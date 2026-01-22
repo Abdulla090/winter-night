@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sample",
+    "name": "Winter Nights Party Games",
     "slug": "sample",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,10 +20,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.totaltech.partygames"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2219f6e9-09be-4e4f-86c5-307639db372e"
+      }
+    },
+    "owner": "abdullla090"
   }
 }
