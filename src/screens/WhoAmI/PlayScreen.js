@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    TouchableOpacity,
-    ScrollView,
-    Dimensions,
-} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { GradientBackground, Button, Timer, Modal, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomCharacter } from '../../constants/whoAmIData';
@@ -29,13 +23,10 @@ export default function PlayScreen({ navigation, route }) {
 
     const currentPlayer = players[currentPlayerIndex];
     const isLastPlayer = currentPlayerIndex === players.length - 1;
-    const accentColor = COLORS.games.whoAmI;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
+    // Ensure we handle array or string for colors
+    const gameColors = Array.isArray(COLORS.games.whoAmI) ? COLORS.games.whoAmI : [COLORS.games.whoAmI, COLORS.games.whoAmI];
+    const accentColor = gameColors[0];
 
     useEffect(() => {
         setCharacter(getRandomCharacter(category, language));
@@ -78,8 +69,6 @@ export default function PlayScreen({ navigation, route }) {
                         style={styles.scrollContainer}
                         contentContainerStyle={styles.centerContent}
                         showsVerticalScrollIndicator={true}
-                        bounces={true}
-                        alwaysBounceVertical={true}
                     >
                         <View style={styles.badge}>
                             <Text style={[styles.badgeText, isKurdish && styles.kurdishFont]}>
@@ -101,7 +90,7 @@ export default function PlayScreen({ navigation, route }) {
                         <Button
                             title={t('common.revealCharacter', language)}
                             onPress={handleReveal}
-                            gradient={[accentColor, accentColor]}
+                            gradient={gameColors}
                             icon={<Ionicons name="eye-outline" size={20} color="#FFF" />}
                             isKurdish={isKurdish}
                         />
@@ -119,9 +108,6 @@ export default function PlayScreen({ navigation, route }) {
                     <ScrollView
                         style={styles.scrollContainer}
                         contentContainerStyle={styles.centerContent}
-                        showsVerticalScrollIndicator={true}
-                        bounces={true}
-                        alwaysBounceVertical={true}
                     >
                         <Text style={[styles.label, isKurdish && styles.kurdishFont]}>
                             {t('common.youAre', language)}
@@ -149,7 +135,10 @@ export default function PlayScreen({ navigation, route }) {
 
     // Gameplay Screen (Forehead Mode)
     return (
-        <View style={styles.gameContainer}>
+        <LinearGradient
+            colors={gameColors}
+            style={styles.gameContainer}
+        >
             <View style={[styles.rotateContainer]}>
                 <Text style={[styles.gameCharacter, isKurdish && styles.kurdishFont]}>{character}</Text>
 
@@ -174,44 +163,31 @@ export default function PlayScreen({ navigation, route }) {
                 showClose={false}
                 isKurdish={isKurdish}
             >
-                {guessedCorrect === null ? (
-                    <View style={[styles.row, { flexDirection: isKurdish ? 'row-reverse' : 'row' }]}>
-                        <Button
-                            title={t('common.yes', language)}
-                            onPress={() => handleGuessResult(true)}
-                            gradient={[COLORS.accent.success, COLORS.accent.success]}
-                            style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
-                            isKurdish={isKurdish}
-                        />
-                        <Button
-                            title={t('common.no', language)}
-                            onPress={() => handleGuessResult(false)}
-                            gradient={[COLORS.accent.danger, COLORS.accent.danger]}
-                            style={{ flex: 1, marginLeft: isKurdish ? 0 : 8, marginRight: isKurdish ? 8 : 0 }}
-                            isKurdish={isKurdish}
-                        />
-                    </View>
-                ) : (
-                    <View style={styles.centerContent}>
-                        <Ionicons
-                            name={guessedCorrect ? 'checkmark-circle' : 'close-circle'}
-                            size={60}
-                            color={guessedCorrect ? COLORS.accent.success : COLORS.accent.danger}
-                        />
-                        <Text style={[styles.resultText, isKurdish && styles.kurdishFont]}>
-                            {guessedCorrect ? t('common.correct', language) : t('common.missedIt', language)}
-                        </Text>
-                    </View>
-                )}
+                <View style={[styles.row, { flexDirection: isKurdish ? 'row-reverse' : 'row' }]}>
+                    <Button
+                        title={t('common.yes', language)}
+                        onPress={() => handleGuessResult(true)}
+                        gradient={[COLORS.accent.success, COLORS.accent.success]}
+                        style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
+                        isKurdish={isKurdish}
+                    />
+                    <Button
+                        title={t('common.no', language)}
+                        onPress={() => handleGuessResult(false)}
+                        gradient={[COLORS.accent.danger, COLORS.accent.danger]}
+                        style={{ flex: 1, marginLeft: isKurdish ? 0 : 8, marginRight: isKurdish ? 8 : 0 }}
+                        isKurdish={isKurdish}
+                    />
+                </View>
             </Modal>
-        </View>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
     scrollContainer: { flex: 1 },
-    gameContainer: { flex: 1, backgroundColor: COLORS.games.whoAmI, justifyContent: 'center' },
+    gameContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     centerContent: {
         flexGrow: 1, alignItems: 'center', padding: SPACING.xl, paddingVertical: 40,
         paddingBottom: 100

@@ -48,7 +48,26 @@ export const GameRoomProvider = ({ children }) => {
                     filter: `room_id=eq.${currentRoom.id}`,
                 },
                 (payload) => {
+                    console.log('Game state update:', payload.new);
                     setGameState(payload.new);
+                }
+            )
+            .subscribe();
+
+        // Subscribe to room updates (for game_type changes)
+        const roomChannel = supabase
+            .channel(`room_updates:${currentRoom.id}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'game_rooms',
+                    filter: `id=eq.${currentRoom.id}`,
+                },
+                (payload) => {
+                    console.log('Room update:', payload.new);
+                    setCurrentRoom(prev => ({ ...prev, ...payload.new }));
                 }
             )
             .subscribe();
@@ -93,6 +112,7 @@ export const GameRoomProvider = ({ children }) => {
         return () => {
             playersChannel.unsubscribe();
             gameStateChannel.unsubscribe();
+            roomChannel.unsubscribe();
             presenceChannel.unsubscribe();
         };
     }, [currentRoom?.id, user?.id, profile]);
@@ -123,9 +143,13 @@ export const GameRoomProvider = ({ children }) => {
     };
 
     const createRoom = async (gameType, roomName) => {
+        console.log('createRoom called with:', { gameType, roomName, user: user?.id, profile: profile?.username });
+
         if (!user || !profile) {
-            setError('You must be logged in to create a room');
-            return null;
+            const msg = 'You must be logged in to create a room';
+            console.log('createRoom error:', msg);
+            setError(msg);
+            return { success: false, error: msg };
         }
 
         try {
@@ -135,6 +159,7 @@ export const GameRoomProvider = ({ children }) => {
             // Generate unique room code
             let roomCode = generateRoomCode();
             let attempts = 0;
+            console.log('Generated room code:', roomCode);
 
             // Check if code exists, regenerate if needed
             while (attempts < 5) {
@@ -149,21 +174,27 @@ export const GameRoomProvider = ({ children }) => {
                 attempts++;
             }
 
+            console.log('Creating room in database...');
             // Create room
             const { data: room, error: roomError } = await supabase
                 .from('game_rooms')
                 .insert({
                     host_id: user.id,
                     room_code: roomCode,
-                    game_type: gameType || 'quiz', // Default to 'quiz' to prevent null error if DB requires it
+                    game_type: gameType || 'truthordare',
                     room_name: roomName,
                 })
                 .select()
                 .single();
 
-            if (roomError) throw roomError;
+            if (roomError) {
+                console.log('Room creation error:', roomError);
+                throw roomError;
+            }
+            console.log('Room created:', room);
 
-            // Add host as player
+            // Add host as player (already ready)
+            console.log('Adding host as player...');
             const { error: playerError } = await supabase
                 .from('room_players')
                 .insert({
@@ -172,9 +203,14 @@ export const GameRoomProvider = ({ children }) => {
                     is_ready: true,
                 });
 
-            if (playerError) throw playerError;
+            if (playerError) {
+                console.log('Player insert error:', playerError);
+                throw playerError;
+            }
+            console.log('Host added as player');
 
             // Create initial game state
+            console.log('Creating game state...');
             const { error: stateError } = await supabase
                 .from('game_states')
                 .insert({
@@ -183,11 +219,17 @@ export const GameRoomProvider = ({ children }) => {
                     game_phase: 'lobby',
                 });
 
-            if (stateError) throw stateError;
+            if (stateError) {
+                console.log('Game state error:', stateError);
+                throw stateError;
+            }
+            console.log('Game state created');
 
             setCurrentRoom(room);
+            console.log('Room creation complete! Success.');
             return { success: true, data: room };
         } catch (err) {
+            console.log('createRoom caught error:', err.message);
             setError(err.message);
             return { success: false, error: err.message };
         } finally {
@@ -256,7 +298,7 @@ export const GameRoomProvider = ({ children }) => {
 
             setCurrentRoom(room);
 
-            // Immediately fetch latest state to ensure UI is ready
+            // Immediately fetch latest state
             await Promise.all([
                 fetchPlayers(room.id),
                 fetchGameState(room.id)
@@ -290,6 +332,20 @@ export const GameRoomProvider = ({ children }) => {
                     .from('game_rooms')
                     .update({ is_active: false })
                     .eq('id', currentRoom.id);
+            } else {
+                // Check if room is now empty and clean up
+                const { count } = await supabase
+                    .from('room_players')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('room_id', currentRoom.id);
+
+                if (count === 0) {
+                    // No players left, mark room as inactive
+                    await supabase
+                        .from('game_rooms')
+                        .update({ is_active: false })
+                        .eq('id', currentRoom.id);
+                }
             }
 
             setCurrentRoom(null);
@@ -297,6 +353,39 @@ export const GameRoomProvider = ({ children }) => {
             setGameState(null);
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // End game and cleanup room
+    const endGame = async () => {
+        if (!currentRoom) return;
+
+        try {
+            setLoading(true);
+
+            // Update game state to finished
+            await supabase
+                .from('game_states')
+                .update({ game_phase: 'finished', updated_at: new Date().toISOString() })
+                .eq('room_id', currentRoom.id);
+
+            // Mark room as inactive
+            await supabase
+                .from('game_rooms')
+                .update({ is_active: false })
+                .eq('id', currentRoom.id);
+
+            // Clear local state
+            setCurrentRoom(null);
+            setPlayers([]);
+            setGameState(null);
+
+            return { success: true };
+        } catch (err) {
+            setError(err.message);
+            return { success: false, error: err.message };
         } finally {
             setLoading(false);
         }
@@ -329,13 +418,17 @@ export const GameRoomProvider = ({ children }) => {
                 .eq('room_id', currentRoom.id);
 
             if (error) throw error;
+            return { success: true };
         } catch (err) {
             setError(err.message);
+            return { success: false, error: err.message };
         }
     };
 
     const startGame = async () => {
-        if (!currentRoom || currentRoom.host_id !== user?.id) return { success: false, error: 'Unauthorized' };
+        if (!currentRoom || currentRoom.host_id !== user?.id) {
+            return { success: false, error: 'Only host can start the game' };
+        }
 
         // Check if all players are ready
         const allReady = players.every(p => p.is_ready);
@@ -345,8 +438,15 @@ export const GameRoomProvider = ({ children }) => {
             return { success: false, error: msg };
         }
 
+        if (players.length < 2) {
+            const msg = 'Need at least 2 players';
+            setError(msg);
+            return { success: false, error: msg };
+        }
+
         try {
             setLoading(true);
+
             // Initialize scores for all players
             const initialScores = {};
             players.forEach(p => {
@@ -354,20 +454,38 @@ export const GameRoomProvider = ({ children }) => {
                 initialScores[username] = 0;
             });
 
-            // Set up initial game state
-            await updateGameState({
-                game_phase: 'playing',
-                round_number: 1,
-                scores: initialScores,
-                current_question: {
-                    phase: 'choose',
-                    player_index: 0,
-                    chosen_type: null,
-                    challenge: '',
-                },
+            console.log('Starting game with:', {
+                game_type: currentRoom.game_type,
+                players: players.length,
+                scores: initialScores
             });
+
+            // Set up initial game state - THIS IS THE KEY UPDATE
+            const { error: updateError } = await supabase
+                .from('game_states')
+                .update({
+                    game_phase: 'playing',
+                    round_number: 1,
+                    scores: initialScores,
+                    current_question: {
+                        phase: 'choose',
+                        player_index: 0,
+                        chosen_type: null,
+                        challenge: '',
+                    },
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('room_id', currentRoom.id);
+
+            if (updateError) {
+                console.error('Error starting game:', updateError);
+                throw updateError;
+            }
+
+            console.log('Game started successfully!');
             return { success: true };
         } catch (err) {
+            console.error('Start game error:', err);
             setError(err.message);
             return { success: false, error: err.message };
         } finally {
@@ -419,6 +537,7 @@ export const GameRoomProvider = ({ children }) => {
         updateGameState,
         startGame,
         selectGame,
+        endGame,
         clearError: () => setError(null),
     };
 

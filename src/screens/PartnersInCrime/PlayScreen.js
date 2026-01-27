@@ -1,26 +1,19 @@
 import React, { useState, useRef } from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Animated, TextInput, KeyboardAvoidingView, Platform
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard, ScrollView } from 'react-native';
+import { X, Check, Users, Trophy, MessageSquare, AlertCircle } from 'lucide-react-native';
 import { MotiView, AnimatePresence } from 'moti';
-import { GradientBackground, GlassCard, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { AnimatedScreen } from '../../components/AnimatedScreen';
+import { GlassCard } from '../../components/GlassCard';
+import { BeastButton } from '../../components/BeastButton';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { getPartnersQuestions } from '../../constants/partnersData'; // Fix invalid import if needed, assuming Data file is correct
+import { layout } from '../../theme/layout';
+import { getPartnersQuestions } from '../../constants/partnersData';
 
 export default function PartnersPlayScreen({ navigation, route }) {
     const { p1Name, p2Name, category } = route.params;
+    const { colors, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
-
-    // Game Logic
-    // Phase 1: Player 1 answers secretly
-    // Phase 2: Player 2 guesses P1's answer
-    // Phase 3: Player 2 answers secretly
-    // Phase 4: Player 1 guesses P2's answer
-    // Then Repeat
 
     const questions = useRef(getPartnersQuestions(category.id));
     const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -28,10 +21,9 @@ export default function PartnersPlayScreen({ navigation, route }) {
     const [p1Answer, setP1Answer] = useState('');
     const [p2Answer, setP2Answer] = useState('');
     const [score, setScore] = useState(0);
-    const [showResult, setShowResult] = useState(false); // To show if guess was correct
+    const [showResult, setShowResult] = useState(false);
 
     const currentQuestion = questions.current[currentQIndex];
-    if (!currentQuestion) return null; // Or Game Over
 
     const handlePhase1Submit = () => {
         if (!p1Answer.trim()) return;
@@ -41,13 +33,12 @@ export default function PartnersPlayScreen({ navigation, route }) {
     const handlePhase2Submit = (correct) => {
         if (correct) setScore(prev => prev + 1);
         setShowResult(true);
-        // Delay then move to next part
         setTimeout(() => {
             setShowResult(false);
             setPhase(3);
             setP1Answer('');
             setP2Answer('');
-        }, 2000);
+        }, 1500);
     };
 
     const handlePhase3Submit = () => {
@@ -58,9 +49,9 @@ export default function PartnersPlayScreen({ navigation, route }) {
     const handlePhase4Submit = (correct) => {
         if (correct) setScore(prev => prev + 1);
         setShowResult(true);
-        // Delay then move to next question or end
         setTimeout(() => {
             setShowResult(false);
+            // Check if game over
             if (currentQIndex + 1 >= questions.current.length) {
                 setPhase('end');
             } else {
@@ -69,47 +60,49 @@ export default function PartnersPlayScreen({ navigation, route }) {
                 setP1Answer('');
                 setP2Answer('');
             }
-        }, 2000);
+        }, 1500);
     };
 
-    // --- RENDER HELPERS ---
-
-    // Game Over
+    // Game Over Screen
     if (phase === 'end') {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <MotiView
-                        from={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        style={styles.centerContent}
-                    >
-                        <Text style={styles.emoji}>💑</Text>
-                        <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'ئەنجام' : 'Results'}
-                        </Text>
-                        <Text style={styles.scoreBig}>{score}</Text>
-                        <Text style={[styles.subText, isKurdish && styles.kurdishFont]}>
+            <AnimatedScreen>
+                <MotiView
+                    from={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={styles.centerContent}
+                >
+                    <View style={[styles.endIconContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                        <Trophy size={64} color={colors.brand.gold} />
+                    </View>
+
+                    <Text style={[styles.endTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'ئەنجام' : 'Results'}
+                    </Text>
+
+                    <View style={styles.scoreContainer}>
+                        <Text style={[styles.scoreBig, { color: colors.brand.primary }]}>{score}</Text>
+                        <Text style={[styles.subText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'خاڵی کۆکراوە' : 'Total Points'}
                         </Text>
+                    </View>
 
-                        <View style={{ marginTop: SPACING.xl, width: '100%' }}>
-                            <Button
-                                title={isKurdish ? 'تەواو' : 'Finish'}
-                                onPress={() => navigation.navigate('Home')}
-                                gradient={[COLORS.accent.primary, '#2563eb']}
-                            />
-                        </View>
-                    </MotiView>
-                </SafeAreaView>
-            </GradientBackground>
+                    <View style={{ width: '100%', paddingHorizontal: layout.spacing.xl }}>
+                        <BeastButton
+                            title={isKurdish ? 'تەواو' : 'Finish'}
+                            onPress={() => navigation.navigate('Home')}
+                            size="lg"
+                            variant="primary"
+                        />
+                    </View>
+                </MotiView>
+            </AnimatedScreen>
         );
     }
 
-    // Question Text
-    const qText = currentQuestion.q[language];
+    if (!currentQuestion) return null;
 
-    // Determine who is doing what
+    const qText = currentQuestion.q[language];
     let activePlayerName = '';
     let instruction = '';
     let isGuessing = false;
@@ -127,7 +120,6 @@ export default function PartnersPlayScreen({ navigation, route }) {
         activePlayerName = p2Name;
         instruction = isKurdish ? `بووەستە! وەڵامی ${p1Name} چی بوو؟` : `Guess ${p1Name}'s answer!`;
         isGuessing = true;
-        // Logic handled differently for guessing phase UI
     } else if (phase === 3) {
         activePlayerName = p2Name;
         instruction = isKurdish ? 'بە نهێنی وەڵام بدەرەوە' : 'Answer secretly';
@@ -141,212 +133,304 @@ export default function PartnersPlayScreen({ navigation, route }) {
     }
 
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.safeArea}>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={{ flex: 1 }}
-                >
-                    {/* Header */}
-                    <View style={[styles.header, { flexDirection: rowDirection }]}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Ionicons name="close" size={24} color={COLORS.text.primary} />
-                        </TouchableOpacity>
-                        <View style={styles.scoreBadge}>
-                            <Text style={styles.scoreText}>{score}</Text>
+        <AnimatedScreen>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
+                {/* Header */}
+                <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <BeastButton
+                        size="sm"
+                        variant="ghost"
+                        icon={X}
+                        onPress={() => navigation.goBack()}
+                        style={{ width: 40, height: 40 }}
+                    />
+                    <GlassCard intensity={20} style={styles.scoreBadge}>
+                        <Trophy size={14} color={colors.accent} style={{ marginRight: 6 }} />
+                        <Text style={{ color: colors.text.primary, fontWeight: 'bold' }}>{score}</Text>
+                    </GlassCard>
+                </View>
+
+                {/* Score/Success Overlay */}
+                <AnimatePresence>
+                    {showResult && (
+                        <MotiView
+                            from={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            style={styles.overlay}
+                        >
+                            <GlassCard style={styles.resultCard}>
+                                <View style={[styles.resultIcon, { backgroundColor: colors.accent }]}>
+                                    <Check size={40} color="#FFF" strokeWidth={3} />
+                                </View>
+                                <Text style={[styles.resultTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                                    {isKurdish ? 'تۆمار کرا!' : 'Recorded!'}
+                                </Text>
+                            </GlassCard>
+                        </MotiView>
+                    )}
+                </AnimatePresence>
+
+                <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+
+                    {/* Question Card */}
+                    <Text style={[styles.phaseLabel, { color: colors.text.tertiary }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? `پرسیاری ${currentQIndex + 1}` : `QUESTION ${currentQIndex + 1}`}
+                    </Text>
+
+                    <GlassCard
+                        style={[styles.questionCard, { borderColor: colors.border }]}
+                        intensity={40}
+                    >
+                        <AlertCircle size={32} color={colors.brand.secondary} style={{ marginBottom: 16 }} />
+                        <Text style={[styles.questionText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {qText}
+                        </Text>
+                    </GlassCard>
+
+                    {/* Logic Section */}
+                    <View style={styles.playerSection}>
+                        <View style={[styles.avatarCircle, { backgroundColor: phase % 2 !== 0 ? colors.brand.primary : colors.brand.secondary }]}>
+                            <Text style={styles.avatarText}>{activePlayerName.charAt(0)}</Text>
                         </View>
+                        <Text style={[styles.playerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {activePlayerName}
+                        </Text>
+                        <Text style={[styles.instruction, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                            {instruction}
+                        </Text>
                     </View>
 
-                    {/* Result Overlay */}
-                    <AnimatePresence>
-                        {showResult && (
-                            <MotiView
-                                from={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                style={styles.overlay}
-                            >
-                                <GlassCard intensity={80} style={styles.resultCard}>
-                                    <Ionicons name="checkmark-circle" size={60} color={COLORS.accent.success} />
-                                    <Text style={[styles.resultTitle, isKurdish && styles.kurdishFont]}>
-                                        {isKurdish ? 'تۆمار کرا!' : 'Recorded!'}
-                                    </Text>
-                                </GlassCard>
-                            </MotiView>
-                        )}
-                    </AnimatePresence>
-
-                    <ScrollView contentContainerStyle={styles.content}>
-                        <Text style={[styles.phaseLabel, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? `پرسیاری ${currentQIndex + 1}` : `Question ${currentQIndex + 1}`}
-                        </Text>
-
-                        <View style={styles.questionCard}>
-                            <Text style={[styles.questionText, isKurdish && styles.kurdishFont]}>
-                                {qText}
-                            </Text>
-                        </View>
-
-                        <View style={styles.playerSection}>
-                            <View style={styles.avatarCircle}>
-                                <Text style={styles.avatarText}>{activePlayerName.charAt(0)}</Text>
-                            </View>
-                            <Text style={[styles.playerName, isKurdish && styles.kurdishFont]}>
-                                {activePlayerName}
-                            </Text>
-                            <Text style={[styles.instruction, isKurdish && styles.kurdishFont]}>
-                                {instruction}
-                            </Text>
-                        </View>
-
-                        {!isGuessing ? (
-                            <View style={styles.inputContainer}>
+                    {!isGuessing ? (
+                        <MotiView
+                            from={{ opacity: 0, translateY: 20 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            style={{ w: '100%' }}
+                        >
+                            <GlassCard intensity={10} style={{ padding: 0 }}>
                                 <TextInput
-                                    style={[styles.input, isKurdish && styles.kurdishFont]}
+                                    style={[
+                                        styles.input,
+                                        { color: colors.text.primary },
+                                        isKurdish && styles.kurdishFont,
+                                        isRTL && { textAlign: 'right' }
+                                    ]}
                                     value={inputValue}
                                     onChangeText={setInputValue}
-                                    placeholder={isKurdish ? 'لێرە  بنوسە...' : 'Type here...'}
-                                    placeholderTextColor={COLORS.text.muted}
+                                    placeholder={isKurdish ? 'لێرە وەڵام بدەرەوە...' : 'Type answer here...'}
+                                    placeholderTextColor={colors.text.muted}
                                     multiline
+                                    autoFocus
                                 />
-                                <Button
-                                    title={isKurdish ? 'تەواو' : 'Done'}
-                                    onPress={onDone}
-                                    disabled={!inputValue.trim()}
-                                    gradient={[COLORS.accent.primary, '#2563eb']}
-                                    style={{ marginTop: SPACING.lg }}
-                                />
-                            </View>
-                        ) : (
-                            <View style={styles.revealSection}>
-                                <Text style={[styles.revealLabel, isKurdish && styles.kurdishFont]}>
+                            </GlassCard>
+                            <BeastButton
+                                title={isKurdish ? 'تەواو' : 'Submit'}
+                                onPress={onDone}
+                                disabled={!inputValue.trim()}
+                                size="lg"
+                                style={{ marginTop: layout.spacing.lg }}
+                                icon={Check}
+                            />
+                        </MotiView>
+                    ) : (
+                        <MotiView
+                            from={{ opacity: 0, translateY: 20 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            style={styles.revealSection}
+                        >
+                            <GlassCard style={{ width: '100%', marginBottom: layout.spacing.lg }}>
+                                <Text style={[styles.revealLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                     {isKurdish ? 'وەڵامە ڕاستەکە:' : 'The Real Answer:'}
                                 </Text>
-                                <GlassCard intensity={20} style={styles.answerRevealCard}>
-                                    <Text style={[styles.revealText, isKurdish && styles.kurdishFont]}>
-                                        {phase === 2 ? p1Answer : p2Answer}
-                                    </Text>
-                                </GlassCard>
-
-                                <Text style={[styles.askText, isKurdish && styles.kurdishFont]}>
-                                    {isKurdish ? 'ڕاستت کرد؟' : 'Did you get it right?'}
+                                <Text style={[styles.revealText, { color: colors.brand.primary }, isKurdish && styles.kurdishFont]}>
+                                    {phase === 2 ? p1Answer : p2Answer}
                                 </Text>
+                            </GlassCard>
 
-                                <View style={styles.decisionRow}>
-                                    <TouchableOpacity
-                                        style={[styles.decisionBtn, styles.wrongBtn]}
-                                        onPress={() => phase === 2 ? handlePhase2Submit(false) : handlePhase4Submit(false)}
-                                    >
-                                        <Ionicons name="close" size={30} color="#FFF" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.decisionBtn, styles.correctBtn]}
-                                        onPress={() => phase === 2 ? handlePhase2Submit(true) : handlePhase4Submit(true)}
-                                    >
-                                        <Ionicons name="checkmark" size={30} color="#FFF" />
-                                    </TouchableOpacity>
-                                </View>
+                            <Text style={[styles.askText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                                {isKurdish ? 'ڕاستت کرد؟' : 'Did you guess correctly?'}
+                            </Text>
+
+                            <View style={styles.decisionRow}>
+                                <BeastButton
+                                    variant="danger"
+                                    icon={X}
+                                    onPress={() => phase === 2 ? handlePhase2Submit(false) : handlePhase4Submit(false)}
+                                    style={styles.decisionBtn}
+                                />
+                                <BeastButton
+                                    variant="success"
+                                    icon={Check}
+                                    onPress={() => phase === 2 ? handlePhase2Submit(true) : handlePhase4Submit(true)}
+                                    style={styles.decisionBtn}
+                                />
                             </View>
-                        )}
+                        </MotiView>
+                    )}
 
-                    </ScrollView>
-                </KeyboardAvoidingView>
-            </SafeAreaView>
-        </GradientBackground>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1 },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: SPACING.md,
+        alignItems: 'center',
+        marginBottom: layout.spacing.md,
     },
     scoreBadge: {
-        backgroundColor: COLORS.accent.secondary,
-        paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12,
-    },
-    scoreText: { color: '#FFF', fontWeight: 'bold' },
-    content: {
-        padding: SPACING.lg,
-        paddingBottom: 40,
+        flexDirection: 'row',
         alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+    },
+    content: {
+        paddingBottom: 40,
     },
     phaseLabel: {
-        color: COLORS.text.secondary,
-        textTransform: 'uppercase',
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom: 8,
         letterSpacing: 1,
-        marginBottom: SPACING.md,
+        textAlign: 'center',
     },
     questionCard: {
-        width: '100%',
-        padding: SPACING.xl,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: BORDER_RADIUS.xl,
-        marginBottom: SPACING.xl,
         alignItems: 'center',
+        padding: layout.spacing.xl,
+        marginBottom: layout.spacing.xl,
     },
     questionText: {
-        color: '#FFF',
         fontSize: 22,
         fontWeight: 'bold',
         textAlign: 'center',
-        lineHeight: 32,
+        lineHeight: 30,
     },
     playerSection: {
         alignItems: 'center',
-        marginBottom: SPACING.xl,
+        marginBottom: layout.spacing.xl,
     },
     avatarCircle: {
-        width: 60, height: 60, borderRadius: 30,
-        backgroundColor: COLORS.accent.primary,
-        alignItems: 'center', justifyContent: 'center',
-        marginBottom: SPACING.sm,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 12,
+        ...layout.shadows.md,
     },
-    avatarText: { color: '#FFF', fontSize: 24, fontWeight: 'bold' },
-    playerName: { color: COLORS.text.primary, fontSize: 20, fontWeight: 'bold', marginBottom: 4 },
-    instruction: { color: COLORS.accent.warning, fontSize: 16 },
-
-    inputContainer: { width: '100%' },
+    avatarText: {
+        color: '#FFF',
+        fontSize: 28,
+        fontWeight: 'bold',
+    },
+    playerName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    instruction: {
+        fontSize: 16,
+    },
     input: {
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        color: COLORS.text.primary,
+        padding: 16,
         fontSize: 18,
         minHeight: 120,
         textAlignVertical: 'top',
     },
-
-    // Reveal
-    revealSection: { width: '100%', alignItems: 'center' },
-    revealLabel: { color: COLORS.text.secondary, marginBottom: SPACING.sm },
-    answerRevealCard: { width: '100%', padding: SPACING.lg, alignItems: 'center', marginBottom: SPACING.lg },
-    revealText: { color: COLORS.text.primary, fontSize: 24, fontWeight: 'bold' },
-    askText: { color: COLORS.text.primary, fontSize: 18, marginBottom: SPACING.lg },
-    decisionRow: { flexDirection: 'row', gap: SPACING.xl },
-    decisionBtn: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
-    wrongBtn: { backgroundColor: COLORS.accent.danger },
-    correctBtn: { backgroundColor: COLORS.accent.success },
-
-    // Overlay
+    revealSection: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    revealLabel: {
+        fontSize: 14,
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    revealText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    askText: {
+        fontSize: 18,
+        marginBottom: 20,
+        fontWeight: '600',
+    },
+    decisionRow: {
+        flexDirection: 'row',
+        gap: 20,
+    },
+    decisionBtn: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+    },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.6)',
+        backgroundColor: 'rgba(0,0,0,0.7)',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 10,
+        zIndex: 100,
     },
-    resultCard: { padding: 40, alignItems: 'center', borderRadius: 20 },
-    resultTitle: { color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 10 },
+    resultIcon: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16,
+    },
+    resultCard: {
+        alignItems: 'center',
+        padding: 30,
+        minWidth: 200,
+    },
+    resultTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
 
     // End Screen
-    centerContent: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.xl },
-    emoji: { fontSize: 80, marginBottom: SPACING.lg },
-    title: { color: COLORS.text.primary, fontSize: 32, fontWeight: 'bold' },
-    scoreBig: { fontSize: 100, fontWeight: '900', color: COLORS.accent.primary },
-    subText: { color: COLORS.text.secondary, fontSize: 18 },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    centerContent: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    endIconContainer: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 24,
+    },
+    endTitle: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    scoreContainer: {
+        alignItems: 'center',
+        marginBottom: 40,
+    },
+    scoreBig: {
+        fontSize: 80,
+        fontWeight: '900',
+        lineHeight: 90,
+    },
+    subText: {
+        fontSize: 16,
+        textTransform: 'uppercase',
+        letterSpacing: 2,
+    },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

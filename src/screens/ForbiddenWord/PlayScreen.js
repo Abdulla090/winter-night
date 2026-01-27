@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Animated, Vibration
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { MotiView } from 'moti';
-import { GradientBackground, GlassCard, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, Vibration, ScrollView } from 'react-native';
+import { Play, SkipForward, AlertCircle, Check, Clock, RotateCcw, ArrowRight } from 'lucide-react-native';
+import { MotiView, AnimatePresence } from 'moti';
+import { AnimatedScreen } from '../../components/AnimatedScreen';
+import { GlassCard } from '../../components/GlassCard';
+import { BeastButton } from '../../components/BeastButton';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 import { getForbiddenWords } from '../../constants/forbiddenWordData';
 
 export default function ForbiddenWordPlayScreen({ navigation, route }) {
     const { teams, difficulty, roundTime } = route.params;
+    const { colors, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
     // Game State
     const [words, setWords] = useState([]);
@@ -29,13 +28,11 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     const timerRef = useRef(null);
     const shakeAnim = useRef(new Animated.Value(0)).current;
 
-    // Initialize words
     useEffect(() => {
         const loadedWords = getForbiddenWords(difficulty.id, language);
         setWords(loadedWords);
     }, [difficulty, language]);
 
-    // Timer
     useEffect(() => {
         if (phase === 'playing' && timeLeft > 0) {
             timerRef.current = setInterval(() => {
@@ -64,7 +61,6 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     };
 
     const handleCorrect = () => {
-        // Add point
         setScores(prev => ({
             ...prev,
             [teams[currentTeamIndex]]: prev[teams[currentTeamIndex]] + 1
@@ -74,14 +70,11 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     };
 
     const handleSkip = () => {
-        // No penalty, just move to next word
         nextWord();
     };
 
     const handleBuzzer = () => {
-        // Team used a forbidden word! (Usually called by opponents)
         Vibration.vibrate(300);
-        // Shake animation
         Animated.sequence([
             Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
             Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
@@ -94,7 +87,6 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
 
     const nextWord = () => {
         if (currentIndex + 1 >= words.length) {
-            // Reshuffle words
             setWords(words.sort(() => Math.random() - 0.5));
             setCurrentIndex(0);
         } else {
@@ -107,7 +99,6 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
         setCurrentTeamIndex(nextTeamIdx);
 
         if (nextTeamIdx === 0) {
-            // Completed a full round
             setRoundNumber(prev => prev + 1);
         }
 
@@ -121,19 +112,20 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
 
     if (words.length === 0) {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <View style={styles.loadingContainer}>
-                        <Text style={styles.loadingText}>Loading...</Text>
-                    </View>
-                </SafeAreaView>
-            </GradientBackground>
+            <AnimatedScreen>
+                <View style={styles.loadingContainer}>
+                    <Text style={{ color: colors.text.muted }}>Loading...</Text>
+                </View>
+            </AnimatedScreen>
         );
     }
 
     const currentWord = words[currentIndex];
     const currentTeam = teams[currentTeamIndex];
-    const teamColor = currentTeamIndex === 0 ? '#3b82f6' : currentTeamIndex === 1 ? '#ef4444' : currentTeamIndex === 2 ? '#10b981' : '#f59e0b';
+
+    // Team Colors based on index (Blue, Red, Green, Yellow essentially)
+    const teamColors = [colors.brand.primary, colors.brand.crimson, colors.accent, colors.brand.gold];
+    const teamColor = teamColors[currentTeamIndex % teamColors.length];
 
     // ========================
     // GAME OVER
@@ -143,41 +135,44 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
         const winner = sortedTeams[0];
 
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <MotiView
-                        from={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        style={styles.gameOverContainer}
-                    >
-                        <Text style={styles.gameOverEmoji}>🏆</Text>
-                        <Text style={[styles.gameOverTitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'براوەکە!' : 'Winner!'}
-                        </Text>
-                        <Text style={[styles.winnerName, isKurdish && styles.kurdishFont]}>
-                            {winner[0]}
-                        </Text>
-                        <Text style={styles.winnerScore}>{winner[1]} {isKurdish ? 'خاڵ' : 'points'}</Text>
+            <AnimatedScreen>
+                <MotiView
+                    from={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ type: 'timing', duration: 300 }}
+                    style={styles.centerContent}
+                >
+                    <View style={[styles.iconCircle, { backgroundColor: colors.surfaceHighlight, marginBottom: 20 }]}>
+                        <Text style={{ fontSize: 40 }}>🏆</Text>
+                    </View>
+                    <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'براوەکە!' : 'WINNER!'}
+                    </Text>
+                    <Text style={[styles.winnerName, { color: teamColor }, isKurdish && styles.kurdishFont]}>
+                        {winner[0]}
+                    </Text>
+                    <Text style={[styles.scoreText, { color: colors.text.secondary }]}>
+                        {winner[1]} {isKurdish ? 'خاڵ' : 'points'}
+                    </Text>
 
-                        <View style={styles.allScores}>
-                            {sortedTeams.map(([team, score], idx) => (
-                                <View key={team} style={[styles.scoreRow, { flexDirection: rowDirection }]}>
-                                    <Text style={[styles.scoreRank, idx === 0 && { color: '#f59e0b' }]}>#{idx + 1}</Text>
-                                    <Text style={[styles.scoreTeam, isKurdish && styles.kurdishFont]}>{team}</Text>
-                                    <Text style={styles.scoreValue}>{score}</Text>
-                                </View>
-                            ))}
-                        </View>
+                    <GlassCard style={styles.scoreBoard}>
+                        {sortedTeams.map(([team, score], idx) => (
+                            <View key={team} style={[styles.scoreRow, { borderBottomColor: colors.border, flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                                <Text style={{ color: idx === 0 ? colors.brand.gold : colors.text.muted, fontWeight: 'bold', width: 30 }}>#{idx + 1}</Text>
+                                <Text style={[{ flex: 1, color: colors.text.primary, fontWeight: '600' }, isKurdish && styles.kurdishFont, { textAlign: isRTL ? 'right' : 'left' }]}>{team}</Text>
+                                <Text style={{ color: colors.accent, fontWeight: 'bold' }}>{score}</Text>
+                            </View>
+                        ))}
+                    </GlassCard>
 
-                        <Button
-                            title={isKurdish ? 'گەڕانەوە' : 'Back to Home'}
-                            onPress={() => navigation.goBack()}
-                            gradient={[COLORS.accent.primary, '#2563eb']}
-                            isKurdish={isKurdish}
-                        />
-                    </MotiView>
-                </SafeAreaView>
-            </GradientBackground>
+                    <BeastButton
+                        title={isKurdish ? 'گەڕانەوە' : 'Back to Home'}
+                        onPress={() => navigation.goBack()}
+                        variant="ghost"
+                        style={{ marginTop: layout.spacing.lg }}
+                    />
+                </MotiView>
+            </AnimatedScreen>
         );
     }
 
@@ -186,44 +181,44 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     // ========================
     if (phase === 'roundEnd') {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <MotiView
-                        from={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        style={styles.roundEndContainer}
-                    >
-                        <Text style={styles.timeUpEmoji}>⏰</Text>
-                        <Text style={[styles.timeUpText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'کات تەواو بوو!' : "Time's Up!"}
+            <AnimatedScreen>
+                <MotiView
+                    from={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    style={styles.centerContent}
+                >
+                    <View style={[styles.iconCircle, { backgroundColor: colors.accent + '20', marginBottom: 20 }]}>
+                        <Clock size={48} color={colors.accent} />
+                    </View>
+                    <Text style={[styles.title, { color: colors.accent }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'کات تەواو بوو!' : "Time's Up!"}
+                    </Text>
+
+                    <GlassCard style={[styles.resultCard, { borderColor: teamColor }]}>
+                        <Text style={[styles.teamName, { color: teamColor }, isKurdish && styles.kurdishFont]}>
+                            {currentTeam}
                         </Text>
+                        <Text style={[styles.scoreValue, { color: colors.text.primary }]}>
+                            +{wordsGuessed} <Text style={{ fontSize: 16, color: colors.text.secondary }}>{isKurdish ? 'وشە' : 'words'}</Text>
+                        </Text>
+                    </GlassCard>
 
-                        <GlassCard intensity={30} style={styles.roundResultCard}>
-                            <Text style={[styles.roundResultTeam, isKurdish && styles.kurdishFont, { color: teamColor }]}>
-                                {currentTeam}
-                            </Text>
-                            <Text style={styles.roundResultScore}>
-                                +{wordsGuessed} {isKurdish ? 'وشە' : 'words'}
-                            </Text>
-                        </GlassCard>
-
-                        <View style={styles.roundEndButtons}>
-                            <Button
-                                title={isKurdish ? 'تیمی دواتر' : 'Next Team'}
-                                onPress={nextTeam}
-                                gradient={[COLORS.accent.success, '#059669']}
-                                icon={<Ionicons name="arrow-forward" size={20} color="#FFF" />}
-                                isKurdish={isKurdish}
-                            />
-                            <TouchableOpacity style={styles.endGameBtn} onPress={endGame}>
-                                <Text style={[styles.endGameText, isKurdish && styles.kurdishFont]}>
-                                    {isKurdish ? 'کۆتایی یاری' : 'End Game'}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </MotiView>
-                </SafeAreaView>
-            </GradientBackground>
+                    <View style={{ width: '100%', gap: 16 }}>
+                        <BeastButton
+                            title={isKurdish ? 'تیمی دواتر' : 'Next Team'}
+                            onPress={nextTeam}
+                            variant="primary"
+                            icon={ArrowRight}
+                            style={{ backgroundColor: colors.brand.success }}
+                        />
+                        <BeastButton
+                            title={isKurdish ? 'کۆتایی یاری' : 'End Game'}
+                            onPress={endGame}
+                            variant="ghost"
+                        />
+                    </View>
+                </MotiView>
+            </AnimatedScreen>
         );
     }
 
@@ -232,50 +227,41 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     // ========================
     if (phase === 'ready') {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <MotiView
-                        from={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        style={styles.readyContainer}
-                    >
-                        <View style={styles.roundBadge}>
-                            <Text style={[styles.roundBadgeText, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? `دەوری ${roundNumber}` : `Round ${roundNumber}`}
-                            </Text>
-                        </View>
-
-                        <View style={[styles.teamCircle, { backgroundColor: teamColor }]}>
-                            <Text style={[styles.teamCircleText, isKurdish && styles.kurdishFont]}>
-                                {currentTeam.charAt(0).toUpperCase()}
-                            </Text>
-                        </View>
-
-                        <Text style={[styles.readyTitle, isKurdish && styles.kurdishFont, { color: teamColor }]}>
-                            {currentTeam}
+            <AnimatedScreen>
+                <MotiView
+                    from={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ type: 'timing', duration: 300 }}
+                    style={styles.centerContent}
+                >
+                    <GlassCard intensity={20} style={{ marginBottom: layout.spacing.xl, paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20 }}>
+                        <Text style={{ color: colors.text.secondary, fontWeight: 'bold' }}>
+                            {isKurdish ? `دەوری ${roundNumber}` : `ROUND ${roundNumber}`}
                         </Text>
-                        <Text style={[styles.readySubtitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'ئامادەی؟' : 'Ready?'}
-                        </Text>
+                    </GlassCard>
 
-                        <Text style={[styles.readyInstruction, isKurdish && styles.kurdishFont]}>
-                            {isKurdish
-                                ? 'تۆ وشەکە بۆ تیمەکەت باس دەکەیت بەبێ بەکارهێنانی وشە قەدەغەکان!'
-                                : 'You will describe words to your team without using the forbidden words!'
-                            }
+                    <View style={[styles.largeAvatar, { backgroundColor: teamColor, ...layout.shadows.lg }]}>
+                        <Text style={{ color: '#FFF', fontSize: 60, fontWeight: '800' }}>
+                            {currentTeam.charAt(0).toUpperCase()}
                         </Text>
+                    </View>
 
-                        <Button
-                            title={isKurdish ? 'دەست پێ بکە' : 'Start'}
-                            onPress={startRound}
-                            gradient={[teamColor, teamColor]}
-                            icon={<Ionicons name="play" size={20} color="#FFF" />}
-                            isKurdish={isKurdish}
-                            style={{ marginTop: SPACING.xl }}
-                        />
-                    </MotiView>
-                </SafeAreaView>
-            </GradientBackground>
+                    <Text style={[styles.title, { color: teamColor, marginBottom: 8 }, isKurdish && styles.kurdishFont]}>
+                        {currentTeam}
+                    </Text>
+                    <Text style={[styles.subtitle, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'ئامادەی؟' : 'Are you ready?'}
+                    </Text>
+
+                    <BeastButton
+                        title={isKurdish ? 'دەست پێ بکە' : 'Start Round'}
+                        onPress={startRound}
+                        size="lg"
+                        style={{ marginTop: layout.spacing.xxl, backgroundColor: teamColor, width: '100%' }}
+                        icon={Play}
+                    />
+                </MotiView>
+            </AnimatedScreen>
         );
     }
 
@@ -283,286 +269,241 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     // PLAYING PHASE
     // ========================
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.safeArea} edges={['top']}>
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <View style={[styles.teamBadge, { backgroundColor: teamColor }]}>
-                        <Text style={[styles.teamBadgeText, isKurdish && styles.kurdishFont]}>{currentTeam}</Text>
-                    </View>
-                    <View style={styles.timerContainer}>
-                        <Ionicons name="time" size={20} color={timeLeft <= 10 ? COLORS.accent.danger : COLORS.text.primary} />
-                        <Text style={[styles.timerText, timeLeft <= 10 && { color: COLORS.accent.danger }]}>
-                            {timeLeft}s
-                        </Text>
-                    </View>
-                    <View style={styles.scoreBadge}>
-                        <Text style={styles.scoreText}>{wordsGuessed}</Text>
-                    </View>
+        <AnimatedScreen>
+            <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <View style={[styles.teamBadge, { backgroundColor: teamColor }]}>
+                    <Text style={{ color: '#FFF', fontWeight: 'bold' }}>{currentTeam}</Text>
                 </View>
 
-                {/* Word Card */}
-                <View style={styles.cardContainer}>
-                    <Animated.View style={{ transform: [{ translateX: shakeAnim }] }}>
-                        <GlassCard intensity={40} style={styles.wordCard}>
-                            <Text style={[styles.wordLabel, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'باسی بکە:' : 'DESCRIBE:'}
-                            </Text>
-                            <Text style={[styles.targetWord, isKurdish && styles.kurdishFont]}>
-                                {currentWord.target[language]}
-                            </Text>
+                <GlassCard intensity={20} style={styles.timerContainer}>
+                    <Clock size={16} color={timeLeft <= 10 ? colors.brand.danger : colors.text.primary} style={{ marginRight: 6 }} />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: timeLeft <= 10 ? colors.brand.danger : colors.text.primary }}>
+                        {timeLeft}s
+                    </Text>
+                </GlassCard>
 
-                            <View style={styles.divider} />
-
-                            <Text style={[styles.forbiddenLabel, isKurdish && styles.kurdishFont]}>
-                                🚫 {isKurdish ? 'وشە قەدەغەکان:' : 'FORBIDDEN WORDS:'}
-                            </Text>
-                            <View style={styles.forbiddenList}>
-                                {currentWord.forbidden[language].map((word, idx) => (
-                                    <View key={idx} style={styles.forbiddenChip}>
-                                        <Text style={[styles.forbiddenWord, isKurdish && styles.kurdishFont]}>
-                                            {word}
-                                        </Text>
-                                    </View>
-                                ))}
-                            </View>
-                        </GlassCard>
-                    </Animated.View>
+                <View style={[styles.scoreBadge, { backgroundColor: colors.brand.success + '20' }]}>
+                    <Text style={{ color: colors.brand.success, fontWeight: 'bold', fontSize: 18 }}>{wordsGuessed}</Text>
                 </View>
+            </View>
 
-                {/* Controls */}
-                <View style={styles.controls}>
-                    <TouchableOpacity
-                        style={[styles.controlBtn, styles.skipBtn]}
-                        onPress={handleSkip}
-                    >
-                        <Ionicons name="play-skip-forward" size={28} color={COLORS.text.muted} />
-                        <Text style={[styles.controlText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'تێپەڕێنە' : 'Skip'}
+            <View style={{ flex: 1, justifyContent: 'center', paddingVertical: layout.spacing.md }}>
+                <Animated.View style={{ transform: [{ translateX: shakeAnim }], width: '100%' }}>
+                    <GlassCard intensity={45} style={styles.wordCard}>
+                        <Text style={[styles.label, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'باسی بکە:' : 'DESCRIBE:'}
                         </Text>
-                    </TouchableOpacity>
+                        <Text style={[styles.targetWord, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {currentWord.target[language]}
+                        </Text>
 
-                    <TouchableOpacity
-                        style={[styles.controlBtn, styles.buzzerBtn]}
-                        onPress={handleBuzzer}
-                    >
-                        <Ionicons name="alert-circle" size={32} color="#FFF" />
-                        <Text style={[styles.controlText, { color: '#FFF' }, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'قەدەغە!' : 'Buzzer!'}
-                        </Text>
-                    </TouchableOpacity>
+                        <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-                    <TouchableOpacity
-                        style={[styles.controlBtn, styles.correctBtn]}
-                        onPress={handleCorrect}
-                    >
-                        <Ionicons name="checkmark-circle" size={28} color={COLORS.accent.success} />
-                        <Text style={[styles.controlText, { color: COLORS.accent.success }, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'ڕاستە!' : 'Correct!'}
+                        <Text style={[styles.label, { color: colors.brand.danger, marginBottom: 12 }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'وشە قەدەغەکان:' : 'FORBIDDEN:'}
                         </Text>
-                    </TouchableOpacity>
-                </View>
-            </SafeAreaView>
-        </GradientBackground>
+
+                        <View style={styles.forbiddenList}>
+                            {currentWord.forbidden[language].map((word, idx) => (
+                                <View key={idx} style={[styles.forbiddenChip, { backgroundColor: colors.brand.danger + '15', borderColor: colors.brand.danger + '30' }]}>
+                                    <Text style={[styles.forbiddenText, { color: colors.brand.danger }, isKurdish && styles.kurdishFont]}>
+                                        {word}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                    </GlassCard>
+                </Animated.View>
+            </View>
+
+            {/* Controls */}
+            <View style={styles.controls}>
+                <TouchableOpacity onPress={handleSkip} activeOpacity={0.8} style={styles.controlBtnWrapper}>
+                    <GlassCard style={styles.controlBtn}>
+                        <SkipForward size={32} color={colors.text.muted} />
+                        <Text style={[styles.controlLabel, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>{isKurdish ? 'تێپەڕێنە' : 'Skip'}</Text>
+                    </GlassCard>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={handleBuzzer} activeOpacity={0.8} style={[styles.controlBtnWrapper, { flex: 1.2 }]}>
+                    <View style={[styles.controlBtn, { backgroundColor: colors.brand.danger, borderRadius: 24, borderWidth: 0 }]}>
+                        <AlertCircle size={40} color="#FFF" />
+                        <Text style={[styles.controlLabel, { color: '#FFF' }, isKurdish && styles.kurdishFont]}>{isKurdish ? 'قەدەغە!' : 'TABOO!'}</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={handleCorrect} activeOpacity={0.8} style={styles.controlBtnWrapper}>
+                    <View style={[styles.controlBtn, { backgroundColor: colors.brand.success + '20', borderColor: colors.brand.success, borderWidth: 2 }]}>
+                        <Check size={32} color={colors.brand.success} />
+                        <Text style={[styles.controlLabel, { color: colors.brand.success }, isKurdish && styles.kurdishFont]}>{isKurdish ? 'ڕاستە!' : 'Got it!'}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1 },
     loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    loadingText: { color: COLORS.text.muted },
 
-    // Header
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SPACING.md,
+        marginBottom: layout.spacing.md,
     },
     teamBadge: {
-        paddingVertical: 6, paddingHorizontal: 14,
-        borderRadius: 20,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
     },
-    teamBadgeText: { color: '#FFF', ...FONTS.bold },
     timerContainer: {
-        flexDirection: 'row', alignItems: 'center', gap: 6,
-        backgroundColor: COLORS.background.card,
-        paddingVertical: 8, paddingHorizontal: 16,
-        borderRadius: 20,
-    },
-    timerText: { color: COLORS.text.primary, ...FONTS.bold, fontSize: 18 },
-    scoreBadge: {
-        backgroundColor: COLORS.accent.success + '30',
-        paddingVertical: 6, paddingHorizontal: 14,
-        borderRadius: 20,
-    },
-    scoreText: { color: COLORS.accent.success, ...FONTS.bold, fontSize: 18 },
-
-    // Word Card
-    cardContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: SPACING.lg,
-    },
-    wordCard: {
-        padding: SPACING.xl,
-        borderRadius: BORDER_RADIUS.xl,
+        flexDirection: 'row',
         alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
     },
-    wordLabel: {
-        color: COLORS.text.muted,
-        ...FONTS.medium,
+    scoreBadge: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+    },
+
+    // Play Card
+    wordCard: {
+        alignItems: 'center',
+        padding: layout.spacing.xl,
+        borderRadius: 24,
+    },
+    label: {
         fontSize: 12,
-        textTransform: 'uppercase',
+        fontWeight: 'bold',
         letterSpacing: 2,
-        marginBottom: SPACING.sm,
+        marginBottom: 8,
     },
     targetWord: {
-        color: COLORS.text.primary,
-        ...FONTS.title,
-        fontSize: 36,
+        fontSize: 42,
+        fontWeight: '900',
         textAlign: 'center',
+        marginBottom: 8,
     },
     divider: {
-        width: '80%',
         height: 1,
-        backgroundColor: COLORS.background.border,
-        marginVertical: SPACING.lg,
-    },
-    forbiddenLabel: {
-        color: COLORS.accent.danger,
-        ...FONTS.medium,
-        fontSize: 12,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: SPACING.md,
+        width: '100%',
+        marginVertical: layout.spacing.lg,
     },
     forbiddenList: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: SPACING.sm,
+        gap: 8,
     },
     forbiddenChip: {
-        backgroundColor: COLORS.accent.danger + '20',
-        paddingVertical: 6, paddingHorizontal: 12,
-        borderRadius: 20,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 16,
         borderWidth: 1,
-        borderColor: COLORS.accent.danger + '40',
     },
-    forbiddenWord: {
-        color: COLORS.accent.danger,
-        ...FONTS.medium,
+    forbiddenText: {
+        fontWeight: '600',
+        fontSize: 18,
     },
 
     // Controls
     controls: {
         flexDirection: 'row',
-        padding: SPACING.lg,
-        paddingBottom: SPACING.xl,
-        gap: SPACING.md,
+        alignItems: 'center',
+        gap: 12,
+        paddingBottom: 20,
+        height: 120,
+    },
+    controlBtnWrapper: {
+        flex: 1,
+        height: '100%',
     },
     controlBtn: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: SPACING.lg,
-        borderRadius: BORDER_RADIUS.lg,
-        borderWidth: 2,
-        gap: 4,
-    },
-    skipBtn: {
-        backgroundColor: COLORS.background.card,
-        borderColor: COLORS.background.border,
-    },
-    buzzerBtn: {
-        backgroundColor: COLORS.accent.danger,
-        borderColor: COLORS.accent.danger,
-    },
-    correctBtn: {
-        backgroundColor: COLORS.accent.success + '20',
-        borderColor: COLORS.accent.success,
-    },
-    controlText: {
-        ...FONTS.medium,
-        fontSize: 12,
-        color: COLORS.text.muted,
-    },
-
-    // Ready Phase
-    readyContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: SPACING.xl,
-    },
-    roundBadge: {
-        backgroundColor: COLORS.background.card,
-        paddingVertical: 6, paddingHorizontal: 16,
         borderRadius: 20,
-        marginBottom: SPACING.lg,
-    },
-    roundBadgeText: { color: COLORS.text.secondary, ...FONTS.medium },
-    teamCircle: {
-        width: 100, height: 100, borderRadius: 50,
-        alignItems: 'center', justifyContent: 'center',
-        marginBottom: SPACING.md,
-    },
-    teamCircleText: { color: '#FFF', fontSize: 48, fontWeight: '800' },
-    readyTitle: { ...FONTS.large, fontSize: 32, marginBottom: 8 },
-    readySubtitle: { color: COLORS.text.muted, ...FONTS.medium, fontSize: 18, marginBottom: SPACING.lg },
-    readyInstruction: { color: COLORS.text.muted, textAlign: 'center', lineHeight: 22, maxWidth: 300 },
-
-    // Round End
-    roundEndContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: SPACING.xl,
-    },
-    timeUpEmoji: { fontSize: 80, marginBottom: SPACING.md },
-    timeUpText: { color: COLORS.accent.danger, ...FONTS.large, marginBottom: SPACING.lg },
-    roundResultCard: {
-        padding: SPACING.xl,
-        borderRadius: BORDER_RADIUS.xl,
-        alignItems: 'center',
-        marginBottom: SPACING.xl,
-        minWidth: 200,
-    },
-    roundResultTeam: { ...FONTS.title, fontSize: 24, marginBottom: 8 },
-    roundResultScore: { color: COLORS.accent.success, ...FONTS.bold, fontSize: 20 },
-    roundEndButtons: { width: '100%', gap: SPACING.md },
-    endGameBtn: { alignSelf: 'center', padding: SPACING.md },
-    endGameText: { color: COLORS.text.muted, ...FONTS.medium },
-
-    // Game Over
-    gameOverContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: SPACING.xl,
-    },
-    gameOverEmoji: { fontSize: 80, marginBottom: SPACING.md },
-    gameOverTitle: { color: COLORS.text.primary, ...FONTS.medium, marginBottom: SPACING.sm },
-    winnerName: { color: COLORS.accent.primary, ...FONTS.title, fontSize: 36, marginBottom: 4 },
-    winnerScore: { color: COLORS.text.muted, ...FONTS.medium, marginBottom: SPACING.xl },
-    allScores: {
         width: '100%',
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.lg,
-        marginBottom: SPACING.xl,
+    },
+    controlLabel: {
+        fontSize: 12,
+        fontWeight: 'Bold',
+        marginTop: 4,
+        textTransform: 'uppercase',
+    },
+
+    // Center Content (Ready/End)
+    centerContent: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: layout.spacing.lg,
+    },
+    largeAvatar: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 24,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: '900',
+        textAlign: 'center',
+    },
+    subtitle: {
+        fontSize: 18,
+        textAlign: 'center',
+    },
+    iconCircle: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    resultCard: {
+        width: '100%',
+        alignItems: 'center',
+        padding: 24,
+        borderRadius: 24,
+        marginBottom: 32,
+        marginTop: 32,
+        borderWidth: 2,
+    },
+    teamName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    scoreValue: {
+        fontSize: 32,
+        fontWeight: '900',
+    },
+    winnerName: {
+        fontSize: 40,
+        fontWeight: '900',
+        marginBottom: 4,
+    },
+    scoreText: {
+        fontSize: 18,
+        marginBottom: 32,
+    },
+    scoreBoard: {
+        width: '100%',
+        padding: 16,
     },
     scoreRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
+        paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
     },
-    scoreRank: { color: COLORS.text.muted, ...FONTS.bold, width: 30 },
-    scoreTeam: { flex: 1, color: COLORS.text.primary, ...FONTS.medium },
-    scoreValue: { color: COLORS.accent.success, ...FONTS.bold },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

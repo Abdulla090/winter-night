@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { GradientBackground, GlassCard, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { RotateCcw, Play, Clock, Grid } from 'lucide-react-native';
+import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 import { charadesCategories } from '../../constants/charadesData';
+import { MotiView } from 'moti';
 
 export default function ReverseCharadesSetupScreen({ navigation }) {
+    const { colors, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
     const [roundTime, setRoundTime] = useState(60);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -24,210 +26,176 @@ export default function ReverseCharadesSetupScreen({ navigation }) {
     };
 
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity
-                        style={styles.backBtn}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons
-                            name={isKurdish ? "arrow-forward" : "arrow-back"}
-                            size={24}
-                            color={COLORS.text.primary}
-                        />
-                    </TouchableOpacity>
-                    <Text style={[styles.headerTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? '🔄 پێچەوانەی چارێد' : '🔄 Reverse Charades'}
+        <AnimatedScreen>
+            <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                    {t('reverseCharades.title', language)}
+                </Text>
+                <View style={{ width: 44 }} />
+            </View>
+
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                {/* Hero Icon */}
+                <MotiView
+                    from={{ opacity: 0, rotation: '-180deg' }}
+                    animate={{ opacity: 1, rotation: '0deg' }}
+                    style={{ alignItems: 'center', marginBottom: layout.spacing.xl }}
+                >
+                    <View style={[styles.heroIconContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                        <RotateCcw size={48} color={colors.accent} strokeWidth={1.5} />
+                    </View>
+                </MotiView>
+
+                {/* Instructions */}
+                <GlassCard style={{ marginBottom: layout.spacing.xl }}>
+                    <Text style={[styles.sectionTitle, { color: colors.accent, marginBottom: 8 }, isKurdish && styles.kurdishFont]}>
+                        {t('common.howToPlay', language)}
                     </Text>
-                    <View style={{ width: 44 }} />
+                    <Text style={[styles.instructionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                        {t('reverseCharades.description', language)}
+                    </Text>
+                </GlassCard>
+
+                {/* Category Selection */}
+                <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Grid size={16} color={colors.text.muted} style={{ marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0 }} />
+                    <Text style={[styles.sectionHeaderText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'بەشێک هەڵبژێرە' : 'CHOOSE CATEGORY'}
+                    </Text>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.content}>
-                    {/* Instructions */}
-                    <GlassCard intensity={30} style={styles.instructionCard}>
-                        <Text style={[styles.instructionTitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'چۆن دەیاریت؟' : 'How to Play'}
-                        </Text>
-                        <Text style={[styles.instructionText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish
-                                ? '• هەموو گروپەکە نواندن بۆ ١ کەس دەکەن\n• ئەوەی دەپرسێت دەبێت بزانێت\n• تا دەتوانیت وەڵامی ی زۆر بدەرەوە!'
-                                : '• The TEAM acts out the word\n• ONE person guesses\n• Get as many as you can in the time limit!'
-                            }
-                        </Text>
-                    </GlassCard>
-
-                    {/* Category Selection */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'بەشێک هەڵبژێرە' : 'Choose Category'}
-                    </Text>
-
-                    <View style={styles.categoriesGrid}>
-                        {charadesCategories.map((category) => (
-                            <TouchableOpacity
+                <View style={{ gap: layout.spacing.md, marginBottom: layout.spacing.xl }}>
+                    {charadesCategories.map((category, index) => {
+                        const isSelected = selectedCategory?.id === category.id;
+                        return (
+                            <MotiView
                                 key={category.id}
-                                activeOpacity={0.8}
-                                onPress={() => setSelectedCategory(category)}
+                                from={{ opacity: 0, translateY: 20 }}
+                                animate={{ opacity: 1, translateY: 0 }}
+                                delay={index * 100}
                             >
-                                <GlassCard
-                                    intensity={25}
-                                    style={[
-                                        styles.categoryCard,
-                                        selectedCategory?.id === category.id && {
-                                            borderColor: category.color,
-                                            borderWidth: 2,
-                                            backgroundColor: category.color + '20'
-                                        }
-                                    ]}
+                                <TouchableOpacity
+                                    onPress={() => setSelectedCategory(category)}
+                                    activeOpacity={0.8}
                                 >
-                                    <Text style={styles.categoryIcon}>{category.icon}</Text>
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={[styles.categoryTitle, isKurdish && styles.kurdishFont]}>
+                                    <GlassCard
+                                        intensity={isSelected ? 40 : 20}
+                                        style={[
+                                            styles.categoryCard,
+                                            isSelected && { borderColor: category.color, borderWidth: 2, backgroundColor: category.color + '20' }
+                                        ]}
+                                    >
+                                        <Text style={{ fontSize: 24 }}>{category.icon}</Text>
+                                        <Text style={[
+                                            styles.categoryTitle,
+                                            { color: colors.text.primary, flex: 1, textAlign: isRTL ? 'right' : 'left' }, isKurdish && styles.kurdishFont
+                                        ]}>
                                             {category.title[language]}
                                         </Text>
-                                    </View>
-                                    {selectedCategory?.id === category.id && (
-                                        <Ionicons name="checkmark-circle" size={24} color={category.color} />
-                                    )}
-                                </GlassCard>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                                        {isSelected && (
+                                            <Play size={20} color={category.color} fill={category.color} />
+                                        )}
+                                    </GlassCard>
+                                </TouchableOpacity>
+                            </MotiView>
+                        );
+                    })}
+                </View>
 
-                    {/* Round Time */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'کاتی دەور' : 'Round Time'}
+                {/* Round Time */}
+                <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Clock size={16} color={colors.text.muted} style={{ marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0 }} />
+                    <Text style={[styles.sectionHeaderText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {t('common.roundTime', language)}
                     </Text>
+                </View>
 
-                    <View style={[styles.timeRow, { flexDirection: rowDirection }]}>
-                        {[60, 90, 120].map((time) => (
-                            <TouchableOpacity
-                                key={time}
-                                onPress={() => setRoundTime(time)}
-                                style={[
-                                    styles.timeBtn,
-                                    roundTime === time && styles.timeBtnSelected
-                                ]}
+                <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', gap: 10, marginBottom: layout.spacing.xl }}>
+                    {[60, 90, 120].map((time) => (
+                        <TouchableOpacity
+                            key={time}
+                            onPress={() => setRoundTime(time)}
+                            style={{ flex: 1 }}
+                        >
+                            <GlassCard
+                                style={{ alignItems: 'center', paddingVertical: 12, backgroundColor: roundTime === time ? colors.accent + '20' : undefined, borderColor: roundTime === time ? colors.accent : undefined, borderWidth: roundTime === time ? 1 : 0 }}
                             >
-                                <Text style={[
-                                    styles.timeBtnText,
-                                    roundTime === time && styles.timeBtnTextSelected
-                                ]}>{time}s</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                                <Text style={{ color: roundTime === time ? colors.accent : colors.text.muted, fontWeight: 'bold' }}>
+                                    {time}s
+                                </Text>
+                            </GlassCard>
+                        </TouchableOpacity>
+                    ))}
+                </View>
 
-                    {/* Start Button */}
-                    <View style={{ marginTop: SPACING.xl }}>
-                        <Button
-                            title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
-                            onPress={handleStart}
-                            disabled={!selectedCategory}
-                            gradient={selectedCategory ? [selectedCategory.color, '#333'] : ['#666', '#555']}
-                            icon={<Ionicons name="play" size={20} color="#FFF" />}
-                            isKurdish={isKurdish}
-                        />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </GradientBackground>
+                <BeastButton
+                    variant={selectedCategory ? 'primary' : 'ghost'}
+                    title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
+                    onPress={handleStart}
+                    disabled={!selectedCategory}
+                    size="lg"
+                    style={{ marginTop: layout.spacing.lg }}
+                    icon={Play}
+                />
+            </ScrollView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1 },
     header: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SPACING.md,
-    },
-    backBtn: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+        marginBottom: layout.spacing.lg,
     },
     headerTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.title,
         fontSize: 20,
+        fontWeight: 'bold',
     },
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 100,
+        paddingBottom: 40,
     },
-    instructionCard: {
-        padding: SPACING.lg,
-        marginBottom: SPACING.lg,
-        borderRadius: BORDER_RADIUS.xl,
-    },
-    instructionTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.medium,
-        fontSize: 16,
-        marginBottom: SPACING.sm,
-    },
-    instructionText: {
-        color: COLORS.text.muted,
-        lineHeight: 24,
+    heroIconContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)'
     },
     sectionTitle: {
-        color: COLORS.text.secondary,
-        ...FONTS.medium,
-        fontSize: 14,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: SPACING.md,
-        marginTop: SPACING.md,
+        fontSize: 18,
+        fontWeight: '600',
     },
-
-    categoriesGrid: {
-        gap: SPACING.sm,
+    instructionText: {
+        fontSize: 15,
+        lineHeight: 22,
+    },
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: layout.spacing.sm,
+    },
+    sectionHeaderText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        letterSpacing: 1,
     },
     categoryCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: SPACING.md,
-        borderRadius: BORDER_RADIUS.lg,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        gap: SPACING.md,
-    },
-    categoryIcon: {
-        fontSize: 32,
+        padding: 16,
+        borderRadius: 16,
+        gap: 16,
     },
     categoryTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.medium,
         fontSize: 18,
+        fontWeight: '600',
     },
-
-    // Time
-    timeRow: {
-        flexDirection: 'row',
-        gap: SPACING.sm,
-    },
-    timeBtn: {
-        flex: 1,
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.md,
-        padding: SPACING.md,
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: 'transparent',
-    },
-    timeBtnSelected: {
-        borderColor: COLORS.accent.primary,
-        backgroundColor: COLORS.accent.primary + '20',
-    },
-    timeBtnText: {
-        color: COLORS.text.muted,
-        ...FONTS.medium,
-    },
-    timeBtnTextSelected: {
-        color: COLORS.accent.primary,
-    },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
-    withSpring,
     withTiming,
     withDelay
 } from 'react-native-reanimated';
@@ -19,14 +18,14 @@ import { t } from '../../localization/translations';
 
 const { width } = Dimensions.get('window');
 
-// Animated Card Component
+// Animated Card Component - Professional fade animation
 const AnimatedCard = ({ children, style, delay = 0 }) => {
     const opacity = useSharedValue(0);
-    const translateY = useSharedValue(20);
+    const translateY = useSharedValue(10);
 
     useEffect(() => {
-        opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
-        translateY.value = withDelay(delay, withSpring(0, { damping: 12 }));
+        opacity.value = withDelay(delay, withTiming(1, { duration: 300 }));
+        translateY.value = withDelay(delay, withTiming(0, { duration: 300 }));
     }, []);
 
     const animatedStyle = useAnimatedStyle(() => ({

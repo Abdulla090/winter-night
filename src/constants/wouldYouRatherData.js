@@ -23,7 +23,13 @@ export const QUESTIONS = {
         { a: { en: "Never sleep", ku: "هەرگیز نەخەویت" }, b: { en: "Never eat", ku: "هەرگیز نەخۆیت" } },
         { a: { en: "Be a famous actor", ku: "ئەکتەرێکی ناودار بیت" }, b: { en: "Be a famous musician", ku: "میوزیکژەنێکی ناودار بیت" } },
         { a: { en: "Have a pet dragon", ku: "ئەژدیهایەکی ماڵی هەبێت" }, b: { en: "Be a dragon yourself", ku: "خۆت ببیتە ئەژدیها" } },
-        { a: { en: "Control fire", ku: "کۆنترۆڵی ئاگر بکەیت" }, b: { en: "Control water", ku: "کۆنترۆڵی ئاو بکەیت" } }
+        { a: { en: "Control fire", ku: "کۆنترۆڵی ئاگر بکەیت" }, b: { en: "Control water", ku: "کۆنترۆڵی ئاو بکەیت" } },
+        { a: { en: "Be able to talk to animals", ku: "بتوانیت لەگەڵ ئاژەڵان قسە بکەیت" }, b: { en: "Speak any human language", ku: "هەر زمانێکی مرۆڤ قسە بکەیت" } },
+        { a: { en: "Have a photographic memory", ku: "بیرەوەری وێنەیی هەبێت" }, b: { en: "Be incredibly athletic", ku: "زۆر وەرزشکار بیت" } },
+        { a: { en: "Live in a big city", ku: "لە شارێکی گەورە بژیت" }, b: { en: "Live in a small village", ku: "لە گوندێکی بچووک بژیت" } },
+        { a: { en: "Have free WiFi everywhere", ku: "لە هەموو شوێنێک وایفای بەخۆ هەبێت" }, b: { en: "Have free coffee everywhere", ku: "لە هەموو شوێنێک قاوەی بەخۆ هەبێت" } },
+        { a: { en: "Travel back in time", ku: "گەشت بکەیت بۆ ڕابردوو" }, b: { en: "Travel to the future", ku: "گەشت بکەیت بۆ داهاتوو" } },
+        { a: { en: "Have a personal chef", ku: "چێشتلێنەری تایبەت هەبێت" }, b: { en: "Have a personal driver", ku: "شۆفێری تایبەت هەبێت" } }
     ],
     deep: [
         { a: { en: "Know when you're going to die", ku: "بزانیت کەی دەمریت" }, b: { en: "Know how you're going to die", ku: "بزانیت چۆن دەمریت" } },
@@ -45,7 +51,12 @@ export const QUESTIONS = {
         { a: { en: "Be remembered for something bad", ku: "بە شتێکی خراپ بیربکرێیتەوە" }, b: { en: "Be forgotten entirely", ku: "بە تەواوی بیرت بکرێتەوە" } },
         { a: { en: "Have all the answers", ku: "هەموو وەڵامەکان هەبێت" }, b: { en: "Have all the questions", ku: "هەموو پرسیارەکان هەبێت" } },
         { a: { en: "Experience true love once", ku: "یەکجار حەزی ڕاستەقینە ئەزموون بکەیت" }, b: { en: "Experience mild love multiple times", ku: "چەند جار حەزی سووک ئەزموون بکەیت" } },
-        { a: { en: "Know everything", ku: "هەموو شتێک بزانیت" }, b: { en: "Be happy always", ku: "هەمیشە خۆش بیت" } }
+        { a: { en: "Know everything", ku: "هەموو شتێک بزانیت" }, b: { en: "Be happy always", ku: "هەمیشە خۆش بیت" } },
+        { a: { en: "Change one thing in your past", ku: "یەک شت بگۆڕیت لە ڕابردووت" }, b: { en: "Know one thing about your future", ku: "یەک شت بزانیت دەربارەی داهاتووت" } },
+        { a: { en: "Be the smartest person in the room", ku: "زیرەکترین کەس بیت لە ژووردا" }, b: { en: "Be the kindest person in the room", ku: "مێهرەبانترین کەس بیت لە ژووردا" } },
+        { a: { en: "Have wisdom", ku: "دانایی هەبێت" }, b: { en: "Have intelligence", ku: "زیرەکی هەبێت" } },
+        { a: { en: "Live a short adventurous life", ku: "ژیانێکی کورت و ماجەرایی بژیت" }, b: { en: "Live a long ordinary life", ku: "ژیانێکی درێژ و ئاسایی بژیت" } },
+        { a: { en: "Have perfect health", ku: "تەندروستی تەواو هەبێت" }, b: { en: "Have unlimited wealth", ku: "دەوڵەمەندی بێسنوور هەبێت" } }
     ],
     funny: [
         { a: { en: "Have fingers as long as legs", ku: "پەنجەت بە درێژایی قاچ بێت" }, b: { en: "Have legs as long as fingers", ku: "قاچت بە درێژایی پەنجە بێت" } },
@@ -67,7 +78,12 @@ export const QUESTIONS = {
         { a: { en: "Burp confetti", ku: "کۆنفیتی قوڕقێنە بکەیت" }, b: { en: "Fart glitter", ku: "زەڕین تڕ بکەیت" } },
         { a: { en: "Have T-Rex arms forever", ku: "هەتاهەتایی دەستی تی-ڕێکس هەبێت" }, b: { en: "Have penguin waddle forever", ku: "هەتاهەتایی وەک پێنگوین بلەریتەوە" } },
         { a: { en: "Wake up as a new person every day", ku: "هەر ڕۆژ وەک کەسێکی نوێ هەستیت" }, b: { en: "Wake up in a new place every day", ku: "هەر ڕۆژ لە شوێنێکی نوێ هەستیت" } },
-        { a: { en: "Have spaghetti hair", ku: "قژت سپاگێتی بێت" }, b: { en: "Sneeze meatballs", ku: "گۆشتی کوببە بپژمیت" } }
+        { a: { en: "Have spaghetti hair", ku: "قژت سپاگێتی بێت" }, b: { en: "Sneeze meatballs", ku: "گۆشتی کوببە بپژمیت" } },
+        { a: { en: "Have eyes on the back of your head", ku: "چاو لە پشتی سەرت هەبێت" }, b: { en: "Have ears on your hands", ku: "گوێ لە دەستەکانت هەبێت" } },
+        { a: { en: "Only be able to hop everywhere", ku: "تەنها بتوانیت لە هەموو شوێنێک باز بدەیت" }, b: { en: "Only be able to walk sideways", ku: "تەنها بتوانیت بەلاچوون ڕێ بکەویت" } },
+        { a: { en: "Smell like cheese forever", ku: "هەتاهەتایی بۆنی پەنیرت لێ بێت" }, b: { en: "Only be able to eat cheese", ku: "تەنها بتوانیت پەنیر بخۆیت" } },
+        { a: { en: "Have a loud squeaky voice", ku: "دەنگی قیرینی بەرزت هەبێت" }, b: { en: "Have a very deep voice", ku: "دەنگی زۆر قووڵت هەبێت" } },
+        { a: { en: "Laugh uncontrollably for 10 minutes a day", ku: "١٠ خولەک لە ڕۆژێکدا بەبێ کۆنترۆڵ بپێکەنیت" }, b: { en: "Cry uncontrollably for 10 minutes a day", ku: "١٠ خولەک لە ڕۆژێکدا بەبێ کۆنترۆڵ بگریت" } }
     ],
     extreme: [
         { a: { en: "Never be able to lie again", ku: "هەرگیز نەتوانیت دیسان درۆ بکەیت" }, b: { en: "Never trust anyone again", ku: "هەرگیز متمانە بە کەسێک نەکەیت" } },
@@ -89,7 +105,12 @@ export const QUESTIONS = {
         { a: { en: "Always be surrounded by people", ku: "هەمیشە خەڵکی لە دەوردا بن" }, b: { en: "Always be completely alone", ku: "هەمیشە بە تەواوی تەنیا بیت" } },
         { a: { en: "Relive your childhood with your current mind", ku: "منداڵیت دووبارە بژیت بە مێشکی ئێستات" }, b: { en: "Start over as a baby with no memories", ku: "دەست پێ بکەیتەوە وەک لەدایکبوو بەبێ بیرەوەری" } },
         { a: { en: "Have the power to end suffering", ku: "هێزی کۆتایی هێنان بە ئازار هەبێت" }, b: { en: "Have the power to bring happiness", ku: "هێزی هێنانی خۆشی هەبێت" } },
-        { a: { en: "Be immortal and watch everyone die", ku: "نەمر بیت و سەیری مردنی هەموان بکەیت" }, b: { en: "Die young but fulfilled", ku: "بە گەنجی بمریت بەڵام تەواو بوو" } }
+        { a: { en: "Be immortal and watch everyone die", ku: "نەمر بیت و سەیری مردنی هەموان بکەیت" }, b: { en: "Die young but fulfilled", ku: "بە گەنجی بمریت بەڵام تەواو بوو" } },
+        { a: { en: "Have your life recorded 24/7", ku: "ژیانت ٢٤/٧ تۆمار بکرێت" }, b: { en: "Never be able to take photos again", ku: "هەرگیز نەتوانیت دیسان وێنە بگریت" } },
+        { a: { en: "Lose all of your money", ku: "هەموو پارەکەت بدۆڕێنیت" }, b: { en: "Lose all of your photos", ku: "هەموو وێنەکانت بدۆڕێنیت" } },
+        { a: { en: "Have a reset button for your life", ku: "دووگمەی ڕیسێت بۆ ژیانت هەبێت" }, b: { en: "Have a save button for good moments", ku: "دووگمەی سەیڤ بۆ کاتە باشەکان هەبێت" } },
+        { a: { en: "Be trapped in a horror movie", ku: "لە فیلمێکی ترسناکدا گیر بکەویت" }, b: { en: "Be trapped in a romantic comedy", ku: "لە فیلمێکی کۆمیدی ڕۆمانسیدا گیر بکەویت" } },
+        { a: { en: "Have your thoughts always broadcasted", ku: "بیرکردنەوەکانت هەمیشە بڵاو بکرێتەوە" }, b: { en: "Never be listened to", ku: "هەرگیز گوێت لێ نەگریت" } }
     ]
 };
 

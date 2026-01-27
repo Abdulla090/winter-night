@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Eye, EyeOff, Clock, Play, Info } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, PlayerInput } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+
+import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 
 const GAME_DURATIONS = [3, 5, 8, 10]; // minutes
 
@@ -15,14 +18,10 @@ export default function SpyfallSetupScreen({ navigation }) {
     const [spyCount, setSpyCount] = useState(1);
 
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
     const canStart = players.length >= 3;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     const startGame = () => {
         navigation.navigate('SpyfallPlay', {
@@ -33,242 +32,212 @@ export default function SpyfallSetupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+        <AnimatedScreen>
             {/* Header */}
             <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name={isKurdish ? "arrow-forward" : "arrow-back"} size={24} color={COLORS.text.primary} />
-                </TouchableOpacity>
-                <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('spyfall.title', language)}
                 </Text>
-                <View style={styles.placeholder} />
+                <View style={{ width: 44 }} />
             </View>
 
-            {/* Content */}
             <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={true}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 120 }}
             >
-                {/* Player Input */}
-                <PlayerInput
-                    players={players}
-                    setPlayers={setPlayers}
-                    minPlayers={3}
-                    maxPlayers={12}
-                    isKurdish={isKurdish}
-                    language={language}
-                />
+                {/* Hero Icon */}
+                <MotiView
+                    from={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}
+                >
+                    <View style={[styles.heroIcon, { backgroundColor: colors.brand.mountain + '20' }]}>
+                        <Eye size={48} color={colors.brand.mountain} strokeWidth={1.5} />
+                    </View>
+                </MotiView>
 
-                {/* Settings Section */}
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
-                    {t('common.gameSettings', language)}
-                </Text>
+                {/* Players Section */}
+                <GlassCard style={{ marginBottom: layout.spacing.lg }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <Eye size={18} color={colors.brand.mountain} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {t('common.players', language)}
+                        </Text>
+                    </View>
+                    <PlayerInput
+                        players={players}
+                        setPlayers={setPlayers}
+                        minPlayers={3}
+                        maxPlayers={12}
+                        isKurdish={isKurdish}
+                        language={language}
+                    />
+                </GlassCard>
 
                 {/* Spy Count */}
-                <View style={[styles.settingCard, { flexDirection: rowDirection }]}>
-                    <View style={[styles.settingHeader, { flexDirection: rowDirection }]}>
-                        <View style={[styles.iconBox, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
-                            <Ionicons name="eye-off-outline" size={20} color={COLORS.accent.success} />
-                        </View>
-                        <View style={isKurdish && { alignItems: 'flex-end' }}>
-                            <Text style={[styles.settingLabel, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'ژمارەی جاسوسەکان' : 'Number of Spies'}
-                            </Text>
-                            <Text style={[styles.settingDesc, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'یاریزانەکانی بێ زانیاری شوێن' : 'Players without location info'}
-                            </Text>
-                        </View>
+                <GlassCard style={{ marginBottom: layout.spacing.lg }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <EyeOff size={18} color={colors.brand.mountain} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'ژمارەی جاسوسەکان' : 'Number of Spies'}
+                        </Text>
                     </View>
-
                     <View style={[styles.toggleRow, { flexDirection: rowDirection }]}>
                         {[1, 2].map(count => (
                             <TouchableOpacity
                                 key={count}
                                 style={[
                                     styles.toggleButton,
-                                    spyCount === count && styles.toggleActiveGreen
+                                    {
+                                        backgroundColor: spyCount === count ? colors.brand.mountain : colors.surface,
+                                        borderColor: spyCount === count ? colors.brand.mountain : colors.border,
+                                    }
                                 ]}
                                 onPress={() => setSpyCount(count)}
                             >
                                 <Text style={[
                                     styles.toggleText,
-                                    spyCount === count && styles.toggleTextActive
+                                    { color: spyCount === count ? '#FFF' : colors.text.secondary }
                                 ]}>{count}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
-                </View>
+                </GlassCard>
 
                 {/* Game Duration */}
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
-                    {isKurdish ? 'ماوەی قۆناغ' : 'Round Duration'}
-                </Text>
-                <View style={[styles.durationGrid, { flexDirection: rowDirection }]}>
-                    {GAME_DURATIONS.map((duration) => (
-                        <TouchableOpacity
-                            key={duration}
-                            style={[
-                                styles.durationItem,
-                                gameDuration === duration && styles.durationSelected
-                            ]}
-                            onPress={() => setGameDuration(duration)}
-                        >
-                            <Text style={[
-                                styles.durationText,
-                                gameDuration === duration && styles.durationTextSelected,
-                                isKurdish && styles.kurdishFont
-                            ]}>
-                                {duration} {isKurdish ? 'خولەک' : 'min'}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                <GlassCard style={{ marginBottom: layout.spacing.lg }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <Clock size={18} color={colors.accent} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'ماوەی قۆناغ' : 'Round Duration'}
+                        </Text>
+                    </View>
+                    <View style={[styles.durationRow, { flexDirection: rowDirection }]}>
+                        {GAME_DURATIONS.map((duration) => (
+                            <TouchableOpacity
+                                key={duration}
+                                style={[
+                                    styles.durationPill,
+                                    {
+                                        backgroundColor: gameDuration === duration ? colors.brand.mountain : colors.surface,
+                                        borderColor: gameDuration === duration ? colors.brand.mountain : colors.border,
+                                    }
+                                ]}
+                                onPress={() => setGameDuration(duration)}
+                            >
+                                <Text style={[
+                                    styles.durationText,
+                                    { color: gameDuration === duration ? '#FFF' : colors.text.secondary },
+                                    isKurdish && styles.kurdishFont
+                                ]}>
+                                    {duration} {isKurdish ? 'خولەک' : 'min'}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </GlassCard>
 
                 {/* How to Play */}
-                <View style={styles.rulesCard}>
-                    <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Ionicons name="information-circle" size={20} color={COLORS.accent.info} />
-                        <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
+                <GlassCard>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <Info size={18} color={colors.accent} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
                             {t('common.howToPlay', language)}
                         </Text>
                     </View>
-                    <Text style={[styles.rulesText, rtlStyles, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.rulesText, { color: colors.text.muted, textAlign: isRTL ? 'right' : 'left' }, isKurdish && styles.kurdishFont]}>
                         {isKurdish
                             ? '• هەموان شوێنی یەکسانیان دەزانن تەنها جاسوس نەبێت\n• یاریزانەکان نۆرەبەت پرسیار دەکەن\n• جاسوسەکە هەوڵ دەدات شوێنەکە بزانێت\n• کەسەکانی تر هەوڵ دەدەن جاسوسەکە بناسن\n• کاتێک پێتوایە دەزانیت کێ جاسوسە، دەنگ بدە!'
                             : "• Everyone gets the same location except the spy\n• Players take turns asking questions\n• The spy tries to figure out the location\n• Others try to identify the spy\n• Vote when you think you know who the spy is!"
                         }
                     </Text>
-                </View>
-
-                {/* Start Button */}
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title={t('common.start', language)}
-                        onPress={startGame}
-                        disabled={!canStart}
-                        gradient={[COLORS.accent.success, COLORS.accent.success]}
-                        icon={<Ionicons name="play" size={20} color="#FFF" />}
-                        isKurdish={isKurdish}
-                    />
-                    {!canStart && (
-                        <Text style={[styles.minPlayersHint, rtlStyles, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'لانیکەم ٣ یاریزان زیاد بکە بۆ دەستپێکردن' : 'Add at least 3 players to start'}
-                        </Text>
-                    )}
-                </View>
+                </GlassCard>
             </ScrollView>
-        </SafeAreaView>
+
+            {/* Start Button */}
+            <MotiView
+                animate={{ translateY: canStart ? 0 : 100, opacity: canStart ? 1 : 0 }}
+                style={styles.fabContainer}
+            >
+                <BeastButton
+                    title={t('common.start', language)}
+                    onPress={startGame}
+                    variant="secondary"
+                    size="lg"
+                    icon={Play}
+                    style={{ width: '100%' }}
+                />
+            </MotiView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: COLORS.background.dark,
-    },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.lg,
-        paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.dark,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
-        minHeight: 60,
+        justifyContent: 'space-between',
+        marginBottom: layout.spacing.md,
     },
-    backButton: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: '700',
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 24 },
-    placeholder: { width: 44 },
-
-    scrollView: { flex: 1 },
-    scrollContent: {
-        padding: SPACING.lg,
-        paddingBottom: 120,
+    heroIcon: {
+        width: 96,
+        height: 96,
+        borderRadius: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: 12,
+    },
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
-        marginBottom: SPACING.md, marginTop: SPACING.lg,
-        textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
+        fontSize: 12,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
-
-    settingCard: {
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: SPACING.sm,
-    },
-    settingHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-    iconBox: {
-        width: 40, height: 40, borderRadius: 8,
-        alignItems: 'center', justifyContent: 'center',
-    },
-    settingLabel: { color: COLORS.text.primary, ...FONTS.medium },
-    settingDesc: { color: COLORS.text.muted, fontSize: 12 },
-
-    toggleRow: { flexDirection: 'row', backgroundColor: COLORS.background.secondary, borderRadius: 8, padding: 2 },
-    toggleButton: {
-        paddingVertical: 6, paddingHorizontal: 16, borderRadius: 6,
-    },
-    toggleActiveGreen: { backgroundColor: COLORS.accent.success },
-    toggleText: { color: COLORS.text.secondary, fontWeight: '600' },
-    toggleTextActive: { color: '#FFF' },
-
-    durationGrid: {
-        flexDirection: 'row',
+    toggleRow: {
         gap: 12,
+        justifyContent: 'center',
     },
-    durationItem: {
-        flex: 1,
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: 'transparent',
+    toggleButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: layout.radius.lg,
+        borderWidth: 1,
     },
-    durationSelected: {
-        borderColor: COLORS.accent.success,
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    toggleText: {
+        fontWeight: '700',
+        fontSize: 16,
     },
-    durationText: { color: COLORS.text.secondary, ...FONTS.medium },
-    durationTextSelected: { color: COLORS.accent.success },
-
-    rulesCard: {
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        marginTop: SPACING.lg,
+    durationRow: {
+        gap: 8,
+        flexWrap: 'wrap',
     },
-    rulesHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: SPACING.sm,
-        marginBottom: SPACING.sm,
+    durationPill: {
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: layout.radius.full,
+        borderWidth: 1,
     },
-    rulesTitle: { color: COLORS.accent.info, ...FONTS.medium },
-    rulesText: { color: COLORS.text.muted, lineHeight: 22 },
-
-    buttonContainer: {
-        marginTop: SPACING.xl,
-        marginBottom: 50,
+    durationText: {
+        fontWeight: '600',
+        fontSize: 14,
     },
-    minPlayersHint: {
-        color: COLORS.text.muted,
-        textAlign: 'center',
-        marginTop: SPACING.sm,
-        fontSize: 13,
+    rulesText: {
+        lineHeight: 24,
     },
-    kurdishFont: { fontFamily: 'Rabar' },
+    fabContainer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 20,
+        right: 20,
+    },
+    kurdishFont: {
+        fontFamily: 'Rabar',
+    },
 });

@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { GradientBackground, GlassCard, Button, PlayerInput } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { ArrowRight, ArrowLeft, Play, PlusCircle, XCircle, Clock, Users, Flame } from 'lucide-react-native';
+import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 import { forbiddenWordCategories } from '../../constants/forbiddenWordData';
+import { MotiView } from 'moti';
 
 export default function ForbiddenWordSetupScreen({ navigation }) {
+    const { colors, isRTL, isDark } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
     const [teams, setTeams] = useState(['', '']);
     const [selectedDifficulty, setSelectedDifficulty] = useState(null);
@@ -37,7 +38,6 @@ export default function ForbiddenWordSetupScreen({ navigation }) {
     const handleStart = () => {
         if (!selectedDifficulty) return;
 
-        // Use team names or defaults
         const finalTeams = teams.map((t, i) =>
             t.trim() || (isKurdish ? `تیمی ${i + 1}` : `Team ${i + 1}`)
         );
@@ -52,280 +52,216 @@ export default function ForbiddenWordSetupScreen({ navigation }) {
     const canStart = selectedDifficulty !== null && teams.length >= 2;
 
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity
-                        style={styles.backBtn}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons
-                            name={isKurdish ? "arrow-forward" : "arrow-back"}
-                            size={24}
-                            color={COLORS.text.primary}
-                        />
-                    </TouchableOpacity>
-                    <Text style={[styles.headerTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? '🚫 وشەی قەدەغە' : '🚫 Forbidden Word'}
+        <AnimatedScreen>
+            <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                    {t('forbiddenWord.title', language)}
+                </Text>
+                <View style={{ width: 44 }} />
+            </View>
+
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                {/* Instructions */}
+                <GlassCard style={{ marginBottom: layout.spacing.xl }}>
+                    <Text style={[styles.sectionTitle, { color: colors.accent, marginBottom: 8 }, isKurdish && styles.kurdishFont]}>
+                        {t('common.howToPlay', language)}
                     </Text>
-                    <View style={{ width: 44 }} />
+                    <Text style={[styles.instructionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                        {t('forbiddenWord.description', language)}
+                    </Text>
+                </GlassCard>
+
+                {/* Team Names */}
+                <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Users size={16} color={colors.text.muted} style={{ marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0 }} />
+                    <Text style={[styles.sectionHeaderText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'تیمەکان' : 'TEAMS'}
+                    </Text>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.content}>
-                    {/* Instructions */}
-                    <GlassCard intensity={30} style={styles.instructionCard}>
-                        <Text style={[styles.instructionTitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'چۆن دەیاریت؟' : 'How to Play'}
-                        </Text>
-                        <Text style={[styles.instructionText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish
-                                ? '• وشەیەک بۆ تیمەکەت باس بکە\n• نابێت وشە قەدەغەکان بەکاربهێنیت!\n• تیمەکەت دەبێت بیزانێت'
-                                : '• Describe a word to your team\n• You CANNOT use the forbidden words!\n• Your team must guess correctly'
-                            }
-                        </Text>
-                    </GlassCard>
-
-                    {/* Team Names */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'تیمەکان' : 'Teams'}
-                    </Text>
-
-                    <View style={styles.teamsContainer}>
-                        {teams.map((team, index) => (
-                            <View key={index} style={[styles.teamRow, { flexDirection: rowDirection }]}>
-                                <View style={[styles.teamBadge, { backgroundColor: index === 0 ? '#3b82f6' : index === 1 ? '#ef4444' : index === 2 ? '#10b981' : '#f59e0b' }]}>
-                                    <Text style={styles.teamBadgeText}>{index + 1}</Text>
-                                </View>
-                                <TextInput
-                                    style={[styles.teamInput, isKurdish && styles.kurdishFont]}
-                                    value={team}
-                                    onChangeText={(val) => updateTeam(index, val)}
-                                    placeholder={isKurdish ? `تیمی ${index + 1}` : `Team ${index + 1}`}
-                                    placeholderTextColor={COLORS.text.muted}
-                                />
-                                {teams.length > 2 && (
-                                    <TouchableOpacity onPress={() => removeTeam(index)}>
-                                        <Ionicons name="close-circle" size={24} color={COLORS.accent.danger} />
-                                    </TouchableOpacity>
-                                )}
+                <View style={{ gap: layout.spacing.md, marginBottom: layout.spacing.xl }}>
+                    {teams.map((team, index) => (
+                        <MotiView
+                            key={index}
+                            from={{ opacity: 0, translateY: 15 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ type: 'timing', duration: 200 }}
+                            style={[styles.teamRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}
+                        >
+                            <View style={[styles.teamBadge, { backgroundColor: index === 0 ? '#3b82f6' : index === 1 ? '#ef4444' : index === 2 ? '#10b981' : '#f59e0b' }]}>
+                                <Text style={{ color: '#FFF', fontWeight: 'bold' }}>{index + 1}</Text>
                             </View>
-                        ))}
-                        {teams.length < 4 && (
-                            <TouchableOpacity style={styles.addTeamBtn} onPress={addTeam}>
-                                <Ionicons name="add-circle-outline" size={24} color={COLORS.accent.primary} />
-                                <Text style={[styles.addTeamText, isKurdish && styles.kurdishFont]}>
-                                    {isKurdish ? 'تیمی تر زیاد بکە' : 'Add Team'}
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
+                            <TextInput
+                                style={[
+                                    styles.teamInput,
+                                    {
+                                        backgroundColor: colors.surface,
+                                        borderColor: colors.border,
+                                        color: colors.text.primary,
+                                        textAlign: isRTL ? 'right' : 'left'
+                                    },
+                                    isKurdish && styles.kurdishFont
+                                ]}
+                                value={team}
+                                onChangeText={(val) => updateTeam(index, val)}
+                                placeholder={isKurdish ? `تیمی ${index + 1}` : `Team ${index + 1}`}
+                                placeholderTextColor={colors.text.muted}
+                            />
+                            {teams.length > 2 && (
+                                <TouchableOpacity onPress={() => removeTeam(index)}>
+                                    <XCircle size={24} color={colors.text.muted} />
+                                </TouchableOpacity>
+                            )}
+                        </MotiView>
+                    ))}
+                    {teams.length < 4 && (
+                        <BeastButton
+                            variant="ghost"
+                            title={isKurdish ? 'تیمی تر زیاد بکە' : 'Add Team'}
+                            icon={PlusCircle}
+                            onPress={addTeam}
+                            size="sm"
+                        />
+                    )}
+                </View>
 
-                    {/* Difficulty Selection */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'ئاستی قورسی' : 'Difficulty'}
+                {/* Difficulty */}
+                <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Flame size={16} color={colors.text.muted} style={{ marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0 }} />
+                    <Text style={[styles.sectionHeaderText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {t('common.difficulty', language)}
                     </Text>
+                </View>
 
-                    <View style={styles.difficultyGrid}>
-                        {forbiddenWordCategories.map((cat) => (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: layout.spacing.xl, justifyContent: isRTL ? 'flex-end' : 'flex-start' }}>
+                    {forbiddenWordCategories.map((cat) => {
+                        const isSelected = selectedDifficulty?.id === cat.id;
+                        return (
                             <TouchableOpacity
                                 key={cat.id}
-                                activeOpacity={0.8}
                                 onPress={() => setSelectedDifficulty(cat)}
+                                activeOpacity={0.8}
+                                style={{ width: '48%' }}
                             >
                                 <GlassCard
-                                    intensity={25}
                                     style={[
                                         styles.difficultyCard,
-                                        selectedDifficulty?.id === cat.id && {
-                                            borderColor: cat.color,
-                                            borderWidth: 2,
-                                            backgroundColor: cat.color + '20'
-                                        }
+                                        isSelected && { borderColor: cat.color, borderWidth: 2, backgroundColor: cat.color + '20' }
                                     ]}
+                                    intensity={isSelected ? 40 : 20}
                                 >
-                                    <Text style={styles.difficultyIcon}>{cat.icon}</Text>
-                                    <Text style={[styles.difficultyTitle, isKurdish && styles.kurdishFont]}>
+                                    <Text style={{ fontSize: 24, marginBottom: 4 }}>{cat.icon}</Text>
+                                    <Text style={[styles.difficultyTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                         {cat.title[language]}
                                     </Text>
                                 </GlassCard>
                             </TouchableOpacity>
-                        ))}
-                    </View>
+                        );
+                    })}
+                </View>
 
-                    {/* Round Time */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'کاتی دەور' : 'Round Time'}
+                {/* Round Time */}
+                <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Clock size={16} color={colors.text.muted} style={{ marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0 }} />
+                    <Text style={[styles.sectionHeaderText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {t('common.roundTime', language)}
                     </Text>
+                </View>
 
-                    <View style={[styles.timeRow, { flexDirection: rowDirection }]}>
-                        {[30, 45, 60, 90].map((time) => (
-                            <TouchableOpacity
-                                key={time}
-                                onPress={() => setRoundTime(time)}
-                                style={[
-                                    styles.timeBtn,
-                                    roundTime === time && styles.timeBtnSelected
-                                ]}
+                <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', gap: 10, marginBottom: layout.spacing.xl }}>
+                    {[30, 45, 60, 90].map((time) => (
+                        <TouchableOpacity
+                            key={time}
+                            onPress={() => setRoundTime(time)}
+                            style={{ flex: 1 }}
+                        >
+                            <GlassCard
+                                style={{ alignItems: 'center', paddingVertical: 12, backgroundColor: roundTime === time ? colors.accent + '20' : undefined, borderColor: roundTime === time ? colors.accent : undefined, borderWidth: roundTime === time ? 1 : 0 }}
                             >
-                                <Text style={[
-                                    styles.timeBtnText,
-                                    roundTime === time && styles.timeBtnTextSelected
-                                ]}>{time}s</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                                <Text style={{ color: roundTime === time ? colors.accent : colors.text.muted, fontWeight: 'bold' }}>
+                                    {time}s
+                                </Text>
+                            </GlassCard>
+                        </TouchableOpacity>
+                    ))}
+                </View>
 
-                    {/* Start Button */}
-                    <View style={{ marginTop: SPACING.xl }}>
-                        <Button
-                            title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
-                            onPress={handleStart}
-                            disabled={!canStart}
-                            gradient={canStart ? [COLORS.accent.danger, '#dc2626'] : ['#666', '#555']}
-                            icon={<Ionicons name="play" size={20} color="#FFF" />}
-                            isKurdish={isKurdish}
-                        />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </GradientBackground>
+                {/* Start Button */}
+                <BeastButton
+                    variant={canStart ? 'primary' : 'ghost'}
+                    title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
+                    onPress={handleStart}
+                    disabled={!canStart}
+                    size="lg"
+                    style={{ marginTop: layout.spacing.lg }}
+                    icon={Play}
+                />
+            </ScrollView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1 },
     header: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SPACING.md,
-    },
-    backBtn: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+        marginBottom: layout.spacing.lg,
     },
     headerTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.title,
         fontSize: 20,
+        fontWeight: 'bold',
     },
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 100,
-    },
-    instructionCard: {
-        padding: SPACING.lg,
-        marginBottom: SPACING.lg,
-        borderRadius: BORDER_RADIUS.xl,
-    },
-    instructionTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.medium,
-        fontSize: 16,
-        marginBottom: SPACING.sm,
-    },
-    instructionText: {
-        color: COLORS.text.muted,
-        lineHeight: 24,
+        paddingBottom: 40,
     },
     sectionTitle: {
-        color: COLORS.text.secondary,
-        ...FONTS.medium,
-        fontSize: 14,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: SPACING.md,
-        marginTop: SPACING.md,
+        fontSize: 18,
+        fontWeight: '600',
     },
-
-    // Teams
-    teamsContainer: {
-        gap: SPACING.sm,
+    instructionText: {
+        fontSize: 15,
+        lineHeight: 22,
+    },
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: layout.spacing.sm,
+    },
+    sectionHeaderText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        letterSpacing: 1,
     },
     teamRow: {
-        flexDirection: 'row',
         alignItems: 'center',
-        gap: SPACING.sm,
+        gap: 12,
     },
     teamBadge: {
-        width: 32, height: 32, borderRadius: 16,
-        alignItems: 'center', justifyContent: 'center',
-    },
-    teamBadgeText: {
-        color: '#FFF',
-        ...FONTS.bold,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     teamInput: {
         flex: 1,
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.md,
-        padding: SPACING.md,
-        color: COLORS.text.primary,
-        ...FONTS.medium,
-    },
-    addTeamBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: SPACING.sm,
-        padding: SPACING.md,
-    },
-    addTeamText: {
-        color: COLORS.accent.primary,
-        ...FONTS.medium,
-    },
-
-    // Difficulty
-    difficultyGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: SPACING.sm,
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        fontSize: 16,
     },
     difficultyCard: {
-        flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: SPACING.md,
-        paddingHorizontal: SPACING.lg,
-        borderRadius: BORDER_RADIUS.lg,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        gap: SPACING.sm,
-    },
-    difficultyIcon: {
-        fontSize: 24,
+        padding: 16,
+        borderRadius: 16,
     },
     difficultyTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.medium,
+        fontWeight: '600',
+        fontSize: 14,
+        textAlign: 'center',
     },
-
-    // Time
-    timeRow: {
-        flexDirection: 'row',
-        gap: SPACING.sm,
-    },
-    timeBtn: {
-        flex: 1,
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.md,
-        padding: SPACING.md,
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: 'transparent',
-    },
-    timeBtnSelected: {
-        borderColor: COLORS.accent.primary,
-        backgroundColor: COLORS.accent.primary + '20',
-    },
-    timeBtnText: {
-        color: COLORS.text.muted,
-        ...FONTS.medium,
-    },
-    timeBtnTextSelected: {
-        color: COLORS.accent.primary,
-    },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

@@ -1,15 +1,17 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { Trophy, RefreshCw, Home } from 'lucide-react-native';
+
+import { AnimatedScreen, BeastButton, GlassCard } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 
 export default function PyramidResultScreen({ navigation, route }) {
     const { teams } = route.params;
     const { language, isKurdish } = useLanguage();
+    const { colors } = useTheme();
 
     const winner = teams.A.score > teams.B.score ? teams.A : (teams.B.score > teams.A.score ? teams.B : null);
     const isTie = teams.A.score === teams.B.score;
@@ -24,108 +26,102 @@ export default function PyramidResultScreen({ navigation, route }) {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <AnimatedScreen>
             <ScrollView contentContainerStyle={styles.content}>
-                <View style={styles.winnerBanner}>
-                    <Ionicons name="trophy" size={60} color={COLORS.games.pyramid} />
-                    <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+
+                {/* Winner Header */}
+                <View style={styles.header}>
+                    <View style={[styles.iconBox, { backgroundColor: colors.brand.gold + '20' }]}>
+                        <Trophy size={60} color={colors.brand.gold} />
+                    </View>
+                    <Text style={[styles.title, { color: colors.brand.gold }]}>
                         {isTie ? t('common.gameOver', language) : t('common.winnerExclaim', language)}
                     </Text>
                     {!isTie && (
-                        <Text style={[styles.winnerName, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.winnerName, { color: colors.text.primary }]}>
                             {winner.name}
                         </Text>
                     )}
                 </View>
 
-                <View style={styles.scoreContainer}>
+                {/* Score Card */}
+                <GlassCard style={styles.scoreCard}>
                     <View style={styles.teamResult}>
-                        <Text style={[styles.scoreLabel, isKurdish && styles.kurdishFont]}>{teams.A.name}</Text>
-                        <Text style={styles.scoreValue}>{teams.A.score}</Text>
+                        <Text style={[styles.teamLabel, { color: colors.text.secondary }]}>{teams.A.name}</Text>
+                        <Text style={[styles.scoreValue, { color: colors.text.primary }]}>{teams.A.score}</Text>
                     </View>
-                    <View style={styles.divider} />
-                    <View style={styles.teamResult}>
-                        <Text style={[styles.scoreLabel, isKurdish && styles.kurdishFont]}>{teams.B.name}</Text>
-                        <Text style={styles.scoreValue}>{teams.B.score}</Text>
-                    </View>
-                </View>
 
-                <View style={styles.buttons}>
-                    <Button
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+                    <View style={styles.teamResult}>
+                        <Text style={[styles.teamLabel, { color: colors.text.secondary }]}>{teams.B.name}</Text>
+                        <Text style={[styles.scoreValue, { color: colors.text.primary }]}>{teams.B.score}</Text>
+                    </View>
+                </GlassCard>
+
+                {/* Actions */}
+                <View style={styles.actions}>
+                    <BeastButton
                         title={t('common.playAgain', language)}
                         onPress={playAgain}
-                        gradient={[COLORS.games.pyramid, '#b45309']}
-                        icon={<Ionicons name="refresh" size={20} color="#FFF" />}
-                        style={{ marginBottom: SPACING.md }}
-                        isKurdish={isKurdish}
+                        icon={RefreshCw}
+                        variant="primary"
+                        style={{ marginBottom: 12, width: '100%' }}
                     />
-                    <Button
+                    <BeastButton
                         title={t('common.home', language)}
                         onPress={goHome}
-                        variant="secondary"
-                        isKurdish={isKurdish}
+                        icon={Home}
+                        variant="ghost"
+                        style={{ width: '100%' }}
                     />
                 </View>
+
             </ScrollView>
-        </SafeAreaView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: COLORS.background.dark },
     content: {
         flexGrow: 1,
         alignItems: 'center',
-        padding: SPACING.xl,
+        padding: layout.spacing.xl,
         justifyContent: 'center',
     },
-    winnerBanner: {
+    header: {
         alignItems: 'center',
-        marginBottom: SPACING.xxl,
+        marginBottom: 40,
+    },
+    iconBox: {
+        width: 100, height: 100, borderRadius: 50,
+        alignItems: 'center', justifyContent: 'center',
+        marginBottom: 20,
     },
     title: {
-        color: COLORS.games.pyramid,
-        ...FONTS.large,
-        marginTop: SPACING.md,
-        textTransform: 'uppercase',
-        letterSpacing: 2,
+        fontSize: 20, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8,
     },
     winnerName: {
-        color: COLORS.text.primary,
-        ...FONTS.title,
-        fontSize: 32,
-        marginTop: SPACING.sm,
+        fontSize: 32, fontWeight: '800',
     },
-    scoreContainer: {
-        flexDirection: 'row',
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
-        width: '100%',
-        justifyContent: 'space-around',
-        marginBottom: SPACING.xxl,
-        borderWidth: 1,
-        borderColor: COLORS.background.border,
+    scoreCard: {
+        flexDirection: 'row', width: '100%',
+        justifyContent: 'space-around', alignItems: 'center',
+        paddingVertical: 30, marginBottom: 50,
     },
     teamResult: {
         alignItems: 'center',
     },
-    scoreLabel: {
-        color: COLORS.text.secondary,
-        ...FONTS.medium,
-        marginBottom: 8,
+    teamLabel: {
+        fontSize: 14, fontWeight: '600', marginBottom: 8,
     },
     scoreValue: {
-        color: COLORS.text.primary,
-        ...FONTS.large,
-        fontSize: 40,
+        fontSize: 40, fontWeight: '800',
     },
     divider: {
-        width: 1,
-        backgroundColor: COLORS.background.border,
+        width: 1, height: 60,
     },
-    buttons: {
+    actions: {
         width: '100%',
-    },
-    kurdishFont: { fontFamily: 'Rabar' },
+    }
 });

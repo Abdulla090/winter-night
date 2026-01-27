@@ -4,118 +4,206 @@ import {
     View,
     Text,
     Modal as RNModal,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
+    Platform,
+    Pressable,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { X } from 'lucide-react-native';
+import { MotiView, MotiPressable } from 'moti';
+import * as Haptics from 'expo-haptics';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
+    withSpring,
     withTiming,
+    runOnJS,
 } from 'react-native-reanimated';
-import { COLORS, BORDER_RADIUS, SPACING, FONTS, SHADOWS } from '../constants/theme';
 import { useTheme } from '../context/ThemeContext';
+import { layout } from '../theme/layout';
 
+/**
+ * ✨ Premium Modal with native-feel animations
+ * Uses spring physics for buttery smooth 120fps transitions
+ */
 export default function Modal({
     visible,
     onClose,
     title,
     children,
     gradient,
-    icon,
+    icon: IconComponent,
     showClose = true,
     isKurdish = false,
 }) {
-    const { theme, isDark } = useTheme();
+    const { colors, mode } = useTheme();
+    const isDark = mode === 'dark';
+
+    // Shared animation values
     const opacity = useSharedValue(0);
-    const scale = useSharedValue(0.9);
+    const scale = useSharedValue(0.85);
+    const translateY = useSharedValue(20);
 
     useEffect(() => {
         if (visible) {
-            opacity.value = withTiming(1, { duration: 200 });
-            scale.value = withTiming(1, { duration: 200 });
+            // Entrance: spring animation for native feel
+            opacity.value = withTiming(1, { duration: 150 });
+            scale.value = withSpring(1, {
+                damping: 20,
+                stiffness: 300,
+                mass: 0.8,
+            });
+            translateY.value = withSpring(0, {
+                damping: 22,
+                stiffness: 280,
+            });
+
+            // Haptic feedback on open
+            if (Platform.OS !== 'web') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
         } else {
-            opacity.value = withTiming(0, { duration: 150 });
-            scale.value = withTiming(0.95, { duration: 150 });
+            // Exit: quick timing for snappy close
+            opacity.value = withTiming(0, { duration: 120 });
+            scale.value = withTiming(0.9, { duration: 120 });
+            translateY.value = withTiming(10, { duration: 120 });
         }
     }, [visible]);
 
-    const animatedStyle = useAnimatedStyle(() => ({
+    const backdropStyle = useAnimatedStyle(() => ({
         opacity: opacity.value,
-        transform: [{ scale: scale.value }],
     }));
 
-    if (!visible && opacity.value === 0) return null;
+    const contentStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+        transform: [
+            { scale: scale.value },
+            { translateY: translateY.value },
+        ],
+    }));
 
-    // Use theme-based colors for glassmorphism
-    const defaultGradient = isDark
-        ? ['rgba(39, 39, 42, 0.95)', 'rgba(24, 24, 27, 0.98)']
-        : ['rgba(255, 255, 255, 0.98)', 'rgba(244, 244, 245, 1)'];
+    const handleClose = () => {
+        if (Platform.OS !== 'web') {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        onClose();
+    };
 
-    const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+    if (!visible) return null;
+
+    const bgColor = colors.surface;
 
     return (
         <RNModal
             visible={visible}
             transparent
             animationType="none"
-            onRequestClose={onClose}
+            onRequestClose={handleClose}
+            statusBarTranslucent
         >
-            <TouchableWithoutFeedback onPress={onClose}>
-                <View style={styles.overlay}>
-                    <TouchableWithoutFeedback>
-                        <Animated.View style={[styles.container, { borderColor: borderColor }, animatedStyle]}>
-                            <LinearGradient
-                                colors={gradient || defaultGradient}
-                                style={styles.gradient}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
+            {/* Backdrop */}
+            <Animated.View style={[styles.overlay, backdropStyle]}>
+                <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
+
+                {/* Modal Content */}
+                <Animated.View style={[
+                    styles.container,
+                    {
+                        backgroundColor: bgColor,
+                        borderColor: colors.border,
+                    },
+                    contentStyle
+                ]}>
+                    {/* Header Gradient Strip */}
+                    <LinearGradient
+                        colors={gradient || [colors.brand.gold, colors.brand.sun]}
+                        style={styles.headerStrip}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                    />
+
+                    <View style={styles.contentContainer}>
+                        {/* Close Button */}
+                        {showClose && (
+                            <MotiPressable
+                                onPress={handleClose}
+                                animate={({ pressed }) => {
+                                    'worklet';
+                                    return {
+                                        scale: pressed ? 0.9 : 1,
+                                        opacity: pressed ? 0.7 : 1,
+                                    };
+                                }}
+                                transition={{
+                                    type: 'spring',
+                                    damping: 20,
+                                    stiffness: 400,
+                                }}
+                                style={[
+                                    styles.closeButton,
+                                    isKurdish ? { left: layout.spacing.md } : { right: layout.spacing.md }
+                                ]}
                             >
-                                <LinearGradient
-                                    colors={isDark ? ['rgba(255,255,255,0.05)', 'transparent'] : ['rgba(255,255,255,0.5)', 'transparent']}
-                                    style={styles.shine}
-                                />
-
-                                {showClose && (
-                                    <TouchableOpacity
-                                        style={[
-                                            styles.closeButton,
-                                            isKurdish ? { left: SPACING.md, right: undefined } : { right: SPACING.md, left: undefined }
-                                        ]}
-                                        onPress={onClose}
-                                    >
-                                        <View style={[styles.closeBtnCircle, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
-                                            <Ionicons name="close" size={20} color={theme.text.secondary} />
-                                        </View>
-                                    </TouchableOpacity>
-                                )}
-
-                                {icon && (
-                                    <View style={styles.iconContainer}>
-                                        <View style={[styles.iconCircle, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.05)' }]}>
-                                            <Ionicons name={icon} size={32} color={theme.colors.success} />
-                                        </View>
-                                    </View>
-                                )}
-
-                                {title && (
-                                    <View style={styles.titleContainer}>
-                                        <Text style={[styles.title, { color: theme.text.primary }, isKurdish && styles.kurdishFont]}>
-                                            {title}
-                                        </Text>
-                                        <View style={[styles.separator, { backgroundColor: theme.colors.primary }]} />
-                                    </View>
-                                )}
-
-                                <View style={styles.content}>
-                                    {children}
+                                <View style={[styles.closeBtnCircle, { backgroundColor: colors.surfaceHighlight }]}>
+                                    <X size={18} color={colors.text.secondary} strokeWidth={2.5} />
                                 </View>
-                            </LinearGradient>
-                        </Animated.View>
-                    </TouchableWithoutFeedback>
-                </View>
-            </TouchableWithoutFeedback>
+                            </MotiPressable>
+                        )}
+
+                        {/* Icon */}
+                        {IconComponent && (
+                            <MotiView
+                                from={{ scale: 0.5, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{
+                                    type: 'spring',
+                                    damping: 15,
+                                    stiffness: 200,
+                                    delay: 100,
+                                }}
+                                style={styles.iconContainer}
+                            >
+                                <View style={[styles.iconCircle, { backgroundColor: colors.brand.mountain + '15', borderColor: colors.brand.mountain }]}>
+                                    <IconComponent size={32} color={colors.brand.mountain} />
+                                </View>
+                            </MotiView>
+                        )}
+
+                        {/* Title */}
+                        {title && (
+                            <MotiView
+                                from={{ translateY: 10, opacity: 0 }}
+                                animate={{ translateY: 0, opacity: 1 }}
+                                transition={{
+                                    type: 'spring',
+                                    damping: 20,
+                                    stiffness: 200,
+                                    delay: 50,
+                                }}
+                                style={styles.titleContainer}
+                            >
+                                <Text style={[styles.title, { color: colors.text.primary }]}>
+                                    {title}
+                                </Text>
+                            </MotiView>
+                        )}
+
+                        {/* Body Content */}
+                        <MotiView
+                            from={{ translateY: 15, opacity: 0 }}
+                            animate={{ translateY: 0, opacity: 1 }}
+                            transition={{
+                                type: 'spring',
+                                damping: 22,
+                                stiffness: 180,
+                                delay: 100,
+                            }}
+                            style={styles.body}
+                        >
+                            {children}
+                        </MotiView>
+                    </View>
+                </Animated.View>
+            </Animated.View>
         </RNModal>
     );
 }
@@ -123,45 +211,41 @@ export default function Modal({
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: SPACING.lg,
+        padding: layout.spacing.lg,
     },
     container: {
         width: '100%',
         maxWidth: 400,
-        borderRadius: BORDER_RADIUS.xl,
+        borderRadius: layout.radius.xl,
         overflow: 'hidden',
-        ...SHADOWS.medium,
-        elevation: 10,
         borderWidth: 1,
+        ...layout.shadows.lg,
     },
-    gradient: {
-        padding: SPACING.xl,
+    headerStrip: {
+        height: 6,
+        width: '100%',
     },
-    shine: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 100,
+    contentContainer: {
+        padding: layout.spacing.xl,
     },
     closeButton: {
         position: 'absolute',
-        top: SPACING.md,
+        top: layout.spacing.md,
         zIndex: 10,
     },
     closeBtnCircle: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
     },
     iconContainer: {
         alignItems: 'center',
-        marginBottom: SPACING.md,
+        marginBottom: layout.spacing.md,
     },
     iconCircle: {
         width: 64,
@@ -170,28 +254,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: 'rgba(16, 185, 129, 0.2)',
     },
     titleContainer: {
         alignItems: 'center',
-        marginBottom: SPACING.lg,
+        marginBottom: layout.spacing.lg,
     },
     title: {
-        ...FONTS.title,
-        fontSize: 22,
+        fontSize: 20,
+        fontWeight: '700',
         textAlign: 'center',
-        marginBottom: SPACING.sm,
     },
-    separator: {
-        width: 40,
-        height: 3,
-        borderRadius: 2,
-        opacity: 0.5,
-    },
-    content: {
-        alignItems: 'center',
-    },
-    kurdishFont: {
-        fontFamily: 'Rabar',
-    },
+    body: {
+        width: '100%',
+    }
 });

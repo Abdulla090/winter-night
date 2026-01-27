@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Animated, Vibration
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, View, Text, TouchableOpacity, Vibration } from 'react-native';
+import { X, Play, Rocket, Link, Clock } from 'lucide-react-native';
 import { MotiView, AnimatePresence } from 'moti';
-import { GradientBackground, GlassCard, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { AnimatedScreen } from '../../components/AnimatedScreen';
+import { BeastButton } from '../../components/BeastButton';
+import { GlassCard } from '../../components/GlassCard';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { layout } from '../../theme/layout';
 
 const STARTING_WORDS = {
     en: ['Fire', 'Water', 'Time', 'Love', 'House', 'Car', 'Phone', 'Music', 'School', 'Food'],
@@ -15,10 +15,9 @@ const STARTING_WORDS = {
 };
 
 export default function WordChainPlayScreen({ navigation }) {
+    const { colors, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
-    // Game State
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentWord, setCurrentWord] = useState('');
     const [timeLeft, setTimeLeft] = useState(5);
@@ -27,10 +26,7 @@ export default function WordChainPlayScreen({ navigation }) {
     const [showInstructions, setShowInstructions] = useState(true);
 
     const timerRef = useRef(null);
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-    const bgAnim = useRef(new Animated.Value(0)).current;
 
-    // Timer Logic
     useEffect(() => {
         if (isPlaying && timeLeft > 0) {
             timerRef.current = setInterval(() => {
@@ -40,21 +36,12 @@ export default function WordChainPlayScreen({ navigation }) {
                         handleTimeUp();
                         return 0;
                     }
-                    return prev - 0.1; // Fast timer updates
+                    return prev - 0.1;
                 });
             }, 100);
         }
         return () => clearInterval(timerRef.current);
     }, [isPlaying, timeLeft]);
-
-    // Animate background color based on time left
-    useEffect(() => {
-        Animated.timing(bgAnim, {
-            toValue: timeLeft / 5, // Normalized 0-1
-            duration: 100,
-            useNativeDriver: false,
-        }).start();
-    }, [timeLeft]);
 
     const handleStart = () => {
         const words = STARTING_WORDS[language] || STARTING_WORDS.en;
@@ -69,15 +56,8 @@ export default function WordChainPlayScreen({ navigation }) {
     };
 
     const handleNext = () => {
-        // Reset timer
         setTimeLeft(5);
         setScore(prev => prev + 1);
-
-        // Visual feedback
-        Animated.sequence([
-            Animated.timing(scaleAnim, { toValue: 1.2, duration: 100, useNativeDriver: true }),
-            Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
-        ]).start();
     };
 
     const handleTimeUp = () => {
@@ -86,277 +66,230 @@ export default function WordChainPlayScreen({ navigation }) {
         setGameOver(true);
     };
 
-    const getBackgroundColor = bgAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [COLORS.accent.danger, COLORS.background.dark]
-    });
-
     if (showInstructions) {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <View style={styles.header}>
-                        <TouchableOpacity
-                            style={styles.backBtn}
-                            onPress={() => navigation.goBack()}
-                        >
-                            <Ionicons name="close" size={24} color={COLORS.text.primary} />
-                        </TouchableOpacity>
-                    </View>
+            <AnimatedScreen>
+                <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <BeastButton
+                        variant="ghost"
+                        icon={X}
+                        onPress={() => navigation.goBack()}
+                        size="sm"
+                    />
+                </View>
 
-                    <View style={styles.centerContent}>
-                        <MotiView
-                            from={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            style={styles.instructionCard}
-                        >
-                            <Text style={styles.gameIcon}>🔗</Text>
-                            <Text style={[styles.gameTitle, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'زنجیرەی وشە' : 'Word Chain'}
-                            </Text>
-
-                            <Text style={[styles.instructionText, isKurdish && styles.kurdishFont]}>
-                                {isKurdish
-                                    ? '١. وشەیەک دەردەکەوێت\n٢. وشەیەکی پەیوەندیدار بڵێ\n٣. دوگمەکە داگرە\n٤. تەنها ٥ چرکەت هەیە!'
-                                    : '1. A word appears\n2. Say a related word\n3. Tap the button\n4. You only have 5 seconds!'}
-                            </Text>
-
-                            <Button
-                                title={isKurdish ? 'دەست پێ بکە' : 'Start Playing'}
-                                onPress={handleStart}
-                                gradient={[COLORS.games.quiz[0], COLORS.games.quiz[1]]}
-                                icon={<Ionicons name="rocket" size={20} color="#FFF" />}
-                                isKurdish={isKurdish}
-                                style={{ width: '100%', marginTop: SPACING.xl }}
-                            />
-                        </MotiView>
-                    </View>
-                </SafeAreaView>
-            </GradientBackground>
+                <View style={styles.centerContent}>
+                    <GlassCard style={{ width: '100%', alignItems: 'center', padding: 24 }}>
+                        <View style={[styles.iconContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                            <Link size={48} color={colors.accent} />
+                        </View>
+                        <Text style={[styles.gameTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'زنجیرەی وشە' : 'Word Chain'}
+                        </Text>
+                        <Text style={[styles.instructionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish
+                                ? '١. وشەیەک دەردەکەوێت\n٢. وشەیەکی پەیوەندیدار بڵێ\n٣. دوگمەکە داگرە\n٤. تەنها ٥ چرکەت هەیە!'
+                                : '1. A word appears\n2. Say a related word\n3. Tap the button\n4. You only have 5 seconds!'}
+                        </Text>
+                        <BeastButton
+                            title={isKurdish ? 'دەست پێ بکە' : 'Start Playing'}
+                            onPress={handleStart}
+                            icon={Rocket}
+                            size="lg"
+                            style={{ width: '100%', marginTop: 20 }}
+                        />
+                    </GlassCard>
+                </View>
+            </AnimatedScreen>
         );
     }
 
     if (gameOver) {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
+            <AnimatedScreen>
+                <View style={styles.centerContent}>
                     <MotiView
                         from={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        style={styles.gameOverContainer}
+                        style={{ width: '100%', alignItems: 'center' }}
                     >
-                        <Text style={styles.gameOverEmoji}>💥</Text>
-                        <Text style={[styles.gameOverTitle, isKurdish && styles.kurdishFont]}>
+                        <Text style={{ fontSize: 80, marginBottom: 20 }}>💥</Text>
+                        <Text style={[styles.gameOverTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'زنجیرەکە پچڕا!' : 'Chain Broken!'}
                         </Text>
 
-                        <View style={styles.scoreContainer}>
-                            <Text style={styles.finalScore}>{score}</Text>
-                            <Text style={[styles.scoreLabel, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'وشە' : 'Words'}
-                            </Text>
+                        <View style={{ alignItems: 'center', marginBottom: 40 }}>
+                            <Text style={{ fontSize: 80, fontWeight: '900', color: colors.accent }}>{score}</Text>
+                            <Text style={{ fontSize: 18, color: colors.text.muted }}>{isKurdish ? 'وشە' : 'Words'}</Text>
                         </View>
 
-                        <View style={styles.gameOverButtons}>
-                            <Button
-                                title={isKurdish ? 'دووبارە بیکەوە' : 'Try Again'}
-                                onPress={handleStart}
-                                gradient={[COLORS.accent.danger, '#ef4444']}
-                                isKurdish={isKurdish}
-                            />
-                            <TouchableOpacity style={styles.menuBtn} onPress={() => navigation.goBack()}>
-                                <Text style={[styles.menuBtnText, isKurdish && styles.kurdishFont]}>
-                                    {isKurdish ? 'گەڕانەوە' : 'Exit Info'}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                        <BeastButton
+                            title={isKurdish ? 'دووبارە بیکەوە' : 'Try Again'}
+                            onPress={handleStart}
+                            variant="primary"
+                            size="lg"
+                            style={{ width: '100%', marginBottom: 16 }}
+                        />
+                        <BeastButton
+                            title={isKurdish ? 'گەڕانەوە' : 'Exit'}
+                            onPress={() => navigation.goBack()}
+                            variant="ghost"
+                            size="md"
+                        />
                     </MotiView>
-                </SafeAreaView>
-            </GradientBackground>
+                </View>
+            </AnimatedScreen>
         );
     }
 
+    // Dynamic background based on timer
+    const dangerLevel = Math.max(0, 1 - timeLeft / 5);
+    const bgColor = timeLeft < 2 ? 'rgba(239, 68, 68, 0.3)' : undefined; // Red tint if low time
+
     return (
-        <Animated.View style={[styles.container, { backgroundColor: getBackgroundColor }]}>
-            <SafeAreaView style={styles.safeArea}>
-                {/* Header */}
-                <View style={styles.playHeader}>
-                    <View style={styles.scorePill}>
-                        <Text style={styles.scoreVal}>{score}</Text>
-                    </View>
-                    <View style={styles.timerPill}>
-                        <Text style={styles.timerVal}>{timeLeft.toFixed(1)}s</Text>
-                    </View>
-                </View>
-
-                {/* Main Game Area */}
-                <View style={styles.gameArea}>
-                    <Text style={[styles.previousLabel, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'وشەی ئێستا' : 'CURRENT WORD'}
-                    </Text>
-                    <Animated.Text
-                        style={[
-                            styles.currentWordText,
-                            isKurdish && styles.kurdishFont,
-                            { transform: [{ scale: scaleAnim }] }
-                        ]}
-                    >
-                        {score === 0 ? currentWord : (isKurdish ? '؟' : '?')}
-                    </Animated.Text>
-
-                    {score > 0 && (
-                        <Text style={[styles.promptText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'وشەی داهاتوو بڵێ!' : 'Say the next word!'}
-                        </Text>
-                    )}
-                </View>
-
-                {/* Interaction - Hit the whole screen basically */}
-                <TouchableOpacity
-                    style={styles.tapArea}
-                    activeOpacity={0.8}
-                    onPress={handleNext}
+        <AnimatedScreen style={{ backgroundColor: bgColor }}>
+            <View style={styles.playHeader}>
+                <GlassCard style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 }}>
+                    <Text style={{ color: colors.text.primary, fontWeight: 'bold', fontSize: 20 }}>{score}</Text>
+                </GlassCard>
+                <GlassCard
+                    style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
+                        borderRadius: 20,
+                        borderColor: timeLeft < 2 ? colors.error : colors.border
+                    }}
                 >
-                    <View style={styles.tapCircle}>
-                        <Text style={[styles.tapText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'دواتر!' : 'NEXT!'}
-                        </Text>
-                        <Text style={styles.tapSubText}>
-                            {isKurdish ? 'کاتێک وتت، دایگرە' : 'Tap after you say it'}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                    <Text style={{ color: timeLeft < 2 ? colors.error : colors.text.primary, fontWeight: '900', fontSize: 20, fontVariant: ['tabular-nums'] }}>
+                        {timeLeft.toFixed(1)}s
+                    </Text>
+                </GlassCard>
+            </View>
 
-            </SafeAreaView>
-        </Animated.View>
+            <View style={styles.gameArea}>
+                <Text style={[styles.previousLabel, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                    {isKurdish ? 'وشەی ئێستا' : 'CURRENT WORD'}
+                </Text>
+
+                <MotiView
+                    key={score} // Re-animate on score change
+                    from={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                >
+                    <Text style={[styles.currentWordText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                        {score === 0 ? currentWord : (isKurdish ? '؟' : '?')}
+                    </Text>
+                </MotiView>
+
+                {score > 0 && (
+                    <Text style={[styles.promptText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'وشەی داهاتوو بڵێ!' : 'Say the next word!'}
+                    </Text>
+                )}
+            </View>
+
+            <TouchableOpacity
+                style={styles.tapArea}
+                activeOpacity={0.8}
+                onPress={handleNext}
+            >
+                <GlassCard
+                    intensity={40}
+                    style={{
+                        width: 200,
+                        height: 200,
+                        borderRadius: 100,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: colors.accent + '40',
+                        borderColor: colors.accent
+                    }}
+                >
+                    <Text style={[styles.tapText, { color: '#FFF' }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'دواتر!' : 'NEXT!'}
+                    </Text>
+                    <Text style={[styles.tapSubText, { color: 'rgba(255,255,255,0.7)' }]}>
+                        {isKurdish ? 'کاتێک وتت، دایگرە' : 'Tap after you say it'}
+                    </Text>
+                </GlassCard>
+            </TouchableOpacity>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: COLORS.background.dark },
-    safeArea: { flex: 1 },
-
-    // Setup
-    header: { padding: SPACING.md },
-    backBtn: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+    header: {
+        padding: layout.spacing.md,
+        justifyContent: 'flex-start',
     },
     centerContent: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: SPACING.xl,
+        padding: layout.spacing.lg,
     },
-    instructionCard: {
-        width: '100%',
-        padding: SPACING.xl,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: BORDER_RADIUS.xl,
+    iconContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+        justifyContent: 'center',
+        marginBottom: 20,
     },
-    gameIcon: { fontSize: 60, marginBottom: SPACING.lg },
-    gameTitle: { color: COLORS.text.primary, ...FONTS.large, marginBottom: SPACING.lg },
+    gameTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+    },
     instructionText: {
-        color: COLORS.text.secondary,
-        lineHeight: 28,
-        textAlign: 'center',
         fontSize: 16,
-        marginBottom: SPACING.xl
+        lineHeight: 26,
+        textAlign: 'center',
+        marginBottom: 24,
     },
-
-    // Play
     playHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: SPACING.lg,
+        padding: layout.spacing.lg,
     },
-    scorePill: {
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        paddingVertical: 8, paddingHorizontal: 16,
-        borderRadius: 20,
-    },
-    scoreVal: { color: '#FFF', fontWeight: 'bold', fontSize: 20 },
-    timerPill: {
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingVertical: 8, paddingHorizontal: 16,
-        borderRadius: 20,
-    },
-    timerVal: { color: '#FFF', fontWeight: '900', fontSize: 20, fontVariant: ['tabular-nums'] },
-
     gameArea: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
     previousLabel: {
-        color: 'rgba(255,255,255,0.6)',
         fontSize: 14,
         letterSpacing: 2,
-        marginBottom: SPACING.md,
+        marginBottom: layout.spacing.md,
+        textTransform: 'uppercase',
     },
     currentWordText: {
-        color: '#FFF',
         fontSize: 48,
         fontWeight: '900',
         textAlign: 'center',
+        marginBottom: 20,
     },
     promptText: {
-        color: 'rgba(255,255,255,0.8)',
         fontSize: 20,
-        marginTop: SPACING.lg,
     },
-
     tapArea: {
-        height: '40%',
-        width: '100%',
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderTopLeftRadius: 40,
-        borderTopRightRadius: 40,
+        paddingBottom: 50,
         alignItems: 'center',
-        justifyContent: 'center',
-    },
-    tapCircle: {
-        width: 150, height: 150,
-        borderRadius: 75,
-        backgroundColor: '#FFF',
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.3,
-        shadowRadius: 20,
     },
     tapText: {
-        color: '#000',
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: '900',
     },
     tapSubText: {
-        color: '#666',
-        fontSize: 10,
-        marginTop: 4,
+        fontSize: 12,
+        marginTop: 8,
     },
-
-    // Game Over
-    gameOverContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: SPACING.xl,
+    gameOverTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
-    gameOverEmoji: { fontSize: 80, marginBottom: SPACING.lg },
-    gameOverTitle: { color: COLORS.text.primary, ...FONTS.title, marginBottom: SPACING.lg },
-    scoreContainer: { alignItems: 'center', marginBottom: SPACING.lg },
-    finalScore: { fontSize: 80, fontWeight: '900', color: COLORS.accent.danger },
-    scoreLabel: { color: COLORS.text.muted, fontSize: 18 },
-    gameOverButtons: { width: '100%', gap: SPACING.md, marginTop: SPACING.xl },
-    menuBtn: { padding: SPACING.md, alignSelf: 'center' },
-    menuBtnText: { color: COLORS.text.muted },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

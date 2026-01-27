@@ -2,6 +2,9 @@
 // Bilingual support: English (en) and Kurdish Sorani (ku)
 // All data is stored locally - NO NETWORK REQUIRED
 
+// Time options for game rounds (in seconds)
+export const TIME_OPTIONS = [30, 60, 90, 120];
+
 export const DRAWING_CATEGORIES = {
     easy: {
         name: { en: 'Easy', ku: 'ئاسان' },
@@ -40,7 +43,18 @@ export const DRAWING_CATEGORIES = {
             { en: 'Orange', ku: 'پرتەقاڵ' },
             { en: 'Strawberry', ku: 'تووفرینگی' },
             { en: 'Grapes', ku: 'ترێ' },
-            { en: 'Watermelon', ku: 'شووتی' }
+            { en: 'Watermelon', ku: 'شووتی' },
+            { en: 'Cupcake', ku: 'کاپکەیک' },
+            { en: 'Donut', ku: 'دۆنەت' },
+            { en: 'Ring', ku: 'ئەنگوستیلە' },
+            { en: 'Hand', ku: 'دەست' },
+            { en: 'Foot', ku: 'پێ' },
+            { en: 'Nose', ku: 'لووت' },
+            { en: 'Eye', ku: 'چاو' },
+            { en: 'Ear', ku: 'گوێ' },
+            { en: 'Mouth', ku: 'دەم' },
+            { en: 'Key', ku: 'کلیل' },
+            { en: 'Lock', ku: 'قوفڵ' }
         ]
     },
     medium: {
@@ -80,7 +94,18 @@ export const DRAWING_CATEGORIES = {
             { en: 'Cookie', ku: 'بسکیت' },
             { en: 'Candy', ku: 'نوقوڵ' },
             { en: 'Compass', ku: 'قیبلەنما' },
-            { en: 'Treasure', ku: 'گەنج' }
+            { en: 'Treasure', ku: 'گەنج' },
+            { en: 'Train', ku: 'شەمەندەفەر' },
+            { en: 'Truck', ku: 'بارهەڵگر' },
+            { en: 'Bus', ku: 'پاس' },
+            { en: 'Boat', ku: 'بەلەم' },
+            { en: 'Ship', ku: 'کەشتی' },
+            { en: 'Motorcycle', ku: 'ماتۆڕسکیل' },
+            { en: 'Scooter', ku: 'سکوتەر' },
+            { en: 'Skateboard', ku: 'سکەیت بۆرد' },
+            { en: 'Rollercoaster', ku: 'رۆلەر کۆستەر' },
+            { en: 'Ambulance', ku: 'ئەمبوڵانس' },
+            { en: 'Fire Truck', ku: 'ئۆتۆمبێلی ئاگرکوژێنەوە' }
         ]
     },
     hard: {
@@ -116,7 +141,16 @@ export const DRAWING_CATEGORIES = {
             { en: 'Galaxy', ku: 'گەلاکسی' },
             { en: 'Nebula', ku: 'نێبیولا' },
             { en: 'Supernova', ku: 'سوپەرنۆڤا' },
-            { en: 'Wormhole', ku: 'کونی کرم' }
+            { en: 'Wormhole', ku: 'کونی کرم' },
+            { en: 'Eclipse', ku: 'خۆرگیران' },
+            { en: 'Earthquake', ku: 'بوومەلەرزە' },
+            { en: 'Tsunami', ku: 'تسونامی' },
+            { en: 'Milky Way', ku: 'ڕێگای شیری' },
+            { en: 'Meteor', ku: 'نەیزەک' },
+            { en: 'Satellite', ku: 'مانگی دەستکرد' },
+            { en: 'Spaceship', ku: 'کەشتی ئاسمانی' },
+            { en: 'Alien', ku: 'بونەوەری ئاسمانی' },
+            { en: 'Meteorite', ku: 'بەردی ئاسمانی' }
         ]
     },
     actions: {
@@ -152,7 +186,16 @@ export const DRAWING_CATEGORIES = {
             { en: 'Thinking', ku: 'بیرکردنەوە' },
             { en: 'Dreaming', ku: 'خەو بینین' },
             { en: 'Fighting', ku: 'شەڕکردن' },
-            { en: 'Hiding', ku: 'شاردنەوە' }
+            { en: 'Hiding', ku: 'شاردنەوە' },
+            { en: 'Building', ku: 'بیناکردن' },
+            { en: 'Breaking', ku: 'شکاندن' },
+            { en: 'Falling', ku: 'کەوتن' },
+            { en: 'Throwing', ku: 'هاویشتن' },
+            { en: 'Catching', ku: 'گرتنەوە' },
+            { en: 'Pushing', ku: 'پاڵنان' },
+            { en: 'Pulling', ku: 'ڕاکێشان' },
+            { en: 'Lifting', ku: 'بەرزکردنەوە' },
+            { en: 'Carrying', ku: 'هەڵگرتن' }
         ]
     },
     places: {
@@ -188,7 +231,16 @@ export const DRAWING_CATEGORIES = {
             { en: 'Reef', ku: 'ڕیف' },
             { en: 'Swamp', ku: 'زەلکاو' },
             { en: 'Space Station', ku: 'وێستگەی بۆشایی' },
-            { en: 'Planet', ku: 'هەسارە' }
+            { en: 'Planet', ku: 'هەسارە' },
+            { en: 'Park', ku: 'پارک' },
+            { en: 'Garden', ku: 'باخچە' },
+            { en: 'Street', ku: 'شەقام' },
+            { en: 'City', ku: 'شار' },
+            { en: 'Village', ku: 'گوند' },
+            { en: 'Bridge', ku: 'پرد' },
+            { en: 'Tunnel', ku: 'تونێل' },
+            { en: 'Market', ku: 'بازاڕ' },
+            { en: 'Hotel', ku: 'هۆتێل' }
         ]
     },
     movies: {
@@ -224,7 +276,16 @@ export const DRAWING_CATEGORIES = {
             { en: 'Snow White', ku: 'بەفرین' },
             { en: 'Rapunzel', ku: 'ڕاپونزڵ' },
             { en: 'Moana', ku: 'مۆئانا' },
-            { en: 'Elsa', ku: 'ئێلسا' }
+            { en: 'Elsa', ku: 'ئێلسا' },
+            { en: 'The Matrix', ku: 'ماتریکس' },
+            { en: 'Inception', ku: 'دەستپێک' },
+            { en: 'Interstellar', ku: 'نێوان ئەستێرەکان' },
+            { en: 'Joker', ku: 'جۆکەر' },
+            { en: 'Wonder Woman', ku: 'ژنەی لێهاتوو' },
+            { en: 'Iron Man', ku: 'پیاوی ئاسن' },
+            { en: 'Captain America', ku: 'کاپتن ئەمریکا' },
+            { en: 'Thor', ku: 'سۆڕ' },
+            { en: 'Hulk', ku: 'هەڵک' }
         ]
     }
 };

@@ -17,6 +17,7 @@ import { LanguageProvider } from './src/context/LanguageContext';
 import { ThemeProvider } from './src/context/ThemeContext';
 import { AuthProvider } from './src/context/AuthContext';
 import { GameRoomProvider } from './src/context/GameRoomContext';
+import { ToastProvider } from './src/components/UltimateToast';
 
 // Minimal Loading Screen
 function LoadingScreen() {
@@ -55,12 +56,14 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <GameRoomProvider>
-            <SafeAreaProvider>
-              <GestureHandlerRootView style={styles.container}>
-                <StatusBar style="auto" />
-                <AppNavigator />
-              </GestureHandlerRootView>
-            </SafeAreaProvider>
+            <ToastProvider>
+              <SafeAreaProvider>
+                <GestureHandlerRootView style={styles.container}>
+                  <StatusBar style="auto" />
+                  <AppNavigator />
+                </GestureHandlerRootView>
+              </SafeAreaProvider>
+            </ToastProvider>
           </GameRoomProvider>
         </AuthProvider>
       </ThemeProvider>

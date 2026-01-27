@@ -5,41 +5,36 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    SafeAreaView,
     ActivityIndicator,
     Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { GradientBackground } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { Gamepad2, Plus, Home } from 'lucide-react-native';
+import { MotiView } from 'moti';
+
+import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
 import { useGameRoom } from '../../context/GameRoomContext';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { layout } from '../../theme/layout';
 
 export default function CreateRoomScreen({ navigation }) {
     const { createRoom, loading, error, clearError } = useGameRoom();
-    const { isAuthenticated, initialized } = useAuth();
-    const { theme } = useTheme();
+    const { user, initialized } = useAuth();
+    const { colors, isRTL } = useTheme();
     const { isKurdish } = useLanguage();
 
     const [roomName, setRoomName] = useState('');
 
-    // Check authentication on mount
+    // If not authenticated, navigate to Login immediately when screen mounts
     useEffect(() => {
-        if (initialized && !isAuthenticated) {
-            Alert.alert(
-                isKurdish ? 'چوونەژوورەوە پێویستە' : 'Login Required',
-                isKurdish ? 'تکایە سەرەتا بچۆ ژوورەوە' : 'Please login first to create a room',
-                [
-                    { text: isKurdish ? 'باشە' : 'OK', onPress: () => navigation.replace('Login') }
-                ]
-            );
+        if (initialized && !user) {
+            navigation.replace('Login');
         }
-    }, [initialized, isAuthenticated]);
+    }, [initialized, user]);
 
     const handleCreateRoom = async () => {
-        if (!isAuthenticated) {
+        if (!user) {
             navigation.replace('Login');
             return;
         }
@@ -52,181 +47,145 @@ export default function CreateRoomScreen({ navigation }) {
             return;
         }
 
-        // Create room without game type - host will select later
-        const room = await createRoom(null, roomName);
+        console.log('Creating room with name:', roomName);
+        const result = await createRoom(null, roomName);
+        console.log('Create room result:', result);
 
-        if (room) {
+        if (result?.success) {
+            console.log('Room created successfully, navigating to lobby');
             navigation.replace('RoomLobby');
-        } else if (error) {
-            Alert.alert(isKurdish ? 'هەڵە' : 'Error', error);
+        } else {
+            const errorMsg = result?.error || error || 'Failed to create room';
+            console.log('Room creation failed:', errorMsg);
+            Alert.alert(isKurdish ? 'هەڵە' : 'Error', errorMsg);
             clearError();
         }
     };
 
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
+
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.container}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        style={[styles.backBtn, { backgroundColor: theme.background.card }]}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons
-                            name={isKurdish ? 'arrow-forward' : 'arrow-back'}
-                            size={24}
-                            color={theme.text.primary}
-                        />
-                    </TouchableOpacity>
-                    <Text style={[styles.headerTitle, { color: theme.text.primary }]}>
-                        {isKurdish ? 'دروستکردنی ژوور' : 'Create Room'}
-                    </Text>
-                    <View style={{ width: 44 }} />
-                </View>
+        <AnimatedScreen>
+            {/* Header */}
+            <View style={[styles.header, { flexDirection: rowDirection }]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+                    {isKurdish ? 'دروستکردنی ژوور' : 'Create Room'}
+                </Text>
+                <View style={{ width: 44 }} />
+            </View>
 
-                {/* Content */}
-                <View style={styles.content}>
-                    {/* Icon */}
-                    <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
-                        <Ionicons name="game-controller" size={48} color={theme.colors.primary} />
+            {/* Content */}
+            <View style={styles.content}>
+                <MotiView
+                    from={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{ alignItems: 'center', marginBottom: layout.spacing.xl }}
+                >
+                    <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
+                        <Gamepad2 size={48} color={colors.accent} strokeWidth={1.5} />
                     </View>
+                </MotiView>
 
-                    <Text style={[styles.title, { color: theme.text.primary }]}>
-                        {isKurdish ? 'ژوورێکی نوێ دروستبکە' : 'Create a New Room'}
-                    </Text>
-                    <Text style={[styles.subtitle, { color: theme.text.secondary }]}>
-                        {isKurdish
-                            ? 'هاوڕێکانت دەتوانن بە کۆدەکە بەشداری بکەن'
-                            : 'Friends can join using the room code'}
-                    </Text>
+                <Text style={[styles.title, { color: colors.text.primary }]}>
+                    {isKurdish ? 'ژوورێکی نوێ دروستبکە' : 'Create a New Room'}
+                </Text>
+                <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+                    {isKurdish
+                        ? 'هاوڕێکانت دەتوانن بە کۆدەکە بەشداری بکەن'
+                        : 'Friends can join using the room code'}
+                </Text>
 
-                    {/* Room Name Input */}
-                    <View style={[styles.inputContainer, { backgroundColor: theme.background.card, borderColor: theme.background.border }]}>
-                        <Ionicons name="home-outline" size={20} color={theme.text.secondary} />
+                {/* Room Name Input */}
+                <GlassCard style={styles.inputCard}>
+                    <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
+                        <Home size={20} color={colors.text.muted} />
                         <TextInput
-                            style={[styles.input, { color: theme.text.primary }]}
+                            style={[
+                                styles.input,
+                                {
+                                    color: colors.text.primary,
+                                    textAlign: isRTL ? 'right' : 'left',
+                                }
+                            ]}
                             placeholder={isKurdish ? 'ناوی ژوور' : 'Room Name'}
-                            placeholderTextColor={theme.text.secondary}
+                            placeholderTextColor={colors.text.muted}
                             value={roomName}
                             onChangeText={setRoomName}
                             maxLength={30}
                         />
                     </View>
+                </GlassCard>
 
-                    <Text style={[styles.hint, { color: theme.text.muted }]}>
-                        {isKurdish
-                            ? 'یاری لە ناو ژوورەکە هەڵدەبژێریت'
-                            : 'You\'ll choose the game after creating the room'}
-                    </Text>
+                <Text style={[styles.hint, { color: colors.text.muted }]}>
+                    {isKurdish
+                        ? 'یاری لە ناو ژوورەکە هەڵدەبژێریت'
+                        : 'You\'ll choose the game after creating the room'}
+                </Text>
 
-                    {/* Create Button */}
-                    <TouchableOpacity
-                        style={[
-                            styles.createBtn,
-                            { backgroundColor: theme.colors.primary },
-                            !roomName.trim() && { opacity: 0.5 },
-                        ]}
-                        onPress={handleCreateRoom}
-                        disabled={loading || !roomName.trim()}
-                    >
-                        {loading ? (
-                            <ActivityIndicator color="#FFF" />
-                        ) : (
-                            <>
-                                <Ionicons name="add-circle" size={24} color="#FFF" />
-                                <Text style={styles.createBtnText}>
-                                    {isKurdish ? 'دروستکردن' : 'Create Room'}
-                                </Text>
-                            </>
-                        )}
-                    </TouchableOpacity>
-                </View>
-            </SafeAreaView>
-        </GradientBackground>
+                {/* Create Button */}
+                <BeastButton
+                    title={isKurdish ? 'دروستکردن' : 'Create Room'}
+                    onPress={handleCreateRoom}
+                    variant="primary"
+                    size="lg"
+                    icon={Plus}
+                    style={{ width: '100%', marginTop: layout.spacing.xl, opacity: !roomName.trim() ? 0.5 : 1 }}
+                />
+            </View>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
     header: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: SPACING.lg,
-        paddingTop: SPACING.md,
-    },
-    backBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: BORDER_RADIUS.md,
-        alignItems: 'center',
-        justifyContent: 'center',
+        marginBottom: layout.spacing.md,
     },
     headerTitle: {
-        ...FONTS.bold,
         fontSize: 18,
+        fontWeight: '700',
     },
     content: {
         flex: 1,
-        paddingHorizontal: SPACING.xl,
         alignItems: 'center',
         justifyContent: 'center',
         paddingBottom: 100,
     },
-    iconContainer: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+    heroIcon: {
+        width: 96,
+        height: 96,
+        borderRadius: 48,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: SPACING.xl,
     },
     title: {
-        ...FONTS.bold,
         fontSize: 24,
-        marginBottom: SPACING.sm,
+        fontWeight: '800',
+        marginBottom: layout.spacing.sm,
         textAlign: 'center',
     },
     subtitle: {
-        ...FONTS.regular,
         fontSize: 15,
         textAlign: 'center',
-        marginBottom: SPACING.xl,
+        marginBottom: layout.spacing.xl,
+    },
+    inputCard: {
+        width: '100%',
+        marginBottom: layout.spacing.sm,
     },
     inputContainer: {
-        flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: SPACING.md,
-        height: 56,
-        borderRadius: BORDER_RADIUS.lg,
-        borderWidth: 1,
-        gap: SPACING.sm,
-        width: '100%',
+        gap: layout.spacing.sm,
     },
     input: {
         flex: 1,
-        ...FONTS.regular,
         fontSize: 16,
+        fontWeight: '500',
     },
     hint: {
-        ...FONTS.regular,
         fontSize: 13,
-        marginTop: SPACING.md,
         textAlign: 'center',
-    },
-    createBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 56,
-        borderRadius: BORDER_RADIUS.lg,
-        marginTop: SPACING.xl,
-        gap: SPACING.sm,
-        width: '100%',
-    },
-    createBtnText: {
-        ...FONTS.bold,
-        fontSize: 16,
-        color: '#FFF',
     },
 });

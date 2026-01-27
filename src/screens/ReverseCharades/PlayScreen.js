@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Animated, Vibration
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, View, Text, TouchableOpacity, Vibration, Animated } from 'react-native';
+import { Play, Pause, Check, RotateCcw, Clock, SkipForward } from 'lucide-react-native';
 import { MotiView, AnimatePresence } from 'moti';
-import { GradientBackground, GlassCard, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { AnimatedScreen } from '../../components/AnimatedScreen';
+import { BeastButton } from '../../components/BeastButton';
+import { GlassCard } from '../../components/GlassCard';
+import { BackButton } from '../../components/BackButton';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 import { getCharadesWords } from '../../constants/charadesData';
-
-// Fallback to buttons if sensors not implemented
-const USE_SENSORS = false;
 
 export default function ReverseCharadesPlayScreen({ navigation, route }) {
     const { category, roundTime } = route.params;
+    const { colors, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
     // Game State
     const [words, setWords] = useState([]);
@@ -32,7 +31,8 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
 
     // Initialize
     useEffect(() => {
-        const loadedWords = getCharadesWords(category.id, language);
+        const loadedWords = getCharadesWords(category.id, language) || [];
+        // Ensure we have words, if strictly array is returned
         setWords(loadedWords);
     }, [category, language]);
 
@@ -88,7 +88,16 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
         });
     };
 
-    if (words.length === 0) return null;
+    if (words.length === 0) {
+        return (
+            <AnimatedScreen>
+                <View style={[styles.centerContent, { justifyContent: 'center' }]}>
+                    <Text style={{ color: colors.text.muted }}>Loading Words...</Text>
+                </View>
+            </AnimatedScreen>
+        );
+    }
+
     const currentWord = words[currentIndex];
 
     // ========================
@@ -96,46 +105,50 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
     // ========================
     if (gameOver) {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <MotiView
-                        from={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        style={styles.gameOverContainer}
-                    >
-                        <Text style={styles.gameOverEmoji}>🎉</Text>
-                        <Text style={[styles.gameOverTitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'کات تەواو بوو!' : "Time's Up!"}
+            <AnimatedScreen>
+                <MotiView
+                    from={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={styles.centerContent}
+                >
+                    <View style={[styles.iconContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                        <Clock size={48} color={colors.accent} />
+                    </View>
+
+                    <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'کات تەواو بوو!' : "Time's Up!"}
+                    </Text>
+
+                    <GlassCard style={styles.scoreCard}>
+                        <Text style={[styles.scoreLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'کۆی گشتی خاڵ' : 'Total Score'}
                         </Text>
+                        <Text style={[styles.finalScore, { color: colors.brand.success }]}>{score}</Text>
+                    </GlassCard>
 
-                        <View style={styles.scoreContainer}>
-                            <Text style={styles.finalScore}>{score}</Text>
-                            <Text style={[styles.scoreLabel, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'خاڵ' : 'Points'}
-                            </Text>
-                        </View>
-
-                        <View style={styles.gameOverButtons}>
-                            <Button
-                                title={isKurdish ? 'دووبارە یاری بکە' : 'Play Again'}
-                                onPress={() => {
-                                    setScore(0);
-                                    setTimeLeft(roundTime);
-                                    setGameOver(false);
-                                    setWords(prev => [...prev].sort(() => Math.random() - 0.5));
-                                    setIsPlaying(true);
-                                }}
-                                gradient={[category.color, category.color]}
-                            />
-                            <TouchableOpacity style={styles.menuBtn} onPress={() => navigation.goBack()}>
-                                <Text style={[styles.menuBtnText, isKurdish && styles.kurdishFont]}>
-                                    {isKurdish ? 'گەڕانەوە' : 'Back to Menu'}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </MotiView>
-                </SafeAreaView>
-            </GradientBackground>
+                    <View style={{ width: '100%', gap: 16 }}>
+                        <BeastButton
+                            title={isKurdish ? 'دووبارە یاری بکە' : 'Play Again'}
+                            onPress={() => {
+                                setScore(0);
+                                setTimeLeft(roundTime);
+                                setGameOver(false);
+                                setWords(prev => [...prev].sort(() => Math.random() - 0.5));
+                                setIsPlaying(true);
+                            }}
+                            variant="primary"
+                            icon={RotateCcw}
+                            size="lg"
+                        />
+                        <BeastButton
+                            title={isKurdish ? 'گەڕانەوە' : 'Back to Menu'}
+                            onPress={() => navigation.goBack()}
+                            variant="ghost"
+                            size="md"
+                        />
+                    </View>
+                </MotiView>
+            </AnimatedScreen>
         );
     }
 
@@ -144,191 +157,313 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
     // ========================
     if (!isPlaying) {
         return (
-            <GradientBackground>
-                <SafeAreaView style={styles.safeArea}>
-                    <View style={styles.centerContent}>
-                        <GlassCard intensity={30} style={styles.startCard}>
-                            <Text style={[styles.readyTitle, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'ئامادەی؟' : 'Ready?'}
-                            </Text>
-                            <Text style={[styles.readySub, isKurdish && styles.kurdishFont]}>
-                                {isKurdish
-                                    ? 'مۆبایلەکە ڕووەو تیمەکە بگرە. کاتێک ئامادە بوون دەست پێ بکە!'
-                                    : 'Hold phone facing the team. Start when ready!'
-                                }
-                            </Text>
-                            <Button
-                                title={isKurdish ? 'دەست پێ بکە' : 'Start'}
-                                onPress={handleStart}
-                                gradient={[category.color, category.color]}
-                                style={{ width: 200 }}
-                            />
-                        </GlassCard>
-                    </View>
-                </SafeAreaView>
-            </GradientBackground>
+            <AnimatedScreen>
+                <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <BackButton onPress={() => navigation.goBack()} />
+                </View>
+                <MotiView
+                    from={{ opacity: 0, translateY: 20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    style={styles.centerContent}
+                >
+                    <GlassCard intensity={30} style={styles.startCard}>
+                        <View style={[styles.iconContainer, { backgroundColor: category.color + '20', marginBottom: 24 }]}>
+                            <Text style={{ fontSize: 40 }}>{category.icon}</Text>
+                        </View>
+
+                        <Text style={[styles.readyTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'ئامادەی؟' : 'Ready?'}
+                        </Text>
+                        <Text style={[styles.readySub, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish
+                                ? 'مۆبایلەکە ڕووەو تیمەکە بگرە. کاتێک ئامادە بوون دەست پێ بکە!'
+                                : 'Hold phone facing the team. Start when ready!'
+                            }
+                        </Text>
+                        <BeastButton
+                            title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
+                            onPress={handleStart}
+                            style={{ width: '100%', backgroundColor: category.color }}
+                            size="lg"
+                            icon={Play}
+                        />
+                    </GlassCard>
+                </MotiView>
+            </AnimatedScreen>
         );
     }
 
     // ========================
     // PLAYING
     // ========================
+    // Calculate danger state for timer
+    const isDanger = timeLeft <= 10;
+
     return (
-        <View style={[styles.container, { backgroundColor: category.color }]}>
-            <SafeAreaView style={styles.safeArea}>
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity onPress={() => setIsPaused(!isPaused)}>
-                        <Ionicons name={isPaused ? "play" : "pause"} size={24} color="#FFF" />
-                    </TouchableOpacity>
-                    <View style={styles.timerPill}>
-                        <Text style={styles.timerText}>{timeLeft}s</Text>
-                    </View>
-                    <View style={styles.scorePill}>
-                        <Text style={styles.scoreText}>{score}</Text>
-                    </View>
-                </View>
+        <AnimatedScreen style={{ backgroundColor: isDanger ? 'rgba(239, 68, 68, 0.2)' : undefined }}>
+            {/* Header */}
+            <View style={[styles.playHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <BeastButton
+                    variant="ghost"
+                    icon={isPaused ? Play : Pause}
+                    onPress={() => setIsPaused(!isPaused)}
+                    size="sm"
+                    style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
+                />
 
-                {/* Main Card */}
-                <Animated.View style={[styles.gameArea, { transform: [{ translateX: cardAnim }] }]}>
-                    <Text style={[styles.wordText, isKurdish && styles.kurdishFont]}>
-                        {currentWord.word[language]}
+                <GlassCard
+                    intensity={20}
+                    style={[
+                        styles.timerPill,
+                        isDanger && { borderColor: colors.brand.danger, borderWidth: 1, backgroundColor: colors.brand.danger + '20' }
+                    ]}
+                >
+                    <Text style={[
+                        styles.timerText,
+                        { color: isDanger ? colors.brand.danger : colors.text.primary }
+                    ]}>
+                        {timeLeft}s
                     </Text>
-                    {isPaused && (
-                        <View style={styles.pausedOverlay}>
-                            <Text style={[styles.pausedText, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'وەستاوە' : 'PAUSED'}
-                            </Text>
-                        </View>
-                    )}
-                </Animated.View>
+                </GlassCard>
 
-                {/* Controls */}
-                <View style={styles.controls}>
-                    <TouchableOpacity
-                        style={[styles.controlBtn, styles.passBtn]}
-                        onPress={handlePass}
+                <GlassCard intensity={20} style={styles.scorePill}>
+                    <Text style={[styles.scoreText, { color: colors.text.primary }]}>{score}</Text>
+                </GlassCard>
+            </View>
+
+            {/* Main Game Area */}
+            <View style={styles.gameArea}>
+                <AnimatePresence>
+                    {isPaused && (
+                        <MotiView
+                            from={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={styles.pausedOverlay}
+                        >
+                            <GlassCard style={{ padding: 32, alignItems: 'center' }}>
+                                <Text style={[styles.pausedText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                                    {isKurdish ? 'وەستاوە' : 'PAUSED'}
+                                </Text>
+                            </GlassCard>
+                        </MotiView>
+                    )}
+                </AnimatePresence>
+
+                <Animated.View style={{ width: '100%', transform: [{ translateX: cardAnim }], paddingHorizontal: layout.spacing.lg }}>
+                    <GlassCard
+                        intensity={40}
+                        style={[styles.wordCard, { borderColor: category.color }]}
                     >
-                        <Text style={[styles.controlText, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.categoryLabel, { color: category.color }, isKurdish && styles.kurdishFont]}>
+                            {category.title[language]}
+                        </Text>
+                        <Text style={[styles.wordText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {currentWord?.word[language]}
+                        </Text>
+                    </GlassCard>
+                </Animated.View>
+            </View>
+
+            {/* Controls */}
+            <View style={styles.controls}>
+                <TouchableOpacity
+                    style={[styles.controlBtnWrapper]}
+                    onPress={handlePass}
+                    activeOpacity={0.8}
+                    disabled={isPaused}
+                >
+                    <GlassCard style={[styles.controlBtn, isPaused && { opacity: 0.5 }]}>
+                        <SkipForward size={32} color={colors.text.tertiary} />
+                        <Text style={[styles.controlText, { color: colors.text.tertiary, marginTop: 8 }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'تێپەڕێنە' : 'PASS'}
                         </Text>
-                    </TouchableOpacity>
+                    </GlassCard>
+                </TouchableOpacity>
 
-                    <View style={styles.separator} />
+                <View style={{ width: 20 }} />
 
-                    <TouchableOpacity
-                        style={[styles.controlBtn, styles.correctBtn]}
-                        onPress={handleCorrect}
-                    >
-                        <Text style={[styles.controlText, isKurdish && styles.kurdishFont]}>
+                <TouchableOpacity
+                    style={[styles.controlBtnWrapper, { flex: 1.5 }]}
+                    onPress={handleCorrect}
+                    activeOpacity={0.8}
+                    disabled={isPaused}
+                >
+                    <View style={[
+                        styles.controlBtn,
+                        { backgroundColor: colors.brand.success, borderColor: colors.brand.success, borderWidth: 0 },
+                        isPaused && { opacity: 0.5 }
+                    ]}>
+                        <Check size={48} color="#FFF" strokeWidth={3} />
+                        <Text style={[styles.controlText, { color: '#FFF', marginTop: 8 }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'ڕاستە' : 'CORRECT'}
                         </Text>
-                    </TouchableOpacity>
-                </View>
-            </SafeAreaView>
-        </View>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    safeArea: { flex: 1 },
-
     header: {
+        paddingHorizontal: layout.spacing.md,
+        paddingTop: layout.spacing.sm,
+    },
+    centerContent: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: layout.spacing.lg,
+    },
+    iconContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 24,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: '900',
+        marginBottom: 24,
+        textAlign: 'center',
+    },
+    scoreCard: {
+        width: '100%',
+        alignItems: 'center',
+        padding: 24,
+        marginBottom: 32,
+        borderRadius: 24,
+    },
+    scoreLabel: {
+        fontSize: 16,
+        marginBottom: 8,
+        fontWeight: '600',
+    },
+    finalScore: {
+        fontSize: 64,
+        fontWeight: '900',
+        lineHeight: 70,
+    },
+
+    // Pre-game
+    startCard: {
+        padding: layout.spacing.xl,
+        borderRadius: 32,
+        alignItems: 'center',
+        width: '100%',
+    },
+    readyTitle: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        marginBottom: layout.spacing.md,
+    },
+    readySub: {
+        textAlign: 'center',
+        fontSize: 18,
+        lineHeight: 26,
+        marginBottom: layout.spacing.xl,
+    },
+
+    // Playing
+    playHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: SPACING.md,
+        padding: layout.spacing.md,
     },
     timerPill: {
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        paddingVertical: 8, paddingHorizontal: 16,
+        paddingVertical: 8,
+        paddingHorizontal: 20,
         borderRadius: 20,
+        minWidth: 80,
+        alignItems: 'center',
     },
-    timerText: { color: '#FFF', fontWeight: 'bold', fontSize: 20 },
+    timerText: {
+        fontWeight: '900',
+        fontSize: 20,
+        fontVariant: ['tabular-nums'],
+    },
     scorePill: {
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingVertical: 8, paddingHorizontal: 16,
+        paddingVertical: 8,
+        paddingHorizontal: 20,
         borderRadius: 20,
+        minWidth: 60,
+        alignItems: 'center',
     },
-    scoreText: { color: '#FFF', fontWeight: 'bold', fontSize: 20 },
-
+    scoreText: {
+        fontWeight: '900',
+        fontSize: 20,
+    },
     gameArea: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: SPACING.xl,
+    },
+    wordCard: {
+        width: '100%',
+        aspectRatio: 1, // Square card
+        maxWidth: 350,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 40,
+        padding: 24,
+        borderWidth: 2,
+    },
+    categoryLabel: {
+        position: 'absolute',
+        top: 24,
+        fontSize: 16,
+        fontWeight: 'bold',
+        letterSpacing: 2,
+        textTransform: 'uppercase',
     },
     wordText: {
-        color: '#FFF',
-        fontSize: 56,
+        fontSize: 48,
         fontWeight: '900',
         textAlign: 'center',
-        textShadowColor: 'rgba(0,0,0,0.3)',
-        textShadowOffset: { width: 0, height: 4 },
-        textShadowRadius: 10,
+        lineHeight: 56,
+    },
+    pausedOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10,
+    },
+    pausedText: {
+        fontSize: 32,
+        fontWeight: '900',
+        letterSpacing: 4,
     },
 
+    // Controls
     controls: {
         flexDirection: 'row',
+        alignItems: 'center',
+        padding: layout.spacing.lg,
+        paddingBottom: layout.spacing.xl,
+    },
+    controlBtnWrapper: {
+        flex: 1,
         height: 100,
-        backgroundColor: 'rgba(0,0,0,0.2)',
     },
     controlBtn: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    passBtn: { backgroundColor: '#f59e0b' },
-    correctBtn: { backgroundColor: '#10b981' },
-    controlText: {
-        color: '#FFF',
-        fontSize: 24,
-        fontWeight: 'bold',
-        letterSpacing: 2,
-    },
-    separator: { width: 2, backgroundColor: 'rgba(0,0,0,0.1)' },
-
-    // Pre-game
-    centerContent: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: SPACING.xl,
-    },
-    startCard: {
-        padding: SPACING.xl,
-        borderRadius: BORDER_RADIUS.xl,
-        alignItems: 'center',
+        borderRadius: 24,
         width: '100%',
+        height: '100%',
     },
-    readyTitle: { color: COLORS.text.primary, fontSize: 32, fontWeight: 'bold', marginBottom: SPACING.md },
-    readySub: { color: COLORS.text.secondary, textAlign: 'center', fontSize: 18, marginBottom: SPACING.xl },
-
-    // Paused
-    pausedOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        alignItems: 'center',
-        justifyContent: 'center',
+    controlText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        letterSpacing: 1,
     },
-    pausedText: { color: '#FFF', fontSize: 40, fontWeight: '900', letterSpacing: 5 },
-
-    // Game Over
-    gameOverContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: SPACING.xl,
-    },
-    gameOverEmoji: { fontSize: 80, marginBottom: SPACING.lg },
-    gameOverTitle: { color: COLORS.text.primary, ...FONTS.title, marginBottom: SPACING.lg },
-    scoreContainer: { alignItems: 'center', marginBottom: SPACING.lg },
-    finalScore: { fontSize: 80, fontWeight: '900', color: COLORS.accent.success },
-    scoreLabel: { color: COLORS.text.muted, fontSize: 18 },
-    gameOverButtons: { width: '100%', gap: SPACING.md, marginTop: SPACING.xl },
-    menuBtn: { padding: SPACING.md, alignSelf: 'center' },
-    menuBtnText: { color: COLORS.text.muted },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

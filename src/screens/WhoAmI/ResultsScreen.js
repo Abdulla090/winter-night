@@ -1,206 +1,153 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    ScrollView,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { GradientBackground, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { Trophy, RefreshCw, Home, Medal } from 'lucide-react-native';
+
+import { AnimatedScreen, BeastButton, GlassCard } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 
 export default function ResultsScreen({ navigation, route }) {
     const { players, scores } = route.params;
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
 
-    // Sort players by score
     const sortedPlayers = [...players].sort((a, b) => (scores[b] || 0) - (scores[a] || 0));
     const winner = sortedPlayers[0];
     const winnerScore = scores[winner] || 0;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
+    const alignStyle = isRTL ? 'right' : 'left';
 
-    // Get correct guess text based on language and count
     const getGuessText = (score) => {
-        if (isKurdish) {
-            return `${score} ${t('common.correctGuess', language)}`;
-        }
+        if (isKurdish) return `${score} ${t('common.correctGuess', language)}`;
         return `${score} correct guess${score !== 1 ? 'es' : ''}`;
     };
 
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}
-                >
-                    {/* Trophy */}
-                    <View style={styles.trophyContainer}>
-                        <View style={styles.trophyCircle}>
-                            <Ionicons name="trophy" size={60} color={COLORS.accent.warning} />
-                        </View>
+        <AnimatedScreen>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
+                {/* Trophy & Winner */}
+                <View style={styles.trophyContainer}>
+                    <View style={[styles.trophyCircle, { backgroundColor: colors.surface, borderColor: colors.brand.gold }]}>
+                        <Trophy size={60} color={colors.brand.gold} />
                     </View>
+                </View>
 
-                    {/* Winner */}
-                    <Text style={[styles.winnerLabel, isKurdish && styles.kurdishFont]}>
-                        {t('common.winnerExclaim', language)}
+                <Text style={[styles.winnerLabel, { color: colors.brand.gold }]}>
+                    {t('common.winnerExclaim', language)}
+                </Text>
+                <Text style={[styles.winnerName, { color: colors.text.primary }]}>{winner}</Text>
+                <Text style={[styles.winnerScore, { color: colors.text.muted }]}>
+                    {getGuessText(winnerScore)}
+                </Text>
+
+                {/* Scoreboard */}
+                <GlassCard style={styles.scoresCard}>
+                    <Text style={[styles.scoresTitle, { color: colors.text.secondary }]}>
+                        {t('common.finalScores', language)}
                     </Text>
-                    <Text style={[styles.winnerName, isKurdish && styles.kurdishFont]}>{winner}</Text>
-                    <Text style={[styles.winnerScore, isKurdish && styles.kurdishFont]}>
-                        {getGuessText(winnerScore)}
-                    </Text>
 
-                    {/* All Scores */}
-                    <View style={styles.scoresContainer}>
-                        <Text style={[styles.scoresTitle, isKurdish && styles.kurdishFont]}>
-                            {t('common.finalScores', language)}
-                        </Text>
-
-                        {sortedPlayers.map((player, index) => (
-                            <View key={player} style={[styles.scoreRow, { flexDirection: rowDirection }]}>
-                                <View style={styles.rankContainer}>
-                                    <Text style={[
-                                        styles.rank,
-                                        index === 0 && styles.rankFirst,
-                                    ]}>
-                                        #{index + 1}
-                                    </Text>
-                                </View>
-                                <Text style={[styles.playerName, rtlStyles, isKurdish && styles.kurdishFont]}>
-                                    {player}
-                                </Text>
-                                <View style={styles.scoreContainer}>
-                                    <Text style={styles.score}>{scores[player] || 0}</Text>
-                                </View>
+                    {sortedPlayers.map((player, index) => (
+                        <View key={player} style={[styles.scoreRow, { flexDirection: rowDirection, borderColor: colors.border }]}>
+                            <View style={styles.rankBox}>
+                                {index === 0 ? <Medal size={20} color={colors.brand.gold} /> : (
+                                    <Text style={[styles.rank, { color: colors.text.muted }]}>#{index + 1}</Text>
+                                )}
                             </View>
-                        ))}
-                    </View>
 
-                    {/* Buttons inside scroll */}
-                    <View style={styles.footer}>
-                        <Button
-                            title={t('common.playAgain', language)}
-                            onPress={() => navigation.replace('WhoAmISetup')}
-                            gradient={[COLORS.games.whoAmI, COLORS.games.whoAmI]}
-                            isKurdish={isKurdish}
-                        />
-                        <Button
-                            title={t('common.backToHome', language)}
-                            onPress={() => navigation.navigate('Home')}
-                            variant="secondary"
-                            style={styles.secondaryButton}
-                            isKurdish={isKurdish}
-                        />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </GradientBackground>
+                            <Text style={[styles.playerName, { color: colors.text.primary, textAlign: alignStyle }]}>
+                                {player}
+                            </Text>
+
+                            <View style={[styles.scoreBadge, { backgroundColor: colors.surfaceHighlight }]}>
+                                <Text style={[styles.score, { color: colors.brand.mountain }]}>{scores[player] || 0}</Text>
+                            </View>
+                        </View>
+                    ))}
+                </GlassCard>
+
+                {/* Footer Actions */}
+                <View style={styles.footer}>
+                    <BeastButton
+                        title={t('common.playAgain', language)}
+                        onPress={() => navigation.replace('WhoAmISetup')}
+                        icon={RefreshCw}
+                        variant="primary"
+                        style={{ width: '100%', marginBottom: 12 }}
+                    />
+                    <BeastButton
+                        title={t('common.backToHome', language)}
+                        onPress={() => navigation.navigate('Home')}
+                        icon={Home}
+                        variant="ghost"
+                        style={{ width: '100%' }}
+                    />
+                </View>
+
+            </ScrollView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     scrollContent: {
-        padding: SPACING.xl,
-        alignItems: 'center',
-        paddingBottom: SPACING.xxl,
         flexGrow: 1,
+        alignItems: 'center',
+        padding: layout.spacing.xl,
         paddingBottom: 100,
     },
     trophyContainer: {
-        marginTop: SPACING.xl,
-        marginBottom: SPACING.lg,
+        marginTop: layout.spacing.xl,
+        marginBottom: layout.spacing.lg,
     },
     trophyCircle: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: COLORS.background.card,
+        width: 120, height: 120, borderRadius: 60,
+        alignItems: 'center', justifyContent: 'center',
         borderWidth: 3,
-        borderColor: COLORS.accent.warning,
+        ...layout.shadows.gold,
     },
     winnerLabel: {
-        color: COLORS.accent.warning,
-        ...FONTS.medium,
-        fontSize: 18,
+        fontSize: 18, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4,
     },
     winnerName: {
-        color: COLORS.text.primary,
-        ...FONTS.title,
-        fontSize: 36,
-        marginBottom: SPACING.xs,
+        fontSize: 36, fontWeight: '800', marginBottom: 4,
     },
     winnerScore: {
-        color: COLORS.text.secondary,
-        ...FONTS.regular,
-        marginBottom: SPACING.xl,
+        fontSize: 16, marginBottom: 32,
     },
-    scoresContainer: {
+    scoresCard: {
         width: '100%',
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
+        padding: layout.spacing.lg,
+        marginBottom: layout.spacing.xl,
     },
     scoresTitle: {
-        color: COLORS.text.secondary,
-        ...FONTS.medium,
-        marginBottom: SPACING.md,
-        textAlign: 'center',
+        textAlign: 'center', fontSize: 14, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 16,
     },
     scoreRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: SPACING.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+        flexDirection: 'row', alignItems: 'center',
+        paddingVertical: 12, borderBottomWidth: 1,
     },
-    rankContainer: {
-        width: 40,
+    rankBox: {
+        width: 40, alignItems: 'center',
     },
     rank: {
-        color: COLORS.text.muted,
-        ...FONTS.bold,
-    },
-    rankFirst: {
-        color: COLORS.accent.warning,
+        fontWeight: 'bold',
     },
     playerName: {
-        flex: 1,
-        color: COLORS.text.primary,
-        ...FONTS.medium,
+        flex: 1, fontSize: 16, fontWeight: '600', paddingHorizontal: 12,
     },
-    scoreContainer: {
-        backgroundColor: COLORS.background.secondary,
-        paddingVertical: SPACING.xs,
-        paddingHorizontal: SPACING.md,
-        borderRadius: BORDER_RADIUS.sm,
+    scoreBadge: {
+        paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12,
     },
     score: {
-        color: COLORS.accent.success,
-        ...FONTS.bold,
+        fontWeight: '800', fontSize: 16,
     },
     footer: {
-        marginTop: SPACING.xl,
         width: '100%',
-        gap: SPACING.sm,
-    },
-    secondaryButton: {
-        backgroundColor: 'transparent',
-    },
-    kurdishFont: {
-        fontFamily: 'Rabar',
-    },
+    }
 });

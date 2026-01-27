@@ -40,7 +40,7 @@ const MULTIPLAYER_GAMES = [
 export default function RoomLobbyScreen({ navigation }) {
     const { currentRoom, players, gameState, onlinePlayers, isHost, leaveRoom, toggleReady, startGame, selectGame, loading } = useGameRoom();
     const { user } = useAuth();
-    const { theme } = useTheme();
+    const { colors, isRTL } = useTheme();
     const { isKurdish } = useLanguage();
     const [showGamePicker, setShowGamePicker] = useState(false);
     const [roomData, setRoomData] = useState(currentRoom);
@@ -232,10 +232,10 @@ export default function RoomLobbyScreen({ navigation }) {
         const isRoomHost = item.player_id === currentRoom?.host_id;
 
         return (
-            <View style={[styles.playerCard, { backgroundColor: theme.background.card, borderColor: theme.background.border }]}>
+            <View style={[styles.playerCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                 <View style={styles.playerInfo}>
-                    <View style={[styles.avatar, { backgroundColor: theme.colors.primary + '20' }]}>
-                        <Text style={[styles.avatarText, { color: theme.colors.primary }]}>
+                    <View style={[styles.avatar, { backgroundColor: colors.accent + '20' }]}>
+                        <Text style={[styles.avatarText, { color: colors.accent }]}>
                             {item.player?.username?.[0]?.toUpperCase() || '?'}
                         </Text>
                         <View style={[styles.onlineIndicator, { backgroundColor: isOnline ? '#22c55e' : '#6b7280' }]} />
@@ -243,11 +243,11 @@ export default function RoomLobbyScreen({ navigation }) {
 
                     <View style={styles.playerDetails}>
                         <View style={styles.nameRow}>
-                            <Text style={[styles.playerName, { color: theme.text.primary }]}>
+                            <Text style={[styles.playerName, { color: colors.text.primary }]}>
                                 {item.player?.username || 'Unknown'}
                             </Text>
                             {isMe && (
-                                <Text style={[styles.youBadge, { color: theme.colors.primary }]}>
+                                <Text style={[styles.youBadge, { color: colors.accent }]}>
                                     ({isKurdish ? 'تۆ' : 'You'})
                                 </Text>
                             )}
@@ -281,7 +281,7 @@ export default function RoomLobbyScreen({ navigation }) {
         return (
             <GradientBackground>
                 <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <ActivityIndicator size="large" color={colors.accent} />
                 </SafeAreaView>
             </GradientBackground>
         );
@@ -293,37 +293,37 @@ export default function RoomLobbyScreen({ navigation }) {
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity
-                        style={[styles.backBtn, { backgroundColor: theme.background.card }]}
+                        style={[styles.backBtn, { backgroundColor: colors.surface }]}
                         onPress={handleLeaveRoom}
                     >
-                        <Ionicons name="close" size={24} color={theme.text.primary} />
+                        <Ionicons name="close" size={24} color={colors.text.primary} />
                     </TouchableOpacity>
 
                     <View style={styles.headerCenter}>
-                        <Text style={[styles.roomName, { color: theme.text.primary }]} numberOfLines={1}>
+                        <Text style={[styles.roomName, { color: colors.text.primary }]} numberOfLines={1}>
                             {currentRoom.room_name}
                         </Text>
                     </View>
 
                     <TouchableOpacity
-                        style={[styles.shareBtn, { backgroundColor: theme.background.card }]}
+                        style={[styles.shareBtn, { backgroundColor: colors.surface }]}
                         onPress={handleShareCode}
                     >
-                        <Ionicons name="share-social" size={20} color={theme.text.primary} />
+                        <Ionicons name="share-social" size={20} color={colors.text.primary} />
                     </TouchableOpacity>
                 </View>
 
                 {/* Room Code Card */}
-                <View style={[styles.codeCard, { backgroundColor: theme.colors.primary + '15', borderColor: theme.colors.primary + '30' }]}>
-                    <Text style={[styles.codeLabel, { color: theme.colors.primary }]}>
+                <View style={[styles.codeCard, { backgroundColor: colors.accent + '15', borderColor: colors.accent + '30' }]}>
+                    <Text style={[styles.codeLabel, { color: colors.accent }]}>
                         {isKurdish ? 'کۆدی ژوور' : 'ROOM CODE'}
                     </Text>
-                    <Text style={[styles.codeValue, { color: theme.colors.primary }]}>
+                    <Text style={[styles.codeValue, { color: colors.accent }]}>
                         {currentRoom.room_code}
                     </Text>
                     <TouchableOpacity style={styles.copyBtn} onPress={handleShareCode}>
-                        <Ionicons name="copy-outline" size={18} color={theme.colors.primary} />
-                        <Text style={[styles.copyText, { color: theme.colors.primary }]}>
+                        <Ionicons name="copy-outline" size={18} color={colors.accent} />
+                        <Text style={[styles.copyText, { color: colors.accent }]}>
                             {isKurdish ? 'هاوبەشی بکە' : 'Share'}
                         </Text>
                     </TouchableOpacity>
@@ -332,7 +332,7 @@ export default function RoomLobbyScreen({ navigation }) {
                 {/* Game Selection (Host Only) */}
                 {isHost ? (
                     <TouchableOpacity
-                        style={[styles.gameSelector, { backgroundColor: theme.background.card, borderColor: selectedGame ? selectedGame.color : theme.background.border }]}
+                        style={[styles.gameSelector, { backgroundColor: colors.surface, borderColor: selectedGame ? selectedGame.color : colors.border }]}
                         onPress={() => setShowGamePicker(true)}
                     >
                         {selectedGame ? (
@@ -341,37 +341,37 @@ export default function RoomLobbyScreen({ navigation }) {
                                     <Ionicons name={selectedGame.icon} size={24} color={selectedGame.color} />
                                 </View>
                                 <View style={styles.gameInfo}>
-                                    <Text style={[styles.gameName, { color: theme.text.primary }]}>
+                                    <Text style={[styles.gameName, { color: colors.text.primary }]}>
                                         {isKurdish ? selectedGame.nameKu : selectedGame.name}
                                     </Text>
-                                    <Text style={[styles.gameHint, { color: theme.text.secondary }]}>
+                                    <Text style={[styles.gameHint, { color: colors.text.secondary }]}>
                                         {isKurdish ? 'کلیک بکە بۆ گۆڕین' : 'Tap to change'}
                                     </Text>
                                 </View>
                             </View>
                         ) : (
                             <View style={styles.noGame}>
-                                <Ionicons name="game-controller-outline" size={28} color={theme.text.secondary} />
-                                <Text style={[styles.selectGameText, { color: theme.text.secondary }]}>
+                                <Ionicons name="game-controller-outline" size={28} color={colors.text.secondary} />
+                                <Text style={[styles.selectGameText, { color: colors.text.secondary }]}>
                                     {isKurdish ? 'یاری هەڵبژێرە' : 'Select a Game'}
                                 </Text>
-                                <Ionicons name="chevron-forward" size={20} color={theme.text.muted} />
+                                <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
                             </View>
                         )}
                     </TouchableOpacity>
                 ) : (
-                    <View style={[styles.gameDisplay, { backgroundColor: theme.background.card }]}>
+                    <View style={[styles.gameDisplay, { backgroundColor: colors.surface }]}>
                         {selectedGame ? (
                             <View style={styles.selectedGame}>
                                 <View style={[styles.gameIconSmall, { backgroundColor: selectedGame.color + '20' }]}>
                                     <Ionicons name={selectedGame.icon} size={24} color={selectedGame.color} />
                                 </View>
-                                <Text style={[styles.gameName, { color: theme.text.primary }]}>
+                                <Text style={[styles.gameName, { color: colors.text.primary }]}>
                                     {isKurdish ? selectedGame.nameKu : selectedGame.name}
                                 </Text>
                             </View>
                         ) : (
-                            <Text style={[styles.waitingGame, { color: theme.text.secondary }]}>
+                            <Text style={[styles.waitingGame, { color: colors.text.secondary }]}>
                                 {isKurdish ? 'چاوەڕوانی هەڵبژاردنی یاری...' : 'Waiting for host to select game...'}
                             </Text>
                         )}
@@ -380,10 +380,10 @@ export default function RoomLobbyScreen({ navigation }) {
 
                 {/* Players Count */}
                 <View style={styles.playersHeader}>
-                    <Text style={[styles.sectionTitle, { color: theme.text.secondary }]}>
+                    <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
                         {isKurdish ? 'یاریزانەکان' : 'PLAYERS'}
                     </Text>
-                    <Text style={[styles.playerCount, { color: theme.text.secondary }]}>
+                    <Text style={[styles.playerCount, { color: colors.text.secondary }]}>
                         {players.length}/{currentRoom.max_players}
                     </Text>
                 </View>
@@ -403,7 +403,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         <TouchableOpacity
                             style={[
                                 styles.readyBtn,
-                                { backgroundColor: currentPlayer?.is_ready ? '#6b7280' : theme.colors.primary },
+                                { backgroundColor: currentPlayer?.is_ready ? '#6b7280' : colors.accent },
                             ]}
                             onPress={toggleReady}
                             disabled={loading}
@@ -456,13 +456,13 @@ export default function RoomLobbyScreen({ navigation }) {
                     onRequestClose={() => setShowGamePicker(false)}
                 >
                     <View style={styles.modalOverlay}>
-                        <View style={[styles.modalContent, { backgroundColor: theme.background.primary }]}>
+                        <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
                             <View style={styles.modalHeader}>
-                                <Text style={[styles.modalTitle, { color: theme.text.primary }]}>
+                                <Text style={[styles.modalTitle, { color: colors.text.primary }]}>
                                     {isKurdish ? 'یاری هەڵبژێرە' : 'Select Game'}
                                 </Text>
                                 <TouchableOpacity onPress={() => setShowGamePicker(false)}>
-                                    <Ionicons name="close" size={24} color={theme.text.secondary} />
+                                    <Ionicons name="close" size={24} color={colors.text.secondary} />
                                 </TouchableOpacity>
                             </View>
 
@@ -472,7 +472,7 @@ export default function RoomLobbyScreen({ navigation }) {
                                         key={game.id}
                                         style={[
                                             styles.gameOption,
-                                            { backgroundColor: theme.background.card, borderColor: theme.background.border },
+                                            { backgroundColor: colors.surface, borderColor: colors.border },
                                             roomData?.game_type === game.id && { borderColor: game.color, borderWidth: 2 },
                                             !game.available && styles.gameDisabled,
                                         ]}
@@ -482,7 +482,7 @@ export default function RoomLobbyScreen({ navigation }) {
                                             <Ionicons name={game.icon} size={32} color={game.available ? game.color : '#666'} />
                                         </View>
                                         <View style={styles.gameDetails}>
-                                            <Text style={[styles.gameTitle, { color: game.available ? theme.text.primary : '#666' }]}>
+                                            <Text style={[styles.gameTitle, { color: game.available ? colors.text.primary : '#666' }]}>
                                                 {isKurdish ? game.nameKu : game.name}
                                             </Text>
                                             {!game.available && (

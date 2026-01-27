@@ -1,343 +1,379 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     StyleSheet,
     View,
     Text,
     TouchableOpacity,
-    SafeAreaView,
     Switch,
     ScrollView,
+    Image,
+    Platform,
+    Alert
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { GradientBackground } from '../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../constants/theme';
+import { MotiPressable } from 'moti/interactions';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+    User,
+    Lock,
+    Bell,
+    Volume2,
+    Globe,
+    CircleHelp,
+    Shield,
+    LogOut,
+    ChevronRight,
+    ChevronLeft,
+    Pencil,
+    Sun,
+    Moon,
+    Palette
+} from 'lucide-react-native';
+
+import { AnimatedScreen, BackButton } from '../components';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { t } from '../localization/translations';
+import { layout } from '../theme/layout';
 
 export default function SettingsScreen({ navigation }) {
-    const [soundEnabled, setSoundEnabled] = useState(true);
-    const [vibrationEnabled, setVibrationEnabled] = useState(true);
     const { language, setLanguage, isKurdish } = useLanguage();
-    const { theme, toggleTheme, isDark } = useTheme();
+    const { colors, isRTL, toggleTheme, isDark } = useTheme();
+    const { profile, user, signOut } = useAuth();
 
-    // Get RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
+    // Get user's display name and email
+    const userName = profile?.username || user?.user_metadata?.username || (user?.email ? user.email.split('@')[0] : (isKurdish ? 'میوان' : 'Guest'));
+    const userEmail = user?.email || (isKurdish ? 'ئیمەیلێک زیادبکە' : 'Add an email');
+
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [soundEnabled, setSoundEnabled] = useState(true);
+
+    const isDarkMode = isDark;
+
+    const handleLanguageToggle = () => {
+        setLanguage(language === 'en' ? 'ku' : 'en');
     };
 
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
-
-    // Dynamic styles based on theme
-    const themeStyles = {
-        container: { backgroundColor: theme.background.main },
-        text: { color: theme.text.primary },
-        subtext: { color: theme.text.secondary },
-        card: { backgroundColor: theme.background.card },
-        iconBg: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-        border: theme.background.border
+    const handleLogout = async () => {
+        Alert.alert(
+            isKurdish ? 'چوونەدەرەوە' : 'Log Out',
+            isKurdish ? 'دڵنیایت دەتەوێت بچیتە دەرەوە؟' : 'Are you sure you want to log out?',
+            [
+                { text: isKurdish ? 'نەخێر' : 'Cancel', style: 'cancel' },
+                {
+                    text: isKurdish ? 'بەڵێ' : 'Yes',
+                    style: 'destructive',
+                    onPress: async () => {
+                        await signOut();
+                        navigation.navigate('Login');
+                    }
+                }
+            ]
+        );
     };
+
+    // ☀️ Theme-aware accent colors
+    const accentColor = isDarkMode ? '#D946EF' : colors.primary;
+    const accentBg = isDarkMode ? '#D946EF20' : 'rgba(14, 165, 233, 0.1)';
+    const switchActiveColor = isDarkMode ? '#FF00A6' : colors.primary;
+    const switchInactiveColor = isDarkMode ? '#3F3F5A' : '#E2E8F0';
+
+    // Simple row component with native-feel animation
+    const SettingRow = ({ icon: Icon, title, showToggle, value, onToggle, showChevron, subtitle, onPress }) => {
+        const handlePress = useCallback(() => {
+            if (onPress && !showToggle) {
+                if (Platform.OS !== 'web') {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+                onPress();
+            }
+        }, [onPress, showToggle]);
+
+        return (
+            <MotiPressable
+                onPress={handlePress}
+                disabled={showToggle}
+                animate={({ pressed }) => {
+                    'worklet';
+                    return {
+                        scale: pressed && !showToggle ? 0.98 : 1,
+                        opacity: pressed && !showToggle ? 0.8 : 1,
+                    };
+                }}
+                transition={{
+                    type: 'spring',
+                    damping: 20,
+                    stiffness: 400,
+                }}
+                style={styles.row}
+            >
+                <View style={[styles.iconBox, { backgroundColor: accentBg }]}>
+                    <Icon size={20} color={accentColor} />
+                </View>
+                <View style={styles.rowText}>
+                    <Text style={[styles.rowTitle, { color: colors.text.primary }]}>{title}</Text>
+                    {subtitle && <Text style={[styles.rowSubtitle, { color: colors.text.muted }]}>{subtitle}</Text>}
+                </View>
+                {showToggle && (
+                    <Switch
+                        value={value}
+                        onValueChange={onToggle}
+                        trackColor={{ false: switchInactiveColor, true: switchActiveColor }}
+                        thumbColor="#FFF"
+                    />
+                )}
+                {showChevron && (
+                    isRTL ? <ChevronLeft size={20} color={colors.text.muted} /> : <ChevronRight size={20} color={colors.text.muted} />
+                )}
+            </MotiPressable>
+        );
+    };
+
+    const cardBg = isDarkMode ? 'rgba(26, 11, 46, 0.8)' : '#FFFFFF';
+    const cardBorder = isDarkMode ? 'rgba(255,255,255,0.06)' : '#E2E8F0';
 
     return (
-        <GradientBackground>
-            <SafeAreaView style={[styles.container, themeStyles.container]}>
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity
-                        style={[styles.backButton, { backgroundColor: theme.background.card }]}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons
-                            name={isKurdish ? "arrow-forward" : "arrow-back"}
-                            size={24}
-                            color={theme.text.primary}
-                        />
-                    </TouchableOpacity>
-                    <Text style={[styles.title, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.primary }]}>
-                        {t('settings.title', language)}
+        <AnimatedScreen>
+            {/* Header */}
+            <View style={styles.header}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+                    {t('settings.title', language)}
+                </Text>
+                <View style={{ width: 44 }} />
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+
+                {/* Profile */}
+                <View style={styles.profileSection}>
+                    <View style={styles.avatarWrap}>
+                        <LinearGradient
+                            colors={isDarkMode ? ['#D946EF', '#EC4899', '#F43F5E'] : [colors.primary, '#38BDF8', '#7DD3FC']}
+                            style={styles.avatarRing}
+                        >
+                            <View style={styles.avatarInner}>
+                                <Image
+                                    source={{ uri: 'https://cdn.jsdelivr.net/gh/alohe/avatars/png/memo_25.png' }}
+                                    style={styles.avatarImg}
+                                />
+                            </View>
+                        </LinearGradient>
+                        <TouchableOpacity style={[styles.editBtn, { backgroundColor: accentColor, borderColor: colors.background }]}>
+                            <Pencil size={14} color="#FFF" />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={[styles.profileName, { color: colors.text.primary }]}>
+                        {userName}
                     </Text>
-                    <View style={styles.placeholder} />
+                    <Text style={[styles.profileEmail, { color: colors.text.muted }]}>
+                        {userEmail}
+                    </Text>
                 </View>
 
-                {/* Settings List */}
-                <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                    {/* Appearance */}
-                    <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.muted }]}>
-                            {t('common.settings', language)}
-                        </Text>
-                    </View>
+                {/* Account Section */}
+                <Text style={[styles.sectionLabel, { color: colors.text.muted }]}>
+                    {t('settings.account', language)}
+                </Text>
+                <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+                    <SettingRow icon={User} title={t('settings.personalInfo', language)} showChevron />
+                    <View style={styles.divider} />
+                    <SettingRow icon={Lock} title={t('settings.security', language)} showChevron />
+                </View>
 
-                    <View style={[styles.settingItem, { flexDirection: rowDirection, backgroundColor: theme.background.card }]}>
-                        <View style={[styles.settingInfo, { flexDirection: rowDirection }]}>
-                            <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
-                                <Ionicons name={isDark ? "moon" : "sunny"} size={22} color={theme.colors.primary} />
-                            </View>
-                            <Text style={[styles.settingText, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.primary }]}>
-                                {isDark ? "Dark Mode" : "Light Mode"}
-                            </Text>
-                        </View>
-                        <Switch
-                            value={isDark}
-                            onValueChange={toggleTheme}
-                            trackColor={{ false: '#767577', true: theme.colors.primary }}
-                            thumbColor={'#fff'}
-                        />
-                    </View>
+                {/* Preferences Section */}
+                <Text style={[styles.sectionLabel, { color: colors.text.muted }]}>
+                    {t('settings.preferences', language)}
+                </Text>
+                <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+                    <SettingRow icon={Bell} title={t('settings.notifications', language)} showToggle value={notificationsEnabled} onToggle={setNotificationsEnabled} />
+                    <View style={[styles.divider, { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#E2E8F0' }]} />
+                    <SettingRow icon={Volume2} title={t('settings.sound', language)} showToggle value={soundEnabled} onToggle={setSoundEnabled} />
+                    <View style={[styles.divider, { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#E2E8F0' }]} />
+                    <SettingRow
+                        icon={isDarkMode ? Moon : Sun}
+                        title={isKurdish ? 'دۆخی تاریک' : 'Dark Mode'}
+                        showToggle
+                        value={isDarkMode}
+                        onToggle={toggleTheme}
+                    />
+                    <View style={[styles.divider, { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#E2E8F0' }]} />
+                    <SettingRow icon={Globe} title={t('settings.language', language)} subtitle={isKurdish ? 'کوردی' : 'English'} showChevron onPress={handleLanguageToggle} />
+                </View>
 
-                    {/* Language Setting */}
-                    <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.muted }]}>
-                            {t('settings.language', language)}
-                        </Text>
-                    </View>
+                {/* More Section */}
+                <Text style={[styles.sectionLabel, { color: colors.text.muted }]}>
+                    {t('settings.more', language)}
+                </Text>
+                <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+                    <SettingRow icon={CircleHelp} title={t('settings.helpCenter', language)} showChevron />
+                    <View style={styles.divider} />
+                    <SettingRow icon={Shield} title={t('settings.privacy', language)} showChevron />
+                </View>
 
-                    <View style={styles.languageContainer}>
-                        <TouchableOpacity
-                            style={[
-                                styles.languageOption,
-                                !isKurdish && styles.languageOptionSelected,
-                                { backgroundColor: theme.background.card, borderColor: !isKurdish ? theme.colors.success : 'transparent' }
-                            ]}
-                            onPress={() => setLanguage('en')}
-                        >
-                            <View style={[styles.languageContent, { flexDirection: rowDirection }]}>
-                                <Text style={styles.languageFlag}>🇬🇧</Text>
-                                <View style={styles.languageTextContainer}>
-                                    <Text style={[
-                                        styles.languageText,
-                                        !isKurdish && { color: theme.colors.success },
-                                        { color: theme.text.primary }
-                                    ]}>
-                                        English
-                                    </Text>
-                                    <Text style={[styles.languageSubtext, { color: theme.text.muted }]}>
-                                        English (US)
-                                    </Text>
-                                </View>
-                            </View>
-                            {!isKurdish && (
-                                <Ionicons
-                                    name="checkmark-circle"
-                                    size={24}
-                                    color={theme.colors.success}
-                                />
-                            )}
-                        </TouchableOpacity>
+                {/* Logout */}
+                <MotiPressable
+                    onPress={handleLogout}
+                    animate={({ pressed }) => {
+                        'worklet';
+                        return {
+                            scale: pressed ? 0.97 : 1,
+                            opacity: pressed ? 0.8 : 1,
+                        };
+                    }}
+                    transition={{
+                        type: 'spring',
+                        damping: 20,
+                        stiffness: 400,
+                    }}
+                    style={[styles.logoutBtn, { borderColor: colors.brand.crimson }]}
+                >
+                    <LogOut size={20} color={colors.brand.crimson} />
+                    <Text style={[styles.logoutText, { color: colors.brand.crimson }]}>
+                        {t('settings.logout', language)}
+                    </Text>
+                </MotiPressable>
 
-                        <TouchableOpacity
-                            style={[
-                                styles.languageOption,
-                                isKurdish && styles.languageOptionSelected,
-                                { backgroundColor: theme.background.card, borderColor: isKurdish ? theme.colors.success : 'transparent' }
-                            ]}
-                            onPress={() => setLanguage('ku')}
-                        >
-                            <View style={[styles.languageContent, { flexDirection: rowDirection }]}>
-                                <Text style={styles.languageFlag}>🇮🇶</Text>
-                                <View style={styles.languageTextContainer}>
-                                    <Text style={[
-                                        styles.languageText,
-                                        isKurdish && { color: theme.colors.success },
-                                        styles.kurdishFont,
-                                        { color: theme.text.primary }
-                                    ]}>
-                                        کوردی سۆرانی
-                                    </Text>
-                                    <Text style={[styles.languageSubtext, styles.kurdishFont, { color: theme.text.muted }]}>
-                                        Kurdish (Sorani)
-                                    </Text>
-                                </View>
-                            </View>
-                            {isKurdish && (
-                                <Ionicons
-                                    name="checkmark-circle"
-                                    size={24}
-                                    color={theme.colors.success}
-                                />
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                {/* Version */}
+                <Text style={[styles.version, { color: colors.text.muted }]}>
+                    {t('settings.version', language)}
+                </Text>
 
-                    {/* About Section */}
-                    <View style={[styles.aboutSection, { backgroundColor: theme.background.card }]}>
-                        <View style={styles.aboutHeader}>
-                            <View style={[styles.appIconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
-                                <Ionicons name="game-controller" size={32} color={theme.colors.primary} />
-                            </View>
-                            <Text style={[styles.aboutTitle, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.primary }]}>
-                                {t('settings.about', language)}
-                            </Text>
-                        </View>
-                        <Text style={[styles.appName, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.primary }]}>
-                            {t('settings.appName', language)}
-                        </Text>
-                        <Text style={[styles.versionText, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.muted }]}>
-                            {t('settings.version', language)}
-                        </Text>
-                        <View style={[styles.divider, { backgroundColor: theme.background.border }]} />
-                        <Text style={[styles.aboutText, rtlStyles, isKurdish && styles.kurdishFont, { color: theme.text.secondary }]}>
-                            {t('settings.aboutDescription', language)}
-                        </Text>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </GradientBackground>
+            </ScrollView>
+        </AnimatedScreen>
     );
 }
 
-const SHADOWS = {
-    small: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-};
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.lg,
-        paddingVertical: SPACING.md,
+        justifyContent: 'space-between',
+        marginBottom: 16,
+        paddingHorizontal: 4,
     },
-    backButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+    headerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    scrollContent: {
+        paddingBottom: 120,
+    },
+    profileSection: {
+        alignItems: 'center',
+        marginBottom: 32,
+    },
+    avatarWrap: {
+        marginBottom: 16,
+    },
+    avatarRing: {
+        width: 108,
+        height: 108,
+        borderRadius: 54,
+        padding: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        ...SHADOWS.small
     },
-    title: {
-        ...FONTS.title,
+    avatarInner: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: '#FFD6A5',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+    },
+    avatarImg: {
+        width: 80,
+        height: 80,
+    },
+    editBtn: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#D946EF',
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 3,
+        borderColor: '#0F0518',
+    },
+    profileName: {
         fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 4,
     },
-    placeholder: {
-        width: 44,
+    profileEmail: {
+        fontSize: 14,
+        opacity: 0.7,
     },
-    content: {
-        flex: 1,
-        padding: SPACING.lg,
-    },
-    sectionHeader: {
-        marginTop: SPACING.md,
-        marginBottom: SPACING.sm,
-    },
-    sectionTitle: {
-        ...FONTS.semibold,
+    sectionLabel: {
         fontSize: 12,
-        letterSpacing: 1.5,
+        fontWeight: '700',
         textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginBottom: 12,
+        paddingHorizontal: 8,
     },
-    languageContainer: {
-        marginBottom: SPACING.lg,
+    card: {
+        borderRadius: 24,
+        borderWidth: 1,
+        marginBottom: 24,
+        overflow: 'hidden',
     },
-    languageOption: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: SPACING.lg,
-        borderRadius: BORDER_RADIUS.lg,
-        marginBottom: SPACING.sm,
-        borderWidth: 2,
-    },
-    languageOptionSelected: {
-        // Handled in render
-    },
-    languageContent: {
+    row: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: SPACING.md,
+        padding: 16,
+        minHeight: 64,
     },
-    languageFlag: {
-        fontSize: 32,
-    },
-    languageTextContainer: {
-        gap: 2,
-    },
-    languageText: {
-        ...FONTS.semibold,
-        fontSize: 17,
-    },
-    languageSubtext: {
-        fontSize: 13,
-    },
-    settingItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: SPACING.lg,
-        borderRadius: BORDER_RADIUS.lg,
-        marginBottom: SPACING.md,
-    },
-    settingInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: SPACING.md,
-    },
-    iconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: BORDER_RADIUS.md,
+    iconBox: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
         alignItems: 'center',
         justifyContent: 'center',
+        marginRight: 12,
     },
-    settingText: {
-        ...FONTS.medium,
+    rowText: {
+        flex: 1,
+    },
+    rowTitle: {
         fontSize: 16,
+        fontWeight: '600',
     },
-    aboutSection: {
-        marginTop: SPACING.xl,
-        padding: SPACING.xl,
-        borderRadius: BORDER_RADIUS.lg,
-        alignItems: 'center',
-    },
-    aboutHeader: {
-        alignItems: 'center',
-        marginBottom: SPACING.md,
-    },
-    appIconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: BORDER_RADIUS.lg,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: SPACING.sm,
-    },
-    aboutTitle: {
-        ...FONTS.bold,
-        fontSize: 18,
-    },
-    appName: {
-        ...FONTS.semibold,
-        fontSize: 16,
-        textAlign: 'center',
-    },
-    versionText: {
+    rowSubtitle: {
         fontSize: 13,
-        marginTop: 4,
+        marginTop: 2,
     },
     divider: {
         height: 1,
-        width: '80%',
-        marginVertical: SPACING.lg,
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        marginLeft: 70,
     },
-    aboutText: {
-        ...FONTS.regular,
+    logoutBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 18,
+        borderRadius: 24,
+        borderWidth: 1.5,
+        backgroundColor: 'rgba(239, 68, 68, 0.06)',
+        gap: 12,
+        marginBottom: 16,
+    },
+    logoutText: {
+        fontSize: 16,
+        fontWeight: '700',
+    },
+    version: {
         textAlign: 'center',
-        lineHeight: 22,
-    },
-    kurdishFont: {
-        fontFamily: 'Rabar',
+        fontSize: 11,
+        opacity: 0.5,
+        letterSpacing: 1,
+        marginBottom: 20,
     },
 });
-
-

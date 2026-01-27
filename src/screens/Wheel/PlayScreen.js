@@ -17,7 +17,7 @@ import Animated, {
     withDecay
 } from 'react-native-reanimated';
 import Svg, { Path, G, Text as SvgText } from 'react-native-svg';
-import { GradientBackground, Button } from '../../components';
+import { GradientBackground, Button, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -38,7 +38,7 @@ const SEGMENT_COLORS = [
 export default function PlayScreen({ navigation, route }) {
     const { options } = route.params;
     const { language, isKurdish } = useLanguage();
-    const { theme } = useTheme();
+    const { colors, isRTL } = useTheme();
 
     // Ensure we have enough options to look good (duplicate if needed for visual only? No, just keep logic simple)
     // Actually, wheel math is easier if we just map options directly.
@@ -133,13 +133,8 @@ export default function PlayScreen({ navigation, route }) {
     return (
         <GradientBackground>
             <SafeAreaView style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        style={[styles.backButton, { backgroundColor: theme.background.card }]}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
-                    </TouchableOpacity>
+                <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <BackButton onPress={() => navigation.goBack()} />
                 </View>
 
                 <View style={styles.content}>
@@ -147,7 +142,7 @@ export default function PlayScreen({ navigation, route }) {
                     <View style={styles.wheelContainer}>
                         {/* Pointer */}
                         <View style={styles.pointerContainer}>
-                            <Ionicons name="caret-down" size={50} color={theme.colors.text} style={styles.pointerShadow} />
+                            <Ionicons name="caret-down" size={50} color={colors.text.primary} style={styles.pointerShadow} />
                             <Ionicons name="caret-down" size={44} color="#FFF" style={styles.pointer} />
                         </View>
 
@@ -196,7 +191,7 @@ export default function PlayScreen({ navigation, route }) {
                         </Animated.View>
 
                         {/* Center Cap */}
-                        <View style={[styles.centerCap, { backgroundColor: theme.background.card, borderColor: theme.background.border }]}>
+                        <View style={[styles.centerCap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                             <View style={[styles.centerKnob, { backgroundColor: COLORS.games.wheel || '#ec4899' }]} />
                         </View>
                     </View>
@@ -204,10 +199,10 @@ export default function PlayScreen({ navigation, route }) {
                     {/* Result */}
                     {winner && (
                         <View style={styles.resultContainer}>
-                            <Text style={[styles.winnerLabel, { color: theme.text.secondary }, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.winnerLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                 {t('wheel.winner', language) || "Winner:"}
                             </Text>
-                            <Text style={[styles.winnerText, { color: theme.colors.primary }, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.winnerText, { color: colors.accent }, isKurdish && styles.kurdishFont]}>
                                 {winner}
                             </Text>
                         </View>

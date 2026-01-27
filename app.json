@@ -2,15 +2,15 @@
   "expo": {
     "name": "Winter Nights Party Games",
     "slug": "sample",
-    "version": "1.0.0",
+    "version": "2.4.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0F0518"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0F0518"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.totaltech.partygames"
@@ -28,9 +28,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "2219f6e9-09be-4e4f-86c5-307639db372e"
+        "projectId": "f091bbeb-87e2-4905-9e06-e8719c44b1ce"
       }
     },
-    "owner": "abdullla090"
+    "owner": "abdullla0900"
   }
 }

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Eye, EyeOff, Play } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, PlayerInput } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
-import { getAllWordCategories } from '../../constants/imposterWords';
-import { useLanguage } from '../../context/LanguageContext';
-import { t } from '../../localization/translations';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
+import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
+import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
+import { getAllWordCategories } from '../../constants/imposterWords';
 
 export default function ImposterSetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
@@ -16,15 +17,11 @@ export default function ImposterSetupScreen({ navigation }) {
     const [imposterCount, setImposterCount] = useState(1);
 
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
     const categories = getAllWordCategories(language);
     const canStart = players.length >= 3;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     const startGame = () => {
         navigation.navigate('ImposterPlay', {
@@ -34,112 +31,119 @@ export default function ImposterSetupScreen({ navigation }) {
         });
     };
 
-    // Get translated category name
     const getCategoryName = (catKey) => {
         const cat = categories.find(c => c.key === catKey);
         return cat ? cat.name : catKey;
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+        <AnimatedScreen>
             {/* Header */}
             <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name={isKurdish ? "arrow-forward" : "arrow-back"} size={24} color={COLORS.text.primary} />
-                </TouchableOpacity>
-                <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('imposter.title', language)}
                 </Text>
-                <View style={styles.placeholder} />
+                <View style={{ width: 44 }} />
             </View>
 
-            {/* Scrollable Content */}
             <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                nestedScrollEnabled={true}
-                keyboardShouldPersistTaps="handled"
-                alwaysBounceVertical={true}
-                showsVerticalScrollIndicator={true}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 120 }}
             >
-                {/* Player Input */}
-                <PlayerInput
-                    players={players}
-                    setPlayers={setPlayers}
-                    minPlayers={3}
-                    maxPlayers={12}
-                    isKurdish={isKurdish}
-                    language={language}
-                />
+                {/* Hero Icon */}
+                <MotiView
+                    from={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}
+                >
+                    <View style={[styles.heroIcon, { backgroundColor: colors.brand.crimson + '20' }]}>
+                        <EyeOff size={48} color={colors.brand.crimson} strokeWidth={1.5} />
+                    </View>
+                </MotiView>
 
-                {/* Settings Section */}
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
-                    {t('common.gameSettings', language)}
-                </Text>
+                {/* Players Section */}
+                <GlassCard style={{ marginBottom: layout.spacing.lg }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <Eye size={18} color={colors.brand.crimson} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {t('common.players', language)}
+                        </Text>
+                    </View>
+                    <PlayerInput
+                        players={players}
+                        setPlayers={setPlayers}
+                        minPlayers={3}
+                        maxPlayers={12}
+                        isKurdish={isKurdish}
+                        language={language}
+                    />
+                </GlassCard>
 
                 {/* Imposter Count */}
-                <View style={[styles.settingCard, { flexDirection: rowDirection }]}>
-                    <View style={[styles.settingHeader, { flexDirection: rowDirection }]}>
-                        <View style={styles.iconBox}>
-                            <Ionicons name="eye-off-outline" size={20} color={COLORS.accent.danger} />
-                        </View>
-                        <View style={isKurdish && { alignItems: 'flex-end' }}>
-                            <Text style={[styles.settingLabel, isKurdish && styles.kurdishFont]}>
-                                {t('imposter.imposters', language)}
-                            </Text>
-                            <Text style={[styles.settingDesc, isKurdish && styles.kurdishFont]}>
-                                {t('imposter.numberOfImposters', language)}
-                            </Text>
-                        </View>
+                <GlassCard style={{ marginBottom: layout.spacing.lg }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <EyeOff size={18} color={colors.brand.crimson} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {t('imposter.imposters', language)}
+                        </Text>
                     </View>
-
                     <View style={[styles.toggleRow, { flexDirection: rowDirection }]}>
                         {[1, 2].map(count => (
                             <TouchableOpacity
                                 key={count}
                                 style={[
                                     styles.toggleButton,
-                                    imposterCount === count && styles.toggleActive
+                                    {
+                                        backgroundColor: imposterCount === count ? colors.brand.crimson : colors.surface,
+                                        borderColor: imposterCount === count ? colors.brand.crimson : colors.border,
+                                    }
                                 ]}
                                 onPress={() => setImposterCount(count)}
                             >
                                 <Text style={[
                                     styles.toggleText,
-                                    imposterCount === count && styles.toggleTextActive
+                                    { color: imposterCount === count ? '#FFF' : colors.text.secondary }
                                 ]}>{count}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
-                </View>
+                </GlassCard>
 
                 {/* Category Selection */}
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
+                <Text style={[styles.dividerLabel, { color: colors.text.muted, textAlign: isRTL ? 'right' : 'left' }]}>
                     {t('common.category', language)}
                 </Text>
-                <View style={styles.categoryGrid}>
+                <View style={[styles.categoryGrid, { flexDirection: rowDirection, flexWrap: 'wrap' }]}>
                     {categories.map((cat) => (
                         <TouchableOpacity
                             key={cat.key}
                             style={[
-                                styles.categoryItem,
-                                selectedCategory === cat.key && styles.categorySelected
+                                styles.categoryCard,
+                                {
+                                    backgroundColor: selectedCategory === cat.key ? colors.brand.crimson + '15' : colors.surface,
+                                    borderColor: selectedCategory === cat.key ? colors.brand.crimson : 'transparent',
+                                    ...layout.shadows.sm,
+                                }
                             ]}
                             onPress={() => setSelectedCategory(cat.key)}
-                            activeOpacity={0.7}
+                            activeOpacity={0.8}
                         >
                             <View style={[
                                 styles.catIcon,
-                                selectedCategory === cat.key && styles.catIconSelected
+                                {
+                                    backgroundColor: selectedCategory === cat.key ? colors.brand.crimson : colors.surfaceHighlight,
+                                }
                             ]}>
                                 <Ionicons
                                     name={cat.icon}
                                     size={24}
-                                    color={selectedCategory === cat.key ? '#FFF' : COLORS.text.secondary}
+                                    color={selectedCategory === cat.key ? '#FFF' : colors.text.secondary}
                                 />
                             </View>
                             <Text style={[
                                 styles.categoryText,
-                                selectedCategory === cat.key && styles.categoryTextSelected,
+                                { color: selectedCategory === cat.key ? colors.brand.crimson : colors.text.primary },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat.key)}
@@ -147,115 +151,105 @@ export default function ImposterSetupScreen({ navigation }) {
                         </TouchableOpacity>
                     ))}
                 </View>
-
-                {/* Start Button */}
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title={t('common.start', language)}
-                        onPress={startGame}
-                        disabled={!canStart}
-                        gradient={[COLORS.accent.danger, COLORS.accent.danger]}
-                        icon={<Ionicons name="play" size={20} color="#FFF" />}
-                        isKurdish={isKurdish}
-                    />
-                </View>
             </ScrollView>
-        </SafeAreaView>
+
+            {/* Start Button */}
+            <MotiView
+                animate={{ translateY: canStart ? 0 : 100, opacity: canStart ? 1 : 0 }}
+                style={styles.fabContainer}
+            >
+                <BeastButton
+                    title={t('common.start', language)}
+                    onPress={startGame}
+                    variant="danger"
+                    size="lg"
+                    icon={Play}
+                    style={{ width: '100%' }}
+                />
+            </MotiView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: COLORS.background.dark,
-    },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.lg,
-        paddingVertical: SPACING.md,
-        zIndex: 1,
-        backgroundColor: COLORS.background.dark,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
-        minHeight: 60,
+        justifyContent: 'space-between',
+        marginBottom: layout.spacing.md,
     },
-    backButton: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: '700',
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 24 },
-    placeholder: { width: 44 },
-
-    scrollView: {
-        flex: 1,
+    heroIcon: {
+        width: 96,
+        height: 96,
+        borderRadius: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    scrollContent: {
-        padding: SPACING.lg,
-        paddingBottom: 250,
-        flexGrow: 1,
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: 12,
     },
-
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
-        marginBottom: SPACING.md, marginTop: SPACING.lg,
-        textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
+        fontSize: 12,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
-
-    settingCard: {
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: SPACING.sm,
+    toggleRow: {
+        gap: 12,
+        justifyContent: 'center',
     },
-    settingHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-    iconBox: {
-        width: 40, height: 40, borderRadius: 8,
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        alignItems: 'center', justifyContent: 'center',
-    },
-    settingLabel: { color: COLORS.text.primary, ...FONTS.medium },
-    settingDesc: { color: COLORS.text.muted, fontSize: 12 },
-
-    toggleRow: { flexDirection: 'row', backgroundColor: COLORS.background.secondary, borderRadius: 8, padding: 2 },
     toggleButton: {
-        paddingVertical: 6, paddingHorizontal: 16, borderRadius: 6,
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: layout.radius.lg,
+        borderWidth: 1,
     },
-    toggleActive: { backgroundColor: COLORS.accent.danger },
-    toggleText: { color: COLORS.text.secondary, fontWeight: '600' },
-    toggleTextActive: { color: '#FFF' },
-
-    categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-    categoryItem: {
+    toggleText: {
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    dividerLabel: {
+        marginTop: layout.spacing.md,
+        marginBottom: layout.spacing.md,
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+    },
+    categoryGrid: {
+        gap: 12,
+    },
+    categoryCard: {
         width: '47%',
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.lg,
+        padding: 16,
+        borderRadius: layout.radius.lg,
         alignItems: 'center',
-        borderWidth: 1, borderColor: 'transparent',
-    },
-    categorySelected: {
-        borderColor: COLORS.accent.danger,
-        backgroundColor: 'rgba(239, 68, 68, 0.05)',
+        justifyContent: 'center',
+        borderWidth: 1,
+        marginBottom: 8,
     },
     catIcon: {
-        width: 48, height: 48, borderRadius: 24,
-        backgroundColor: COLORS.background.secondary,
-        alignItems: 'center', justifyContent: 'center',
-        marginBottom: SPACING.sm,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 8,
     },
-    catIconSelected: { backgroundColor: COLORS.accent.danger },
-    categoryText: { color: COLORS.text.secondary, ...FONTS.medium },
-    categoryTextSelected: { color: COLORS.text.primary },
-
-    buttonContainer: {
-        marginTop: SPACING.xl,
-        marginBottom: 100,
+    categoryText: {
+        fontWeight: '600',
+        fontSize: 14,
+        textAlign: 'center',
+    },
+    fabContainer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 20,
+        right: 20,
     },
     kurdishFont: {
         fontFamily: 'Rabar',

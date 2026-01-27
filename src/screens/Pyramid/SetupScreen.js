@@ -1,51 +1,31 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Zap, Play, Users } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ChevronLeft, ChevronRight, Zap, Play, Users } from 'lucide-react-native';
 
-import { GradientBackground } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { AnimatedScreen, BeastButton, GlassCard, PremiumInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
-
-// Custom Glass Input for Premium Feel
-const GlassInput = ({ label, value, onChangeText, placeholder, isKurdish }) => (
-    <View style={{ marginBottom: SPACING.lg }}>
-        <Text style={[styles.inputLabel, isKurdish && styles.kurdishFont]}>{label}</Text>
-        <BlurView intensity={20} tint="dark" style={styles.glassInputContainer}>
-            <TextInput
-                style={[
-                    styles.glassInput,
-                    isKurdish && styles.kurdishFont,
-                    isKurdish ? { textAlign: 'right' } : { textAlign: 'left' }
-                ]}
-                value={value}
-                onChangeText={onChangeText}
-                placeholder={placeholder}
-                placeholderTextColor="rgba(255,255,255,0.4)"
-            />
-        </BlurView>
-    </View>
-);
+import { layout } from '../../theme/layout';
 
 export default function PyramidSetupScreen({ navigation }) {
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
+
+    // Initial State
     const [teamA, setTeamA] = useState('');
     const [teamB, setTeamB] = useState('');
 
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
-
     const canStart = teamA.trim().length > 0 && teamB.trim().length > 0;
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     const startGame = () => {
         if (canStart) {
             navigation.navigate('PyramidGameBoard', {
                 teams: {
-                    A: { name: teamA, score: 0 },
-                    B: { name: teamB, score: 0 }
+                    A: { name: teamA.trim(), score: 0 },
+                    B: { name: teamB.trim(), score: 0 }
                 },
                 currentTeam: 'A'
             });
@@ -53,163 +33,121 @@ export default function PyramidSetupScreen({ navigation }) {
     };
 
     return (
-        <GradientBackground>
-            {/* Sticky Glass Header */}
-            <BlurView intensity={80} tint="dark" style={styles.stickyHeader}>
-                <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-                    <View style={[styles.headerContent, { flexDirection: rowDirection }]}>
-                        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-                            {isKurdish ? <ChevronRight color="#FFF" size={24} /> : <ChevronLeft color="#FFF" size={24} />}
-                        </TouchableOpacity>
-                        <Text style={[styles.headerTitle, isKurdish && styles.kurdishFont]}>
-                            {t('pyramid.title', language)}
-                        </Text>
-                        <View style={{ width: 40 }} />
-                    </View>
-                </SafeAreaView>
-            </BlurView>
+        <AnimatedScreen>
+            {/* Header */}
+            <View style={[styles.header, { flexDirection: rowDirection }]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+                    {t('pyramid.title', language)}
+                </Text>
+                <View style={{ width: 44 }} />
+            </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Hero Icon */}
+            <ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+                {/* Hero Section */}
                 <MotiView
-                    from={{ scale: 0.5, opacity: 0 }}
+                    from={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    style={styles.heroContainer}
+                    style={styles.hero}
                 >
-                    <View style={styles.heroCircle}>
-                        <Zap size={64} color={COLORS.games.pyramid[0]} fill={COLORS.games.pyramid[0]} />
+                    <View style={[styles.heroIcon, { backgroundColor: colors.brand.gold + '20', borderColor: colors.brand.gold }]}>
+                        <Zap size={64} color={colors.brand.gold} fill={colors.brand.gold} />
                     </View>
-                    <Text style={[styles.heroDesc, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.heroDesc, { color: colors.text.secondary }]}>
                         {t('pyramid.description', language)}
                     </Text>
                 </MotiView>
 
-                {/* Team Inputs (Glass) */}
-                <MotiView
-                    from={{ translateY: 50, opacity: 0 }}
-                    animate={{ translateY: 0, opacity: 1 }}
-                    delay={200}
-                    style={styles.formSection}
-                >
+                {/* Teams Inputs */}
+                <GlassCard style={styles.card}>
                     <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
-                        <Users size={20} color={COLORS.games.pyramid[1]} style={{ marginRight: 8 }} />
-                        <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
+                        <Users size={18} color={colors.brand.gold} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.muted }]}>
                             {t('common.teams', language) || "TEAMS"}
                         </Text>
                     </View>
 
-                    <GlassInput
+                    <PremiumInput
                         label={`${t('pyramid.teamName', language)} A`}
                         placeholder={t('pyramid.enterTeamName', language)}
                         value={teamA}
                         onChangeText={setTeamA}
-                        isKurdish={isKurdish}
                     />
 
-                    <GlassInput
+                    <PremiumInput
                         label={`${t('pyramid.teamName', language)} B`}
                         placeholder={t('pyramid.enterTeamName', language)}
                         value={teamB}
                         onChangeText={setTeamB}
-                        isKurdish={isKurdish}
                     />
-                </MotiView>
-
-                <View style={{ height: 100 }} />
+                </GlassCard>
             </ScrollView>
 
-            {/* Floating Start Button */}
+            {/* Start Button */}
             <MotiView
-                from={{ translateY: 100 }}
-                animate={{ translateY: canStart ? 0 : 100 }}
-                style={styles.fabContainer}
+                animate={{ translateY: canStart ? 0 : 100, opacity: canStart ? 1 : 0 }}
+                style={styles.fab}
             >
-                <TouchableOpacity onPress={startGame} activeOpacity={0.9}>
-                    <LinearGradient
-                        colors={COLORS.games.pyramid}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={[styles.startButton, { flexDirection: rowDirection }]}
-                    >
-                        <Text style={[styles.startText, isKurdish && styles.kurdishFont]}>
-                            {t('pyramid.startGame', language)}
-                        </Text>
-                        <Play size={20} color="#FFF" fill="#FFF" style={isKurdish ? { marginRight: 8 } : { marginLeft: 8 }} />
-                    </LinearGradient>
-                </TouchableOpacity>
+                <BeastButton
+                    title={t('pyramid.startGame', language)}
+                    onPress={startGame}
+                    variant="primary"
+                    size="lg"
+                    icon={Play}
+                    style={{ width: '100%' }}
+                />
             </MotiView>
-        </GradientBackground>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    stickyHeader: {
-        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
-        borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)',
-        paddingBottom: SPACING.md,
+    header: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        marginBottom: layout.spacing.lg,
     },
-    headerContent: {
-        flex: 1, alignItems: 'center', paddingHorizontal: SPACING.lg,
-        justifyContent: 'space-between', height: 50,
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
     },
-    headerTitle: { color: '#FFF', fontSize: 18, fontWeight: 'bold', letterSpacing: 0.5 },
-    backBtn: {
-        width: 40, height: 40, alignItems: 'center', justifyContent: 'center',
-        borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.1)',
+    hero: {
+        alignItems: 'center',
+        marginBottom: layout.spacing.xl,
     },
-    scrollContent: { paddingTop: 120, paddingHorizontal: SPACING.lg },
-
-    heroContainer: { alignItems: 'center', marginBottom: SPACING.xl },
-    heroCircle: {
-        width: 100, height: 100, borderRadius: 50,
-        backgroundColor: 'rgba(234, 179, 8, 0.1)', // Gold tint
-        alignItems: 'center', justifyContent: 'center',
-        marginBottom: SPACING.lg,
-        borderWidth: 1, borderColor: COLORS.games.pyramid[0],
-        shadowColor: COLORS.games.pyramid[0],
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.5, shadowRadius: 20,
+    heroIcon: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        marginBottom: layout.spacing.md,
+        ...layout.shadows.gold,
     },
     heroDesc: {
-        color: 'rgba(255,255,255,0.7)', textAlign: 'center',
-        maxWidth: '80%', lineHeight: 22, fontSize: 14,
+        textAlign: 'center',
+        maxWidth: '80%',
+        fontSize: 14,
+        lineHeight: 20,
     },
-
-    formSection: {
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
-        borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    card: {
+        padding: layout.spacing.lg,
     },
-    sectionHeader: { alignItems: 'center', marginBottom: SPACING.lg },
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: layout.spacing.lg,
+    },
     sectionTitle: {
-        color: COLORS.games.pyramid[0], fontSize: 14, fontWeight: '700',
-        textTransform: 'uppercase', letterSpacing: 1,
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 1,
     },
-
-    // Glass Input Styles
-    inputLabel: {
-        color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: '600',
-        marginBottom: 8, marginLeft: 4, letterSpacing: 0.5,
-    },
-    glassInputContainer: {
-        borderRadius: BORDER_RADIUS.lg, overflow: 'hidden',
-        borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-    },
-    glassInput: {
-        padding: SPACING.md, color: '#FFF', fontSize: 16,
-        fontWeight: '500', minHeight: 50,
-    },
-
-    fabContainer: { position: 'absolute', bottom: 40, left: SPACING.lg, right: SPACING.lg },
-    startButton: {
-        height: 56, borderRadius: 30,
-        alignItems: 'center', justifyContent: 'center',
-        shadowColor: COLORS.games.pyramid[0],
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.4, shadowRadius: 16, elevation: 8,
-    },
-    startText: { color: '#FFF', fontSize: 18, fontWeight: 'bold', letterSpacing: 1 },
-    kurdishFont: { fontFamily: 'Rabar' },
+    fab: {
+        position: 'absolute',
+        bottom: 30,
+        left: 20,
+        right: 20,
+    }
 });

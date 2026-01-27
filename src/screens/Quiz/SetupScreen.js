@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HelpCircle, Play, Trophy, Check } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, PlayerInput } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
-import { getAllQuizCategories } from '../../constants/quizData';
+
+import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
+import { getAllQuizCategories } from '../../constants/quizData';
 
 export default function QuizSetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
@@ -14,17 +17,12 @@ export default function QuizSetupScreen({ navigation }) {
     const [questionCount, setQuestionCount] = useState(10);
 
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
     const categories = getAllQuizCategories();
     const canStart = players.length >= 1;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
 
-    // Get category name in Kurdish
     const getCategoryName = (key, name) => {
         if (!isKurdish) return name;
         const names = {
@@ -47,32 +45,51 @@ export default function QuizSetupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+        <AnimatedScreen>
+            {/* Header */}
             <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name={isKurdish ? "arrow-forward" : "arrow-back"} size={24} color={COLORS.text.primary} />
-                </TouchableOpacity>
-                <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('quiz.title', language)}
                 </Text>
-                <View style={styles.placeholder} />
+                <View style={{ width: 44 }} />
             </View>
 
             <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 120 }}
             >
-                <PlayerInput
-                    players={players}
-                    setPlayers={setPlayers}
-                    minPlayers={1}
-                    maxPlayers={10}
-                    isKurdish={isKurdish}
-                    language={language}
-                />
+                {/* Hero Icon */}
+                <MotiView
+                    from={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}
+                >
+                    <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
+                        <HelpCircle size={48} color={colors.accent} strokeWidth={1.5} />
+                    </View>
+                </MotiView>
 
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
+                {/* Players Section */}
+                <GlassCard style={{ marginBottom: layout.spacing.lg }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <Trophy size={18} color={colors.accent} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {t('common.players', language)}
+                        </Text>
+                    </View>
+                    <PlayerInput
+                        players={players}
+                        setPlayers={setPlayers}
+                        minPlayers={1}
+                        maxPlayers={10}
+                        isKurdish={isKurdish}
+                        language={language}
+                    />
+                </GlassCard>
+
+                {/* Category Selection */}
+                <Text style={[styles.dividerLabel, { color: colors.text.muted, textAlign: isRTL ? 'right' : 'left' }]}>
                     {t('common.chooseCategory', language)}
                 </Text>
                 <View style={[styles.categoryGrid, { flexDirection: rowDirection, flexWrap: 'wrap' }]}>
@@ -81,177 +98,191 @@ export default function QuizSetupScreen({ navigation }) {
                             key={cat.key}
                             style={[
                                 styles.categoryCard,
-                                selectedCategory === cat.key && styles.categorySelected
+                                {
+                                    backgroundColor: selectedCategory === cat.key ? colors.accent + '15' : colors.surface,
+                                    borderColor: selectedCategory === cat.key ? colors.accent : 'transparent',
+                                    ...layout.shadows.sm,
+                                }
                             ]}
                             onPress={() => setSelectedCategory(cat.key)}
+                            activeOpacity={0.8}
                         >
                             <View style={[
-                                styles.categoryIcon,
-                                selectedCategory === cat.key && styles.categoryIconSelected
+                                styles.catIcon,
+                                {
+                                    backgroundColor: selectedCategory === cat.key ? colors.accent : colors.surfaceHighlight,
+                                }
                             ]}>
                                 <Ionicons
                                     name={cat.icon}
                                     size={24}
-                                    color={selectedCategory === cat.key ? '#FFF' : COLORS.text.secondary}
+                                    color={selectedCategory === cat.key ? '#FFF' : colors.text.secondary}
                                 />
                             </View>
                             <Text style={[
-                                styles.categoryName,
-                                selectedCategory === cat.key && styles.categoryNameSelected,
+                                styles.categoryText,
+                                { color: selectedCategory === cat.key ? colors.accent : colors.text.primary },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat.key, cat.name)}
                             </Text>
-                            <Text style={[styles.categoryCount, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.categoryCount, { color: colors.text.muted }]}>
                                 {cat.count} {isKurdish ? 'پرسیار' : 'questions'}
                             </Text>
+                            {selectedCategory === cat.key && (
+                                <View style={[styles.checkBadge, { backgroundColor: colors.accent }]}>
+                                    <Check size={10} color="#FFF" strokeWidth={3} />
+                                </View>
+                            )}
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
-                    {isKurdish ? 'ژمارەی پرسیارەکان' : 'Number of Questions'}
-                </Text>
-                <View style={[styles.questionOptions, { flexDirection: rowDirection }]}>
-                    {[5, 10, 15, 20].map((count) => (
-                        <TouchableOpacity
-                            key={count}
-                            style={[
-                                styles.questionOption,
-                                questionCount === count && styles.questionOptionSelected
-                            ]}
-                            onPress={() => setQuestionCount(count)}
-                        >
-                            <Text style={[
-                                styles.questionOptionText,
-                                questionCount === count && styles.questionOptionTextSelected
-                            ]}>
-                                {count}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-
-                <View style={styles.rulesCard}>
-                    <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Ionicons name="trophy" size={20} color={COLORS.accent.success} />
-                        <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
-                            {t('common.howToPlay', language)}
+                {/* Question Count */}
+                <GlassCard style={{ marginTop: layout.spacing.xl }}>
+                    <View style={[styles.sectionHeader, { flexDirection: rowDirection }]}>
+                        <HelpCircle size={18} color={colors.accent} style={{ marginHorizontal: 8 }} />
+                        <Text style={[styles.sectionTitle, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'ژمارەی پرسیارەکان' : 'Number of Questions'}
                         </Text>
                     </View>
-                    <Text style={[styles.rulesText, rtlStyles, isKurdish && styles.kurdishFont]}>
-                        {isKurdish
-                            ? '• وەڵامی پرسیارە چەند هەڵبژاردنییەکان بدەوە\n• وەڵامی دروستی خێراتر خاڵی زیاتر دەبات\n• یاریزانی خاوەنی زۆرترین خاڵ دەباتەوە!\n• هەموو پرسیارەکان ١٠٠٪ ئۆفلاین کاردەکەن'
-                            : "• Answer multiple choice questions\n• Fastest correct answer wins more points\n• The player with most points wins!\n• All questions work 100% offline"
-                        }
-                    </Text>
-                </View>
-
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title={isKurdish ? 'پرسیارەکان دەست پێ بکە' : 'Start Quiz'}
-                        onPress={startGame}
-                        disabled={!canStart}
-                        gradient={[COLORS.accent.success, COLORS.accent.success]}
-                        icon={<Ionicons name="play" size={20} color="#FFF" />}
-                        isKurdish={isKurdish}
-                    />
-                </View>
+                    <View style={[styles.countRow, { flexDirection: rowDirection }]}>
+                        {[5, 10, 15, 20].map((count) => (
+                            <TouchableOpacity
+                                key={count}
+                                style={[
+                                    styles.countPill,
+                                    {
+                                        backgroundColor: questionCount === count ? colors.accent : colors.surface,
+                                        borderColor: questionCount === count ? colors.accent : colors.border,
+                                    }
+                                ]}
+                                onPress={() => setQuestionCount(count)}
+                            >
+                                <Text style={[
+                                    styles.countText,
+                                    { color: questionCount === count ? '#FFF' : colors.text.secondary }
+                                ]}>{count}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </GlassCard>
             </ScrollView>
-        </SafeAreaView>
+
+            {/* Start Button */}
+            <MotiView
+                animate={{ translateY: canStart ? 0 : 100, opacity: canStart ? 1 : 0 }}
+                style={styles.fabContainer}
+            >
+                <BeastButton
+                    title={isKurdish ? 'پرسیارەکان دەست پێ بکە' : 'Start Quiz'}
+                    onPress={startGame}
+                    variant="primary"
+                    size="lg"
+                    icon={Play}
+                    style={{ width: '100%' }}
+                />
+            </MotiView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    screen: { flex: 1, backgroundColor: COLORS.background.dark },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.lg,
-        paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.dark,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
-        minHeight: 60,
+        justifyContent: 'space-between',
+        marginBottom: layout.spacing.md,
     },
-    backButton: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: '700',
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 24 },
-    placeholder: { width: 44 },
-    scrollView: { flex: 1 },
-    scrollContent: { padding: SPACING.lg, paddingBottom: 120 },
+    heroIcon: {
+        width: 96,
+        height: 96,
+        borderRadius: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: 12,
+    },
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
-        marginBottom: SPACING.md, marginTop: SPACING.lg,
-        textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
+        fontSize: 12,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+    },
+    dividerLabel: {
+        marginTop: layout.spacing.md,
+        marginBottom: layout.spacing.md,
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
     },
     categoryGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         gap: 12,
     },
     categoryCard: {
         width: '47%',
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
+        padding: 16,
+        borderRadius: layout.radius.lg,
         alignItems: 'center',
-        borderWidth: 2,
-        borderColor: 'transparent',
+        justifyContent: 'center',
+        borderWidth: 1,
+        marginBottom: 8,
+        position: 'relative',
     },
-    categorySelected: {
-        borderColor: COLORS.accent.success,
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    },
-    categoryIcon: {
-        width: 48, height: 48, borderRadius: 24,
-        backgroundColor: COLORS.background.secondary,
-        alignItems: 'center', justifyContent: 'center',
+    catIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
         marginBottom: 8,
     },
-    categoryIconSelected: {
-        backgroundColor: COLORS.accent.success,
+    categoryText: {
+        fontWeight: '600',
+        fontSize: 14,
+        textAlign: 'center',
     },
-    categoryName: { color: COLORS.text.primary, ...FONTS.medium, textAlign: 'center' },
-    categoryNameSelected: { color: COLORS.accent.success },
-    categoryCount: { color: COLORS.text.muted, fontSize: 12, marginTop: 4 },
-    questionOptions: {
-        flexDirection: 'row',
+    categoryCount: {
+        fontSize: 12,
+        marginTop: 4,
+    },
+    checkBadge: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    countRow: {
         gap: 12,
+        justifyContent: 'center',
     },
-    questionOption: {
-        flex: 1,
-        backgroundColor: COLORS.background.card,
-        paddingVertical: SPACING.md,
-        borderRadius: BORDER_RADIUS.md,
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: 'transparent',
+    countPill: {
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: layout.radius.lg,
+        borderWidth: 1,
     },
-    questionOptionSelected: {
-        borderColor: COLORS.accent.success,
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    countText: {
+        fontWeight: '700',
+        fontSize: 16,
     },
-    questionOptionText: { color: COLORS.text.secondary, ...FONTS.bold },
-    questionOptionTextSelected: { color: COLORS.accent.success },
-    rulesCard: {
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        marginTop: SPACING.lg,
+    fabContainer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 20,
+        right: 20,
     },
-    rulesHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: SPACING.sm,
-        marginBottom: SPACING.sm,
+    kurdishFont: {
+        fontFamily: 'Rabar',
     },
-    rulesTitle: { color: COLORS.accent.success, ...FONTS.medium },
-    rulesText: { color: COLORS.text.muted, lineHeight: 22 },
-    buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
-    kurdishFont: { fontFamily: 'Rabar' },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useCallback } from 'react';
 import {
     StyleSheet,
     View,
@@ -6,497 +6,936 @@ import {
     TouchableOpacity,
     StatusBar,
     FlatList,
+    useWindowDimensions,
     Platform,
-    Dimensions
+    Image,
+    ScrollView,
+    TextInput
 } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView, MotiText } from 'moti';
+import { MotiView, MotiPressable } from 'moti';
+import * as Haptics from 'expo-haptics';
 import {
-    Settings,
-    Globe,
+    Bell,
+    Search,
+    SlidersHorizontal, // Filter icon
+    Play,
     Zap,
     Trophy,
     Users,
-    Play,
-    Plus,
     Gamepad2,
     Sparkles,
     Flame,
     HelpCircle,
     EyeOff,
-    Search,
     Mic,
     Link,
     Repeat,
-    HeartHandshake
+    HeartHandshake,
+    Aperture,
+    Brush,
+    ArrowRightLeft,
+    Hand,
+    MessageSquare,
+    Globe,
+    User,
+    Compass,
+    Grid,
+    Home,
+    LogIn
 } from 'lucide-react-native';
 
-import { GradientBackground } from '../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS, GLASS } from '../constants/theme';
+import { AnimatedScreen } from '../components/AnimatedScreen';
+import { GlassCard } from '../components/GlassCard';
+import { BottomNavBar } from '../components/BottomNavBar';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { layout } from '../theme/layout';
+import { textShadows } from '../lib/utils';
 import { t } from '../localization/translations';
+import gameImages from '../assets/gameImages';
 
-const { width } = Dimensions.get('window');
+// --- COMPONENTS ---
 
-// --- MODERN COMPONENTS ---
-
-const GlassCard = ({ children, style, intensity = 20, tint = 'dark' }) => (
-    <View style={[styles.glassCardWrapper, style]}>
-        <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFill} />
-        <View style={styles.glassContent}>{children}</View>
-    </View>
-);
-
-const SectionHeader = ({ title, icon: Icon, color }) => (
-    <View style={styles.sectionHeader}>
-        {Icon && <Icon size={18} color={color || '#FFF'} style={{ marginRight: 8, opacity: 0.8 }} />}
-        <Text style={styles.sectionTitle}>{title}</Text>
-    </View>
-);
-
-const GameCardModern = ({ item, index, onPress, isKurdish, featured }) => {
-    const { theme } = useTheme();
-
-    // Map internal IDs to Lucide Icons
-    const getIcon = (iconName) => {
-        switch (iconName) {
-            case 'triangle': return Zap;
-            case 'help-circle': return HelpCircle;
-            case 'eye-off': return EyeOff;
-            case 'search': return Search;
-            case 'flame': return Flame;
-            case 'mic': return Mic;
-            case 'link': return Link;
-            case 'repeat': return Repeat;
-            case 'heart-handshake': return HeartHandshake;
-            default: return Gamepad2;
-        }
-    };
-
-    const Icon = getIcon(item.icon);
-    const gradientColors = Array.isArray(item.gradient) ? item.gradient : [item.gradient, item.gradient];
+const HeaderSection = ({ isKurdish, colors, isDark, onToggleLanguage, onNotificationPress, userName, isAuthenticated, onLoginPress }) => {
+    // ☀️ Theme-aware colors
+    const iconBtnBg = isDark ? '#1C0F2E' : '#FFFFFF';
+    const iconBtnBorder = isDark ? 'rgba(255,255,255,0.08)' : '#E2E8F0';
+    const bellColor = isDark ? '#FFF' : colors.primary;
+    const avatarBorder = isDark ? '#EAC545' : colors.primary;
+    const notificationBadge = isDark ? '#D900FF' : colors.primary;
+    const loginBtnBg = isDark ? '#7C3AED' : colors.primary;
 
     return (
-        <MotiView
-            from={{ opacity: 0, scale: 0.9, translateY: 20 }}
-            animate={{ opacity: 1, scale: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400, delay: index * 100 }}
-            style={[
-                featured ? styles.featuredCardContainer : styles.gridCardContainer,
-                isKurdish && { direction: 'rtl' }
-            ]}
-        >
-            <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={onPress}
-                style={{ flex: 1 }}
-            >
-                <LinearGradient
-                    colors={featured ? [...gradientColors] : [theme.background.card, theme.background.card]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={[
-                        styles.cardGradient,
-                        featured && { padding: SPACING.lg },
-                        !featured && { borderWidth: 1, borderColor: theme.background.border }
-                    ]}
+        <View style={styles.headerContainer}>
+            {/* Left Side: Notification & Language */}
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+                <TouchableOpacity
+                    style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
+                    onPress={onNotificationPress}
                 >
-                    {/* Featured Background Decor */}
-                    {featured && (
-                        <View style={styles.featuredDecor}>
-                            <Icon size={180} color="#FFF" style={{ opacity: 0.1, transform: [{ rotate: '-15deg' }] }} />
-                        </View>
-                    )}
+                    <Bell size={22} color={bellColor} />
+                    <View style={[styles.notificationBadge, { backgroundColor: notificationBadge }]} />
+                </TouchableOpacity>
 
-                    {!featured && (
-                        <View style={[styles.miniIcon, { backgroundColor: gradientColors[0] + '20' }]}>
-                            <Icon size={24} color={gradientColors[0]} />
-                        </View>
-                    )}
+                <TouchableOpacity
+                    style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
+                    onPress={onToggleLanguage}
+                >
+                    <Globe size={22} color={colors.text.secondary} />
+                </TouchableOpacity>
+            </View>
 
-                    <View style={styles.cardContent}>
-                        {featured && (
-                            <View style={[styles.featuredBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                                <Sparkles size={12} color="#FFF" style={{ marginRight: 4 }} />
-                                <Text style={styles.featuredBadgeText}>{isKurdish ? 'نوێترین' : 'FEATURED'}</Text>
-                            </View>
-                        )}
-
-                        <Text
-                            style={[
-                                featured ? styles.featuredTitle : styles.cardTitle,
-                                isKurdish && styles.kurdishFont,
-                                !featured && { color: theme.text.primary }
-                            ]}
-                            numberOfLines={1}
-                        >
-                            {item.title}
+            {/* Profile Info or Login Button */}
+            {isAuthenticated ? (
+                <View style={styles.profileContainer}>
+                    <View style={{ alignItems: isKurdish ? 'flex-start' : 'flex-end', marginHorizontal: 12 }}>
+                        <Text style={[styles.welcomeSubtitle, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'بەخێربێیتەوە' : 'Welcome back'}
                         </Text>
-
-                        <Text
-                            style={[
-                                featured ? styles.featuredDesc : styles.cardDesc,
-                                isKurdish && styles.kurdishFont,
-                                !featured && { color: theme.text.secondary }
-                            ]}
-                            numberOfLines={2}
-                        >
-                            {item.description}
+                        <Text style={[styles.welcomeTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {userName || (isKurdish ? 'میوان' : 'Guest')}
                         </Text>
-
-                        {/* Footer / Meta */}
-                        <View style={[styles.cardFooter, { marginTop: 'auto', paddingTop: SPACING.sm }]}>
-                            <View style={styles.playerTag}>
-                                <Users size={12} color={featured ? 'rgba(255,255,255,0.7)' : theme.text.muted} />
-                                <Text style={[
-                                    styles.playerText,
-                                    { color: featured ? 'rgba(255,255,255,0.9)' : theme.text.secondary }
-                                ]}>
-                                    {item.players}
-                                </Text>
-                            </View>
-                            {featured && (
-                                <View style={styles.playBtn}>
-                                    <Play size={16} color={gradientColors[0]} fill={gradientColors[0]} />
-                                </View>
-                            )}
-                        </View>
                     </View>
-                </LinearGradient>
-            </TouchableOpacity>
-        </MotiView>
+                    <View style={[styles.avatarCircle, { borderColor: avatarBorder }]}>
+                        <Image
+                            source={{ uri: 'https://i.pravatar.cc/150?img=11' }}
+                            style={styles.avatarImage}
+                        />
+                    </View>
+                </View>
+            ) : (
+                <TouchableOpacity
+                    style={[styles.loginButton, { backgroundColor: loginBtnBg }]}
+                    onPress={onLoginPress}
+                    activeOpacity={0.8}
+                >
+                    <LogIn size={18} color="#FFF" />
+                    <Text style={[styles.loginButtonText, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'چوونەژوورەوە' : 'Login'}
+                    </Text>
+                </TouchableOpacity>
+            )}
+        </View>
     );
 };
 
-export default function HomeScreen({ navigation }) {
-    const { language, isKurdish, toggleLanguage } = useLanguage();
-    const { theme } = useTheme();
-
-    const GAMES = [
-        { id: 'pyramid', title: t('pyramid.title', language), description: t('pyramid.description', language), players: '4+', icon: 'triangle', gradient: COLORS.games.pyramid, screen: 'PyramidSetup', featured: true },
-        { id: 'whoami', title: t('games.whoAmI.title', language), description: t('games.whoAmI.description', language), players: '2-10', icon: 'help-circle', gradient: COLORS.games.whoAmI, screen: 'WhoAmISetup' },
-        { id: 'imposter', title: t('games.imposter.title', language), description: t('games.imposter.description', language), players: '3-10', icon: 'eye-off', gradient: COLORS.games.imposter, screen: 'ImposterSetup' },
-        { id: 'spyfall', title: t('games.spyfall.title', language), description: t('games.spyfall.description', language), players: '3-12', icon: 'search', gradient: COLORS.games.spyfall, screen: 'SpyfallSetup' },
-        { id: 'truthordare', title: t('games.truthOrDare.title', language), description: t('games.truthOrDare.description', language), players: '2-20', icon: 'flame', gradient: COLORS.games.truthOrDare, screen: 'TruthOrDareSetup' },
-        { id: 'neverhaveiever', title: t('games.neverHaveIEver.title', language), description: t('games.neverHaveIEver.description', language), players: '2-20', icon: 'hand-left', gradient: COLORS.games.neverHaveIEver, screen: 'NeverHaveIEverSetup' },
-        { id: 'wouldyourather', title: t('games.wouldYouRather.title', language), description: t('games.wouldYouRather.description', language), players: '2-20', icon: 'swap-horizontal', gradient: COLORS.games.wouldYouRather, screen: 'WouldYouRatherSetup' },
-        { id: 'quiz', title: t('games.quiz.title', language), description: t('games.quiz.description', language), players: '1-10', icon: 'trophy', gradient: COLORS.games.quiz, screen: 'QuizSetup' },
-        { id: 'drawguess', title: t('games.drawGuess.title', language), description: t('games.drawGuess.description', language), players: '2-10', icon: 'brush', gradient: COLORS.games.drawGuess, screen: 'DrawGuessSetup' },
-        { id: 'wheel', title: t('wheel.title', language), description: t('wheel.description', language) || "Spin the wheel", players: '2+', icon: 'aperture', gradient: COLORS.games.wheel, screen: 'WheelSetup' },
-        { id: 'emojidecoder', title: isKurdish ? 'دەربازی ئیمۆجی' : 'Emoji Decoder', description: isKurdish ? 'ئیمۆجییەکان چی دەڵێن؟' : 'Guess the word from emojis!', players: '1-10', icon: 'help-circle', gradient: ['#ec4899', '#8b5cf6'], screen: 'EmojiDecoderSetup' },
-        { id: 'forbiddenword', title: isKurdish ? 'وشەی قەدەغە' : 'Forbidden Word', description: isKurdish ? 'باسی بکە بەبێ وشە قەدەغەکان!' : 'Describe without forbidden words!', players: '4+', icon: 'eye-off', gradient: ['#ef4444', '#dc2626'], screen: 'ForbiddenWordSetup' },
-        { id: 'lyricschallenge', title: isKurdish ? 'تەحەدای گۆرانی' : 'Lyrics Challenge', description: isKurdish ? 'ئەمە گۆرانی کێیە؟' : 'Guess the song from lyrics!', players: '1-10', icon: 'mic', gradient: ['#ec4899', '#db2777'], screen: 'LyricsChallengeSetup' },
-        { id: 'wordchain', title: isKurdish ? 'زنجیرەی وشە' : 'Word Chain', description: isKurdish ? 'وشەی داهاتوو بڵێ، خێرا!' : 'Say the next word, fast!', players: '2+', icon: 'link', gradient: ['#f59e0b', '#d97706'], screen: 'WordChainPlay' },
-        { id: 'reversecharades', title: isKurdish ? 'پێچەوانەی چارێد' : 'Reverse Charades', description: isKurdish ? 'گروپەکە نواندن دەکات!' : 'Team acts, one guesses!', players: '4+', icon: 'repeat', gradient: ['#8b5cf6', '#7c3aed'], screen: 'ReverseCharadesSetup' },
-        { id: 'partnersincrime', title: isKurdish ? 'هاوبەشی تاوان' : 'Partners in Crime', description: isKurdish ? 'چەند یەکتری دەناسن؟' : 'How well do you know them?', players: '2', icon: 'heart-handshake', gradient: ['#db2777', '#be185d'], screen: 'PartnersInCrimeSetup' },
-    ];
-
-    const featuredGame = GAMES.find(g => g.featured);
-    const otherGames = GAMES.filter(g => !g.featured);
-
-    const renderHeader = () => (
-        <View style={{ paddingHorizontal: SPACING.lg, paddingBottom: SPACING.xl }}>
-            {/* Greeting */}
-            <MotiView
-                from={{ opacity: 0, translateY: -20 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: 'timing', duration: 500 }}
-                style={styles.greetingContainer}
-            >
-                <View>
-                    <Text style={[styles.greetingSub, { color: theme.text.muted }]}>
-                        {isKurdish ? 'بەخێربێیت بۆ' : 'WELCOME TO'}
-                    </Text>
-                    <Text style={[styles.greetingTitle, { color: theme.text.primary }]}>
-                        Winter Nights
-                    </Text>
-                </View>
-                <TouchableOpacity
-                    onPress={toggleLanguage}
-                    style={[styles.langBtn, { borderColor: theme.background.border }]}
-                >
-                    <Text style={[styles.langText, { color: theme.colors.primary }]}>
-                        {isKurdish ? 'EN' : 'KU'}
-                    </Text>
-                </TouchableOpacity>
-            </MotiView>
-
-            {/* Online Play Card (Glass) */}
-            <GlassCard style={styles.onlineCard} intensity={30} tint="dark">
-                <View style={[styles.onlineHeader, isKurdish && { flexDirection: 'row-reverse' }]}>
-                    <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary }]}>
-                        <Globe size={24} color="#FFF" />
-                    </View>
-                    <View style={{ flex: 1, paddingHorizontal: 12 }}>
-                        <Text style={[styles.onlineTitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'یاری ئۆنلاین' : 'Online Multiplayer'}
-                        </Text>
-                        <Text style={[styles.onlineDesc, { color: 'rgba(255,255,255,0.6)' }, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'یاری بکە لەگەڵ هاوڕێکانت' : 'Play with friends remotely'}
-                        </Text>
-                    </View>
-                    <TouchableOpacity
-                        style={styles.joinBtn}
-                        onPress={() => navigation.navigate('JoinRoom')}
-                    >
-                        <Text style={styles.joinBtnText}>{isKurdish ? 'جۆین' : 'JOIN'}</Text>
-                    </TouchableOpacity>
-                </View>
-            </GlassCard>
-
-            {/* Featured Section */}
-            <SectionHeader title={isKurdish ? 'نوێترین یاری' : 'FEATURED GAME'} icon={Sparkles} color={theme.colors.warning} />
-            {featuredGame && (
-                <GameCardModern
-                    item={featuredGame}
-                    featured={true}
-                    onPress={() => navigation.navigate(featuredGame.screen)}
-                    index={0}
-                    isKurdish={isKurdish}
-                />
-            )}
-
-            <View style={{ height: SPACING.lg }} />
-
-            {/* All Games Label */}
-            <SectionHeader title={isKurdish ? 'هەموو یارییەکان' : 'ALL GAMES'} icon={Gamepad2} color={theme.colors.info} />
-        </View>
-    );
+const SearchBar = ({ isKurdish, colors, isDark, onSearchPress, onFilterPress }) => {
+    // ☀️ Theme-aware search bar
+    const searchBg = isDark ? '#170B26' : '#FFFFFF';
+    const searchBorder = isDark ? '#2D1B4E' : '#E2E8F0';
+    const filterColor = isDark ? '#D900FF' : colors.primary;
+    const searchIconColor = isDark ? '#6B5A8A' : colors.text.muted;
 
     return (
-        <GradientBackground>
-            <StatusBar barStyle="light-content" />
+        <View style={styles.searchContainer}>
+            <TouchableOpacity
+                style={[styles.searchBar, { backgroundColor: searchBg, borderColor: searchBorder }]}
+                onPress={onSearchPress}
+                activeOpacity={0.8}
+            >
+                {/* Filter Icon (Left) */}
+                <TouchableOpacity style={styles.filterBtn} onPress={onFilterPress}>
+                    <SlidersHorizontal size={20} color={filterColor} />
+                </TouchableOpacity>
 
-            {/* Sticky Glass Header */}
-            <BlurView intensity={80} tint="dark" style={[styles.stickyHeader, { borderBottomColor: theme.background.border }]}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1 }}>
-                    <Sparkles size={20} color={theme.colors.primary} />
-                    <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                        <Settings size={24} color={theme.text.primary} />
-                    </TouchableOpacity>
-                </View>
-            </BlurView>
+                <Text style={[
+                    styles.searchPlaceholder,
+                    { color: colors.text.muted },
+                    isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }
+                ]}>
+                    {isKurdish ? 'گەڕان بۆ یاری...' : 'Search for games...'}
+                </Text>
 
-            <FlatList
-                data={otherGames}
-                renderItem={({ item, index }) => (
-                    <GameCardModern
-                        item={item}
-                        index={index + 1} // Offset by 1 for animation delay
-                        onPress={() => navigation.navigate(item.screen)}
-                        isKurdish={isKurdish}
+                {/* Search Icon (Right) */}
+                <Search size={20} color={searchIconColor} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const ImmersiveFeaturedCard = ({ item, onPress, isKurdish, colors, isDark }) => {
+    // ☀️ Theme-appropriate overlay - lighter gradient for light mode
+    const cardGradient = isDark
+        ? (item.featured
+            ? ['transparent', 'rgba(15, 5, 24, 0.4)', 'rgba(15, 5, 24, 0.95)']
+            : ['transparent', 'rgba(0,0,0,0.8)'])
+        : ['transparent', 'rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.95)'];
+
+    // ☀️ Theme-aware button gradient
+    const playBtnGradient = isDark
+        ? ['#D900FF', '#B026FF']
+        : ['#0EA5E9', '#0284C7']; // Sky Blue gradient
+
+    const badgeBg = isDark ? '#D900FF' : colors.primary;
+
+    // Light mode text should be dark for contrast on light overlay
+    const titleColor = isDark ? '#FFF' : colors.text.primary;
+    const subtitleColor = isDark ? 'rgba(255,255,255,0.7)' : colors.text.secondary;
+
+    return (
+        <View
+            style={[styles.featuredCardContainer, !isDark && { borderColor: '#E2E8F0' }]}
+        >
+            <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={{ flex: 1 }}>
+
+                {/* Game Image Background */}
+                {item.image ? (
+                    <Image
+                        source={item.image}
+                        style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <LinearGradient
+                        colors={item.gradient || [colors.surface, colors.surfaceHighlight]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={StyleSheet.absoluteFill}
                     />
                 )}
-                keyExtractor={item => item.id}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: SPACING.lg }}
-                ListHeaderComponent={renderHeader}
-                contentContainerStyle={{ paddingTop: 80, paddingBottom: 100 }}
-                showsVerticalScrollIndicator={false}
-            />
-        </GradientBackground>
+
+                {/* Overlay for text readability */}
+                <LinearGradient
+                    colors={cardGradient}
+                    style={StyleSheet.absoluteFill}
+                />
+
+                {/* Content */}
+                <View style={styles.featuredContent}>
+                    {/* Tags */}
+                    <View style={styles.tagRow}>
+                        <View style={[styles.newBadge, { backgroundColor: badgeBg }]}>
+                            <Text style={[styles.newBadgeText, isKurdish && styles.kurdishFont]}>
+                                {isKurdish ? 'تازە' : 'NEW'}
+                            </Text>
+                        </View>
+                        <GlassCard intensity={20} style={styles.playerBadge}>
+                            <Text style={[styles.playerBadgeText, isKurdish && styles.kurdishFont]}>
+                                {item.players} {isKurdish ? 'یاریزان' : 'Players'}
+                            </Text>
+                        </GlassCard>
+                    </View>
+
+                    <View style={{ flex: 1 }} />
+
+                    {/* Title & Desc */}
+                    <Text style={[styles.featuredTitle, { color: titleColor }, isKurdish && styles.kurdishFont]}>
+                        {item.title}
+                    </Text>
+                    <Text style={[styles.featuredSubtitle, { color: subtitleColor }, isKurdish && styles.kurdishFont]} numberOfLines={1}>
+                        {item.description}
+                    </Text>
+
+                    {/* Play Button */}
+                    <TouchableOpacity style={styles.playButton} onPress={onPress}>
+                        <LinearGradient
+                            colors={playBtnGradient}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.playButtonGradient}
+                        >
+                            <Play size={18} color="#FFF" fill="#FFF" />
+                            <Text style={[styles.playButtonText, isKurdish && styles.kurdishFont]}>
+                                {isKurdish ? 'ئێستا یاری بکە' : 'Play Now'}
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Decorative Icon Background */}
+                <View style={styles.bgIconContainer}>
+                    {item.Icon && <item.Icon size={200} color="rgba(255,255,255,0.06)" />}
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
+    // ☀️ Theme-aware colors
+    const cardBg = isDark ? '#1A0B2E' : '#FFFFFF';
+    const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
+    const playBtnBg = isDark ? 'rgba(217, 0, 255, 0.15)' : 'rgba(14, 165, 233, 0.1)';
+    const playIconColor = isDark ? '#D900FF' : colors.primary;
+    const metaColor = isDark ? '#6B5A8A' : colors.text.muted;
+
+    return (
+        <View
+            style={[styles.continueCardContainer, { backgroundColor: cardBg, borderColor: cardBorder }]}
+        >
+            <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={styles.continueRow}>
+
+                {/* 1. Play Button on Left */}
+                <View style={[styles.miniPlayBtn, { backgroundColor: playBtnBg }]}>
+                    <Play size={16} color={playIconColor} fill={playIconColor} />
+                </View>
+
+                {/* 2. Text Content (Middle) */}
+                <View style={[styles.continueInfo, isKurdish && { alignItems: 'flex-end' }]}>
+                    <Text style={[styles.continueTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]} numberOfLines={1}>
+                        {item.title}
+                    </Text>
+                    <View style={styles.continueMetaRow}>
+                        <Users size={12} color={metaColor} />
+                        <Text style={[styles.continueMetaText, { color: metaColor }, isKurdish && styles.kurdishFont]}>
+                            {item.players} {isKurdish ? 'یاریزان' : 'players'} • 2 {isKurdish ? 'کاتژمێر' : 'hrs'}
+                        </Text>
+                    </View>
+                </View>
+
+                {/* 3. Game Image/Gradient Square (Right) */}
+                {item.image ? (
+                    <Image
+                        source={item.image}
+                        style={styles.continueImage}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <LinearGradient
+                        colors={item.gradient || [colors.surface, colors.surfaceHighlight]}
+                        style={styles.continueImage}
+                    >
+                        {item.Icon && <item.Icon size={28} color="#FFF" opacity={0.8} />}
+                    </LinearGradient>
+                )}
+
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const CategoryCard = ({ item, onPress, isKurdish, colors, isDark }) => {
+    // ☀️ Theme-aware category card
+    const cardBg = isDark ? '#1E1231' : '#FFFFFF';
+    const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
+
+    return (
+        <TouchableOpacity
+            style={[styles.categoryCard, { backgroundColor: cardBg, borderColor: cardBorder }]}
+            onPress={onPress}
+        >
+            <View style={[styles.categoryIconCircle, { backgroundColor: item.color + '20' }]}>
+                {item.Icon && <item.Icon size={26} color={item.color} />}
+            </View>
+            <Text style={[styles.categoryText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                {item.name}
+            </Text>
+        </TouchableOpacity>
+    );
+};
+
+// --- MAIN SCREEN ---
+
+export default function HomeScreen({ navigation }) {
+    const { language, isKurdish, toggleLanguage } = useLanguage();
+    const { colors, isRTL, isDark } = useTheme();
+    const { profile, user } = useAuth();
+    const { width } = useWindowDimensions();
+
+    // Check if user is authenticated
+    const isLoggedIn = !!user;
+
+    // Get user's display name from profile or email
+    const userName = profile?.username || user?.user_metadata?.username || (user?.email ? user.email.split('@')[0] : null);
+
+    const getIcon = (name) => {
+        const icons = {
+            triangle: Zap, 'help-circle': HelpCircle, 'eye-off': EyeOff, search: Search,
+            flame: Flame, mic: Mic, link: Link, trophy: Trophy, aperture: Aperture,
+            brush: Brush, 'swap-horizontal': ArrowRightLeft, 'hand-left': Hand,
+            'message-square': MessageSquare, 'heart-handshake': HeartHandshake,
+            default: Gamepad2
+        };
+        return icons[name] || icons.default;
+    };
+
+    const GAMES = [
+        // Featured
+        { id: 'truthordare', title: t('games.truthOrDare.title', language), description: t('games.truthOrDare.description', language), players: '2-20', icon: 'flame', gradient: ['#F97316', '#C2410C'], screen: 'TruthOrDareSetup', featured: true, image: gameImages.truthordare },
+        { id: 'pyramid', title: t('pyramid.title', language), description: t('pyramid.description', language), players: '4+', icon: 'triangle', gradient: ['#F59E0B', '#B45309'], screen: 'PyramidSetup', featured: true, image: gameImages.pyramid },
+
+        // Continue Playing / List - Reordered
+        { id: 'quiz', title: t('games.quiz.title', language), description: t('games.quiz.description', language), players: '1-10', icon: 'trophy', gradient: ['#EAB308', '#A16207'], screen: 'QuizSetup', image: gameImages.quiz },
+        { id: 'spyfall', title: t('games.spyfall.title', language), description: t('games.spyfall.description', language), players: '3-12', icon: 'search', gradient: ['#10B981', '#064E3B'], screen: 'SpyfallSetup', image: gameImages.spyfall },
+        { id: 'whoami', title: t('games.whoAmI.title', language), description: t('games.whoAmI.description', language), players: '2-10', icon: 'help-circle', gradient: ['#3B82F6', '#1E3A8A'], screen: 'WhoAmISetup', image: gameImages.whoami },
+
+        // Categories (Mapped from remaining games)
+        { id: 'imposter', title: t('games.imposter.title', language), icon: 'eye-off', color: '#EF4444', screen: 'ImposterSetup', image: gameImages.imposter },
+        { id: 'drawguess', title: t('games.drawGuess.title', language), icon: 'brush', color: '#06B6D4', screen: 'DrawGuessSetup', image: gameImages.drawguess },
+        { id: 'wheel', title: t('wheel.title', language), icon: 'aperture', color: '#EC4899', screen: 'WheelSetup', image: gameImages.wheel },
+        { id: 'partners', title: t('partnersInCrime.title', language), icon: 'heart-handshake', color: '#F43F5E', screen: 'PartnersInCrimeSetup', image: gameImages.partners },
+    ];
+
+    const featuredGames = GAMES.filter(g => g.featured).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
+    const continueGames = GAMES.slice(2, 5).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
+    const categoryGames = GAMES.slice(5).map(g => ({
+        id: g.id, name: g.title, Icon: getIcon(g.icon), color: g.color || colors.primary, screen: g.screen, image: g.image
+    }));
+
+    return (
+        <AnimatedScreen>
+
+            <View style={{ flex: 1 }}>
+
+                {/* 1. Header */}
+                <HeaderSection
+                    isKurdish={isKurdish}
+                    colors={colors}
+                    isDark={isDark}
+                    onToggleLanguage={toggleLanguage}
+                    userName={userName}
+                    isAuthenticated={isLoggedIn}
+                    onLoginPress={() => navigation.navigate('Login')}
+                    onNotificationPress={() => {
+                        alert(isKurdish ? 'هیچ ئاگادارکردنەوەیەک نییە' : 'No notifications');
+                    }}
+                />
+
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 120 }}
+                    style={{ flex: 1 }}
+                    nestedScrollEnabled={true}
+                    overScrollMode="never"
+                    bounces={false}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {/* 2. Search Bar - Navigates to Library */}
+                    <SearchBar
+                        isKurdish={isKurdish}
+                        colors={colors}
+                        isDark={isDark}
+                        onSearchPress={() => navigation.navigate('AllGames')}
+                        onFilterPress={() => navigation.navigate('AllGames')}
+                    />
+
+                    {/* PLAY ONLINE - Prominent Card */}
+                    <TouchableOpacity
+                        style={[styles.playOnlineCard, !isDark && { borderColor: colors.border, borderWidth: 1 }]}
+                        activeOpacity={0.9}
+                        onPress={() => navigation.navigate('CreateRoom')}
+                    >
+                        <LinearGradient
+                            colors={isDark
+                                ? ['#7C3AED', '#4F46E5', '#2563EB']
+                                : ['#0EA5E9', '#38BDF8', '#7DD3FC']
+                            }
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={StyleSheet.absoluteFill}
+                        />
+                        <View style={styles.playOnlineContent}>
+                            <View style={styles.playOnlineLeft}>
+                                <View style={styles.playOnlineIconWrap}>
+                                    <Globe size={28} color="#FFF" />
+                                </View>
+                                <View>
+                                    <Text style={[styles.playOnlineTitle, isKurdish && styles.kurdishFont]}>
+                                        {isKurdish ? 'یاری ئۆنلاین' : 'Play Online'}
+                                    </Text>
+                                    <Text style={[styles.playOnlineSubtitle, isKurdish && styles.kurdishFont]}>
+                                        {isKurdish ? 'لەگەڵ هاوڕێکانت یاری بکە' : 'Play with friends anywhere'}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={styles.playOnlineArrow}>
+                                <Sparkles size={24} color="#FFF" />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+
+                    {/* 3. Featured Section */}
+                    <View style={styles.sectionHeader}>
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'یارییە باوەکان' : 'Featured Games'}
+                        </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('AllGames')}>
+                            <Text style={[styles.seeAllText, { color: colors.primary }, isKurdish && styles.kurdishFont]}>
+                                {isKurdish ? 'هەمووی ببینە' : 'See All'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{
+                            paddingHorizontal: 4,
+                            flexDirection: isKurdish ? 'row-reverse' : 'row',
+                        }}
+                        decelerationRate="fast"
+                        snapToInterval={306}
+                        snapToAlignment="start"
+                        nestedScrollEnabled={true}
+                        disableIntervalMomentum={true}
+                        directionalLockEnabled={true}
+                        style={{ marginBottom: 28 }}
+                    >
+                        {featuredGames.map((item, index) => (
+                            <ImmersiveFeaturedCard
+                                key={item.id}
+                                item={item}
+                                index={index}
+                                isKurdish={isKurdish}
+                                colors={colors}
+                                isDark={isDark}
+                                onPress={() => navigation.navigate(item.screen)}
+                            />
+                        ))}
+                    </ScrollView>
+
+                    {/* 4. Continue Playing */}
+                    <View style={styles.sectionHeader}>
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'بەردەوامی یاریەکان' : 'Continue Playing'}
+                        </Text>
+                    </View>
+
+                    <View style={{ gap: 14, marginBottom: 28 }}>
+                        {continueGames.map((item) => (
+                            <ContinuePlayingCard
+                                key={item.id}
+                                item={item}
+                                isKurdish={isKurdish}
+                                colors={colors}
+                                isDark={isDark}
+                                onPress={() => navigation.navigate(item.screen)}
+                            />
+                        ))}
+                    </View>
+
+                    {/* 5. Categories */}
+                    <View style={styles.sectionHeader}>
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'هاوپۆلەکان' : 'Categories'}
+                        </Text>
+                    </View>
+
+                    <View style={styles.categoriesGrid}>
+                        {categoryGames.map((item) => (
+                            <CategoryCard
+                                key={item.id}
+                                item={item}
+                                isKurdish={isKurdish}
+                                colors={colors}
+                                isDark={isDark}
+                                onPress={() => navigation.navigate(item.screen)}
+                            />
+                        ))}
+                    </View>
+
+                </ScrollView>
+            </View>
+
+        </AnimatedScreen>
     );
 }
 
+// --- STYLES (Pixel Perfect) ---
 const styles = StyleSheet.create({
-    stickyHeader: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 80, // Covers status bar + simple nav
-        zIndex: 100,
-        paddingTop: 40,
-        paddingHorizontal: SPACING.lg,
-        borderBottomWidth: 1,
-    },
-    greetingContainer: {
+    headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: SPACING.xl,
-        marginTop: SPACING.sm,
+        marginTop: Platform.OS === 'android' ? 16 : 0,
+        marginBottom: 20,
+        paddingHorizontal: 4,
     },
-    greetingSub: {
-        fontSize: 12,
-        fontWeight: '600',
-        letterSpacing: 1.5,
-        marginBottom: 4,
-    },
-    greetingTitle: {
-        fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
-        fontWeight: '800',
-        fontSize: 32,
-        letterSpacing: -1,
-    },
-    langBtn: {
-        borderWidth: 1,
-        borderRadius: 20,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-    },
-    langText: {
-        fontWeight: '700',
-        fontSize: 12,
-    },
-
-    // Cards
-    gridCardContainer: {
-        width: (width - SPACING.lg * 2 - SPACING.md) / 2,
-        height: 180,
-        marginBottom: SPACING.md,
-    },
-    featuredCardContainer: {
-        width: '100%',
-        height: 220,
-        marginBottom: SPACING.md,
-    },
-    cardGradient: {
-        flex: 1,
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.md,
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-    },
-    featuredDecor: {
-        position: 'absolute',
-        right: -40,
-        bottom: -40,
-    },
-    miniIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: SPACING.md,
-    },
-    cardContent: {
-        flex: 1,
-    },
-    cardTitle: {
-        fontSize: 17,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    cardDesc: {
-        fontSize: 12,
-        lineHeight: 16,
-    },
-    featuredTitle: {
-        fontSize: 28,
-        fontWeight: '800',
-        color: '#FFF',
-        marginBottom: 8,
-    },
-    featuredDesc: {
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
-        maxWidth: '70%',
-    },
-
-    // Featured Badge
-    featuredBadge: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 8,
-    },
-    featuredBadgeText: {
-        color: '#FFF',
-        fontSize: 10,
-        fontWeight: '700',
-        letterSpacing: 1,
-    },
-
-    // Footer
-    cardFooter: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    playerTag: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    playerText: {
-        fontSize: 12,
-        fontWeight: '600',
-    },
-    playBtn: {
-        backgroundColor: '#FFF',
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
-    // Online Card
-    onlineCard: {
-        marginBottom: SPACING.xl,
-        borderRadius: BORDER_RADIUS.xl,
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
-    },
-    glassCardWrapper: {
-        overflow: 'hidden',
-    },
-    glassContent: {
-        padding: SPACING.md,
-    },
-    onlineHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    iconCircle: {
+    iconButton: {
         width: 48,
         height: 48,
         borderRadius: 24,
+        backgroundColor: '#1C0F2E', // Dark Purple
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
     },
-    onlineTitle: {
-        color: '#FFF',
-        fontWeight: 'bold',
-        fontSize: 16,
+    notificationBadge: {
+        position: 'absolute',
+        top: 14,
+        right: 14,
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: '#D900FF', // Neon Pink
+        borderWidth: 1.5,
+        borderColor: '#1C0F2E',
     },
-    onlineDesc: {
-        fontSize: 12,
-    },
-    joinBtn: {
-        backgroundColor: 'rgba(255,255,255,0.9)',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-    },
-    joinBtnText: {
-        fontWeight: 'bold',
-        fontSize: 12,
-        color: '#000',
-    },
-
-    // Section Header
-    sectionHeader: {
+    profileContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: SPACING.md,
-        opacity: 0.9,
+    },
+    welcomeSubtitle: {
+        color: '#6B5A8A', // Muted Purple
+        fontSize: 12,
+        fontWeight: '500',
+        marginBottom: 2,
+    },
+    welcomeTitle: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.5,
+    },
+    avatarCircle: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        borderWidth: 2,
+        borderColor: '#EAC545', // Gold accent from image (or Pink #D900FF)
+        overflow: 'hidden',
+    },
+    avatarImage: {
+        width: '100%',
+        height: '100%',
+    },
+    loginButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 25,
+        gap: 8,
+    },
+    loginButtonText: {
+        color: '#FFF',
+        fontSize: 14,
+        fontWeight: '700',
+    },
+
+    // Search Bar
+    searchContainer: {
+        marginBottom: 24,
+        paddingHorizontal: 4,
+    },
+    searchBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#170B26', // Very Dark Purple
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        height: 56,
+        borderWidth: 1,
+        borderColor: '#2D1B4E', // Subtle border
+    },
+    filterBtn: {
+        marginRight: 12,
+        padding: 4,
+    },
+    searchInput: {
+        flex: 1,
+        color: '#FFF',
+        fontSize: 15,
+        height: '100%',
+        fontWeight: '500',
+    },
+    searchPlaceholder: {
+        flex: 1,
+        color: '#6B5A8A',
+        fontSize: 15,
+        fontWeight: '500',
+    },
+
+    // Section Headers
+    sectionHeader: {
+        flexDirection: 'row-reverse', // RTL alignment visual trick
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+        paddingHorizontal: 4,
     },
     sectionTitle: {
         color: '#FFF',
+        fontSize: 20,
+        fontWeight: '800', // Extra bold like image
+        letterSpacing: 0.5,
+    },
+    seeAllText: {
+        color: '#D900FF', // Neon Pink
         fontSize: 13,
         fontWeight: '700',
-        letterSpacing: 1.5,
-        textTransform: 'uppercase',
+    },
+
+    // Featured Card
+    featuredCardContainer: {
+        width: 290,
+        height: 360,
+        borderRadius: 36,
+        marginRight: 16,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: '#1E1231',
+    },
+    featuredContent: {
+        flex: 1,
+        padding: 24,
+        zIndex: 2,
+    },
+    tagRow: {
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    newBadge: {
+        backgroundColor: '#D900FF',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+    },
+    newBadgeText: {
+        color: '#FFF',
+        fontSize: 11,
+        fontWeight: '800',
+    },
+    playerBadge: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 100,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        borderWidth: 0,
+    },
+    playerBadgeText: {
+        color: '#FFF',
+        fontSize: 11,
+        fontWeight: '600',
+    },
+    featuredTitle: {
+        color: '#FFF',
+        fontSize: 32,
+        fontWeight: '800',
+        textAlign: 'right',
+        marginBottom: 8,
+        lineHeight: 40,
+        // Text shadow for readability on image backgrounds
+        ...textShadows.strong,
+    },
+    featuredSubtitle: {
+        color: '#FFF',
+        fontSize: 14,
+        textAlign: 'right',
+        marginBottom: 24,
+        fontWeight: '500',
+        // Text shadow for readability
+        ...textShadows.medium,
+    },
+    playButton: {
+        width: '100%',
+        borderRadius: 20,
+        overflow: 'hidden',
+        shadowColor: '#D900FF',
+        shadowOpacity: 0.6,
+        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 8 },
+        elevation: 12,
+    },
+    playButtonGradient: {
+        paddingVertical: 16,
+        flexDirection: 'row-reverse',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+    },
+    playButtonText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: '800',
+        letterSpacing: 0.5,
+    },
+    bgIconContainer: {
+        position: 'absolute',
+        top: 20,
+        left: -40,
+        opacity: 1,
+        zIndex: 1,
+    },
+
+    // Continue Card Pixel Perfect
+    continueCardContainer: {
+        width: '100%',
+        height: 80, // Taller
+        borderRadius: 24,
+        backgroundColor: '#1A0B2E', // Dark Purple Surface
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.05)',
+        overflow: 'hidden',
+    },
+    continueRow: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    miniPlayBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(217, 0, 255, 0.15)', // Subtle pink bg
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 12,
+    },
+    continueInfo: {
+        flex: 1,
+        paddingHorizontal: 16,
+        justifyContent: 'center',
+    },
+    continueTitle: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: '700',
+        marginBottom: 6,
+    },
+    continueMetaRow: {
+        flexDirection: 'row-reverse',
+        alignItems: 'center',
+        gap: 6,
+    },
+    continueMetaText: {
+        color: '#6B5A8A',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    continueImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 18, // Squircle
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    // Categories
+    categoriesGrid: {
+        flexDirection: 'row-reverse',
+        flexWrap: 'wrap',
+        gap: 16,
+    },
+    categoryCard: {
+        flex: 1,
+        minWidth: '45%',
+        aspectRatio: 1.4,
+        backgroundColor: '#1E1231',
+        borderRadius: 28,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 14,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.05)',
+    },
+    categoryIconCircle: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    categoryText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: '700',
+    },
+
+    // Bottom Nav Floater
+    floatingNavContainer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        zIndex: 100,
+    },
+    floatingNavBar: {
+        flexDirection: 'row',
+        backgroundColor: '#150824', // Almost Black Purple
+        borderRadius: 40,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
+        shadowColor: '#000',
+        shadowOpacity: 0.5,
+        shadowRadius: 30,
+        elevation: 25,
+        width: '90%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    navItem: {
+        width: 50,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    navItemActive: {
+        width: 60,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    activeNavCircle: {
+        width: 54,
+        height: 54,
+        borderRadius: 27,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#D900FF',
+        shadowOpacity: 0.6,
+        shadowRadius: 12,
+        elevation: 10,
+        marginTop: -20, // Pop out
+        borderWidth: 4,
+        borderColor: '#0F0518', // Match bg to cut out
+    },
+
+    // Play Online Card
+    playOnlineCard: {
+        marginBottom: 24,
+        borderRadius: 20,
+        overflow: 'hidden',
+        height: 80,
+    },
+    playOnlineContent: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+    },
+    playOnlineLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 14,
+    },
+    playOnlineIconWrap: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    playOnlineTitle: {
+        color: '#FFF',
+        fontSize: 18,
+        fontWeight: '800',
+    },
+    playOnlineSubtitle: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 13,
+        fontWeight: '500',
+        marginTop: 2,
+    },
+    playOnlineArrow: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     kurdishFont: {

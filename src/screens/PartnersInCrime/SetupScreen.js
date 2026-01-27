@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { GradientBackground, GlassCard, Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { Users, Play, Heart, Star, Briefcase, Smile } from 'lucide-react-native';
+import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
+import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { t } from '../../localization/translations';
+import { layout } from '../../theme/layout';
 import { partnersData } from '../../constants/partnersData';
+import { MotiView } from 'moti';
+
+// Map icon string to Lucide component if needed, or update data source.
+// Assuming partnersData has icon strings, we might need a mapper or update data.
+// For now, I'll use a generic mapper or just render text/emoji from data if provided.
+// Actually, let's use Lucide icons for categories if possible.
+const getIcon = (id, color) => {
+    const props = { size: 24, color };
+    switch (id) {
+        case 'couples': return <Heart {...props} />;
+        case 'friends': return <Smile {...props} />;
+        case 'work': return <Briefcase {...props} />;
+        default: return <Star {...props} />;
+    }
+};
 
 export default function PartnersSetupScreen({ navigation }) {
+    const { colors, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
     const [player1, setPlayer1] = useState('');
     const [player2, setPlayer2] = useState('');
@@ -18,7 +34,7 @@ export default function PartnersSetupScreen({ navigation }) {
     const handleStart = () => {
         if (!player1.trim() || !player2.trim()) return;
 
-        navigation.navigate('PartnersPlay', {
+        navigation.navigate('PartnersInCrimePlay', {
             p1Name: player1,
             p2Name: player2,
             category: selectedCategory,
@@ -26,201 +42,182 @@ export default function PartnersSetupScreen({ navigation }) {
     };
 
     return (
-        <GradientBackground>
-            <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity
-                        style={styles.backBtn}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Ionicons name={isKurdish ? "arrow-forward" : "arrow-back"} size={24} color={COLORS.text.primary} />
-                    </TouchableOpacity>
-                    <Text style={[styles.headerTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'هاوبەشی تاوان' : 'Partners in Crime'}
+        <AnimatedScreen>
+            <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                    {t('partners.title', language)}
+                </Text>
+                <View style={{ width: 48 }} />
+            </View>
+
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                {/* Instructions */}
+                <GlassCard style={{ marginBottom: layout.spacing.xl }}>
+                    <Text style={[styles.sectionTitle, { color: colors.accent, marginBottom: 8 }, isKurdish && styles.kurdishFont]}>
+                        {t('common.howToPlay', language)}
                     </Text>
-                    <View style={{ width: 44 }} />
+                    <Text style={[styles.instructionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                        {t('partners.description', language)}
+                    </Text>
+                </GlassCard>
+
+                {/* Names */}
+                <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <Users size={16} color={colors.text.muted} style={{ marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0 }} />
+                    <Text style={[styles.sectionHeaderText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                        {isKurdish ? 'ناوەکان' : 'NAMES'}
+                    </Text>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.content}>
-                    {/* Instructions */}
-                    <GlassCard intensity={30} style={styles.instructionCard}>
-                        <Text style={[styles.instructionTitle, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'چۆن دەیاریت؟' : 'How to Play'}
-                        </Text>
-                        <Text style={[styles.instructionText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish
-                                ? '• ٢ یاریزان وەڵامی پرسیارەکان دەدەنەوە\n• بزانن چەند یەکتری دەناسن!'
-                                : '• 2 Players answer questions about each other\n• See how well you know your partner!'}
-                        </Text>
-                    </GlassCard>
-
-                    {/* Names */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'ناوەکان' : 'Names'}
-                    </Text>
-
-                    <View style={styles.namesContainer}>
-                        <View style={styles.inputWrapper}>
-                            <Text style={[styles.inputLabel, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'یاریزانی ١' : 'Player 1'}
-                            </Text>
-                            <TextInput
-                                style={[styles.input, isKurdish && styles.kurdishFont]}
-                                value={player1}
-                                onChangeText={setPlayer1}
-                                placeholder={isKurdish ? 'ناوی یەکەم' : 'Enter Name'}
-                                placeholderTextColor={COLORS.text.muted}
-                            />
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <Text style={[styles.inputLabel, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'یاریزانی ٢' : 'Player 2'}
-                            </Text>
-                            <TextInput
-                                style={[styles.input, isKurdish && styles.kurdishFont]}
-                                value={player2}
-                                onChangeText={setPlayer2}
-                                placeholder={isKurdish ? 'ناوی دووەم' : 'Enter Name'}
-                                placeholderTextColor={COLORS.text.muted}
-                            />
-                        </View>
+                <View style={{ gap: layout.spacing.md, marginBottom: layout.spacing.xl }}>
+                    <View>
+                        <TextInput
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: colors.surface,
+                                    borderColor: colors.border,
+                                    color: colors.text.primary,
+                                    textAlign: isRTL ? 'right' : 'left'
+                                },
+                                isKurdish && styles.kurdishFont
+                            ]}
+                            value={player1}
+                            onChangeText={setPlayer1}
+                            placeholder={isKurdish ? 'ناوی یەکەم' : 'Player 1 Name'}
+                            placeholderTextColor={colors.text.muted}
+                        />
                     </View>
+                    <View>
+                        <TextInput
+                            style={[
+                                styles.input,
+                                {
+                                    backgroundColor: colors.surface,
+                                    borderColor: colors.border,
+                                    color: colors.text.primary,
+                                    textAlign: isRTL ? 'right' : 'left'
+                                },
+                                isKurdish && styles.kurdishFont
+                            ]}
+                            value={player2}
+                            onChangeText={setPlayer2}
+                            placeholder={isKurdish ? 'ناوی دووەم' : 'Player 2 Name'}
+                            placeholderTextColor={colors.text.muted}
+                        />
+                    </View>
+                </View>
 
-                    {/* Category */}
-                    <Text style={[styles.sectionTitle, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'پرسیارەکان' : 'Questions'}
-                    </Text>
+                {/* Category */}
+                <Text style={[styles.sectionHeader, { color: colors.text.muted, textAlign: isRTL ? 'right' : 'left' }, isKurdish && styles.kurdishFont]}>
+                    {isKurdish ? 'پرسیارەکان' : 'QUESTIONS'}
+                </Text>
 
-                    <View style={styles.categoriesGrid}>
-                        {partnersData.map((cat) => (
+                <View style={styles.categoriesGrid}>
+                    {partnersData.map((cat) => {
+                        const isSelected = selectedCategory.id === cat.id;
+                        return (
                             <TouchableOpacity
                                 key={cat.id}
                                 onPress={() => setSelectedCategory(cat)}
                                 activeOpacity={0.8}
-                                style={[
-                                    styles.categoryChip,
-                                    selectedCategory.id === cat.id && styles.categorySelected
-                                ]}
+                                style={{ width: '48%' }}
                             >
-                                <Text style={[
-                                    styles.categoryText,
-                                    selectedCategory.id === cat.id && styles.categoryTextSelected,
-                                    isKurdish && styles.kurdishFont
-                                ]}>
-                                    {cat.title[language]}
-                                </Text>
+                                <GlassCard
+                                    style={[
+                                        styles.categoryCard,
+                                        isSelected && { borderColor: colors.accent, borderWidth: 1, backgroundColor: colors.accent + '20' }
+                                    ]}
+                                    intensity={isSelected ? 30 : 15}
+                                >
+                                    {getIcon(cat.id, isSelected ? colors.accent : colors.text.secondary)}
+                                    <Text style={[
+                                        styles.categoryText,
+                                        { color: isSelected ? colors.text.primary : colors.text.secondary, marginTop: 8 },
+                                        isKurdish && styles.kurdishFont
+                                    ]}>
+                                        {cat.title[language]}
+                                    </Text>
+                                </GlassCard>
                             </TouchableOpacity>
-                        ))}
-                    </View>
+                        );
+                    })}
+                </View>
 
-                    <View style={{ marginTop: SPACING.xl }}>
-                        <Button
-                            title={isKurdish ? 'دەست پێ بکە' : 'Start'}
-                            onPress={handleStart}
-                            disabled={!player1.trim() || !player2.trim()}
-                            gradient={[COLORS.accent.primary, '#2563eb']}
-                            isKurdish={isKurdish}
-                        />
-                    </View>
+                <BeastButton
+                    variant={player1 && player2 ? 'primary' : 'ghost'}
+                    title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
+                    onPress={handleStart}
+                    disabled={!player1.trim() || !player2.trim()}
+                    size="lg"
+                    style={{ marginTop: layout.spacing.xl }}
+                    icon={Play}
+                />
 
-                </ScrollView>
-            </SafeAreaView>
-        </GradientBackground>
+            </ScrollView>
+        </AnimatedScreen>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1 },
     header: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: SPACING.md,
-    },
-    backBtn: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
+        marginBottom: layout.spacing.lg,
     },
     headerTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.title,
         fontSize: 20,
-    },
-    content: {
-        padding: SPACING.lg,
-        paddingBottom: 100,
-    },
-    instructionCard: {
-        padding: SPACING.lg,
-        marginBottom: SPACING.lg,
-        borderRadius: BORDER_RADIUS.xl,
-    },
-    instructionTitle: {
-        color: COLORS.text.primary,
-        ...FONTS.medium,
-        fontSize: 16,
-        marginBottom: SPACING.sm,
-    },
-    instructionText: {
-        color: COLORS.text.muted,
-        lineHeight: 24,
-    },
-    sectionTitle: {
-        color: COLORS.text.secondary,
-        ...FONTS.medium,
-        fontSize: 14,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: SPACING.md,
-        marginTop: SPACING.md,
-    },
-
-    namesContainer: {
-        gap: SPACING.md,
-    },
-    inputWrapper: {
-        gap: 8,
-    },
-    inputLabel: {
-        color: COLORS.text.secondary,
-        fontSize: 12,
         fontWeight: 'bold',
     },
+    content: {
+        paddingBottom: 40,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    instructionText: {
+        fontSize: 15,
+        lineHeight: 22,
+    },
+    sectionHeader: {
+        alignItems: 'center',
+        marginBottom: layout.spacing.sm,
+        fontSize: 12,
+        fontWeight: 'bold',
+        letterSpacing: 1,
+    },
+    sectionHeaderText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        letterSpacing: 1,
+    },
     input: {
-        backgroundColor: COLORS.background.card,
-        borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
-        color: COLORS.text.primary,
-        ...FONTS.medium,
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
         fontSize: 16,
     },
-
     categoriesGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: SPACING.sm,
+        gap: 8,
     },
-    categoryChip: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        backgroundColor: COLORS.background.card,
-        borderWidth: 1,
-        borderColor: COLORS.background.border,
-    },
-    categorySelected: {
-        backgroundColor: COLORS.accent.primary,
-        borderColor: COLORS.accent.primary,
+    categoryCard: {
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
+        height: 100,
     },
     categoryText: {
-        color: COLORS.text.secondary,
-        ...FONTS.medium,
+        fontWeight: '600',
+        fontSize: 14,
+        textAlign: 'center',
     },
-    categoryTextSelected: {
-        color: '#FFF',
-    },
-
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: {
+        fontFamily: 'Rabar_022',
+    }
 });

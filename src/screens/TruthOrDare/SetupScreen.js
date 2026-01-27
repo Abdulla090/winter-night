@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, PlayerInput } from '../../components';
+import { Button, PlayerInput, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getIntensityLevels } from '../../constants/truthOrDareData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
 
 export default function TruthOrDareSetupScreen({ navigation }) {
@@ -13,15 +14,12 @@ export default function TruthOrDareSetupScreen({ navigation }) {
     const [selectedIntensity, setSelectedIntensity] = useState('mild');
 
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
     const intensityLevels = getIntensityLevels(language);
     const canStart = players.length >= 2;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
+    const rtlStyles = { textAlign: isRTL ? 'right' : 'left' };
 
     // Get intensity name and desc from the levels array
     const getIntensityName = (key) => {
@@ -45,13 +43,11 @@ export default function TruthOrDareSetupScreen({ navigation }) {
         <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
             {/* Header */}
             <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name={isKurdish ? "arrow-forward" : "arrow-back"} size={24} color={COLORS.text.primary} />
-                </TouchableOpacity>
-                <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('truthOrDare.title', language)}
                 </Text>
-                <View style={styles.placeholder} />
+                <View style={{ width: 44 }} />
             </View>
 
             {/* Content */}

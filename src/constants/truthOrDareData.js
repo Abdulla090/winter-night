@@ -23,7 +23,14 @@ export const TRUTHS = {
         { en: "What's the most trouble you've ever been in?", ku: "گەورەترین کێشە کامەیە کەت تێیدا بوویت؟" },
         { en: "What's your biggest regret?", ku: "گەورەترین پەشیمانییەکەت چییە؟" },
         { en: "What's something you've done that you'd judge others for?", ku: "چی شتێکت کردووە کە تۆش ڕەخنەی لە کەسانی تر دەگریت بۆی؟" },
-        { en: "What's the most immature thing you do?", ku: "نابەواوترین شت چییە کە دەیکەیت؟" }
+        { en: "What's the most immature thing you do?", ku: "نابەواوترین شت چییە کە دەیکەیت؟" },
+        { en: "What is your favorite smell and why?", ku: "بۆنی دڵخوازت چییە و بۆچی؟" },
+        { en: "What is your dream vacation destination?", ku: "شوێنی خەونەکانت بۆ گەشتکردن کوێیە؟" },
+        { en: "If you could have any superpower, what would it be?", ku: "ئەگەر هەر هێزێکی سەرووسروشتیت هەبوایە، چی دەبوو؟" },
+        { en: "What is the best meal you have ever had?", ku: "خۆشترین وەکەی خواردن کە خواردووتە چی بووە؟" },
+        { en: "What is a hidden talent you have?", ku: "بەهرەیەکی شاراوەت چییە؟" },
+        { en: "What is your favorite movie of all time?", ku: "فیلمی دڵخوازت لە هەموو کاتێکدا چییە؟" },
+        { en: "Who is your celebrity crush?", ku: "کەسایەتی بەناوبانگی دڵخوازت کێیە؟" }
     ],
     spicy: [
         { en: "Who in this room would you date?", ku: "کێ لەم ژوورەدا دەچوویە ژوان لەگەڵی؟" },
@@ -45,7 +52,13 @@ export const TRUTHS = {
         { en: "Who's the last person you stalked on social media?", ku: "دوایین کەس کێ بوو کەت ستالکی کرد لە تۆڕە کۆمەڵایەتییەکان؟" },
         { en: "What's the dumbest thing you've ever cried about?", ku: "گەمژانەترین شت چییە کەت بۆی گریوە؟" },
         { en: "Have you ever blamed someone else for something you did?", ku: "ئایا تۆمەتی کەسێکی ترت کردووە بۆ شتێک کە تۆ کردووتبێت؟" },
-        { en: "What's the meanest thing you've said behind someone's back?", ku: "نایابانەترین شت چییە لە پشت کەسێکەوە گوتوویتە؟" }
+        { en: "What's the meanest thing you've said behind someone's back?", ku: "نایابانەترین شت چییە لە پشت کەسێکەوە گوتوویتە؟" },
+        { en: "Who is the last person you texted?", ku: "دوایین کەس کێ بوو نامەت بۆ نارد؟" },
+        { en: "What is the worst habit you have?", ku: "خراپترین خوەت چییە؟" },
+        { en: "Have you ever ghosted someone?", ku: "ئایا هەرگیز لەناکاو پەیوەندیت لەگەڵ کەسێک بڕیوە بەبێ هۆکار؟" },
+        { en: "What is a lie you tell often?", ku: "درۆیەک کە زۆرجار دەیکەیت چییە؟" },
+        { en: "Who in this room do you trust the least?", ku: "لەم ژوورەدا متمانەت بە کێ کەمترینە؟" },
+        { en: "Have you ever creeped on an ex?", ku: "ئایا هەرگیز چاودێری خۆشەویستی پێشووت کردووە؟" }
     ],
     extreme: [
         { en: "What's the biggest secret you're keeping from your family?", ku: "گەورەترین نهێنی چییە کە لە خێزانەکەت دەیشاریتەوە؟" },
@@ -67,7 +80,12 @@ export const TRUTHS = {
         { en: "Have you ever felt jealous of someone's happiness?", ku: "ئایا حەسوودیت لە خۆشییەکانی کەسێک بووە؟" },
         { en: "What's the biggest lie you've ever told a partner?", ku: "گەورەترین درۆ کامەیە کەت بە هاوسەرت کردووە؟" },
         { en: "What's something embarrassing you do when alone?", ku: "چی شتێکی شەرمەزارکەر دەکەیت کاتێک تەنیایت؟" },
-        { en: "Have you ever pretended to be someone you're not?", ku: "ئایا وادەخستەوە کەسێکی تریت کە نیت؟" }
+        { en: "Have you ever pretended to be someone you're not?", ku: "ئایا وادەخستەوە کەسێکی تریت کە نیت؟" },
+        { en: "What is the worst crime you have committed?", ku: "خراپترین تاوان کە کردووتە چییە؟" },
+        { en: "Have you ever stolen money from your parents?", ku: "ئایا هەرگیز پارەت لە دایک و باوکت دزیوە؟" },
+        { en: "What is the biggest lie you have told your best friend?", ku: "گەورەترین درۆ کە بە باشترین هاوڕێت وتووە چییە؟" },
+        { en: "Have you ever been caught doing something you shouldn't?", ku: "ئایا هەرگیز گیراویت لە کاتی ئەنجامدانی کارێکی نەشیاو؟" },
+        { en: "What is a secret you will never tell your partner?", ku: "نهێنییەک کە هەرگیز بە هاوبەشەکەت ناڵێیت چییە؟" }
     ]
 };
 
@@ -92,7 +110,12 @@ export const DARES = {
         { en: "Act out a movie scene without words", ku: "دیمەنێکی فیلم ئەدا بکە بەبێ وشە" },
         { en: "Make up a rap about the person to your left", ku: "ڕاپێک دابنێ دەربارەی کەسی لای چەپت" },
         { en: "Do your best model walk across the room", ku: "باشترین ڕێکردنی مۆدێل بکە بەناو ژوورەکەدا" },
-        { en: "Talk like a baby for the next 2 rounds", ku: "٢ قۆناغی داهاتوو وەک منداڵ قسە بکە" }
+        { en: "Talk like a baby for the next 2 rounds", ku: "٢ قۆناغی داهاتوو وەک منداڵ قسە بکە" },
+        { en: "Dance like a chicken for 30 seconds", ku: "٣٠ چرکە وەک مریشک سەما بکە" },
+        { en: "Speak in a whisper for the next 3 rounds", ku: "٣ قۆناغی داهاتوو بە چرپە قسە بکە" },
+        { en: "Walk backwards everywhere for the next 2 minutes", ku: "٢ خولەکی داهاتوو بۆ هەموو شوێنێک بە دواوە بڕۆ" },
+        { en: "Hug the person to your right", ku: "باوەش بە کەسی لای ڕاستتدا بکە" },
+        { en: "Make a funny face and hold it for 30 seconds", ku: "ڕوخسارێکی کۆمیدی دروست بکە و ٣٠ چرکە ڕایگرە" }
     ],
     spicy: [
         { en: "Let someone go through your camera roll for 1 minute", ku: "ڕێگە بە کەسێک بدە ١ خولەک وێنەکانت ببینێت" },
@@ -114,7 +137,12 @@ export const DARES = {
         { en: "Share your screen time from your phone", ku: "کاتی سکڕینی مۆبایلەکەت پیشان بدە" },
         { en: "Do 20 squats right now", ku: "ئێستا ٢٠ سکوات بکە" },
         { en: "Let someone apply makeup on you blindfolded", ku: "ڕێگە بە کەسێک بدە بە چاوداخراوی مەیک ئەپت بکات" },
-        { en: "Reveal your most recent Google search", ku: "دوایین گەڕانەکەت لە گووگڵ پیشان بدە" }
+        { en: "Reveal your most recent Google search", ku: "دوایین گەڕانەکەت لە گووگڵ پیشان بدە" },
+        { en: "Post an embarrassing photo of yourself", ku: "وێنەیەکی شەرمەزارکەری خۆت بڵاو بکەرەوە" },
+        { en: "Call a random number and sing Happy Birthday", ku: "پەیوەندی بە ژمارەیەکی هەڕەمەکی بکە و گۆرانی یادی لەدایکبوون بڵێ" },
+        { en: "Let someone draw a mustache on your face", ku: "ڕێگە بە کەسێک بدە سمێڵێک لەسەر دەموچاوت بکێشێت" },
+        { en: "Eat a teaspoon of hot sauce", ku: "کەوچکێکی چا سۆسی توون بخۆ" },
+        { en: "Let the group choose your profile picture for 24 hours", ku: "ڕێگە بە گروپەکە بدە وێنەی پرۆفایلەکەت بۆ ٢٤ کاتژمێر دیاری بکەن" }
     ],
     extreme: [
         { en: "Let the group read your last 5 DMs", ku: "ڕێگە بە گروپەکە بدە دوایین ٥ نامەکەت بخوێننەوە" },
@@ -136,7 +164,12 @@ export const DARES = {
         { en: "Show your most embarrassing saved video", ku: "شەرمەزارکەرترین ڤیدیۆی سەیڤکراوەکەت پیشان بدە" },
         { en: "Do whatever challenge the group comes up with on the spot", ku: "هەر چالینجێک گروپەکە دایبنێن لەو کاتەدا بیکە" },
         { en: "Reveal your most embarrassing purchase online", ku: "شەرمەزارکەرترین کڕینت لە ئۆنلاین پیشان بدە" },
-        { en: "Let someone unlock your phone for 2 minutes", ku: "ڕێگە بە کەسێک بدە ٢ خولەک مۆبایلەکەت بکاتەوە" }
+        { en: "Let someone unlock your phone for 2 minutes", ku: "ڕێگە بە کەسێک بدە ٢ خولەک مۆبایلەکەت بکاتەوە" },
+        { en: "Drink a mixture of 3 liquids chosen by the group", ku: "تێکەڵەیەک لە ٣ شلە بخۆرەوە کە گروپەکە دیاری دەکەن" },
+        { en: "Send a break-up text to a random person (prank)", ku: "نامەی جیابوونەوە بۆ کەسێکی هەڕەمەکی بنێرە (گاڵتە)" },
+        { en: "Let someone cut a small piece of your hair", ku: "ڕێگە بە کەسێک بدە پارچەیەکی بچووک لە قژت ببڕێت" },
+        { en: "Lick the floor (or something equally gross)", ku: "زەوییەکە بڵێسەرەوە (یان شتێکی تر کە پیس بێت)" },
+        { en: "Let the group send a DM to your crush", ku: "ڕێگە بە گروپەکە بدە نامەیەک بۆ ئەو کەسە بنێرن کە حەزت لێیەتی" }
     ]
 };
 

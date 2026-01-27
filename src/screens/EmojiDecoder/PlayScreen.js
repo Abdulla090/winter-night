@@ -157,8 +157,9 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
             <GradientBackground>
                 <SafeAreaView style={styles.safeArea} edges={['top']}>
                     <MotiView
-                        from={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        from={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ type: 'timing', duration: 300 }}
                         style={styles.gameOverContainer}
                     >
                         <Text style={styles.gameOverEmoji}>🏆</Text>

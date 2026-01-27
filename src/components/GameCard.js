@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, Dimensions } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View, Dimensions, Platform } from 'react-native';
+import { MotiView } from 'moti';
+import { MotiPressable } from 'moti/interactions';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming, Easing } from 'react-native-reanimated';
-import { COLORS, BORDER_RADIUS, SPACING, FONTS, SHADOWS } from '../constants/theme';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
+import { layout } from '../theme/layout';
 
 const { width } = Dimensions.get('window');
 
+/**
+ * ✨ GameCard - Premium animated game card
+ * Smooth spring animations with staggered reveals
+ */
 export default function GameCard({
     title,
     description,
@@ -17,236 +23,212 @@ export default function GameCard({
     style,
     index = 0,
     isKurdish = false,
-    playersLabel = 'players',
-    layout = 'list',
+    layout: cardLayout = 'list',
     featured = false,
 }) {
-    const scale = useSharedValue(1);
-    const opacity = useSharedValue(0);
-    const translateY = useSharedValue(10); // Subtle 10px slide
-    const { theme } = useTheme();
+    const { colors, isRTL } = useTheme();
+    const isGrid = cardLayout === 'grid';
 
-    const isGrid = layout === 'grid';
-    const isFeatured = featured;
+    // Mapped gradient
+    const cardGradient = useMemo(() => {
+        if (Array.isArray(gradient)) return gradient[0];
+        return gradient || colors.brand.primary;
+    }, [gradient, colors]);
 
-    // Linear Professional Animation
-    useEffect(() => {
-        opacity.value = withDelay(index * 30, withTiming(1, { duration: 300, easing: Easing.out(Easing.quad) }));
-        translateY.value = withDelay(index * 30, withTiming(0, { duration: 300, easing: Easing.out(Easing.quad) }));
-    }, []);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-        transform: [
-            { translateY: translateY.value },
-            { scale: scale.value }
-        ]
-    }));
-
-    // Tighter press feedback (No wobble)
-    const handlePressIn = () => {
-        scale.value = withTiming(0.98, { duration: 50 });
-    };
-
-    const handlePressOut = () => {
-        scale.value = withTiming(1, { duration: 100 });
-    };
-
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
     const textAlign = isKurdish ? 'right' : 'left';
-    const alignItems = isKurdish ? 'flex-end' : 'flex-start';
+    const rowDirection = isKurdish ? 'row-reverse' : 'row';
 
-    // Styles based on theme
-    const themeStyles = {
-        card: { backgroundColor: theme.background.card, borderColor: theme.background.border },
-        text: { color: theme.text.primary },
-        desc: { color: theme.text.secondary },
-        iconBg: featured ? gradient : gradient, // Keep gradient for icon
-        badge: { backgroundColor: theme.background.main }
+    const handlePress = () => {
+        if (Platform.OS !== 'web') {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        onPress?.();
     };
 
-    const containerStyle = isGrid ? styles.gridContainer : styles.listContainer;
-    const contentStyle = isGrid ? styles.gridContent : [styles.listContent, { flexDirection: rowDirection }];
+    // Stagger delay - fast but noticeable
+    const staggerDelay = Math.min(index * 40, 300);
 
     return (
-        <Animated.View style={[
-            animatedStyle,
-            isGrid ? styles.gridWrapper : { marginBottom: SPACING.md },
-            isFeatured && styles.featuredWrapper,
-            style
-        ]}>
-            <TouchableOpacity
-                onPress={onPress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                activeOpacity={0.9} // Slight opacity change
+        <MotiView
+            from={{ opacity: 0, translateY: 16, scale: 0.98 }}
+            animate={{ opacity: 1, translateY: 0, scale: 1 }}
+            transition={{
+                type: 'spring',
+                damping: 18,
+                stiffness: 200,
+                mass: 0.6,
+                delay: staggerDelay,
+            }}
+            style={[
+                isGrid ? styles.gridWrapper : styles.listWrapper,
+                style
+            ]}
+        >
+            <MotiPressable
+                onPress={handlePress}
+                animate={({ pressed, hovered }) => {
+                    'worklet';
+                    return {
+                        scale: pressed ? 0.97 : hovered ? 1.02 : 1,
+                        opacity: pressed ? 0.95 : 1,
+                    };
+                }}
+                transition={{
+                    type: 'spring',
+                    damping: 15,
+                    stiffness: 350,
+                    mass: 0.4,
+                }}
                 style={[
-                    containerStyle,
-                    themeStyles.card,
-                    isFeatured && styles.featuredContainer,
-                    { borderColor: isFeatured ? gradient : themeStyles.card.borderColor }
+                    isGrid ? styles.gridContainer : styles.listContainer,
+                    {
+                        backgroundColor: colors.surface,
+                        borderColor: colors.border,
+                        borderWidth: 1,
+                    },
+                    featured && { borderColor: cardGradient, borderWidth: 2 }
                 ]}
             >
-                <View style={[contentStyle, isGrid && { alignItems }]}>
+                <View style={[
+                    isGrid ? styles.gridContent : styles.listContent,
+                    { flexDirection: isGrid ? 'column' : rowDirection }
+                ]}>
                     {/* Icon Box */}
                     <View style={[
-                        isGrid ? styles.gridIcon : styles.listIcon,
-                        { backgroundColor: gradient },
-                        !isGrid && (isKurdish ? { marginLeft: SPACING.md } : { marginRight: SPACING.md })
+                        styles.iconBox,
+                        { backgroundColor: cardGradient + '15' },
+                        !isGrid && (isKurdish ? { marginLeft: 16 } : { marginRight: 16 }),
+                        isGrid && { marginBottom: 12, alignSelf: isRTL ? 'flex-end' : 'flex-start' }
                     ]}>
-                        <Ionicons name={icon} size={isGrid || isFeatured ? 32 : 24} color="#FFF" />
+                        <Ionicons
+                            name={icon}
+                            size={isGrid ? 28 : 24}
+                            color={cardGradient}
+                        />
                     </View>
 
                     {/* Text Container */}
-                    <View style={[
-                        styles.textContainer,
-                        !isGrid && { flex: 1 },
-                        isGrid && { width: '100%', marginTop: SPACING.md, alignItems }
-                    ]}>
-                        <Text
-                            style={[
-                                isGrid || isFeatured ? styles.gridTitle : styles.listTitle,
-                                { textAlign, color: themeStyles.text.color },
-                                isKurdish && styles.kurdishFont
-                            ]}
-                            numberOfLines={1}
-                        >
+                    <View style={{ flex: 1, alignItems: isGrid ? (isRTL ? 'flex-end' : 'flex-start') : undefined }}>
+                        <Text style={[
+                            styles.title,
+                            { color: colors.text.primary, textAlign },
+                            isKurdish && styles.kurdishFont
+                        ]} numberOfLines={1}>
                             {title}
                         </Text>
-
-                        <Text
-                            style={[
-                                styles.description,
-                                { textAlign, color: themeStyles.desc.color },
-                                isKurdish && styles.kurdishFont
-                            ]}
-                            numberOfLines={2}
-                        >
+                        <Text style={[
+                            styles.desc,
+                            { color: colors.text.secondary, textAlign },
+                            isKurdish && styles.kurdishFont
+                        ]} numberOfLines={2}>
                             {description}
                         </Text>
 
-                        {/* Meta Tags */}
-                        <View style={[
-                            styles.metaContainer,
-                            { flexDirection: rowDirection, marginTop: 8 }
-                        ]}>
-                            <View style={[styles.badge, themeStyles.badge, { flexDirection: rowDirection }]}>
-                                <Ionicons name="people" size={12} color={themeStyles.desc.color} />
-                                <Text style={[
-                                    styles.playersText,
-                                    isKurdish ? { marginRight: 4 } : { marginLeft: 4 },
-                                    isKurdish && styles.kurdishFont,
-                                    { color: themeStyles.desc.color }
-                                ]}>
-                                    {players}
-                                </Text>
-                            </View>
+                        {/* Players Tag */}
+                        <View style={[styles.metaRow, { flexDirection: rowDirection, marginTop: 8 }]}>
+                            <Ionicons name="people" size={12} color={colors.text.muted} />
+                            <Text style={[
+                                styles.metaText,
+                                { color: colors.text.muted },
+                                isKurdish ? { marginRight: 4 } : { marginLeft: 4 }
+                            ]}>
+                                {players}
+                            </Text>
                         </View>
                     </View>
 
-                    {/* Arrow for List View Only */}
-                    {!isGrid && !isFeatured && (
+                    {/* Chevron (List only) */}
+                    {!isGrid && (
                         <Ionicons
                             name={isKurdish ? "chevron-back" : "chevron-forward"}
                             size={20}
-                            color={themeStyles.desc.color}
+                            color={colors.text.muted}
                         />
                     )}
                 </View>
-            </TouchableOpacity>
-        </Animated.View>
+            </MotiPressable>
+        </MotiView>
     );
 }
 
 const styles = StyleSheet.create({
-    // Grid Styles
     gridWrapper: {
         width: '48%',
-        marginBottom: SPACING.md,
+        marginBottom: 16,
     },
-    featuredWrapper: {
+    listWrapper: {
         width: '100%',
-        marginBottom: SPACING.md,
+        marginBottom: 12,
     },
     gridContainer: {
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.md,
-        height: 180,
-        borderWidth: 1,
-        ...SHADOWS.medium,
-        elevation: 4,
+        borderRadius: layout.radius.xl,
+        padding: 16,
+        height: 170,
+        overflow: 'hidden',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 12,
+            },
+            android: {
+                elevation: 4,
+            },
+            web: {
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+            },
+        }),
     },
-    featuredContainer: {
-        height: 'auto',
-        padding: SPACING.lg,
-        borderWidth: 1,
+    listContainer: {
+        borderRadius: layout.radius.lg,
+        padding: 16,
+        overflow: 'hidden',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.06,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 3,
+            },
+            web: {
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+            },
+        }),
     },
     gridContent: {
         flex: 1,
         justifyContent: 'space-between',
     },
-    gridIcon: {
+    listContent: {
+        alignItems: 'center',
+    },
+    iconBox: {
         width: 48,
         height: 48,
         borderRadius: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        ...SHADOWS.small,
-        elevation: 4,
     },
-    gridTitle: {
-        ...FONTS.bold,
+    title: {
         fontSize: 16,
+        fontWeight: '700',
         marginBottom: 4,
+        letterSpacing: 0.2,
     },
-
-    // List Styles
-    listContainer: {
-        borderRadius: BORDER_RADIUS.lg,
-        borderWidth: 1,
-        ...SHADOWS.small,
-    },
-    listContent: {
-        alignItems: 'center',
-        padding: SPACING.md,
-    },
-    listIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    listTitle: {
-        ...FONTS.semibold,
-        fontSize: 16,
-        marginBottom: 2,
-    },
-
-    // Shared
-    container: {
-        overflow: 'hidden',
-    },
-    textContainer: {
-        justifyContent: 'center',
-    },
-    description: {
+    desc: {
         fontSize: 12,
         lineHeight: 16,
-        opacity: 0.8,
     },
-    metaContainer: {
+    metaRow: {
         alignItems: 'center',
     },
-    badge: {
-        alignItems: 'center',
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 6,
-    },
-    playersText: {
-        fontSize: 11,
-        fontWeight: '600',
+    metaText: {
+        fontSize: 12,
+        fontWeight: '500',
     },
     kurdishFont: {
         fontFamily: 'Rabar',

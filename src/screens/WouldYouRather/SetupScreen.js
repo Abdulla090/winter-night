@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Button, PlayerInput } from '../../components';
+import { Button, PlayerInput, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getAllCategories } from '../../constants/wouldYouRatherData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
 
 export default function WouldYouRatherSetupScreen({ navigation }) {
@@ -13,15 +14,12 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
     const [selectedCategory, setSelectedCategory] = useState('fun');
 
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
     const categories = getAllCategories();
     const canStart = players.length >= 2;
 
-    // RTL styles
-    const rtlStyles = {
-        textAlign: isKurdish ? 'right' : 'left',
-        writingDirection: isKurdish ? 'rtl' : 'ltr',
-    };
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const rowDirection = isRTL ? 'row-reverse' : 'row';
+    const rtlStyles = { textAlign: isRTL ? 'right' : 'left' };
 
     // Get category name in Kurdish
     const getCategoryName = (key, name) => {
@@ -45,13 +43,11 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
     return (
         <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
             <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name={isKurdish ? "arrow-forward" : "arrow-back"} size={24} color={COLORS.text.primary} />
-                </TouchableOpacity>
-                <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                <BackButton onPress={() => navigation.goBack()} />
+                <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('wouldYouRather.title', language)}
                 </Text>
-                <View style={styles.placeholder} />
+                <View style={{ width: 44 }} />
             </View>
 
             <ScrollView

@@ -58,14 +58,19 @@ export const translations = {
     // ============================================
     settings: {
         title: { en: 'Settings', ku: 'ڕێکخستنەکان' },
-        sound: { en: 'Sound Effects', ku: 'کاریگەری دەنگ' },
-        vibration: { en: 'Vibration', ku: 'لەرزین' },
+        account: { en: 'Account', ku: 'هەژمار' },
+        personalInfo: { en: 'Personal Info', ku: 'زانیاری کەسی' },
+        security: { en: 'Password & Security', ku: 'وشەی نهێنی و ئاسایش' },
+        preferences: { en: 'Preferences', ku: 'ئارەزووەکان' },
+        notifications: { en: 'Notifications', ku: 'ئاگادارکردنەوەکان' },
+        sound: { en: 'Sound & Music', ku: 'دەنگ و مۆسیقا' },
         language: { en: 'Language', ku: 'زمان' },
-        english: { en: 'English', ku: 'ئینگلیزی' },
-        kurdish: { en: 'کوردی سۆرانی', ku: 'کوردی سۆرانی' },
-        about: { en: 'About', ku: 'دەربارەی ئەپ' },
+        more: { en: 'More', ku: 'زیاتر' },
+        helpCenter: { en: 'Help Center', ku: 'ناوەندی یارمەتی' },
+        privacy: { en: 'Privacy Policy', ku: 'پاراستنی زانیاری' },
+        logout: { en: 'Log Out', ku: 'چوونەدەرەوە لە هەژمار' },
         appName: { en: 'Winter Nights Party Games', ku: 'یاری‌یەکانی شەوانی زستان' },
-        version: { en: 'Version 1.0.0', ku: 'وەشانی ١.٠.٠' },
+        version: { en: 'VERSION 2.4.0 BUILD 102', ku: 'VERSION 2.4.0 BUILD 102' },
         aboutDescription: { en: 'Perfect for cozy gatherings with friends and family!', ku: 'تەواو گونجاوە بۆ کۆبوونەوە لەگەڵ هاوڕێ و خێزان!' },
     },
 
@@ -339,6 +344,33 @@ export const translations = {
         spin: { en: 'SPIN', ku: 'سووڕاندن' },
         spinning: { en: 'Spinning...', ku: 'دەسووڕێتەوە...' },
         winner: { en: 'Winner:', ku: 'براوە:' },
+    },
+    // ============================================
+    // NEW GAMES
+    // ============================================
+    emojiDecoder: {
+        title: { en: 'Emoji Decoder', ku: 'مەتەڵی ئیمۆجی' },
+        description: { en: 'Guess the phrase from emojis', ku: 'ڕستەکە بدۆزەرەوە لە ڕێگەی ئیمۆجییەکانەوە' },
+    },
+    forbiddenWord: {
+        title: { en: 'Forbidden Word', ku: 'وشەی قەدەغە' },
+        description: { en: 'Describe without using forbidden words', ku: 'وەسف بکە بەبێ بەکارهێنانی وشە قەدەغەکان' },
+    },
+    lyricsChallenge: {
+        title: { en: 'Lyrics Challenge', ku: 'چالینجی گۆرانی' },
+        description: { en: 'Complete the song lyrics', ku: 'تەواوکردنی شیعرەکانی گۆرانی' },
+    },
+    wordChain: {
+        title: { en: 'Word Chain', ku: 'زنجیرەی وشە' },
+        description: { en: 'Link words by last letter', ku: 'وشەکان بەیەکەوە ببەستە بە پیتى کۆتایی' },
+    },
+    reverseCharades: {
+        title: { en: 'Reverse Charades', ku: 'نواندنی پێچەوانە' },
+        description: { en: 'Team acts, one guesses', ku: 'تیمەکە دەینێنێت، یەک کەس دەیزانێت' },
+    },
+    partnersInCrime: {
+        title: { en: 'Partners in Crime', ku: 'هەوکاڕ لە تاوان' },
+        description: { en: 'Match answers with your partner', ku: 'وەڵامەکانت لەگەڵ هاوڕێکەت بگونجێنە' },
     },
 };
 

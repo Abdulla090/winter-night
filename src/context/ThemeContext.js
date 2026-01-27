@@ -1,47 +1,49 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { THEMES } from '../constants/theme';
+import { I18nManager } from 'react-native';
+import { colors } from '../theme/colors';
 
 const ThemeContext = createContext();
-const THEME_KEY = '@app_theme_mode';
 
-export function ThemeProvider({ children }) {
-    const systemScheme = useColorScheme();
-    const [themeMode, setThemeMode] = useState('dark'); // Default to dark 'pro' mode
+export const ThemeProvider = ({ children }) => {
+    // 🌙 Dark mode is default (Winter Nights Vibe)
+    // Available themes: 'dark', 'light' (sky blue)
+    const [mode, setMode] = useState('dark');
 
-    // Load saved theme
-    useEffect(() => {
-        loadTheme();
-    }, []);
+    // USER REQUEST: Priority for Kurdish Design (RTL).
+    // We explicitly manage an RTL state helper.
+    const [isRTL, setIsRTL] = useState(true);
 
-    const loadTheme = async () => {
-        try {
-            const saved = await AsyncStorage.getItem(THEME_KEY);
-            if (saved) {
-                setThemeMode(saved);
-            } else if (systemScheme) {
-                // Optional: Sync with system if no preference
-                // setThemeMode(systemScheme);
-            }
-        } catch (e) { console.error(e); }
+    // We expose the active color palette based on mode
+    const activeColors = {
+        ...colors[mode],
+        brand: colors.brand,
     };
 
-    const toggleTheme = async () => {
-        const newMode = themeMode === 'dark' ? 'light' : 'dark';
-        setThemeMode(newMode);
-        await AsyncStorage.setItem(THEME_KEY, newMode);
+    // Toggle between dark and light
+    const toggleTheme = () => {
+        setMode(prev => (prev === 'dark' ? 'light' : 'dark'));
     };
 
-    const theme = THEMES[themeMode];
+    const value = {
+        colors: activeColors,
+        theme: activeColors, // Alias for backward compatibility
+        mode,
+        isDark: mode === 'dark', // Dark purple theme
+        isLight: mode === 'light', // Sky blue theme
+        isDarkBased: mode === 'dark', // For compatibility (same as isDark now)
+        isRTL,
+        toggleTheme,
+        setIsRTL,
+
+        // Helper for conditional styles: theme.rtl(styleLeft, styleRight)
+        rtl: (ltr, rtl) => (isRTL ? rtl : ltr),
+    };
 
     return (
-        <ThemeContext.Provider value={{ theme, themeMode, toggleTheme, isDark: themeMode === 'dark' }}>
+        <ThemeContext.Provider value={value}>
             {children}
         </ThemeContext.Provider>
     );
-}
+};
 
-export function useTheme() {
-    return useContext(ThemeContext);
-}
+export const useTheme = () => useContext(ThemeContext);
