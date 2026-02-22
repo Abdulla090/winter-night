@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -9,9 +9,9 @@ import {
     Platform,
     ActivityIndicator,
     Alert,
+    Animated,
 } from 'react-native';
 import { Mail, Lock, Eye, EyeOff, Gamepad2 } from 'lucide-react-native';
-import { MotiView } from 'moti';
 
 import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
 import { useAuth } from '../../context/AuthContext';
@@ -72,6 +72,16 @@ export default function LoginScreen({ navigation }) {
 
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
+    // Native fade-in animation (replaces MotiView)
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.8)).current;
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+            Animated.timing(scaleAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+        ]).start();
+    }, []);
+
     return (
         <AnimatedScreen>
             <KeyboardAvoidingView
@@ -88,10 +98,8 @@ export default function LoginScreen({ navigation }) {
                 </View>
 
                 {/* Hero */}
-                <MotiView
-                    from={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    style={styles.heroContainer}
+                <Animated.View
+                    style={[styles.heroContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}
                 >
                     <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
                         <Gamepad2 size={48} color={colors.accent} strokeWidth={1.5} />
@@ -102,7 +110,7 @@ export default function LoginScreen({ navigation }) {
                     <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
                         {isKurdish ? 'بچۆ ژوورەوە بۆ یاری کردن' : 'Sign in to play with friends'}
                     </Text>
-                </MotiView>
+                </Animated.View>
 
                 {/* Form */}
                 <GlassCard style={styles.formCard}>

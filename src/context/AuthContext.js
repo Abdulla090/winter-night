@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext({});
@@ -12,15 +13,45 @@ export const AuthProvider = ({ children }) => {
     const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchProfile(session.user.id);
+        // Get initial session — bypass supabase client on web (it hangs)
+        const initSession = async () => {
+            try {
+                let session = null;
+                if (Platform.OS === 'web') {
+                    // Read session directly from localStorage to avoid Supabase client hang
+                    try {
+                        const storageKey = 'sb-babwvpzevcyaltmslqfu-auth-token';
+                        const stored = localStorage.getItem(storageKey);
+                        if (stored) {
+                            const parsed = JSON.parse(stored);
+                            if (parsed?.access_token && parsed?.user) {
+                                session = { user: parsed.user, access_token: parsed.access_token };
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Failed to read session from localStorage:', e);
+                    }
+                } else {
+                    // Native: use Supabase client with a timeout
+                    const result = await Promise.race([
+                        supabase.auth.getSession(),
+                        new Promise(resolve => setTimeout(() => resolve({ data: { session: null } }), 5000))
+                    ]);
+                    session = result?.data?.session;
+                }
+
+                setUser(session?.user ?? null);
+                if (session?.user) {
+                    fetchProfile(session.user.id);
+                }
+            } catch (e) {
+                console.log('Session init error:', e);
+            } finally {
+                setLoading(false);
+                setInitialized(true);
             }
-            setLoading(false);
-            setInitialized(true);
-        });
+        };
+        initSession();
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Platform } from 'react-native';
-import { supabase, generateRoomCode } from '../lib/supabase';
+import { supabase, generateRoomCode, supabaseUrl, supabaseAnonKey } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
 const GameRoomContext = createContext({});
@@ -181,8 +181,8 @@ export const GameRoomProvider = ({ children }) => {
             }
             console.log('Got auth token, proceeding...');
 
-            const SUPABASE_URL = 'https://babwvpzevcyaltmslqfu.supabase.co';
-            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYnd2cHpldmN5YWx0bXNscWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTUzNzYsImV4cCI6MjA4NDQ5MTM3Nn0.RKqoiiPo-HTnyGgSTrRzt8_eGbtGrld7uyEnLgifcWM';
+            const SUPABASE_URL = supabaseUrl;
+            const SUPABASE_KEY = supabaseAnonKey;
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -264,6 +264,48 @@ export const GameRoomProvider = ({ children }) => {
         }
     };
 
+    // Helper to get auth token (bypasses supabase client hang on web)
+    const getAuthToken = async () => {
+        if (Platform.OS === 'web') {
+            try {
+                const storageKey = 'sb-babwvpzevcyaltmslqfu-auth-token';
+                const stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    return parsed?.access_token;
+                }
+            } catch (e) {
+                console.log('Failed to read token from localStorage:', e);
+            }
+            return null;
+        }
+        const { data: sessionData } = await supabase.auth.getSession();
+        return sessionData?.session?.access_token;
+    };
+
+    // Helper to make authenticated fetch calls to Supabase REST API
+    const supabaseFetch = async (path, options = {}) => {
+        const token = await getAuthToken();
+        if (!token) throw new Error('Session expired. Please log in again.');
+        const headers = {
+            'Content-Type': 'application/json',
+            'apikey': supabaseAnonKey,
+            'Authorization': `Bearer ${token}`,
+            'Prefer': options.prefer || 'return=representation',
+        };
+        const res = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
+            method: options.method || 'GET',
+            headers,
+            ...(options.body ? { body: JSON.stringify(options.body) } : {}),
+        });
+        if (!res.ok) {
+            const errBody = await res.text();
+            throw new Error(`Supabase ${path} failed (${res.status}): ${errBody}`);
+        }
+        const text = await res.text();
+        return text ? JSON.parse(text) : null;
+    };
+
     const joinRoom = async (roomCode) => {
         if (!user) {
             const msg = 'You must be logged in to join a room';
@@ -281,46 +323,36 @@ export const GameRoomProvider = ({ children }) => {
             setLoading(true);
             setError(null);
 
-            // Find room
-            const { data: room, error: roomError } = await supabase
-                .from('game_rooms')
-                .select('*')
-                .eq('room_code', roomCode.toUpperCase())
-                .eq('is_active', true)
-                .maybeSingle();
+            // Find room via raw fetch (avoids supabase client hang on web)
+            const rooms = await supabaseFetch(
+                `game_rooms?room_code=eq.${roomCode.toUpperCase()}&is_active=eq.true&select=*`
+            );
+            const room = Array.isArray(rooms) ? rooms[0] : rooms;
 
-            if (roomError || !room) {
+            if (!room) {
                 throw new Error('Room not found or no longer active');
             }
 
             // Check if already in room
-            const { data: existingPlayer } = await supabase
-                .from('room_players')
-                .select('id')
-                .eq('room_id', room.id)
-                .eq('player_id', user.id)
-                .maybeSingle();
+            const existing = await supabaseFetch(
+                `room_players?room_id=eq.${room.id}&player_id=eq.${user.id}&select=id`
+            );
 
-            if (!existingPlayer) {
+            if (!existing || existing.length === 0) {
                 // Check player count
-                const { count } = await supabase
-                    .from('room_players')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('room_id', room.id);
+                const playerCount = await supabaseFetch(
+                    `room_players?room_id=eq.${room.id}&select=id`
+                );
 
-                if (count >= room.max_players) {
+                if (playerCount && playerCount.length >= room.max_players) {
                     throw new Error('Room is full');
                 }
 
                 // Join room
-                const { error: joinError } = await supabase
-                    .from('room_players')
-                    .insert({
-                        room_id: room.id,
-                        player_id: user.id,
-                    });
-
-                if (joinError) throw joinError;
+                await supabaseFetch('room_players', {
+                    method: 'POST',
+                    body: { room_id: room.id, player_id: user.id },
+                });
             }
 
             setCurrentRoom(room);

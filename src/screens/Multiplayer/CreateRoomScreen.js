@@ -5,11 +5,12 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    ActivityIndicator,
     Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
 } from 'react-native';
-import { Gamepad2, Plus, Home } from 'lucide-react-native';
-import { MotiView } from 'moti';
+import { Gamepad2, Plus, Home, LogIn } from 'lucide-react-native';
 
 import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
 import { useGameRoom } from '../../context/GameRoomContext';
@@ -21,10 +22,12 @@ import { layout } from '../../theme/layout';
 export default function CreateRoomScreen({ navigation }) {
     const { createRoom, currentRoom, loading, error, clearError } = useGameRoom();
     const { user, initialized } = useAuth();
-    const { colors, isRTL } = useTheme();
+    const { colors, isRTL, isDark } = useTheme();
     const { isKurdish } = useLanguage();
 
     const [roomName, setRoomName] = useState('');
+    const [roomCode, setRoomCode] = useState('');
+    const { joinRoom } = useGameRoom();
 
     // If not authenticated, navigate to Login immediately when screen mounts
     useEffect(() => {
@@ -75,77 +78,166 @@ export default function CreateRoomScreen({ navigation }) {
         }
     };
 
+    const handleJoinRoom = async () => {
+        if (!user) {
+            navigation.replace('Login');
+            return;
+        }
+
+        if (roomCode.length !== 6) {
+            Alert.alert(
+                isKurdish ? 'هەڵە' : 'Error',
+                isKurdish ? 'کۆدی ژوور دەبێت ٦ پیت بێت' : 'Room code must be 6 characters'
+            );
+            return;
+        }
+
+        console.log('Joining room with code:', roomCode);
+        const result = await joinRoom(roomCode);
+        console.log('Join room result:', result);
+
+        if (result?.success) {
+            navigation.replace('RoomLobby');
+        } else {
+            const errorMsg = result?.error || error || 'Failed to join room';
+            Alert.alert(isKurdish ? 'هەڵە' : 'Error', errorMsg);
+            clearError();
+        }
+    };
+
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     return (
         <AnimatedScreen>
-            {/* Header */}
-            <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <BackButton onPress={() => navigation.goBack()} />
-                <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
-                    {isKurdish ? 'دروستکردنی ژوور' : 'Create Room'}
-                </Text>
-                <View style={{ width: 44 }} />
-            </View>
-
-            {/* Content */}
-            <View style={styles.content}>
-                <MotiView
-                    from={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    style={{ alignItems: 'center', marginBottom: layout.spacing.xl }}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    bounces={false}
                 >
-                    <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
-                        <Gamepad2 size={48} color={colors.accent} strokeWidth={1.5} />
+                    {/* Header */}
+                    <View style={[styles.header, { flexDirection: rowDirection }]}>
+                        <BackButton onPress={() => navigation.goBack()} />
+                        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+                            {isKurdish ? 'یاری ئۆنلاین' : 'Play Online'}
+                        </Text>
+                        <View style={{ width: 44 }} />
                     </View>
-                </MotiView>
 
-                <Text style={[styles.title, { color: colors.text.primary }]}>
-                    {isKurdish ? 'ژوورێکی نوێ دروستبکە' : 'Create a New Room'}
-                </Text>
-                <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
-                    {isKurdish
-                        ? 'هاوڕێکانت دەتوانن بە کۆدەکە بەشداری بکەن'
-                        : 'Friends can join using the room code'}
-                </Text>
+                    {/* Content */}
+                    <View style={styles.content}>
+                        <View style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}>
+                            <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
+                                <Gamepad2 size={48} color={colors.accent} strokeWidth={1.5} />
+                            </View>
+                        </View>
 
-                {/* Room Name Input */}
-                <GlassCard style={styles.inputCard}>
-                    <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
-                        <Home size={20} color={colors.text.muted} />
-                        <TextInput
-                            style={[
-                                styles.input,
-                                {
-                                    color: colors.text.primary,
-                                    textAlign: isRTL ? 'right' : 'left',
-                                }
-                            ]}
-                            placeholder={isKurdish ? 'ناوی ژوور' : 'Room Name'}
-                            placeholderTextColor={colors.text.muted}
-                            value={roomName}
-                            onChangeText={setRoomName}
-                            maxLength={30}
+                        {/* === CREATE ROOM SECTION === */}
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+                            {isKurdish ? 'ژوورێکی نوێ دروستبکە' : 'Create a New Room'}
+                        </Text>
+                        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+                            {isKurdish
+                                ? 'هاوڕێکانت دەتوانن بە کۆدەکە بەشداری بکەن'
+                                : 'Friends can join using the room code'}
+                        </Text>
+
+                        {/* Room Name Input */}
+                        <GlassCard style={styles.inputCard}>
+                            <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
+                                <Home size={20} color={colors.text.muted} />
+                                <TextInput
+                                    style={[
+                                        styles.input,
+                                        {
+                                            color: colors.text.primary,
+                                            textAlign: isRTL ? 'right' : 'left',
+                                        }
+                                    ]}
+                                    placeholder={isKurdish ? 'ناوی ژوور' : 'Room Name'}
+                                    placeholderTextColor={colors.text.muted}
+                                    value={roomName}
+                                    onChangeText={setRoomName}
+                                    maxLength={30}
+                                />
+                            </View>
+                        </GlassCard>
+
+                        {/* Create Button */}
+                        <BeastButton
+                            title={isKurdish ? 'دروستکردن' : 'Create Room'}
+                            onPress={handleCreateRoom}
+                            variant="primary"
+                            size="lg"
+                            icon={Plus}
+                            style={{ width: '100%', marginTop: layout.spacing.md, opacity: !roomName.trim() ? 0.5 : 1 }}
                         />
+
+                        {/* Divider */}
+                        <View style={[styles.dividerContainer, { flexDirection: rowDirection }]}>
+                            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                            <Text style={[styles.dividerText, { color: colors.text.muted }]}>
+                                {isKurdish ? 'یان' : 'OR'}
+                            </Text>
+                            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                        </View>
+
+                        {/* === JOIN ROOM SECTION === */}
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+                            {isKurdish ? 'چوونە ژوورەوە' : 'Join a Room'}
+                        </Text>
+                        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'کۆدی ژوورەکە لە هاوڕێکەت وەربگرە' : 'Enter the 6-digit room code'}
+                        </Text>
+
+                        {/* Code Input */}
+                        <GlassCard style={styles.inputCard}>
+                            <TextInput
+                                style={[
+                                    styles.codeInput,
+                                    {
+                                        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+                                        borderColor: colors.border,
+                                        color: colors.text.primary,
+                                    },
+                                ]}
+                                value={roomCode}
+                                onChangeText={(text) => setRoomCode(text.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                                maxLength={6}
+                                placeholder="XXXXXX"
+                                placeholderTextColor={colors.text.muted}
+                                autoCapitalize="characters"
+                                autoCorrect={false}
+                            />
+                        </GlassCard>
+
+                        {/* Join Button */}
+                        <TouchableOpacity
+                            style={[
+                                styles.joinBtn,
+                                {
+                                    borderColor: colors.accent,
+                                    opacity: roomCode.length !== 6 ? 0.5 : 1,
+                                },
+                            ]}
+                            onPress={handleJoinRoom}
+                            activeOpacity={0.8}
+                        >
+                            <LogIn size={20} color={colors.accent} />
+                            <Text style={[styles.joinBtnText, { color: colors.accent }]}>
+                                {isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <View style={{ height: 40 }} />
                     </View>
-                </GlassCard>
-
-                <Text style={[styles.hint, { color: colors.text.muted }]}>
-                    {isKurdish
-                        ? 'یاری لە ناو ژوورەکە هەڵدەبژێریت'
-                        : 'You\'ll choose the game after creating the room'}
-                </Text>
-
-                {/* Create Button */}
-                <BeastButton
-                    title={isKurdish ? 'دروستکردن' : 'Create Room'}
-                    onPress={handleCreateRoom}
-                    variant="primary"
-                    size="lg"
-                    icon={Plus}
-                    style={{ width: '100%', marginTop: layout.spacing.xl, opacity: !roomName.trim() ? 0.5 : 1 }}
-                />
-            </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </AnimatedScreen>
     );
 }
@@ -161,10 +253,8 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     content: {
-        flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingBottom: 100,
+        paddingBottom: 40,
     },
     heroIcon: {
         width: 96,
@@ -173,20 +263,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    title: {
-        fontSize: 24,
+    sectionTitle: {
+        fontSize: 22,
         fontWeight: '800',
-        marginBottom: layout.spacing.sm,
+        marginBottom: layout.spacing.xs,
         textAlign: 'center',
     },
     subtitle: {
-        fontSize: 15,
+        fontSize: 14,
         textAlign: 'center',
-        marginBottom: layout.spacing.xl,
+        marginBottom: layout.spacing.lg,
     },
     inputCard: {
         width: '100%',
-        marginBottom: layout.spacing.sm,
+        marginBottom: layout.spacing.xs,
     },
     inputContainer: {
         alignItems: 'center',
@@ -197,8 +287,44 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
     },
-    hint: {
-        fontSize: 13,
+    codeInput: {
+        width: 200,
+        height: 64,
+        borderRadius: layout.radius.lg,
+        borderWidth: 2,
         textAlign: 'center',
+        fontSize: 28,
+        fontWeight: '700',
+        letterSpacing: 8,
+        alignSelf: 'center',
+    },
+    dividerContainer: {
+        alignItems: 'center',
+        marginVertical: layout.spacing.xl,
+        gap: layout.spacing.md,
+        width: '100%',
+    },
+    divider: {
+        flex: 1,
+        height: 1,
+    },
+    dividerText: {
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    joinBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 56,
+        borderRadius: layout.radius.xl,
+        borderWidth: 2,
+        gap: layout.spacing.sm,
+        width: '100%',
+        marginTop: layout.spacing.md,
+    },
+    joinBtnText: {
+        fontSize: 16,
+        fontWeight: '700',
     },
 });

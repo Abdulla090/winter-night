@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
-const supabaseUrl = 'https://babwvpzevcyaltmslqfu.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYnd2cHpldmN5YWx0bXNscWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTUzNzYsImV4cCI6MjA4NDQ5MTM3Nn0.RKqoiiPo-HTnyGgSTrRzt8_eGbtGrld7uyEnLgifcWM';
+export const supabaseUrl = 'https://babwvpzevcyaltmslqfu.supabase.co';
+export const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYnd2cHpldmN5YWx0bXNscWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTUzNzYsImV4cCI6MjA4NDQ5MTM3Nn0.RKqoiiPo-HTnyGgSTrRzt8_eGbtGrld7uyEnLgifcWM';
 
 // Web storage adapter using localStorage
 const webStorageAdapter = {

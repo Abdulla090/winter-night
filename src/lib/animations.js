@@ -105,7 +105,7 @@ export const TIMING_SLOW = {
 };
 
 // ============================================
-// PRESS ANIMATION CONFIGS
+// PRESS ANIMATION CONFIGS (safe, no worklets)
 // ============================================
 
 /**
@@ -130,51 +130,6 @@ export const PRESS_SCALE_DRAMATIC = Platform.select({
     android: 0.92,
     default: 0.93,
 });
-
-// ============================================
-// MOTI ANIMATION PRESETS
-// ============================================
-
-/**
- * Button press animation for MotiPressable
- */
-export const motiButtonPress = {
-    animate: ({ pressed }) => {
-        'worklet';
-        return {
-            scale: pressed ? PRESS_SCALE : 1,
-            opacity: pressed ? 0.9 : 1,
-        };
-    },
-    transition: SPRING_SNAPPY,
-};
-
-/**
- * Card press animation
- */
-export const motiCardPress = {
-    animate: ({ pressed }) => {
-        'worklet';
-        return {
-            scale: pressed ? PRESS_SCALE_SUBTLE : 1,
-        };
-    },
-    transition: SPRING_QUICK,
-};
-
-/**
- * Icon press animation
- */
-export const motiIconPress = {
-    animate: ({ pressed }) => {
-        'worklet';
-        return {
-            scale: pressed ? 0.85 : 1,
-            opacity: pressed ? 0.7 : 1,
-        };
-    },
-    transition: SPRING_SNAPPY,
-};
 
 // ============================================
 // ENTRANCE ANIMATIONS (for initial mount)
@@ -311,11 +266,6 @@ export default {
     PRESS_SCALE,
     PRESS_SCALE_SUBTLE,
     PRESS_SCALE_DRAMATIC,
-
-    // Moti presets
-    motiButtonPress,
-    motiCardPress,
-    motiIconPress,
 
     // Entrances
     fadeIn,

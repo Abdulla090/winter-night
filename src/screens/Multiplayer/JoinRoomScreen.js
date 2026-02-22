@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     StyleSheet,
     View,
     Text,
     TextInput,
     TouchableOpacity,
-    ActivityIndicator,
     Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Animated,
 } from 'react-native';
 import { LogIn, Plus, ArrowLeft, ArrowRight } from 'lucide-react-native';
-import { MotiView } from 'moti';
 
 import { AnimatedScreen, BeastButton, GlassCard, BackButton } from '../../components';
 import { useGameRoom } from '../../context/GameRoomContext';
@@ -69,86 +71,107 @@ export default function JoinRoomScreen({ navigation }) {
 
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
+    // Native fade-in animation (replaces MotiView)
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.8)).current;
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+            Animated.timing(scaleAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+        ]).start();
+    }, []);
+
     return (
         <AnimatedScreen>
-            {/* Header */}
-            <View style={[styles.header, { flexDirection: rowDirection }]}>
-                <BackButton onPress={() => navigation.goBack()} />
-                <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
-                    {isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
-                </Text>
-                <View style={{ width: 44 }} />
-            </View>
-
-            {/* Content */}
-            <View style={styles.content}>
-                <MotiView
-                    from={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    style={{ alignItems: 'center', marginBottom: layout.spacing.xl }}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    bounces={false}
                 >
-                    <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
-                        <LogIn size={48} color={colors.accent} strokeWidth={1.5} />
+                    {/* Header */}
+                    <View style={[styles.header, { flexDirection: rowDirection }]}>
+                        <BackButton onPress={() => navigation.goBack()} />
+                        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+                            {isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
+                        </Text>
+                        <View style={{ width: 44 }} />
                     </View>
-                </MotiView>
 
-                <Text style={[styles.title, { color: colors.text.primary }]}>
-                    {isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
-                </Text>
-                <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
-                    {isKurdish ? 'کۆدی ژوورەکە لە هاوڕێکەت وەربگرە' : 'Enter the room code from your friend'}
-                </Text>
+                    {/* Content */}
+                    <View style={styles.content}>
+                        <Animated.View
+                            style={{ alignItems: 'center', marginBottom: layout.spacing.xl, opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}
+                        >
+                            <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
+                                <LogIn size={48} color={colors.accent} strokeWidth={1.5} />
+                            </View>
+                        </Animated.View>
 
-                {/* Code Input */}
-                <GlassCard style={styles.inputCard}>
-                    <TextInput
-                        style={[
-                            styles.codeInput,
-                            {
-                                backgroundColor: colors.surfaceHighlight,
-                                borderColor: colors.border,
-                                color: colors.text.primary,
-                            },
-                        ]}
-                        value={roomCode}
-                        onChangeText={(text) => setRoomCode(text.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-                        maxLength={6}
-                        placeholder="XXXXXX"
-                        placeholderTextColor={colors.text.muted}
-                        autoCapitalize="characters"
-                        autoCorrect={false}
-                    />
-                </GlassCard>
+                        <Text style={[styles.title, { color: colors.text.primary }]}>
+                            {isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
+                        </Text>
+                        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'کۆدی ژوورەکە لە هاوڕێکەت وەربگرە' : 'Enter the room code from your friend'}
+                        </Text>
 
-                <BeastButton
-                    title={isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
-                    onPress={handleJoinRoom}
-                    variant="primary"
-                    size="lg"
-                    icon={LogIn}
-                    style={{ width: '100%', opacity: roomCode.length !== 6 ? 0.5 : 1 }}
-                />
+                        {/* Code Input */}
+                        <GlassCard style={styles.inputCard}>
+                            <TextInput
+                                style={[
+                                    styles.codeInput,
+                                    {
+                                        backgroundColor: colors.surfaceHighlight,
+                                        borderColor: colors.border,
+                                        color: colors.text.primary,
+                                    },
+                                ]}
+                                value={roomCode}
+                                onChangeText={(text) => setRoomCode(text.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                                maxLength={6}
+                                placeholder="XXXXXX"
+                                placeholderTextColor={colors.text.muted}
+                                autoCapitalize="characters"
+                                autoCorrect={false}
+                            />
+                        </GlassCard>
 
-                {/* Divider */}
-                <View style={[styles.dividerContainer, { flexDirection: rowDirection }]}>
-                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
-                    <Text style={[styles.dividerText, { color: colors.text.muted }]}>
-                        {isKurdish ? 'یان' : 'OR'}
-                    </Text>
-                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
-                </View>
+                        <BeastButton
+                            title={isKurdish ? 'چوونە ژوورەوە' : 'Join Room'}
+                            onPress={handleJoinRoom}
+                            variant="primary"
+                            size="lg"
+                            icon={LogIn}
+                            style={{ width: '100%', opacity: roomCode.length !== 6 ? 0.5 : 1 }}
+                        />
 
-                {/* Create Room Button */}
-                <TouchableOpacity
-                    style={[styles.createBtn, { borderColor: colors.accent }]}
-                    onPress={() => navigation.replace('CreateRoom')}
-                >
-                    <Plus size={20} color={colors.accent} />
-                    <Text style={[styles.createBtnText, { color: colors.accent }]}>
-                        {isKurdish ? 'ژوورێک دروستبکە' : 'Create a New Room'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                        {/* Divider */}
+                        <View style={[styles.dividerContainer, { flexDirection: rowDirection }]}>
+                            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                            <Text style={[styles.dividerText, { color: colors.text.muted }]}>
+                                {isKurdish ? 'یان' : 'OR'}
+                            </Text>
+                            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                        </View>
+
+                        {/* Create Room Button */}
+                        <TouchableOpacity
+                            style={[styles.createBtn, { borderColor: colors.accent }]}
+                            onPress={() => navigation.replace('CreateRoom')}
+                        >
+                            <Plus size={20} color={colors.accent} />
+                            <Text style={[styles.createBtnText, { color: colors.accent }]}>
+                                {isKurdish ? 'ژوورێک دروستبکە' : 'Create a New Room'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </AnimatedScreen>
     );
 }
