@@ -4,7 +4,8 @@ import {
     KeyboardAvoidingView, Platform, Keyboard
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Star, Music, Lightbulb, X, Check, Eye } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { MotiView, AnimatePresence } from 'moti';
 import { GradientBackground, GlassCard, Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
@@ -33,10 +34,12 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
     }, [category, language]);
 
     const handleReveal = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setRevealAnswer(true);
     };
 
     const handleNext = (correct) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         if (correct) {
             setScore(prev => prev + 1);
             // Pulse animation
@@ -56,6 +59,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
     };
 
     const handleRestart = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         setQuestions(questions.sort(() => Math.random() - 0.5));
         setCurrentIndex(0);
         setScore(0);
@@ -129,7 +133,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                         style={styles.backBtn}
                         onPress={() => navigation.goBack()}
                     >
-                        <Ionicons name="close" size={24} color={COLORS.text.primary} />
+                        <X size={24} color={COLORS.text.primary} />
                     </TouchableOpacity>
 
                     <View style={styles.progressPill}>
@@ -137,7 +141,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                     </View>
 
                     <Animated.View style={[styles.scoreBadge, { transform: [{ scale: scaleAnim }] }]}>
-                        <Ionicons name="star" size={16} color="#f59e0b" />
+                        <Star size={16} color="#f59e0b" fill="#f59e0b" />
                         <Text style={styles.scoreText}>{score}</Text>
                     </Animated.View>
                 </View>
@@ -146,7 +150,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                     {/* Lyrics Card */}
                     <GlassCard intensity={40} style={styles.lyricsCard}>
                         <View style={styles.musicIcon}>
-                            <Ionicons name="musical-notes" size={32} color={category.color} />
+                            <Music size={32} color={category.color} />
                         </View>
 
                         <Text style={[styles.lyricsText, isKurdish && styles.kurdishFont]}>
@@ -158,7 +162,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                                 style={styles.hintBtn}
                                 onPress={() => setShowHint(true)}
                             >
-                                <Ionicons name="bulb-outline" size={16} color={COLORS.text.secondary} />
+                                <Lightbulb size={16} color={COLORS.text.secondary} />
                                 <Text style={[styles.hintText, isKurdish && styles.kurdishFont]}>
                                     {showHint ? currentQuestion.hint : (isKurdish ? 'یارمەتی' : 'Show Hint')}
                                 </Text>
@@ -192,7 +196,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                                         style={[styles.actionBtn, styles.wrongBtn]}
                                         onPress={() => handleNext(false)}
                                     >
-                                        <Ionicons name="close" size={32} color="#FFF" />
+                                        <X size={32} color="#FFF" />
                                         <Text style={[styles.btnLabel, isKurdish && styles.kurdishFont]}>
                                             {isKurdish ? 'نەخێر' : 'No'}
                                         </Text>
@@ -202,7 +206,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                                         style={[styles.actionBtn, styles.correctBtn]}
                                         onPress={() => handleNext(true)}
                                     >
-                                        <Ionicons name="checkmark" size={32} color="#FFF" />
+                                        <Check size={32} color="#FFF" />
                                         <Text style={[styles.btnLabel, isKurdish && styles.kurdishFont]}>
                                             {isKurdish ? 'بەڵێ' : 'Yes'}
                                         </Text>
@@ -215,7 +219,7 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
                                     title={isKurdish ? 'وەڵامەکە پیشان بدە' : 'Reveal Answer'}
                                     onPress={handleReveal}
                                     gradient={[category.color, category.color]}
-                                    icon={<Ionicons name="eye" size={20} color="#FFF" />}
+                                    icon={<Eye size={20} color="#FFF" />}
                                     isKurdish={isKurdish}
                                 />
                             </View>

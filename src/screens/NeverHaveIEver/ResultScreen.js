@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Trophy, Skull, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
@@ -33,7 +33,7 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
         <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={[styles.winnerBanner, isKurdish && styles.kurdishBorder]}>
-                    <Ionicons name="trophy" size={60} color="#FFD700" />
+                    <Trophy size={60} color="#FFD700" />
                     <Text style={[styles.winnerLabel, isKurdish && styles.kurdishFont]}>
                         {t('neverHaveIEver.mostInnocent', language)}
                     </Text>
@@ -45,7 +45,7 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
 
                 {loser && loser[1] < winner[1] && (
                     <View style={[styles.loserBanner, { flexDirection: rowDirection }]}>
-                        <Ionicons name="skull" size={32} color={COLORS.accent.danger} />
+                        <Skull size={32} color={COLORS.accent.danger} />
                         <View style={isKurdish && { alignItems: 'flex-end' }}>
                             <Text style={[styles.loserLabel, isKurdish && styles.kurdishFont]}>
                                 {t('neverHaveIEver.mostExperienced', language)}
@@ -95,7 +95,7 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
                         title={t('common.playAgain', language)}
                         onPress={playAgain}
                         gradient={[COLORS.accent.warning, COLORS.accent.warning]}
-                        icon={<Ionicons name="refresh" size={20} color="#FFF" />}
+                        icon={<RefreshCw size={20} color="#FFF" />}
                         style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
                         isKurdish={isKurdish}
                     />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Trophy, Gamepad2, Medal, CheckCircle2, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
@@ -46,7 +46,7 @@ export default function TruthOrDareResultScreen({ navigation, route }) {
                 {hasWinner ? (
                     <View style={styles.winnerBanner}>
                         <View style={styles.crown}>
-                            <Ionicons name="trophy" size={60} color="#FFD700" />
+                            <Trophy size={60} color="#FFD700" />
                         </View>
                         <Text style={[styles.winnerLabel, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'قارەمان' : 'Champion'}
@@ -61,7 +61,7 @@ export default function TruthOrDareResultScreen({ navigation, route }) {
                     </View>
                 ) : (
                     <View style={styles.noWinnerBanner}>
-                        <Ionicons name="game-controller" size={60} color={COLORS.accent.purple} />
+                        <Gamepad2 size={60} color={COLORS.accent.purple} />
                         <Text style={[styles.noWinnerTitle, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'یاری تەواو بوو!' : 'Game Complete!'}
                         </Text>
@@ -84,7 +84,7 @@ export default function TruthOrDareResultScreen({ navigation, route }) {
                         <View key={name} style={[styles.leaderboardItem, { flexDirection: rowDirection }]}>
                             <View style={styles.rankContainer}>
                                 {index < 3 ? (
-                                    <Ionicons name="medal" size={24} color={getMedalColor(index)} />
+                                    <Medal size={24} color={getMedalColor(index)} />
                                 ) : (
                                     <Text style={styles.rankNumber}>{index + 1}</Text>
                                 )}
@@ -98,7 +98,7 @@ export default function TruthOrDareResultScreen({ navigation, route }) {
                             </Text>
                             <View style={[styles.scoreContainer, { flexDirection: rowDirection }]}>
                                 <Text style={styles.scoreValue}>{score}</Text>
-                                <Ionicons name="checkmark-circle" size={16} color={COLORS.accent.success} />
+                                <CheckCircle2 size={16} color={COLORS.accent.success} />
                             </View>
                         </View>
                     ))}
@@ -136,7 +136,7 @@ export default function TruthOrDareResultScreen({ navigation, route }) {
                         title={t('common.playAgain', language)}
                         onPress={playAgain}
                         gradient={[COLORS.accent.purple, COLORS.accent.purple]}
-                        icon={<Ionicons name="refresh" size={20} color="#FFF" />}
+                        icon={<RefreshCw size={20} color="#FFF" />}
                         style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
                         isKurdish={isKurdish}
                     />

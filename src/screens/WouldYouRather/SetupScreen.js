@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Smile, Lightbulb, Gamepad2, Zap, ArrowLeftRight } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { Button, PlayerInput, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getAllCategories } from '../../constants/wouldYouRatherData';
@@ -34,10 +36,26 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
     };
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('WouldYouRatherPlay', {
             players,
             category: selectedCategory,
         });
+    };
+
+    const handleCategorySelect = (key) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setSelectedCategory(key);
+    };
+
+    const getIcon = (iconName, color) => {
+        switch (iconName) {
+            case 'Smile': return <Smile size={24} color={color} />;
+            case 'Lightbulb': return <Lightbulb size={24} color={color} />;
+            case 'Gamepad2': return <Gamepad2 size={24} color={color} />;
+            case 'Zap': return <Zap size={24} color={color} />;
+            default: return <Smile size={24} color={color} />;
+        }
     };
 
     return (
@@ -78,9 +96,9 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                                     backgroundColor: `${cat.color}15`
                                 }
                             ]}
-                            onPress={() => setSelectedCategory(cat.key)}
+                            onPress={() => handleCategorySelect(cat.key)}
                         >
-                            <Ionicons name={cat.icon} size={24} color={cat.color} />
+                            {getIcon(cat.icon, cat.color)}
                             <Text style={[
                                 styles.categoryName,
                                 selectedCategory === cat.key && { color: cat.color },
@@ -94,7 +112,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
 
                 <View style={styles.rulesCard}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Ionicons name="swap-horizontal" size={20} color={COLORS.accent.info} />
+                        <ArrowLeftRight size={20} color={COLORS.accent.info} />
                         <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
@@ -113,7 +131,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                         onPress={startGame}
                         disabled={!canStart}
                         gradient={[COLORS.accent.info, COLORS.accent.info]}
-                        icon={<Ionicons name="swap-horizontal" size={20} color="#FFF" />}
+                        icon={<ArrowLeftRight size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
                 </View>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { X, User, CheckCircle2, XCircle, ArrowLeft, ArrowRight } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomQuestions } from '../../constants/quizData';
@@ -134,6 +135,8 @@ export default function QuizPlayScreen({ navigation, route }) {
         if (isAnswered) return;
         if (isMultiplayer && !isMyTurn) return;
 
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         clearInterval(timerRef.current);
 
         const currentQuestion = questions[currentIndex];
@@ -163,6 +166,7 @@ export default function QuizPlayScreen({ navigation, route }) {
     };
 
     const handleNext = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         if (currentIndex + 1 >= questions.length) {
             // Game over
             if (isMultiplayer) {
@@ -200,6 +204,7 @@ export default function QuizPlayScreen({ navigation, route }) {
     };
 
     const handleEndGame = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         clearInterval(timerRef.current);
         if (isMultiplayer) {
             await leaveRoom();
@@ -230,7 +235,7 @@ export default function QuizPlayScreen({ navigation, route }) {
                 {/* Header */}
                 <View style={[styles.header, { flexDirection: rowDirection }]}>
                     <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                        <Ionicons name="close" size={24} color={COLORS.text.secondary} />
+                        <X size={24} color={COLORS.text.secondary} />
                     </TouchableOpacity>
                     <View style={styles.progressInfo}>
                         <Text style={styles.questionNum}>{currentIndex + 1}/{questions.length}</Text>
@@ -257,7 +262,7 @@ export default function QuizPlayScreen({ navigation, route }) {
                 <ScrollView contentContainerStyle={styles.content}>
                     {/* Current Player */}
                     <GlassCard intensity={20} style={[styles.playerBadge, { flexDirection: rowDirection }]}>
-                        <Ionicons name="person" size={16} color={COLORS.accent.primary} />
+                        <User size={16} color={COLORS.accent.primary} />
                         <Text style={[styles.playerBadgeText, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? `نۆرەی ${currentPlayer}` : `${currentPlayer}'s Turn`}
                         </Text>
@@ -314,10 +319,10 @@ export default function QuizPlayScreen({ navigation, route }) {
                                         </View>
                                         <Text style={[styles.optionText, isKurdish && styles.kurdishFont, { textAlign }]}>{option}</Text>
                                         {showCorrect && (
-                                            <Ionicons name="checkmark-circle" size={24} color={COLORS.accent.success} />
+                                            <CheckCircle2 size={24} color={COLORS.accent.success} />
                                         )}
                                         {showWrong && (
-                                            <Ionicons name="close-circle" size={24} color={COLORS.accent.danger} />
+                                            <XCircle size={24} color={COLORS.accent.danger} />
                                         )}
                                     </GlassCard>
                                 </TouchableOpacity>
@@ -332,11 +337,10 @@ export default function QuizPlayScreen({ navigation, route }) {
                             { flexDirection: rowDirection },
                             selectedAnswer === currentQuestion.answer ? styles.resultCorrect : styles.resultWrong
                         ]}>
-                            <Ionicons
-                                name={selectedAnswer === currentQuestion.answer ? "checkmark-circle" : "close-circle"}
-                                size={24}
-                                color={selectedAnswer === currentQuestion.answer ? COLORS.accent.success : COLORS.accent.danger}
-                            />
+                            {selectedAnswer === currentQuestion.answer ?
+                                <CheckCircle2 size={24} color={COLORS.accent.success} /> :
+                                <XCircle size={24} color={COLORS.accent.danger} />
+                            }
                             <Text style={[
                                 styles.resultText,
                                 isKurdish && styles.kurdishFont,
@@ -357,7 +361,7 @@ export default function QuizPlayScreen({ navigation, route }) {
                                 : (isKurdish ? 'پرسیاری دواتر' : 'Next Question')}
                             onPress={handleNext}
                             gradient={[COLORS.accent.primary, '#2563eb']}
-                            icon={<Ionicons name={isKurdish ? "arrow-back" : "arrow-forward"} size={20} color="#FFF" />}
+                            icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                             isKurdish={isKurdish}
                         />
                     )}

@@ -175,9 +175,9 @@ export const DARES = {
 
 // Settings for intensity levels
 export const INTENSITY_LEVELS = [
-    { key: 'mild', name: { en: 'Mild', ku: 'سووک' }, description: { en: 'Fun & friendly', ku: 'خۆشی و هاوڕێیانە' }, icon: 'happy-outline', color: '#10b981' },
-    { key: 'spicy', name: { en: 'Spicy', ku: 'توون' }, description: { en: 'Gets personal', ku: 'کەمێک کەسی' }, icon: 'flame-outline', color: '#f59e0b' },
-    { key: 'extreme', name: { en: 'Extreme', ku: 'توند' }, description: { en: 'No limits!', ku: 'بێ سنوور!' }, icon: 'skull-outline', color: '#ef4444' },
+    { key: 'mild', name: { en: 'Mild', ku: 'سووک' }, description: { en: 'Fun & friendly', ku: 'خۆشی و هاوڕێیانە' }, icon: 'Smile', color: '#10b981' },
+    { key: 'spicy', name: { en: 'Spicy', ku: 'توون' }, description: { en: 'Gets personal', ku: 'کەمێک کەسی' }, icon: 'Flame', color: '#f59e0b' },
+    { key: 'extreme', name: { en: 'Extreme', ku: 'توند' }, description: { en: 'No limits!', ku: 'بێ سنوور!' }, icon: 'Skull', color: '#ef4444' },
 ];
 
 // Helper to get text based on language

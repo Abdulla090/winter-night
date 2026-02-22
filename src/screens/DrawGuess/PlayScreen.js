@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Paintbrush, Clock, Trash2, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
@@ -76,12 +78,14 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
     ).current;
 
     const handleStartDrawing = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         setPhase('drawing');
         setTimeLeft(roundTime);
         setPaths([]);
     };
 
     const handleGuessed = (correct) => {
+        if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         clearInterval(timerRef.current);
         if (correct) {
             setScores(prev => ({
@@ -93,6 +97,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
     };
 
     const handleNext = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         const nextIndex = (currentPlayerIndex + 1) % players.length;
         if (nextIndex === 0) {
             setRoundNumber(prev => prev + 1);
@@ -112,6 +117,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
     };
 
     const clearCanvas = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setPaths([]);
     };
 
@@ -154,7 +160,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                             title={t('drawGuess.draw', language)}
                             onPress={handleStartDrawing}
                             gradient={[COLORS.accent.info, COLORS.accent.info]}
-                            icon={<Ionicons name="brush" size={20} color="#FFF" />}
+                            icon={<Paintbrush size={20} color="#FFF" />}
                             isKurdish={isKurdish}
                         />
                     </ScrollView>
@@ -173,8 +179,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                     {/* Header */}
                     <View style={[styles.drawHeader, { flexDirection: rowDirection }]}>
                         <View style={[styles.timerBadge, { flexDirection: rowDirection }]}>
-                            <Ionicons
-                                name="time"
+                            <Clock
                                 size={18}
                                 color={timeLeft <= 10 ? COLORS.accent.danger : COLORS.text.primary}
                             />
@@ -185,7 +190,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                         </View>
 
                         <TouchableOpacity style={styles.clearBtn} onPress={clearCanvas}>
-                            <Ionicons name="trash" size={20} color={COLORS.accent.danger} />
+                            <Trash2 size={20} color={COLORS.accent.danger} />
                         </TouchableOpacity>
                     </View>
 
@@ -237,7 +242,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                             style={[styles.guessBtn, { flexDirection: rowDirection }]}
                             onPress={() => handleGuessed(true)}
                         >
-                            <Ionicons name="checkmark-circle" size={24} color={COLORS.accent.success} />
+                            <CheckCircle2 size={24} color={COLORS.accent.success} />
                             <Text style={[styles.guessBtnText, isKurdish && styles.kurdishFont]}>
                                 {t('drawGuess.someoneGuessed', language)}
                             </Text>
@@ -257,7 +262,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <View style={styles.resultBanner}>
-                            <Ionicons name="brush" size={48} color={COLORS.accent.info} />
+                            <Paintbrush size={48} color={COLORS.accent.info} />
                             <Text style={[styles.resultTitle, isKurdish && styles.kurdishFont]}>
                                 {t('drawGuess.roundComplete', language)}
                             </Text>
@@ -288,7 +293,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                                 title={t('drawGuess.nextRound', language)}
                                 onPress={handleNext}
                                 gradient={[COLORS.accent.info, COLORS.accent.info]}
-                                icon={<Ionicons name={isKurdish ? "arrow-back" : "arrow-forward"} size={20} color="#FFF" />}
+                                icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                 style={{ marginBottom: SPACING.md }}
                                 isKurdish={isKurdish}
                             />

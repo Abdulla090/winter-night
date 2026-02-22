@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { HelpCircle, Play, Trophy, Check } from 'lucide-react-native';
+import { HelpCircle, Play, Trophy, Check, Lightbulb, FlaskConical, Book, Film, Music } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 
 import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
@@ -37,11 +38,34 @@ export default function QuizSetupScreen({ navigation }) {
     };
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('QuizPlay', {
             players,
             category: selectedCategory,
             questionCount,
         });
+    };
+
+    const handleCategorySelect = (key) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setSelectedCategory(key);
+    };
+
+    const handleCountSelect = (count) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setQuestionCount(count);
+    };
+
+    const getCategoryIcon = (key, size, color) => {
+        switch (key) {
+            case 'general': return <Lightbulb size={size} color={color} />;
+            case 'science': return <FlaskConical size={size} color={color} />;
+            case 'history': return <Book size={size} color={color} />;
+            case 'movies': return <Film size={size} color={color} />;
+            case 'sports': return <Trophy size={size} color={color} />;
+            case 'music': return <Music size={size} color={color} />;
+            default: return <HelpCircle size={size} color={color} />;
+        }
     };
 
     return (
@@ -104,7 +128,7 @@ export default function QuizSetupScreen({ navigation }) {
                                     ...layout.shadows.sm,
                                 }
                             ]}
-                            onPress={() => setSelectedCategory(cat.key)}
+                            onPress={() => handleCategorySelect(cat.key)}
                             activeOpacity={0.8}
                         >
                             <View style={[
@@ -113,11 +137,7 @@ export default function QuizSetupScreen({ navigation }) {
                                     backgroundColor: selectedCategory === cat.key ? colors.accent : colors.surfaceHighlight,
                                 }
                             ]}>
-                                <Ionicons
-                                    name={cat.icon}
-                                    size={24}
-                                    color={selectedCategory === cat.key ? '#FFF' : colors.text.secondary}
-                                />
+                                {getCategoryIcon(cat.key, 24, selectedCategory === cat.key ? '#FFF' : colors.text.secondary)}
                             </View>
                             <Text style={[
                                 styles.categoryText,
@@ -157,7 +177,7 @@ export default function QuizSetupScreen({ navigation }) {
                                         borderColor: questionCount === count ? colors.accent : colors.border,
                                     }
                                 ]}
-                                onPress={() => setQuestionCount(count)}
+                                onPress={() => handleCountSelect(count)}
                             >
                                 <Text style={[
                                     styles.countText,

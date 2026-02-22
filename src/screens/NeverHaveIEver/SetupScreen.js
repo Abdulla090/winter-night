@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Hand } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { Button, PlayerInput, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getIntensityLevels } from '../../constants/neverHaveIEverData';
@@ -41,6 +44,7 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
     };
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('NeverHaveIEverPlay', {
             players,
             intensity: selectedIntensity,
@@ -85,10 +89,16 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
                                     backgroundColor: `${level.color}15`
                                 }
                             ]}
-                            onPress={() => setSelectedIntensity(level.key)}
+                            onPress={() => {
+                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setSelectedIntensity(level.key);
+                            }}
                         >
                             <View style={[styles.intensityIcon, { backgroundColor: `${level.color}20` }]}>
-                                <Ionicons name={level.icon} size={28} color={level.color} />
+                                {(() => {
+                                    const IconComponent = Icons[level.icon] || Icons.HelpCircle;
+                                    return <IconComponent size={28} color={level.color} />;
+                                })()}
                             </View>
                             <Text style={[
                                 styles.intensityName,
@@ -106,7 +116,7 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
 
                 <View style={styles.rulesCard}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Ionicons name="hand-left" size={20} color={COLORS.accent.warning} />
+                        <Hand size={20} color={COLORS.accent.warning} />
                         <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
@@ -125,7 +135,7 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
                         onPress={startGame}
                         disabled={!canStart}
                         gradient={[COLORS.accent.warning, COLORS.accent.warning]}
-                        icon={<Ionicons name="hand-left" size={20} color="#FFF" />}
+                        icon={<Hand size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
                 </View>

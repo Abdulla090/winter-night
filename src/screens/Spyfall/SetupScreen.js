@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Eye, EyeOff, Clock, Play, Info } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { Ionicons } from '@expo/vector-icons';
-
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -24,6 +24,7 @@ export default function SpyfallSetupScreen({ navigation }) {
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('SpyfallPlay', {
             players,
             gameDuration,

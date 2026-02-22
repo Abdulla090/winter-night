@@ -97,9 +97,9 @@ export const GameRoomProvider = ({ children }) => {
                 });
             })
             .subscribe(async (status) => {
-                if (status === 'SUBSCRIBED' && profile) {
+                if (status === 'SUBSCRIBED' && user) {
                     await presenceChannel.track({
-                        username: profile.username,
+                        username: profile?.username || user?.user_metadata?.username || (user?.email ? user.email.split('@')[0] : 'Player'),
                         online_at: new Date().toISOString(),
                     });
                 }
@@ -143,9 +143,10 @@ export const GameRoomProvider = ({ children }) => {
     };
 
     const createRoom = async (gameType, roomName) => {
-        console.log('createRoom called with:', { gameType, roomName, user: user?.id, profile: profile?.username });
+        const username = profile?.username || user?.user_metadata?.username;
+        console.log('createRoom called with:', { gameType, roomName, user: user?.id, username });
 
-        if (!user || !profile) {
+        if (!user) {
             const msg = 'You must be logged in to create a room';
             console.log('createRoom error:', msg);
             setError(msg);
@@ -238,7 +239,7 @@ export const GameRoomProvider = ({ children }) => {
     };
 
     const joinRoom = async (roomCode) => {
-        if (!user || !profile) {
+        if (!user) {
             const msg = 'You must be logged in to join a room';
             setError(msg);
             return { success: false, error: msg };

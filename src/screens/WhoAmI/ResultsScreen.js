@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { Trophy, RefreshCw, Home, Medal } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 
 import { AnimatedScreen, BeastButton, GlassCard } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
@@ -75,14 +77,20 @@ export default function ResultsScreen({ navigation, route }) {
                 <View style={styles.footer}>
                     <BeastButton
                         title={t('common.playAgain', language)}
-                        onPress={() => navigation.replace('WhoAmISetup')}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            navigation.replace('WhoAmISetup');
+                        }}
                         icon={RefreshCw}
                         variant="primary"
                         style={{ width: '100%', marginBottom: 12 }}
                     />
                     <BeastButton
                         title={t('common.backToHome', language)}
-                        onPress={() => navigation.navigate('Home')}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            navigation.navigate('Home');
+                        }}
                         icon={Home}
                         variant="ghost"
                         style={{ width: '100%' }}

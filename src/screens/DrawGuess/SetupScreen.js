@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Paintbrush } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { Button, PlayerInput, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getAllDrawingCategories, TIME_OPTIONS } from '../../constants/drawingData';
@@ -28,6 +31,7 @@ export default function DrawGuessSetupScreen({ navigation }) {
     };
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('DrawGuessPlay', {
             players,
             category: selectedCategory,
@@ -70,13 +74,20 @@ export default function DrawGuessSetupScreen({ navigation }) {
                                 styles.categoryCard,
                                 selectedCategory === cat.key && styles.categorySelected
                             ]}
-                            onPress={() => setSelectedCategory(cat.key)}
+                            onPress={() => {
+                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setSelectedCategory(cat.key);
+                            }}
                         >
-                            <Ionicons
-                                name={cat.icon}
-                                size={24}
-                                color={selectedCategory === cat.key ? COLORS.accent.primary : COLORS.text.secondary}
-                            />
+                            {(() => {
+                                const IconComp = Icons[cat.icon] || Icons.HelpCircle;
+                                return (
+                                    <IconComp
+                                        size={24}
+                                        color={selectedCategory === cat.key ? COLORS.accent.primary : COLORS.text.secondary}
+                                    />
+                                );
+                            })()}
                             <Text style={[
                                 styles.categoryName,
                                 selectedCategory === cat.key && styles.categoryNameSelected,
@@ -102,7 +113,10 @@ export default function DrawGuessSetupScreen({ navigation }) {
                                 styles.timeOption,
                                 roundTime === time && styles.timeOptionSelected
                             ]}
-                            onPress={() => setRoundTime(time)}
+                            onPress={() => {
+                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setRoundTime(time);
+                            }}
                         >
                             <Text style={[
                                 styles.timeOptionText,
@@ -116,7 +130,7 @@ export default function DrawGuessSetupScreen({ navigation }) {
 
                 <View style={styles.rulesCard}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Ionicons name="brush" size={20} color={COLORS.accent.info} />
+                        <Paintbrush size={20} color={COLORS.accent.info} />
                         <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
@@ -135,7 +149,7 @@ export default function DrawGuessSetupScreen({ navigation }) {
                         onPress={startGame}
                         disabled={!canStart}
                         gradient={[COLORS.accent.info, COLORS.accent.info]}
-                        icon={<Ionicons name="brush" size={20} color="#FFF" />}
+                        icon={<Paintbrush size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
                 </View>

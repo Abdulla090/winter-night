@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Trophy, Frown, CheckCircle2, XCircle, Skull, User, RefreshCw } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
 import { Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
@@ -28,11 +29,11 @@ export default function SpyfallResultScreen({ navigation, route }) {
             <ScrollView contentContainerStyle={styles.content}>
                 {/* Result Banner */}
                 <View style={[styles.resultBanner, spyCaught ? styles.winBanner : styles.loseBanner]}>
-                    <Ionicons
-                        name={spyCaught ? "trophy" : "sad"}
-                        size={60}
-                        color={spyCaught ? "#FFD700" : COLORS.text.secondary}
-                    />
+                    {spyCaught ? (
+                        <Trophy size={60} color="#FFD700" />
+                    ) : (
+                        <Frown size={60} color={COLORS.text.secondary} />
+                    )}
                     <Text style={[styles.resultTitle, isKurdish && styles.kurdishFont]}>
                         {spyCaught ? t('spyfall.spyCaught', language) : t('spyfall.spyWins', language)}
                     </Text>
@@ -45,7 +46,10 @@ export default function SpyfallResultScreen({ navigation, route }) {
 
                 {/* Location Reveal */}
                 <View style={[styles.locationCard, { flexDirection: rowDirection }]}>
-                    <Ionicons name={gameData.location.icon} size={32} color={COLORS.accent.primary} />
+                    {(() => {
+                        const LocationIcon = Icons[gameData.location.icon] || Icons.HelpCircle;
+                        return <LocationIcon size={32} color={COLORS.accent.primary} />;
+                    })()}
                     <View style={[styles.locationInfo, isKurdish && { alignItems: 'flex-end' }]}>
                         <Text style={[styles.locationLabel, isKurdish && styles.kurdishFont]}>
                             {t('spyfall.theLocationWas', language)}
@@ -62,12 +66,12 @@ export default function SpyfallResultScreen({ navigation, route }) {
                     <Text style={[styles.votedName, isKurdish && styles.kurdishFont]}>{players[votedPlayer]}</Text>
                     {spyCaught ? (
                         <View style={[styles.correctBadge, { flexDirection: rowDirection }]}>
-                            <Ionicons name="checkmark-circle" size={20} color="#FFF" />
+                            <CheckCircle2 size={20} color="#FFF" />
                             <Text style={[styles.correctText, isKurdish && styles.kurdishFont]}>{t('common.correct', language)}</Text>
                         </View>
                     ) : (
                         <View style={[styles.wrongBadge, { flexDirection: rowDirection }]}>
-                            <Ionicons name="close-circle" size={20} color="#FFF" />
+                            <XCircle size={20} color="#FFF" />
                             <Text style={[styles.wrongText, isKurdish && styles.kurdishFont]}>{t('common.incorrect', language)}</Text>
                         </View>
                     )}
@@ -88,11 +92,11 @@ export default function SpyfallResultScreen({ navigation, route }) {
                             ]}
                         >
                             <View style={[styles.roleLeft, { flexDirection: rowDirection }]}>
-                                <Ionicons
-                                    name={player.isSpy ? "skull" : "person"}
-                                    size={20}
-                                    color={player.isSpy ? COLORS.accent.danger : COLORS.accent.primary}
-                                />
+                                {player.isSpy ? (
+                                    <Skull size={20} color={COLORS.accent.danger} />
+                                ) : (
+                                    <User size={20} color={COLORS.accent.primary} />
+                                )}
                                 <Text style={[styles.roleName, isKurdish && styles.kurdishFont]}>{player.name}</Text>
                             </View>
                             <Text style={[
@@ -112,7 +116,7 @@ export default function SpyfallResultScreen({ navigation, route }) {
                         title={t('common.playAgain', language)}
                         onPress={playAgain}
                         gradient={[COLORS.accent.success, COLORS.accent.success]}
-                        icon={<Ionicons name="refresh" size={20} color="#FFF" />}
+                        icon={<RefreshCw size={20} color="#FFF" />}
                         style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
                         isKurdish={isKurdish}
                     />

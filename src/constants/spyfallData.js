@@ -5,7 +5,7 @@
 export const LOCATIONS = {
     theaterStage: {
         name: { en: 'Theater Stage', ku: 'شانۆ' },
-        icon: 'musical-notes',
+        icon: 'Music',
         roles: [
             { en: 'Actor', ku: 'ئەکتەر' },
             { en: 'Director', ku: 'دەرهێنەر' },
@@ -19,7 +19,7 @@ export const LOCATIONS = {
     },
     spaceStation: {
         name: { en: 'Space Station', ku: 'وێستگەی ئەفەزا' },
-        icon: 'planet',
+        icon: 'Globe',
         roles: [
             { en: 'Commander', ku: 'فەرماندە' },
             { en: 'Astronaut', ku: 'ئاسمانەوان' },
@@ -33,7 +33,7 @@ export const LOCATIONS = {
     },
     submarine: {
         name: { en: 'Submarine', ku: 'ژێردەریایی' },
-        icon: 'boat',
+        icon: 'Ship',
         roles: [
             { en: 'Captain', ku: 'کاپتن' },
             { en: 'Navigator', ku: 'ڕێنیشاندەر' },
@@ -47,7 +47,7 @@ export const LOCATIONS = {
     },
     hospital: {
         name: { en: 'Hospital', ku: 'نەخۆشخانە' },
-        icon: 'medkit',
+        icon: 'Stethoscope',
         roles: [
             { en: 'Doctor', ku: 'پزیشک' },
             { en: 'Nurse', ku: 'پەرستار' },
@@ -61,7 +61,7 @@ export const LOCATIONS = {
     },
     pirateShip: {
         name: { en: 'Pirate Ship', ku: 'کەشتی چەتەکان' },
-        icon: 'skull',
+        icon: 'Skull',
         roles: [
             { en: 'Captain', ku: 'کاپتن' },
             { en: 'First Mate', ku: 'یاریدەی یەکەم' },
@@ -75,7 +75,7 @@ export const LOCATIONS = {
     },
     casino: {
         name: { en: 'Casino', ku: 'کازینۆ' },
-        icon: 'diamond',
+        icon: 'Diamond',
         roles: [
             { en: 'Dealer', ku: 'دابەشکەر' },
             { en: 'Gambler', ku: 'قومارباز' },
@@ -89,7 +89,7 @@ export const LOCATIONS = {
     },
     school: {
         name: { en: 'School', ku: 'قوتابخانە' },
-        icon: 'school',
+        icon: 'GraduationCap',
         roles: [
             { en: 'Teacher', ku: 'مامۆستا' },
             { en: 'Student', ku: 'قوتابی' },
@@ -103,7 +103,7 @@ export const LOCATIONS = {
     },
     beach: {
         name: { en: 'Beach', ku: 'قەراغ دەریا' },
-        icon: 'sunny',
+        icon: 'Sun',
         roles: [
             { en: 'Lifeguard', ku: 'ڕزگارکەر' },
             { en: 'Swimmer', ku: 'مەلەوان' },
@@ -117,7 +117,7 @@ export const LOCATIONS = {
     },
     airport: {
         name: { en: 'Airport', ku: 'فڕۆکەخانە' },
-        icon: 'airplane',
+        icon: 'Plane',
         roles: [
             { en: 'Pilot', ku: 'فڕۆکەوان' },
             { en: 'Flight Attendant', ku: 'میوانداری فڕۆکە' },
@@ -131,7 +131,7 @@ export const LOCATIONS = {
     },
     supermarket: {
         name: { en: 'Supermarket', ku: 'سوپەرمارکێت' },
-        icon: 'cart',
+        icon: 'ShoppingCart',
         roles: [
             { en: 'Cashier', ku: 'کاشێر' },
             { en: 'Shopper', ku: 'کڕیار' },
@@ -145,7 +145,7 @@ export const LOCATIONS = {
     },
     circus: {
         name: { en: 'Circus', ku: 'سیرک' },
-        icon: 'balloon',
+        icon: 'Tent',
         roles: [
             { en: 'Clown', ku: 'پەڵەوان' },
             { en: 'Acrobat', ku: 'بەندباز' },
@@ -159,7 +159,7 @@ export const LOCATIONS = {
     },
     restaurant: {
         name: { en: 'Restaurant', ku: 'چێشتخانە' },
-        icon: 'restaurant',
+        icon: 'UtensilsCrossed',
         roles: [
             { en: 'Chef', ku: 'سەرچێشتلێنەر' },
             { en: 'Waiter', ku: 'خزمەتکار' },
@@ -173,7 +173,7 @@ export const LOCATIONS = {
     },
     movieStudio: {
         name: { en: 'Movie Studio', ku: 'ستۆدیۆی فیلم' },
-        icon: 'videocam',
+        icon: 'Video',
         roles: [
             { en: 'Director', ku: 'دەرهێنەر' },
             { en: 'Actor', ku: 'ئەکتەر' },
@@ -187,7 +187,7 @@ export const LOCATIONS = {
     },
     policeStation: {
         name: { en: 'Police Station', ku: 'بنکەی پۆلیس' },
-        icon: 'shield',
+        icon: 'Shield',
         roles: [
             { en: 'Police Officer', ku: 'پۆلیس' },
             { en: 'Detective', ku: 'لێکۆڵەر' },
@@ -201,7 +201,7 @@ export const LOCATIONS = {
     },
     university: {
         name: { en: 'University', ku: 'زانکۆ' },
-        icon: 'library',
+        icon: 'Library',
         roles: [
             { en: 'Professor', ku: 'پڕۆفیسۆر' },
             { en: 'Student', ku: 'خوێندکار' },
@@ -215,7 +215,7 @@ export const LOCATIONS = {
     },
     embassy: {
         name: { en: 'Embassy', ku: 'باڵیۆزخانە' },
-        icon: 'flag',
+        icon: 'Flag',
         roles: [
             { en: 'Ambassador', ku: 'باڵیۆز' },
             { en: 'Secretary', ku: 'سکرتێر' },

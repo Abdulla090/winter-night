@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, Dimensions, Platform, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import * as Icons from 'lucide-react-native';
+import { Users, ChevronRight, ChevronLeft } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
@@ -74,11 +75,15 @@ export default function GameCard({
                         !isGrid && (isKurdish ? { marginLeft: 16 } : { marginRight: 16 }),
                         isGrid && { marginBottom: 12, alignSelf: isRTL ? 'flex-end' : 'flex-start' }
                     ]}>
-                        <Ionicons
-                            name={icon}
-                            size={isGrid ? 28 : 24}
-                            color={cardGradient}
-                        />
+                        {(() => {
+                            const IconComp = Icons[icon] || Icons.Gamepad2;
+                            return (
+                                <IconComp
+                                    size={isGrid ? 28 : 24}
+                                    color={cardGradient}
+                                />
+                            );
+                        })()}
                     </View>
 
                     {/* Text Container */}
@@ -100,7 +105,7 @@ export default function GameCard({
 
                         {/* Players Tag */}
                         <View style={[styles.metaRow, { flexDirection: rowDirection, marginTop: 8 }]}>
-                            <Ionicons name="people" size={12} color={colors.text.muted} />
+                            <Users size={12} color={colors.text.muted} />
                             <Text style={[
                                 styles.metaText,
                                 { color: colors.text.muted },
@@ -113,11 +118,11 @@ export default function GameCard({
 
                     {/* Chevron (List only) */}
                     {!isGrid && (
-                        <Ionicons
-                            name={isKurdish ? "chevron-back" : "chevron-forward"}
-                            size={20}
-                            color={colors.text.muted}
-                        />
+                        isKurdish ? (
+                            <ChevronLeft size={20} color={colors.text.muted} />
+                        ) : (
+                            <ChevronRight size={20} color={colors.text.muted} />
+                        )
                     )}
                 </View>
             </TouchableOpacity>

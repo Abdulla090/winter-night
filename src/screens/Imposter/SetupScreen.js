@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Eye, EyeOff, Play } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { Ionicons } from '@expo/vector-icons';
+import * as Icons from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 
 import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
@@ -24,6 +26,7 @@ export default function ImposterSetupScreen({ navigation }) {
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('ImposterPlay', {
             players,
             category: selectedCategory,
@@ -99,7 +102,10 @@ export default function ImposterSetupScreen({ navigation }) {
                                         borderColor: imposterCount === count ? colors.brand.crimson : colors.border,
                                     }
                                 ]}
-                                onPress={() => setImposterCount(count)}
+                                onPress={() => {
+                                    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    setImposterCount(count);
+                                }}
                             >
                                 <Text style={[
                                     styles.toggleText,
@@ -126,7 +132,10 @@ export default function ImposterSetupScreen({ navigation }) {
                                     ...layout.shadows.sm,
                                 }
                             ]}
-                            onPress={() => setSelectedCategory(cat.key)}
+                            onPress={() => {
+                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setSelectedCategory(cat.key);
+                            }}
                             activeOpacity={0.8}
                         >
                             <View style={[
@@ -135,11 +144,10 @@ export default function ImposterSetupScreen({ navigation }) {
                                     backgroundColor: selectedCategory === cat.key ? colors.brand.crimson : colors.surfaceHighlight,
                                 }
                             ]}>
-                                <Ionicons
-                                    name={cat.icon}
-                                    size={24}
-                                    color={selectedCategory === cat.key ? '#FFF' : colors.text.secondary}
-                                />
+                                {(() => {
+                                    const IconComponent = Icons[cat.icon] || Icons.HelpCircle;
+                                    return <IconComponent size={24} color={selectedCategory === cat.key ? '#FFF' : colors.text.secondary} />;
+                                })()}
                             </View>
                             <Text style={[
                                 styles.categoryText,

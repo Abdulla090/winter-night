@@ -8,7 +8,7 @@ export const TIME_OPTIONS = [30, 60, 90, 120];
 export const DRAWING_CATEGORIES = {
     easy: {
         name: { en: 'Easy', ku: 'ئاسان' },
-        icon: 'happy-outline',
+        icon: 'Smile',
         words: [
             { en: 'Dog', ku: 'سەگ' },
             { en: 'Cat', ku: 'پشیلە' },
@@ -59,7 +59,7 @@ export const DRAWING_CATEGORIES = {
     },
     medium: {
         name: { en: 'Medium', ku: 'ناوەند' },
-        icon: 'flash-outline',
+        icon: 'Zap',
         words: [
             { en: 'Bicycle', ku: 'پاسکیل' },
             { en: 'Airplane', ku: 'فڕۆکە' },
@@ -110,7 +110,7 @@ export const DRAWING_CATEGORIES = {
     },
     hard: {
         name: { en: 'Hard', ku: 'قورس' },
-        icon: 'skull-outline',
+        icon: 'Skull',
         words: [
             { en: 'Astronaut', ku: 'ئاسمانەوان' },
             { en: 'Submarine', ku: 'ژێردەریایی' },
@@ -155,7 +155,7 @@ export const DRAWING_CATEGORIES = {
     },
     actions: {
         name: { en: 'Actions', ku: 'کردارەکان' },
-        icon: 'walk-outline',
+        icon: 'PersonStanding',
         words: [
             { en: 'Dancing', ku: 'سەماکردن' },
             { en: 'Singing', ku: 'گۆرانی گوتن' },
@@ -200,7 +200,7 @@ export const DRAWING_CATEGORIES = {
     },
     places: {
         name: { en: 'Places', ku: 'شوێنەکان' },
-        icon: 'location-outline',
+        icon: 'MapPin',
         words: [
             { en: 'Beach', ku: 'کەناری دەریا' },
             { en: 'Forest', ku: 'دارستان' },
@@ -245,7 +245,7 @@ export const DRAWING_CATEGORIES = {
     },
     movies: {
         name: { en: 'Movies & TV', ku: 'فیلم و تەلەفزیۆن' },
-        icon: 'film-outline',
+        icon: 'Film',
         words: [
             { en: 'Batman', ku: 'باتمان' },
             { en: 'Superman', ku: 'سوپەرمان' },

@@ -8,7 +8,8 @@ import {
     Alert,
 } from 'react-native';
 import { Circle, X, Plus, Play } from 'lucide-react-native';
-import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { MotiView } from 'moti';
 
 import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
@@ -26,13 +27,16 @@ export default function SetupScreen({ navigation }) {
     const handleAddOption = (text) => {
         if (!text.trim()) return;
         if (options.length >= 20) {
+            if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
             Alert.alert('Limit Reached', 'Maximum 20 options allowed');
             return;
         }
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setOptions([...options, text.trim()]);
     };
 
     const handleRemoveOption = (index) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         const newOptions = [...options];
         newOptions.splice(index, 1);
         setOptions(newOptions);
@@ -40,9 +44,11 @@ export default function SetupScreen({ navigation }) {
 
     const handleStartGame = () => {
         if (options.length < 2) {
+            if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             Alert.alert('Error', 'Add at least 2 options to spin');
             return;
         }
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('WheelPlay', { options });
     };
 

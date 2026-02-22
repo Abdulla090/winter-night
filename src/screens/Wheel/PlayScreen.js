@@ -7,7 +7,9 @@ import {
     Dimensions,
     TouchableOpacity,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { ChevronDown } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -52,6 +54,7 @@ export default function PlayScreen({ navigation, route }) {
 
     const spinWheel = () => {
         if (isSpinning) return;
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         setIsSpinning(true);
         setWinner(null);
 
@@ -105,6 +108,7 @@ export default function PlayScreen({ navigation, route }) {
 
         const winningIndex = Math.floor(effectiveAngle / anglePerSegment);
 
+        if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setWinner(options[winningIndex]);
         setIsSpinning(false);
     };
@@ -142,8 +146,8 @@ export default function PlayScreen({ navigation, route }) {
                     <View style={styles.wheelContainer}>
                         {/* Pointer */}
                         <View style={styles.pointerContainer}>
-                            <Ionicons name="caret-down" size={50} color={colors.text.primary} style={styles.pointerShadow} />
-                            <Ionicons name="caret-down" size={44} color="#FFF" style={styles.pointer} />
+                            <ChevronDown size={50} color={colors.text.primary} style={styles.pointerShadow} />
+                            <ChevronDown size={44} color="#FFF" style={styles.pointer} />
                         </View>
 
                         <Animated.View style={[styles.wheel, animatedStyle]}>

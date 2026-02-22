@@ -7,9 +7,11 @@ import {
     ScrollView,
     Vibration,
     Animated,
+    Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Fingerprint, EyeOff, Type, MessageCircle } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { GradientBackground, Button, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomWord } from '../../constants/imposterWords';
@@ -53,11 +55,13 @@ export default function ImposterPlayScreen({ navigation, route }) {
     const isImposter = imposters.includes(currentPlayer);
 
     const handleReveal = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setShowSecret(true);
         setPhase('viewing');
     };
 
     const handleNext = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         setShowSecret(false);
         if (currentPlayerIdx < players.length - 1) {
             setCurrentPlayerIdx(prev => prev + 1);
@@ -68,6 +72,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
     };
 
     const handleEndGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('ImposterResult', {
             imposters,
             word: gameWord,
@@ -112,7 +117,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
                                     title={t('common.reveal', language)}
                                     onPress={handleReveal}
                                     gradient={[COLORS.accent.danger, COLORS.accent.danger]}
-                                    icon={<Ionicons name="finger-print" size={24} color="#FFF" />}
+                                    icon={<Fingerprint size={24} color="#FFF" />}
                                     style={{ minWidth: 200 }}
                                     isKurdish={isKurdish}
                                 />
@@ -128,12 +133,11 @@ export default function ImposterPlayScreen({ navigation, route }) {
                                     styles.card,
                                     isImposter ? styles.imposterCard : styles.crewCard
                                 ]}>
-                                    <Ionicons
-                                        name={isImposter ? "eye-off" : "text"}
-                                        size={48}
-                                        color={isImposter ? COLORS.accent.danger : COLORS.accent.primary}
-                                        style={{ marginBottom: 16 }}
-                                    />
+                                    {isImposter ? (
+                                        <EyeOff size={48} color={COLORS.accent.danger} style={{ marginBottom: 16 }} />
+                                    ) : (
+                                        <Type size={48} color={COLORS.accent.primary} style={{ marginBottom: 16 }} />
+                                    )}
 
                                     {isImposter ? (
                                         <>
@@ -195,7 +199,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
                     alwaysBounceVertical={true}
                 >
                     <View style={styles.iconCircle}>
-                        <Ionicons name="chatbubbles-outline" size={40} color={COLORS.text.primary} />
+                        <MessageCircle size={40} color={COLORS.text.primary} />
                     </View>
 
                     <Text style={[styles.discussTitle, isKurdish && styles.kurdishFont]}>

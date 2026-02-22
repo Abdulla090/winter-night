@@ -4,7 +4,8 @@ import {
     Animated, Keyboard, KeyboardAvoidingView, Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Star, RefreshCw, X, CheckCircle2, XCircle, Check, ArrowLeft, ArrowRight } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { MotiView } from 'moti';
 import { GradientBackground, GlassCard, Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
@@ -80,6 +81,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
             userInput === correctAnswer;
 
         if (isMatch) {
+            if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setIsCorrect(true);
             setScore(prev => prev + (timeLeft * 10)); // Bonus for speed
             // Success animation
@@ -88,6 +90,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                 Animated.timing(scaleAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
             ]).start();
         } else {
+            if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             setIsCorrect(false);
             // Shake animation for wrong answer
             Animated.sequence([
@@ -103,6 +106,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
     };
 
     const handleNext = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         if (currentIndex + 1 >= puzzles.length) {
             setGameOver(true);
         } else {
@@ -176,7 +180,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                                 title={isKurdish ? 'دووبارە بیکەوە' : 'Play Again'}
                                 onPress={handlePlayAgain}
                                 gradient={[category.color, category.color]}
-                                icon={<Ionicons name="refresh" size={20} color="#FFF" />}
+                                icon={<RefreshCw size={20} color="#FFF" />}
                                 isKurdish={isKurdish}
                             />
                             <TouchableOpacity
@@ -210,7 +214,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                             style={styles.backBtn}
                             onPress={() => navigation.goBack()}
                         >
-                            <Ionicons name="close" size={24} color={COLORS.text.primary} />
+                            <X size={24} color={COLORS.text.primary} />
                         </TouchableOpacity>
 
                         <View style={styles.progressBadge}>
@@ -220,7 +224,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                         </View>
 
                         <View style={[styles.scoreBadge, { backgroundColor: category.color + '30' }]}>
-                            <Ionicons name="star" size={16} color={category.color} />
+                            <Star size={16} color={category.color} fill={category.color} />
                             <Text style={[styles.scoreText, { color: category.color }]}>{score}</Text>
                         </View>
                     </View>
@@ -255,11 +259,11 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                                             styles.resultBadge,
                                             { backgroundColor: isCorrect ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)' }
                                         ]}>
-                                            <Ionicons
-                                                name={isCorrect ? "checkmark-circle" : "close-circle"}
-                                                size={24}
-                                                color={isCorrect ? COLORS.accent.success : COLORS.accent.danger}
-                                            />
+                                            {isCorrect ? (
+                                                <CheckCircle2 size={24} color={COLORS.accent.success} />
+                                            ) : (
+                                                <XCircle size={24} color={COLORS.accent.danger} />
+                                            )}
                                             <Text style={[
                                                 styles.resultText,
                                                 { color: isCorrect ? COLORS.accent.success : COLORS.accent.danger },
@@ -310,7 +314,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                                     <Text style={[styles.submitBtnText, isKurdish && styles.kurdishFont]}>
                                         {isKurdish ? 'بیسەلمێنە' : 'Submit'}
                                     </Text>
-                                    <Ionicons name="checkmark" size={20} color="#FFF" />
+                                    <Check size={20} color="#FFF" />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -322,7 +326,7 @@ export default function EmojiDecoderPlayScreen({ navigation, route }) {
                                     : (isKurdish ? 'دواتر' : 'Next')}
                                 onPress={handleNext}
                                 gradient={[category.color, category.color]}
-                                icon={<Ionicons name={isKurdish ? "arrow-back" : "arrow-forward"} size={20} color="#FFF" />}
+                                icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                 isKurdish={isKurdish}
                             />
                         </View>

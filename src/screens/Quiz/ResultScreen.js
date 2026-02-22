@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Trophy, Medal, Star, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
@@ -40,7 +40,7 @@ export default function QuizResultScreen({ navigation, route }) {
         <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={[styles.winnerBanner, isKurdish && styles.kurdishBorder]}>
-                    <Ionicons name="trophy" size={60} color="#FFD700" />
+                    <Trophy size={60} color="#FFD700" />
                     <Text style={[styles.winnerLabel, isKurdish && styles.kurdishFont]}>
                         {t('quiz.quizChampion', language)}
                     </Text>
@@ -58,7 +58,7 @@ export default function QuizResultScreen({ navigation, route }) {
                         <View key={name} style={[styles.leaderboardItem, { flexDirection: rowDirection }]}>
                             <View style={styles.rankContainer}>
                                 {index < 3 ? (
-                                    <Ionicons name="medal" size={24} color={getMedalColor(index)} />
+                                    <Medal size={24} color={getMedalColor(index)} />
                                 ) : (
                                     <Text style={styles.rankNumber}>{index + 1}</Text>
                                 )}
@@ -66,7 +66,7 @@ export default function QuizResultScreen({ navigation, route }) {
                             <Text style={[styles.playerName, isKurdish && styles.kurdishFont, { textAlign }]}>{name}</Text>
                             <View style={[styles.scoreContainer, { flexDirection: rowDirection }]}>
                                 <Text style={styles.scoreValue}>{score}</Text>
-                                <Ionicons name="star" size={16} color={COLORS.accent.warning} />
+                                <Star size={16} color={COLORS.accent.warning} />
                             </View>
                         </View>
                     ))}
@@ -102,7 +102,7 @@ export default function QuizResultScreen({ navigation, route }) {
                         title={t('common.playAgain', language)}
                         onPress={playAgain}
                         gradient={[COLORS.accent.success, COLORS.accent.success]}
-                        icon={<Ionicons name="refresh" size={20} color="#FFF" />}
+                        icon={<RefreshCw size={20} color="#FFF" />}
                         style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
                         isKurdish={isKurdish}
                     />

@@ -13,7 +13,8 @@ import {
     ScrollView,
     Platform,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Share2, Copy, X, Star, CheckCircle2, Clock, Play, ChevronRight, Gamepad2 } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
 import { GradientBackground } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useGameRoom } from '../../context/GameRoomContext';
@@ -24,17 +25,17 @@ import { supabase } from '../../lib/supabase';
 
 // Available games for multiplayer
 const MULTIPLAYER_GAMES = [
-    { id: 'truthordare', name: 'Truth or Dare', nameKu: 'ڕاستی یان بوێری', icon: 'flame', color: '#ef4444', available: true },
-    { id: 'neverhaveiever', name: 'Never Have I Ever', nameKu: 'هەرگیز نەمکردووە', icon: 'hand-left', color: '#f59e0b', available: true },
-    { id: 'wouldyourather', name: 'Would You Rather', nameKu: 'کامیان باشترە', icon: 'swap-horizontal', color: '#06b6d4', available: true },
-    { id: 'quiz', name: 'Quiz Trivia', nameKu: 'پرسیار و وەڵام', icon: 'trophy', color: '#10b981', available: true },
-    { id: 'pyramid', name: 'Pyramid', nameKu: 'پیرامید', icon: 'triangle', color: '#8b5cf6', available: true },
-    { id: 'whoami', name: 'Who Am I', nameKu: 'من کێم', icon: 'help-circle', color: '#f97316', available: true },
-    { id: 'imposter', name: 'Imposter', nameKu: 'ئیمپۆستەر', icon: 'eye-off', color: '#ef4444', available: true },
-    { id: 'spyfall', name: 'Spyfall', nameKu: 'سیخوڕ', icon: 'search', color: '#3b82f6', available: true },
-    { id: 'drawguess', name: 'Draw & Guess', nameKu: 'وێنەکێشان', icon: 'brush', color: '#ec4899', available: true },
-    { id: 'forbiddenword', name: 'Forbidden Word', nameKu: 'وشەی قەدەغە', icon: 'alert-circle', color: '#ef4444', available: false }, // Requires team logic adaptation
-    { id: 'emojidecoder', name: 'Emoji Decoder', nameKu: 'دەربازی ئیمۆجی', icon: 'happy', color: '#8b5cf6', available: false }, // Single player focused currently
+    { id: 'truthordare', name: 'Truth or Dare', nameKu: 'ڕاستی یان بوێری', icon: 'Flame', color: '#ef4444', available: true },
+    { id: 'neverhaveiever', name: 'Never Have I Ever', nameKu: 'هەرگیز نەمکردووە', icon: 'Hand', color: '#f59e0b', available: true },
+    { id: 'wouldyourather', name: 'Would You Rather', nameKu: 'کامیان باشترە', icon: 'ArrowRightLeft', color: '#06b6d4', available: true },
+    { id: 'quiz', name: 'Quiz Trivia', nameKu: 'پرسیار و وەڵام', icon: 'Trophy', color: '#10b981', available: true },
+    { id: 'pyramid', name: 'Pyramid', nameKu: 'پیرامید', icon: 'Triangle', color: '#8b5cf6', available: true },
+    { id: 'whoami', name: 'Who Am I', nameKu: 'من کێم', icon: 'HelpCircle', color: '#f97316', available: true },
+    { id: 'imposter', name: 'Imposter', nameKu: 'ئیمپۆستەر', icon: 'EyeOff', color: '#ef4444', available: true },
+    { id: 'spyfall', name: 'Spyfall', nameKu: 'سیخوڕ', icon: 'Search', color: '#3b82f6', available: true },
+    { id: 'drawguess', name: 'Draw & Guess', nameKu: 'وێنەکێشان', icon: 'Paintbrush', color: '#ec4899', available: true },
+    { id: 'forbiddenword', name: 'Forbidden Word', nameKu: 'وشەی قەدەغە', icon: 'AlertCircle', color: '#ef4444', available: false },
+    { id: 'emojidecoder', name: 'Emoji Decoder', nameKu: 'دەربازی ئیمۆجی', icon: 'Smile', color: '#8b5cf6', available: false },
 ];
 
 export default function RoomLobbyScreen({ navigation }) {
@@ -254,7 +255,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         </View>
                         {isRoomHost && (
                             <View style={styles.hostBadge}>
-                                <Ionicons name="star" size={12} color="#f59e0b" />
+                                <Star size={12} color="#f59e0b" fill="#f59e0b" />
                                 <Text style={styles.hostText}>
                                     {isKurdish ? 'خاوەنی ژوور' : 'Host'}
                                 </Text>
@@ -264,11 +265,11 @@ export default function RoomLobbyScreen({ navigation }) {
                 </View>
 
                 <View style={[styles.readyBadge, { backgroundColor: item.is_ready ? '#22c55e20' : '#6b728020' }]}>
-                    <Ionicons
-                        name={item.is_ready ? 'checkmark-circle' : 'time-outline'}
-                        size={18}
-                        color={item.is_ready ? '#22c55e' : '#6b7280'}
-                    />
+                    {item.is_ready ? (
+                        <CheckCircle2 size={18} color="#22c55e" />
+                    ) : (
+                        <Clock size={18} color="#6b7280" />
+                    )}
                     <Text style={[styles.readyText, { color: item.is_ready ? '#22c55e' : '#6b7280' }]}>
                         {item.is_ready ? (isKurdish ? 'ئامادە' : 'Ready') : (isKurdish ? 'چاوەڕوان' : 'Waiting')}
                     </Text>
@@ -296,7 +297,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         style={[styles.backBtn, { backgroundColor: colors.surface }]}
                         onPress={handleLeaveRoom}
                     >
-                        <Ionicons name="close" size={24} color={colors.text.primary} />
+                        <X size={24} color={colors.text.primary} />
                     </TouchableOpacity>
 
                     <View style={styles.headerCenter}>
@@ -309,7 +310,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         style={[styles.shareBtn, { backgroundColor: colors.surface }]}
                         onPress={handleShareCode}
                     >
-                        <Ionicons name="share-social" size={20} color={colors.text.primary} />
+                        <Share2 size={20} color={colors.text.primary} />
                     </TouchableOpacity>
                 </View>
 
@@ -322,7 +323,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         {currentRoom.room_code}
                     </Text>
                     <TouchableOpacity style={styles.copyBtn} onPress={handleShareCode}>
-                        <Ionicons name="copy-outline" size={18} color={colors.accent} />
+                        <Copy size={18} color={colors.accent} />
                         <Text style={[styles.copyText, { color: colors.accent }]}>
                             {isKurdish ? 'هاوبەشی بکە' : 'Share'}
                         </Text>
@@ -338,7 +339,10 @@ export default function RoomLobbyScreen({ navigation }) {
                         {selectedGame ? (
                             <View style={styles.selectedGame}>
                                 <View style={[styles.gameIconSmall, { backgroundColor: selectedGame.color + '20' }]}>
-                                    <Ionicons name={selectedGame.icon} size={24} color={selectedGame.color} />
+                                    {(() => {
+                                        const IconComp = Icons[selectedGame.icon] || Icons.HelpCircle;
+                                        return <IconComp size={24} color={selectedGame.color} />;
+                                    })()}
                                 </View>
                                 <View style={styles.gameInfo}>
                                     <Text style={[styles.gameName, { color: colors.text.primary }]}>
@@ -351,11 +355,11 @@ export default function RoomLobbyScreen({ navigation }) {
                             </View>
                         ) : (
                             <View style={styles.noGame}>
-                                <Ionicons name="game-controller-outline" size={28} color={colors.text.secondary} />
+                                <Gamepad2 size={28} color={colors.text.secondary} />
                                 <Text style={[styles.selectGameText, { color: colors.text.secondary }]}>
                                     {isKurdish ? 'یاری هەڵبژێرە' : 'Select a Game'}
                                 </Text>
-                                <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
+                                <ChevronRight size={20} color={colors.text.muted} />
                             </View>
                         )}
                     </TouchableOpacity>
@@ -364,7 +368,10 @@ export default function RoomLobbyScreen({ navigation }) {
                         {selectedGame ? (
                             <View style={styles.selectedGame}>
                                 <View style={[styles.gameIconSmall, { backgroundColor: selectedGame.color + '20' }]}>
-                                    <Ionicons name={selectedGame.icon} size={24} color={selectedGame.color} />
+                                    {(() => {
+                                        const IconComp = Icons[selectedGame.icon] || Icons.HelpCircle;
+                                        return <IconComp size={24} color={selectedGame.color} />;
+                                    })()}
                                 </View>
                                 <Text style={[styles.gameName, { color: colors.text.primary }]}>
                                     {isKurdish ? selectedGame.nameKu : selectedGame.name}
@@ -412,11 +419,11 @@ export default function RoomLobbyScreen({ navigation }) {
                                 <ActivityIndicator color="#FFF" />
                             ) : (
                                 <>
-                                    <Ionicons
-                                        name={currentPlayer?.is_ready ? 'close-circle' : 'checkmark-circle'}
-                                        size={24}
-                                        color="#FFF"
-                                    />
+                                    {currentPlayer?.is_ready ? (
+                                        <X size={24} color="#FFF" />
+                                    ) : (
+                                        <CheckCircle2 size={24} color="#FFF" />
+                                    )}
                                     <Text style={styles.readyBtnText}>
                                         {currentPlayer?.is_ready
                                             ? (isKurdish ? 'ئامادە نیم' : 'Not Ready')
@@ -438,7 +445,7 @@ export default function RoomLobbyScreen({ navigation }) {
                                 <ActivityIndicator color="#FFF" />
                             ) : (
                                 <>
-                                    <Ionicons name="play" size={24} color="#FFF" />
+                                    <Play size={24} color="#FFF" fill="#FFF" />
                                     <Text style={styles.startBtnText}>
                                         {isKurdish ? 'دەستپێکردنی یاری' : 'Start Game'}
                                     </Text>
@@ -462,7 +469,7 @@ export default function RoomLobbyScreen({ navigation }) {
                                     {isKurdish ? 'یاری هەڵبژێرە' : 'Select Game'}
                                 </Text>
                                 <TouchableOpacity onPress={() => setShowGamePicker(false)}>
-                                    <Ionicons name="close" size={24} color={colors.text.secondary} />
+                                    <X size={24} color={colors.text.secondary} />
                                 </TouchableOpacity>
                             </View>
 
@@ -479,7 +486,10 @@ export default function RoomLobbyScreen({ navigation }) {
                                         onPress={() => handleSelectGame(game)}
                                     >
                                         <View style={[styles.gameIconLarge, { backgroundColor: game.color + '20' }]}>
-                                            <Ionicons name={game.icon} size={32} color={game.available ? game.color : '#666'} />
+                                            {(() => {
+                                                const IconComp = Icons[game.icon] || Icons.HelpCircle;
+                                                return <IconComp size={32} color={game.available ? game.color : '#666'} />;
+                                            })()}
                                         </View>
                                         <View style={styles.gameDetails}>
                                             <Text style={[styles.gameTitle, { color: game.available ? colors.text.primary : '#666' }]}>
@@ -492,7 +502,7 @@ export default function RoomLobbyScreen({ navigation }) {
                                             )}
                                         </View>
                                         {roomData?.game_type === game.id && (
-                                            <Ionicons name="checkmark-circle" size={24} color={game.color} />
+                                            <CheckCircle2 size={24} color={game.color} />
                                         )}
                                     </TouchableOpacity>
                                 ))}

@@ -4,7 +4,7 @@
 export const WORD_CATEGORIES = {
     food: {
         name: { en: 'Food', ku: 'خواردن' },
-        icon: 'fast-food',
+        icon: 'Utensils',
         words: [
             { word: { en: 'Pizza', ku: 'پیتزا' }, hint: { en: 'Italian dish', ku: 'خواردنی ئیتاڵی' } },
             { word: { en: 'Sushi', ku: 'سوشی' }, hint: { en: 'Japanese food', ku: 'خواردنی ژاپۆنی' } },
@@ -34,7 +34,7 @@ export const WORD_CATEGORIES = {
     },
     animals: {
         name: { en: 'Animals', ku: 'ئاژەڵەکان' },
-        icon: 'paw',
+        icon: 'PawPrint',
         words: [
             { word: { en: 'Elephant', ku: 'فیل' }, hint: { en: 'Large mammal', ku: 'شیرەمەندی گەورە' } },
             { word: { en: 'Penguin', ku: 'پێنگوین' }, hint: { en: 'Antarctic bird', ku: 'باڵندەی قوتبی' } },
@@ -64,7 +64,7 @@ export const WORD_CATEGORIES = {
     },
     places: {
         name: { en: 'Places', ku: 'شوێنەکان' },
-        icon: 'location',
+        icon: 'MapPin',
         words: [
             { word: { en: 'Beach', ku: 'قەراغ دەریا' }, hint: { en: 'Sandy destination', ku: 'شوێنی لمین' } },
             { word: { en: 'Library', ku: 'کتێبخانە' }, hint: { en: 'Book building', ku: 'شوێنی کتێب' } },
@@ -94,7 +94,7 @@ export const WORD_CATEGORIES = {
     },
     objects: {
         name: { en: 'Objects', ku: 'شتەکان' },
-        icon: 'cube',
+        icon: 'Box',
         words: [
             { word: { en: 'Umbrella', ku: 'چەتر' }, hint: { en: 'Rain protection', ku: 'بۆ باران' } },
             { word: { en: 'Guitar', ku: 'گیتار' }, hint: { en: 'Musical instrument', ku: 'ئامێری میوزیک' } },
@@ -124,7 +124,7 @@ export const WORD_CATEGORIES = {
     },
     activities: {
         name: { en: 'Activities', ku: 'چالاکییەکان' },
-        icon: 'bicycle',
+        icon: 'Bike',
         words: [
             { word: { en: 'Swimming', ku: 'مەلەکردن' }, hint: { en: 'Water activity', ku: 'چالاکی ئاو' } },
             { word: { en: 'Dancing', ku: 'سەماکردن' }, hint: { en: 'Moving to music', ku: 'جووڵان بە میوزیک' } },

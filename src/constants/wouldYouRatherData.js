@@ -116,10 +116,10 @@ export const QUESTIONS = {
 
 // Category info
 export const CATEGORIES = [
-    { key: 'fun', name: { en: 'Fun & Light', ku: 'خۆشی و سووک' }, icon: 'happy-outline', color: '#3b82f6' },
-    { key: 'deep', name: { en: 'Deep & Thought', ku: 'قووڵ و بیرکردنەوە' }, icon: 'bulb-outline', color: '#8b5cf6' },
-    { key: 'funny', name: { en: 'Silly & Absurd', ku: 'سەیر و گاڵتەجار' }, icon: 'game-controller-outline', color: '#f59e0b' },
-    { key: 'extreme', name: { en: 'Extreme', ku: 'توند' }, icon: 'flash-outline', color: '#ef4444' },
+    { key: 'fun', name: { en: 'Fun & Light', ku: 'خۆشی و سووک' }, icon: 'Smile', color: '#3b82f6' },
+    { key: 'deep', name: { en: 'Deep & Thought', ku: 'قووڵ و بیرکردنەوە' }, icon: 'Lightbulb', color: '#8b5cf6' },
+    { key: 'funny', name: { en: 'Silly & Absurd', ku: 'سەیر و گاڵتەجار' }, icon: 'Gamepad2', color: '#f59e0b' },
+    { key: 'extreme', name: { en: 'Extreme', ku: 'توند' }, icon: 'Zap', color: '#ef4444' },
 ];
 
 // Helper to get text based on language

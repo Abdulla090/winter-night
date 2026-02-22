@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Smile, Flame, Skull, Gamepad2 } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { Button, PlayerInput, BackButton } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getIntensityLevels } from '../../constants/truthOrDareData';
@@ -32,11 +33,30 @@ export default function TruthOrDareSetupScreen({ navigation }) {
         return level ? level.description : '';
     };
 
+    const handleIntensitySelect = (key) => {
+        if (Platform.OS !== 'web') {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        setSelectedIntensity(key);
+    };
+
     const startGame = () => {
+        if (Platform.OS !== 'web') {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }
         navigation.navigate('TruthOrDarePlay', {
             players,
             intensity: selectedIntensity,
         });
+    };
+
+    const getIcon = (iconName, color) => {
+        switch (iconName) {
+            case 'Smile': return <Smile size={28} color={color} />;
+            case 'Flame': return <Flame size={28} color={color} />;
+            case 'Skull': return <Skull size={28} color={color} />;
+            default: return <Smile size={28} color={color} />;
+        }
     };
 
     return (
@@ -82,10 +102,11 @@ export default function TruthOrDareSetupScreen({ navigation }) {
                                     backgroundColor: `${level.color}15`
                                 }
                             ]}
-                            onPress={() => setSelectedIntensity(level.key)}
+                            onPress={() => handleIntensitySelect(level.key)}
+                            activeOpacity={0.8}
                         >
                             <View style={[styles.intensityIcon, { backgroundColor: `${level.color}20` }]}>
-                                <Ionicons name={level.icon} size={28} color={level.color} />
+                                {getIcon(level.icon, level.color)}
                             </View>
                             <Text style={[
                                 styles.intensityName,
@@ -104,7 +125,7 @@ export default function TruthOrDareSetupScreen({ navigation }) {
                 {/* How to Play */}
                 <View style={styles.rulesCard}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Ionicons name="game-controller" size={20} color={COLORS.accent.purple} />
+                        <Gamepad2 size={20} color={COLORS.accent.purple} />
                         <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
@@ -121,7 +142,7 @@ export default function TruthOrDareSetupScreen({ navigation }) {
                         onPress={startGame}
                         disabled={!canStart}
                         gradient={[COLORS.accent.purple, COLORS.accent.purple]}
-                        icon={<Ionicons name="flame" size={20} color="#FFF" />}
+                        icon={<Flame size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
                     {!canStart && (
@@ -151,13 +172,7 @@ const styles = StyleSheet.create({
         borderBottomColor: COLORS.background.border,
         minHeight: 60,
     },
-    backButton: {
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
-        alignItems: 'center', justifyContent: 'center',
-    },
     title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 24 },
-    placeholder: { width: 44 },
 
     scrollView: { flex: 1 },
     scrollContent: {
@@ -188,7 +203,7 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.sm,
     },
     intensityName: { color: COLORS.text.primary, ...FONTS.bold, fontSize: 18, marginBottom: 4 },
-    intensityDesc: { color: COLORS.text.muted, fontSize: 13 },
+    intensityDesc: { color: COLORS.text.muted, fontSize: 13, textAlign: 'center' },
 
     rulesCard: {
         backgroundColor: COLORS.background.card,

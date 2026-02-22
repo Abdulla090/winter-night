@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Eye } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { GradientBackground, Button, Timer, Modal, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
@@ -32,8 +34,12 @@ export default function PlayScreen({ navigation, route }) {
         setCharacter(getRandomCharacter(category, language));
     }, []);
 
-    const handleReveal = () => setShowCharacter(true);
+    const handleReveal = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setShowCharacter(true);
+    };
     const handleStart = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         setShowCharacter(false);
         setIsPlaying(true);
     };
@@ -43,6 +49,7 @@ export default function PlayScreen({ navigation, route }) {
     };
 
     const handleGuessResult = (correct) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         setGuessedCorrect(correct);
         const newScores = { ...scores };
         if (correct) {
@@ -91,7 +98,7 @@ export default function PlayScreen({ navigation, route }) {
                             title={t('common.revealCharacter', language)}
                             onPress={handleReveal}
                             gradient={gameColors}
-                            icon={<Ionicons name="eye-outline" size={20} color="#FFF" />}
+                            icon={<Eye size={20} color="#FFF" />}
                             isKurdish={isKurdish}
                         />
                     </ScrollView>

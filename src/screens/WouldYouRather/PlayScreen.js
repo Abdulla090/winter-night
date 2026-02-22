@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { X, Eye, ArrowLeft, ArrowRight } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomQuestion } from '../../constants/wouldYouRatherData';
@@ -81,6 +83,8 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
         // In multiplayer, you can only vote for yourself
         if (isMultiplayer && player !== myUsername) return;
 
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
         const newVotes = { ...votes, [player]: choice };
 
         const anim = choice === 'a' ? scaleAnimA : scaleAnimB;
@@ -97,6 +101,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
     };
 
     const handleReveal = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         if (isMultiplayer) {
             await syncGameState({ revealed: true });
         } else {
@@ -105,6 +110,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
     };
 
     const handleNext = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         const newQuestion = getRandomQuestion(category, language);
 
         if (isMultiplayer) {
@@ -125,6 +131,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
     };
 
     const handleEndGame = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         if (isMultiplayer) {
             await leaveRoom();
             navigation.replace('Home');
@@ -152,7 +159,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
             <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                 <View style={[styles.header, { flexDirection: rowDirection }]}>
                     <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                        <Ionicons name="close" size={24} color={COLORS.text.secondary} />
+                        <X size={24} color={COLORS.text.secondary} />
                     </TouchableOpacity>
                     <View style={styles.questionBadge}>
                         <Text style={[styles.questionText, isKurdish && styles.kurdishFont]}>
@@ -336,7 +343,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                                     onPress={handleReveal}
                                     disabled={!allVoted}
                                     gradient={[COLORS.accent.info, '#0284c7']}
-                                    icon={<Ionicons name="eye" size={20} color="#FFF" />}
+                                    icon={<Eye size={20} color="#FFF" />}
                                     isKurdish={isKurdish}
                                 />
                             )
@@ -346,7 +353,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                                     title={isKurdish ? 'پرسیاری دواتر' : 'Next Question'}
                                     onPress={handleNext}
                                     gradient={[COLORS.accent.success, '#059669']}
-                                    icon={<Ionicons name={isKurdish ? "arrow-back" : "arrow-forward"} size={20} color="#FFF" />}
+                                    icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                     isKurdish={isKurdish}
                                 />
                             )

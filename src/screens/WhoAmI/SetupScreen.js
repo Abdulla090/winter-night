@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions, Platform } from 'react-native';
 import { Users, Clock, Play, Check } from 'lucide-react-native';
 import { MotiView } from 'moti';
+import * as Haptics from 'expo-haptics';
 
 import { AnimatedScreen, BeastButton, GlassCard, PlayerInput, BackButton } from '../../components';
 import { useLanguage } from '../../context/LanguageContext';
@@ -23,6 +24,7 @@ export default function SetupScreen({ navigation }) {
     const rowStyle = { flexDirection: isRTL ? 'row-reverse' : 'row' };
 
     const startGame = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('WhoAmIPlay', {
             players,
             category: selectedCategory,
@@ -80,7 +82,10 @@ export default function SetupScreen({ navigation }) {
                     {categories.map((cat) => (
                         <TouchableOpacity
                             key={cat.key}
-                            onPress={() => setSelectedCategory(cat.key)}
+                            onPress={() => {
+                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setSelectedCategory(cat.key);
+                            }}
                             activeOpacity={0.8}
                             style={[
                                 styles.catCard,
@@ -119,7 +124,10 @@ export default function SetupScreen({ navigation }) {
                         {[30, 60, 90, 120].map((time) => (
                             <TouchableOpacity
                                 key={time}
-                                onPress={() => setRoundTime(time)}
+                                onPress={() => {
+                                    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    setRoundTime(time);
+                                }}
                                 style={[
                                     styles.timePill,
                                     {

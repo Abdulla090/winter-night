@@ -6,7 +6,7 @@ import {
     ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { AlertCircle } from 'lucide-react-native';
 import { GradientBackground, Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
@@ -25,7 +25,7 @@ export default function ImposterResultScreen({ navigation, route }) {
                 <ScrollView contentContainerStyle={styles.content}>
 
                     <View style={styles.headerIcon}>
-                        <Ionicons name="alert-circle" size={64} color={COLORS.accent.danger} />
+                        <AlertCircle size={64} color={COLORS.accent.danger} />
                     </View>
 
                     <Text style={[styles.title, isKurdish && styles.kurdishFont]}>

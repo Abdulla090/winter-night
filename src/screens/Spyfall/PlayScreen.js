@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Eye, Skull, List, Clock, Hand, User, CheckCircle2, AlarmClock, UserCircle2 } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { Button, Modal, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomLocation, getAllLocations } from '../../constants/spyfallData';
@@ -91,6 +94,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
     };
 
     const handleRevealComplete = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         if (currentRevealIndex < players.length - 1) {
             setCurrentRevealIndex(currentRevealIndex + 1);
             setShowRole(false);
@@ -107,10 +111,12 @@ export default function SpyfallPlayScreen({ navigation, route }) {
     };
 
     const handleVote = (playerIndex) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setVotedPlayer(playerIndex);
     };
 
     const confirmVote = () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const isCaught = gameData.spyIndices.includes(votedPlayer);
         navigation.replace('SpyfallResult', {
             gameData,
@@ -154,9 +160,12 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                                 </Text>
                                 <Button
                                     title={isKurdish ? 'نۆرەکەم ببینە' : "Reveal My Role"}
-                                    onPress={() => setShowRole(true)}
+                                    onPress={() => {
+                                        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                        setShowRole(true);
+                                    }}
                                     gradient={[COLORS.accent.success, COLORS.accent.success]}
-                                    icon={<Ionicons name="eye-outline" size={20} color="#FFF" />}
+                                    icon={<Eye size={20} color="#FFF" />}
                                     isKurdish={isKurdish}
                                 />
                             </>
@@ -164,7 +173,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                             <View style={styles.roleContainer}>
                                 {currentPlayer.isSpy ? (
                                     <GlassCard intensity={30} style={styles.spyCard}>
-                                        <Ionicons name="skull" size={48} color={COLORS.accent.danger} />
+                                        <Skull size={48} color={COLORS.accent.danger} />
                                         <Text style={[styles.spyText, isKurdish && styles.kurdishFont]}>
                                             {t('common.youAreSpy', language)}
                                         </Text>
@@ -221,14 +230,14 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                             style={[styles.locationBtn, { flexDirection: rowDirection }]}
                             onPress={() => setShowLocationsModal(true)}
                         >
-                            <Ionicons name="list" size={20} color={COLORS.text.secondary} />
+                            <List size={20} color={COLORS.text.secondary} />
                             <Text style={[styles.locationBtnText, isKurdish && styles.kurdishFont]}>
                                 {t('common.location', language)}
                             </Text>
                         </TouchableOpacity>
 
                         <Animated.View style={[styles.timerBadge, { transform: [{ scale: pulseAnim }], flexDirection: rowDirection }]}>
-                            <Ionicons name="time-outline" size={20} color={timeLeft <= 30 ? COLORS.accent.danger : COLORS.text.primary} />
+                            <Clock size={20} color={timeLeft <= 30 ? COLORS.accent.danger : COLORS.text.primary} />
                             <Text style={[styles.timerText, timeLeft <= 30 && styles.timerDanger]}>
                                 {formatTime(timeLeft)}
                             </Text>
@@ -238,7 +247,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                             style={[styles.voteBtn, { flexDirection: rowDirection }]}
                             onPress={() => setShowVoteModal(true)}
                         >
-                            <Ionicons name="hand-left" size={20} color="#FFF" />
+                            <Hand size={20} color="#FFF" />
                             <Text style={[styles.voteBtnText, isKurdish && styles.kurdishFont]}>
                                 {t('common.vote', language)}
                             </Text>
@@ -257,7 +266,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                         <View style={[styles.playerGrid, { flexDirection: rowDirection }]}>
                             {players.map((player, index) => (
                                 <View key={index} style={[styles.playerChip, { flexDirection: rowDirection }]}>
-                                    <Ionicons name="person" size={16} color={COLORS.accent.primary} />
+                                    <User size={16} color={COLORS.accent.primary} />
                                     <Text style={[styles.playerChipText, isKurdish && styles.kurdishFont]}>{player}</Text>
                                 </View>
                             ))}
@@ -308,7 +317,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                                 >
                                     <Text style={[styles.voteItemText, isKurdish && styles.kurdishFont]}>{player}</Text>
                                     {votedPlayer === index && (
-                                        <Ionicons name="checkmark-circle" size={24} color={COLORS.accent.success} />
+                                        <CheckCircle2 size={24} color={COLORS.accent.success} />
                                     )}
                                 </TouchableOpacity>
                             ))}
@@ -331,12 +340,15 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                         isKurdish={isKurdish}
                     >
                         <ScrollView style={styles.locationsList}>
-                            {getAllLocations(language).map((loc) => (
-                                <View key={loc.key} style={[styles.locationItem, { flexDirection: rowDirection }]}>
-                                    <Ionicons name={loc.icon} size={20} color={COLORS.accent.primary} />
-                                    <Text style={[styles.locationItemText, isKurdish && styles.kurdishFont]}>{loc.name}</Text>
-                                </View>
-                            ))}
+                            {getAllLocations(language).map((loc) => {
+                                const IconComponent = Icons[loc.icon] || Icons.HelpCircle;
+                                return (
+                                    <View key={loc.key} style={[styles.locationItem, { flexDirection: rowDirection }]}>
+                                        <IconComponent size={20} color={COLORS.accent.primary} />
+                                        <Text style={[styles.locationItemText, isKurdish && styles.kurdishFont]}>{loc.name}</Text>
+                                    </View>
+                                );
+                            })}
                         </ScrollView>
                     </Modal>
                 </SafeAreaView>
@@ -353,7 +365,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <View style={styles.timeUpBadge}>
-                            <Ionicons name="alarm" size={48} color={COLORS.accent.danger} />
+                            <AlarmClock size={48} color={COLORS.accent.danger} />
                             <Text style={[styles.timeUpText, isKurdish && styles.kurdishFont]}>
                                 {t('quiz.timeUp', language)}
                             </Text>
@@ -376,11 +388,11 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                                     ]}
                                     onPress={() => handleVote(index)}
                                 >
-                                    <Ionicons
-                                        name={votedPlayer === index ? "checkmark-circle" : "person-circle-outline"}
-                                        size={32}
-                                        color={votedPlayer === index ? COLORS.accent.success : COLORS.text.secondary}
-                                    />
+                                    {votedPlayer === index ? (
+                                        <CheckCircle2 size={32} color={COLORS.accent.success} />
+                                    ) : (
+                                        <UserCircle2 size={32} color={COLORS.text.secondary} />
+                                    )}
                                     <Text style={[
                                         styles.voteCardText,
                                         votedPlayer === index && styles.voteCardTextSelected,

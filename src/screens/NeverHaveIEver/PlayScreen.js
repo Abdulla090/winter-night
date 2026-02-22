@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { X, Users, Minus, Plus, Skull, ArrowLeft, ArrowRight } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomStatement } from '../../constants/neverHaveIEverData';
@@ -76,6 +78,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
     }, [isMultiplayer, gameState, updateGameState, statementsUsed]);
 
     const getNextStatement = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const newStatement = getRandomStatement(intensity, language);
 
         // Animate
@@ -99,6 +102,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
     };
 
     const handleFingerDown = async (player) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         const newCounts = {
             ...fingerCounts,
             [player]: Math.max(0, (fingerCounts[player] || 5) - 1)
@@ -112,6 +116,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
     };
 
     const handleFingerUp = async (player) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         const newCounts = {
             ...fingerCounts,
             [player]: Math.min(5, (fingerCounts[player] || 0) + 1)
@@ -162,7 +167,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                 {/* Header */}
                 <View style={[styles.header, { flexDirection: rowDirection }]}>
                     <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                        <Ionicons name="close" size={24} color={COLORS.text.secondary} />
+                        <X size={24} color={COLORS.text.secondary} />
                     </TouchableOpacity>
                     <View style={styles.headerCenter}>
                         <Text style={styles.headerTitle}>
@@ -171,9 +176,12 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                     </View>
                     <TouchableOpacity
                         style={styles.scoresBtn}
-                        onPress={() => setShowScores(!showScores)}
+                        onPress={() => {
+                            if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            setShowScores(!showScores);
+                        }}
                     >
-                        <Ionicons name="people" size={20} color={COLORS.text.secondary} />
+                        <Users size={20} color={COLORS.text.secondary} />
                     </TouchableOpacity>
                 </View>
 
@@ -215,7 +223,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                                             onPress={() => handleFingerDown(player)}
                                             disabled={!canAdjust(player)}
                                         >
-                                            <Ionicons name="remove" size={20} color="#FFF" />
+                                            <Minus size={20} color="#FFF" />
                                         </TouchableOpacity>
                                         <View style={[styles.fingerDisplay, { flexDirection: rowDirection }]}>
                                             {[...Array(5)].map((_, i) => (
@@ -229,7 +237,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                                             onPress={() => handleFingerUp(player)}
                                             disabled={!canAdjust(player)}
                                         >
-                                            <Ionicons name="add" size={20} color="#FFF" />
+                                            <Plus size={20} color="#FFF" />
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -240,7 +248,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                     {/* Game Over Notice */}
                     {gameOver && (
                         <View style={[styles.gameOverBanner, { flexDirection: rowDirection }]}>
-                            <Ionicons name="skull" size={24} color={COLORS.accent.danger} />
+                            <Skull size={24} color={COLORS.accent.danger} />
                             <Text style={[styles.gameOverText, isKurdish && styles.kurdishFont]}>
                                 {playersOut.join(', ')} {playersOut.length > 1
                                     ? (isKurdish ? 'دەرچوون' : 'are out!')
@@ -256,7 +264,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                                 title={isKurdish ? 'دەربڕینی دواتر' : 'Next Statement'}
                                 onPress={getNextStatement}
                                 gradient={[COLORS.accent.warning, '#d97706']}
-                                icon={<Ionicons name={isKurdish ? "arrow-back" : "arrow-forward"} size={20} color="#FFF" />}
+                                icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                 isKurdish={isKurdish}
                             />
                         </View>

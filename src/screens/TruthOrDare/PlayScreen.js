@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { X, User, MessageCircle, Zap, CheckCircle2, XCircle, RefreshCw, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -116,6 +117,8 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
     const handleChoice = async (type) => {
         if (isMultiplayer && !isMyTurn) return; // Only active player can choose
 
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         cardScale.value = withTiming(0.95, { duration: 100 });
 
         const challenge = type === 'truth' ? getRandomTruth(intensity, language) : getRandomDare(intensity, language);
@@ -141,6 +144,8 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
     const handleComplete = async (completed) => {
         if (isMultiplayer && !isMyTurn) return;
 
+        if (Platform.OS !== 'web') Haptics.notificationAsync(completed ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning);
+
         const newScores = { ...scores };
         if (completed) {
             newScores[currentPlayer] = (newScores[currentPlayer] || 0) + 1;
@@ -158,6 +163,8 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
     };
 
     const handleNext = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
         const nextIndex = (currentPlayerIndex + 1) % players.length;
 
         if (isMultiplayer) {
@@ -191,6 +198,8 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
     const handleNewChallenge = async () => {
         if (isMultiplayer && !isMyTurn) return;
 
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         const challenge = chosenType === 'truth' ? getRandomTruth(intensity, language) : getRandomDare(intensity, language);
 
         if (isMultiplayer) {
@@ -214,7 +223,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                     <View style={[styles.header, { flexDirection: rowDirection }]}>
                         <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                            <Ionicons name="close" size={24} color={COLORS.text.secondary} />
+                            <X size={24} color={COLORS.text.secondary} />
                         </TouchableOpacity>
                         <View style={styles.roundBadge}>
                             <Text style={[styles.roundText, isKurdish && styles.kurdishFont]}>
@@ -226,7 +235,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
 
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <AnimatedCard delay={100} style={[styles.playerBadge, { flexDirection: rowDirection }]}>
-                            <Ionicons name="person" size={16} color={COLORS.accent.purple} />
+                            <User size={16} color={COLORS.accent.purple} />
                             <Text style={[styles.playerBadgeText, isKurdish && styles.kurdishFont]}>
                                 {currentPlayer}{isKurdish ? ' نۆرەبەتی' : "'s Turn"}
                             </Text>
@@ -269,7 +278,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     ]}
                                 >
                                     <View style={styles.iconCircleBlue}>
-                                        <Ionicons name="chatbubble-ellipses" size={32} color="#3b82f6" />
+                                        <MessageCircle size={32} color="#3b82f6" />
                                     </View>
                                     <Text style={[styles.choiceText, { color: '#3b82f6' }, isKurdish && styles.kurdishFont]}>
                                         {t('common.truth', language)}
@@ -292,7 +301,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     ]}
                                 >
                                     <View style={styles.iconCircleRed}>
-                                        <Ionicons name="flash" size={32} color="#ef4444" />
+                                        <Zap size={32} color="#ef4444" />
                                     </View>
                                     <Text style={[styles.choiceText, { color: '#ef4444' }, isKurdish && styles.kurdishFont]}>
                                         {t('common.dare', language)}
@@ -337,11 +346,11 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <Animated.View style={contentStyle}>
                             <View style={[styles.typeBadge, { backgroundColor: `${accentColor}20`, flexDirection: rowDirection }]}>
-                                <Ionicons
-                                    name={isTruth ? "chatbubble-ellipses" : "flash"}
-                                    size={20}
-                                    color={accentColor}
-                                />
+                                {isTruth ? (
+                                    <MessageCircle size={20} color={accentColor} />
+                                ) : (
+                                    <Zap size={20} color={accentColor} />
+                                )}
                                 <Text style={[styles.typeBadgeText, { color: accentColor }, isKurdish && styles.kurdishFont]}>
                                     {isTruth ? t('common.truth', language).toUpperCase() : t('common.dare', language).toUpperCase()}
                                 </Text>
@@ -360,7 +369,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                         title={isKurdish ? 'تەواو کرا!' : 'Completed!'}
                                         onPress={() => handleComplete(true)}
                                         gradient={[COLORS.accent.success, '#059669']}
-                                        icon={<Ionicons name="checkmark-circle" size={20} color="#FFF" />}
+                                        icon={<CheckCircle2 size={20} color="#FFF" />}
                                         style={{ flex: 1, marginRight: isKurdish ? 0 : 12, marginLeft: isKurdish ? 12 : 0 }}
                                         isKurdish={isKurdish}
                                     />
@@ -368,7 +377,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                         title={isKurdish ? 'تێپەڕا' : 'Skipped'}
                                         onPress={() => handleComplete(false)}
                                         gradient={[COLORS.accent.danger, '#b91c1c']}
-                                        icon={<Ionicons name="close-circle" size={20} color="#FFF" />}
+                                        icon={<XCircle size={20} color="#FFF" />}
                                         style={{ flex: 1, marginLeft: isKurdish ? 0 : 12, marginRight: isKurdish ? 12 : 0 }}
                                         isKurdish={isKurdish}
                                     />
@@ -387,7 +396,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     style={[styles.newChallengeBtn, { flexDirection: rowDirection }]}
                                     onPress={handleNewChallenge}
                                 >
-                                    <Ionicons name="refresh" size={18} color={COLORS.text.muted} />
+                                    <RefreshCw size={18} color={COLORS.text.muted} />
                                     <Text style={[styles.newChallengeText, isKurdish && styles.kurdishFont]}>
                                         {isKurdish
                                             ? `${isTruth ? 'ڕاستی' : 'هەوەس'}ی نوێ وەربگرە`
@@ -413,7 +422,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <AnimatedCard delay={100}>
                             <View style={styles.completeBadge}>
-                                <Ionicons name="checkmark-done-circle" size={80} color={COLORS.accent.success} />
+                                <CheckCircle size={80} color={COLORS.accent.success} />
                             </View>
                         </AnimatedCard>
 
@@ -433,7 +442,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     title={isKurdish ? 'یاریزانی دواتر' : 'Next Player'}
                                     onPress={handleNext}
                                     gradient={[COLORS.accent.primary, '#2563eb']}
-                                    icon={<Ionicons name={isKurdish ? "arrow-back" : "arrow-forward"} size={20} color="#FFF" />}
+                                    icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                     style={{ flex: 1 }}
                                     isKurdish={isKurdish}
                                 />
