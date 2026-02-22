@@ -158,41 +158,39 @@ export const GameRoomProvider = ({ children }) => {
             setError(null);
 
             // Generate unique room code
-            let roomCode = generateRoomCode();
             let attempts = 0;
-            console.log('Generated room code:', roomCode);
+            let room = null;
+            let roomCode = generateRoomCode();
 
-            // Check if code exists, regenerate if needed
-            while (attempts < 5) {
-                const { data: existing } = await supabase
+            while (attempts < 5 && !room) {
+                console.log(`Attempt ${attempts + 1}: Generating and inserting room code ${roomCode}...`);
+
+                const { data, error: roomError } = await supabase
                     .from('game_rooms')
-                    .select('id')
-                    .eq('room_code', roomCode)
-                    .maybeSingle();
+                    .insert({
+                        host_id: user.id,
+                        room_code: roomCode,
+                        game_type: gameType || 'truthordare',
+                        room_name: roomName,
+                    })
+                    .select()
+                    .single();
 
-                if (!existing) break;
-                roomCode = generateRoomCode();
-                attempts++;
+                if (roomError) {
+                    console.log('Room creation error (possibly duplicate code):', roomError);
+                    // generate a new code and retry
+                    roomCode = generateRoomCode();
+                    attempts++;
+                } else {
+                    room = data;
+                }
             }
 
-            console.log('Creating room in database...');
-            // Create room
-            const { data: room, error: roomError } = await supabase
-                .from('game_rooms')
-                .insert({
-                    host_id: user.id,
-                    room_code: roomCode,
-                    game_type: gameType || 'truthordare',
-                    room_name: roomName,
-                })
-                .select()
-                .single();
-
-            if (roomError) {
-                console.log('Room creation error:', roomError);
-                throw roomError;
+            if (!room) {
+                throw new Error("Failed to generate a unique room code. Try again.");
             }
-            console.log('Room created:', room);
+
+            console.log('Room created successfully:', room);
 
             // Add host as player (already ready)
             console.log('Adding host as player...');
