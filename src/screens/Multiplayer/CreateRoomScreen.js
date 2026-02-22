@@ -19,7 +19,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { layout } from '../../theme/layout';
 
 export default function CreateRoomScreen({ navigation }) {
-    const { createRoom, loading, error, clearError } = useGameRoom();
+    const { createRoom, currentRoom, loading, error, clearError } = useGameRoom();
     const { user, initialized } = useAuth();
     const { colors, isRTL } = useTheme();
     const { isKurdish } = useLanguage();
@@ -32,6 +32,14 @@ export default function CreateRoomScreen({ navigation }) {
             navigation.replace('Login');
         }
     }, [initialized, user]);
+
+    // Watch for room creation success via context state
+    useEffect(() => {
+        if (currentRoom) {
+            console.log('currentRoom detected, navigating to RoomLobby:', currentRoom.id);
+            navigation.replace('RoomLobby');
+        }
+    }, [currentRoom]);
 
     const handleCreateRoom = async () => {
         if (!user) {
@@ -48,17 +56,22 @@ export default function CreateRoomScreen({ navigation }) {
         }
 
         console.log('Creating room with name:', roomName);
-        const result = await createRoom(null, roomName);
-        console.log('Create room result:', result);
+        try {
+            const result = await createRoom(null, roomName);
+            console.log('Create room result:', result);
 
-        if (result?.success) {
-            console.log('Room created successfully, navigating to lobby');
-            navigation.replace('RoomLobby');
-        } else {
-            const errorMsg = result?.error || error || 'Failed to create room';
-            console.log('Room creation failed:', errorMsg);
-            Alert.alert(isKurdish ? 'هەڵە' : 'Error', errorMsg);
-            clearError();
+            if (result?.success) {
+                console.log('Room created successfully, navigating to lobby');
+                navigation.replace('RoomLobby');
+            } else {
+                const errorMsg = result?.error || error || 'Failed to create room';
+                console.log('Room creation failed:', errorMsg);
+                Alert.alert(isKurdish ? 'هەڵە' : 'Error', errorMsg);
+                clearError();
+            }
+        } catch (err) {
+            console.log('handleCreateRoom caught error:', err);
+            Alert.alert(isKurdish ? 'هەڵە' : 'Error', err.message || 'Something went wrong');
         }
     };
 

@@ -250,11 +250,14 @@ export default function AllGamesScreen({ navigation }) {
     const [activeFilter, setActiveFilter] = useState('all');
 
     // Responsive Calculation
+    // AnimatedScreen adds layout.screen.padding (24px) on each side = 48px total
     const numColumns = 2;
-    const gap = 8; // Absolute minimum gap
-    const padding = 4; // Almost edge-to-edge
-    const availableWidth = width - (padding * 2) - gap;
-    const cardWidth = availableWidth / numColumns;
+    const gap = 8;
+    const gridPadding = 0; // no extra padding — let AnimatedScreen handle it
+    const screenPadding = 24; // AnimatedScreen's paddingHorizontal (layout.screen.padding)
+    const containerWidth = Platform.OS === 'web' ? Math.min(width, 500) : width;
+    const availableWidth = containerWidth - (screenPadding * 2) - gap;
+    const cardWidth = Math.floor(availableWidth / numColumns);
 
     // Real Games Data
     const GAMES = [
@@ -507,7 +510,7 @@ export default function AllGamesScreen({ navigation }) {
                     data={filteredGames}
                     keyExtractor={item => item.id}
                     numColumns={2}
-                    columnWrapperStyle={{ gap: gap, paddingHorizontal: padding }}
+                    columnWrapperStyle={{ gap: gap }}
                     contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
                     ListHeaderComponent={
                         <View style={{ paddingHorizontal: 16, marginBottom: 10 }}>

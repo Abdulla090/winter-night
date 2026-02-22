@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Platform, StatusBar } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, StyleSheet, Platform, StatusBar, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
@@ -19,6 +19,16 @@ export const AnimatedScreen = ({
 }) => {
     const { colors, isDark } = useTheme();
     const insets = useSafeAreaInsets();
+
+    // Subtle fade-in using native driver (zero perf cost)
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    useEffect(() => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 150,
+            useNativeDriver: true,
+        }).start();
+    }, []);
 
     // Theme-specific gradient backgrounds
     const gradientColors = isDark
@@ -43,10 +53,11 @@ export const AnimatedScreen = ({
                 style={StyleSheet.absoluteFillObject}
             />
 
-            <View
+            <Animated.View
                 style={[
                     styles.content,
                     {
+                        opacity: fadeAnim,
                         paddingTop: topPadding + (noPadding ? 0 : layout.spacing.md),
                         paddingBottom: bottomPadding,
                         paddingHorizontal: noPadding ? 0 : layout.screen.padding,
@@ -57,7 +68,7 @@ export const AnimatedScreen = ({
                 ]}
             >
                 {children}
-            </View>
+            </Animated.View>
         </View>
     );
 };

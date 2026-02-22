@@ -61,7 +61,19 @@ export default function App() {
     'Rabar-Bold': NotoNaskhArabic_700Bold,
   });
 
-  if (!fontsLoaded) {
+  // Timeout fallback: don't stay on splash forever (especially on web)
+  const [fontTimeout, setFontTimeout] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!fontsLoaded) {
+        console.log('Font loading timed out, proceeding without custom fonts');
+        setFontTimeout(true);
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded && !fontTimeout) {
     return <LoadingScreen />;
   }
 

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { Platform } from 'react-native';
 import { supabase, generateRoomCode } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
@@ -157,80 +158,107 @@ export const GameRoomProvider = ({ children }) => {
             setLoading(true);
             setError(null);
 
-            // Generate unique room code
-            let attempts = 0;
-            let room = null;
-            let roomCode = generateRoomCode();
-
-            while (attempts < 5 && !room) {
-                console.log(`Attempt ${attempts + 1}: Generating and inserting room code ${roomCode}...`);
-
-                const { data, error: roomError } = await supabase
-                    .from('game_rooms')
-                    .insert({
-                        host_id: user.id,
-                        room_code: roomCode,
-                        game_type: gameType || 'truthordare',
-                        room_name: roomName,
-                    })
-                    .select()
-                    .single();
-
-                if (roomError) {
-                    console.log('Room creation error (possibly duplicate code):', roomError);
-                    // generate a new code and retry
-                    roomCode = generateRoomCode();
-                    attempts++;
-                } else {
-                    room = data;
+            // Get auth token - bypass supabase client on web (it hangs)
+            let token = null;
+            if (Platform.OS === 'web') {
+                try {
+                    const storageKey = 'sb-babwvpzevcyaltmslqfu-auth-token';
+                    const stored = localStorage.getItem(storageKey);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        token = parsed?.access_token;
+                    }
+                } catch (e) {
+                    console.log('Failed to read token from localStorage:', e);
                 }
+            } else {
+                const { data: sessionData } = await supabase.auth.getSession();
+                token = sessionData?.session?.access_token;
             }
 
-            if (!room) {
-                throw new Error("Failed to generate a unique room code. Try again.");
+            if (!token) {
+                throw new Error('Session expired. Please log in again.');
+            }
+            console.log('Got auth token, proceeding...');
+
+            const SUPABASE_URL = 'https://babwvpzevcyaltmslqfu.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYnd2cHpldmN5YWx0bXNscWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTUzNzYsImV4cCI6MjA4NDQ5MTM3Nn0.RKqoiiPo-HTnyGgSTrRzt8_eGbtGrld7uyEnLgifcWM';
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Prefer': 'return=representation',
+            };
+
+            const roomCode = generateRoomCode();
+            console.log('Step 1: Creating room with code:', roomCode);
+
+            // Step 1: Create room via raw fetch
+            const roomRes = await fetch(`${SUPABASE_URL}/rest/v1/game_rooms`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    host_id: user.id,
+                    room_code: roomCode,
+                    game_type: gameType || 'truthordare',
+                    room_name: roomName,
+                }),
+            });
+
+            if (!roomRes.ok) {
+                const errBody = await roomRes.text();
+                console.log('Room insert failed:', roomRes.status, errBody);
+                throw new Error(`Room creation failed (${roomRes.status})`);
             }
 
-            console.log('Room created successfully:', room);
+            const rooms = await roomRes.json();
+            const room = Array.isArray(rooms) ? rooms[0] : rooms;
+            console.log('Step 1 complete. Room:', room.id);
 
-            // Add host as player (already ready)
-            console.log('Adding host as player...');
-            const { error: playerError } = await supabase
-                .from('room_players')
-                .insert({
+            // Step 2: Add host as player
+            console.log('Step 2: Adding host as player...');
+            const playerRes = await fetch(`${SUPABASE_URL}/rest/v1/room_players`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
                     room_id: room.id,
                     player_id: user.id,
                     is_ready: true,
-                });
+                }),
+            });
 
-            if (playerError) {
-                console.log('Player insert error:', playerError);
-                throw playerError;
+            if (!playerRes.ok) {
+                const errBody = await playerRes.text();
+                console.log('Player insert failed:', playerRes.status, errBody);
             }
-            console.log('Host added as player');
+            console.log('Step 2 complete.');
 
-            // Create initial game state
-            console.log('Creating game state...');
-            const { error: stateError } = await supabase
-                .from('game_states')
-                .insert({
+            // Step 3: Create game state
+            console.log('Step 3: Creating game state...');
+            const stateRes = await fetch(`${SUPABASE_URL}/rest/v1/game_states`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
                     room_id: room.id,
                     current_player_id: user.id,
                     game_phase: 'lobby',
-                });
+                }),
+            });
 
-            if (stateError) {
-                console.log('Game state error:', stateError);
-                throw stateError;
+            if (!stateRes.ok) {
+                const errBody = await stateRes.text();
+                console.log('State insert failed:', stateRes.status, errBody);
             }
-            console.log('Game state created');
+            console.log('Step 3 complete.');
 
             setCurrentRoom(room);
-            console.log('Room creation complete! Success.');
+            console.log('Room creation complete! Navigating to lobby.');
             return { success: true, data: room };
         } catch (err) {
-            console.log('createRoom caught error:', err.message);
-            setError(err.message);
-            return { success: false, error: err.message };
+            console.log('createRoom caught error:', err.message || err);
+            setError(err.message || 'Unknown error creating room');
+            return { success: false, error: err.message || 'Unknown error' };
         } finally {
             setLoading(false);
         }

@@ -127,33 +127,40 @@ const Stack = createNativeStackNavigator();
 function AppStack({ isFirstLaunch }) {
     const { colors } = useTheme();
 
-    // Native stack screen options - ultra smooth, platform-native animations
+    // Native stack screen options - CRISP, FAST, NO FLOATY ANIMATIONS
     const screenOptions = {
         headerShown: false,
         contentStyle: { backgroundColor: colors.background },
-        // Native animations - much faster than JS-based
-        animation: 'slide_from_right',
-        // Enable native back gesture
+        // Platform-specific animations
+        ...(Platform.OS === 'web'
+            ? {
+                animation: 'fade',
+                animationDuration: 150,
+            }
+            : {
+                // Android/iOS: instant fade - no sliding, no slippery motion
+                animation: 'fade_from_bottom',
+                animationDuration: 150,
+            }
+        ),
         gestureEnabled: true,
-        // Fullscreen gesture on Android
         fullScreenGestureEnabled: true,
-        // Faster animation for snappy feel
-        animationDuration: 200,
-        // CRITICAL: Freeze background screens to prevent re-renders
         freezeOnBlur: true,
     };
 
     // Modal-style options for result/auth screens
     const modalOptions = {
         ...screenOptions,
-        presentation: 'modal',
-        animation: 'slide_from_bottom',
+        presentation: Platform.OS === 'web' ? 'card' : 'modal',
+        animation: Platform.OS === 'web' ? 'fade' : 'fade_from_bottom',
+        animationDuration: 150,
     };
 
     // Fade animation for special transitions
     const fadeOptions = {
         ...screenOptions,
         animation: 'fade',
+        animationDuration: 120,
     };
 
     return (
