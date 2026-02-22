@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, Platform, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MotiView } from 'moti';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 
 /**
- * ✨ AnimatedScreen - Premium screen wrapper with native-feel animations
- * Ultra-smooth 60fps enter animations that feel like iOS native
+ * ✨ AnimatedScreen - Lightweight screen wrapper
+ * Optimized for Native Stack - no JS animations that would block transitions
+ * Native Stack handles all screen transition animations natively at 60fps
  */
 export const AnimatedScreen = ({
     children,
@@ -16,9 +16,6 @@ export const AnimatedScreen = ({
     noPadding = false,
     noTopPadding = false,
     noBottomPadding = false,
-    // Animation options
-    animate = true,
-    delay = 0,
 }) => {
     const { colors, isDark } = useTheme();
     const insets = useSafeAreaInsets();
@@ -30,24 +27,6 @@ export const AnimatedScreen = ({
 
     const topPadding = noTopPadding ? 0 : Math.max(insets.top, Platform.select({ ios: 44, android: StatusBar.currentHeight || 24, web: 20 }));
     const bottomPadding = noBottomPadding ? 0 : insets.bottom;
-
-    const content = (
-        <View
-            style={[
-                styles.content,
-                {
-                    paddingTop: topPadding + (noPadding ? 0 : layout.spacing.md),
-                    paddingBottom: bottomPadding,
-                    paddingHorizontal: noPadding ? 0 : layout.screen.padding,
-                },
-                // Web-specific: enable scrolling
-                Platform.OS === 'web' && styles.webContent,
-                style
-            ]}
-        >
-            {children}
-        </View>
-    );
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }, Platform.OS === 'web' && styles.webContainer]}>
@@ -64,26 +43,21 @@ export const AnimatedScreen = ({
                 style={StyleSheet.absoluteFillObject}
             />
 
-            {animate ? (
-                <MotiView
-                    from={{
-                        opacity: 0.5,
-                        scale: 0.98,
-                    }}
-                    animate={{
-                        opacity: 1,
-                        scale: 1,
-                    }}
-                    transition={{
-                        type: 'timing',
-                        duration: 200,
-                        delay,
-                    }}
-                    style={[{ flex: 1 }, Platform.OS === 'web' && styles.webMotiView]}
-                >
-                    {content}
-                </MotiView>
-            ) : content}
+            <View
+                style={[
+                    styles.content,
+                    {
+                        paddingTop: topPadding + (noPadding ? 0 : layout.spacing.md),
+                        paddingBottom: bottomPadding,
+                        paddingHorizontal: noPadding ? 0 : layout.screen.padding,
+                    },
+                    // Web-specific: enable scrolling
+                    Platform.OS === 'web' && styles.webContent,
+                    style
+                ]}
+            >
+                {children}
+            </View>
         </View>
     );
 };
@@ -106,11 +80,6 @@ const styles = StyleSheet.create({
         overflow: 'auto',
         height: '100%',
     },
-    webMotiView: {
-        height: '100%',
-        overflow: 'hidden',
-    },
 });
 
 export default AnimatedScreen;
-

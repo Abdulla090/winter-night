@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as NavigationBar from 'expo-navigation-bar';
 import * as Font from 'expo-font';
 import {
   useFonts,
@@ -34,6 +35,19 @@ function LoadingScreen() {
 }
 
 export default function App() {
+  useEffect(() => {
+    console.log('--- APP COMPONENT MOUNTED ---');
+    // Enable edge-to-edge on Android (transparent system bars)
+    if (Platform.OS === 'android') {
+      try {
+        NavigationBar.setPositionAsync('absolute').catch(err => console.log('NB Position Error:', err));
+        NavigationBar.setBackgroundColorAsync('transparent').catch(err => console.log('NB Color Error:', err));
+      } catch (e) {
+        console.log('NavigationBar configuration error:', e);
+      }
+    }
+  }, []);
+
   // Load Google Fonts for Kurdish (Noto Naskh Arabic has excellent Kurdish support)
   const [fontsLoaded] = useFonts({
     NotoNaskhArabic_400Regular,

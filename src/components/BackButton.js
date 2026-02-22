@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
-import { MotiPressable } from 'moti/interactions';
+import { StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
 
 /**
- * ✨ BackButton - Premium animated back button with native feel
- * Smooth spring animations and haptic feedback
+ * ✨ BackButton - Premium back button with native feel
+ * Uses TouchableOpacity for reliable cross-platform behavior
  */
 export const BackButton = ({ onPress, style }) => {
     const { colors, isRTL } = useTheme();
@@ -22,21 +21,9 @@ export const BackButton = ({ onPress, style }) => {
     const Icon = isRTL ? ChevronRight : ChevronLeft;
 
     return (
-        <MotiPressable
+        <TouchableOpacity
             onPress={handlePress}
-            animate={({ pressed, hovered }) => {
-                'worklet';
-                return {
-                    scale: pressed ? 0.9 : hovered ? 1.05 : 1,
-                    opacity: pressed ? 0.8 : 1,
-                };
-            }}
-            transition={{
-                type: 'spring',
-                damping: 15,
-                stiffness: 400,
-                mass: 0.4,
-            }}
+            activeOpacity={0.7}
             style={[
                 styles.button,
                 {
@@ -47,7 +34,7 @@ export const BackButton = ({ onPress, style }) => {
             ]}
         >
             <Icon size={24} color={colors.text.primary} strokeWidth={2.5} />
-        </MotiPressable>
+        </TouchableOpacity>
     );
 };
 

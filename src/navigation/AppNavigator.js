@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Easing } from 'react-native';
+import { View, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
 import { BottomNavBar } from '../components/BottomNavBar';
 
@@ -115,155 +115,45 @@ import RoomLobbyScreen from '../screens/Multiplayer/RoomLobbyScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 /**
- * ✨ PREMIUM NATIVE TRANSITIONS
- * Ultra-smooth, 60fps animations that feel like iOS native
+ * ✨ NATIVE STACK NAVIGATOR
+ * Uses native platform navigation for 60fps smooth transitions
+ * - Android: Uses native Fragment transactions
+ * - iOS: Uses native UINavigationController
  */
-
-// iOS-style horizontal slide (sleek, fast, professional)
-const forSlideFromRight = ({ current, next, inverted, layouts }) => {
-    const progress = current.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [layouts.screen.width, 0],
-        extrapolate: 'clamp',
-    });
-
-    const shadowOpacity = current.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 0.15],
-        extrapolate: 'clamp',
-    });
-
-    // Subtle parallax for the screen underneath
-    const translatePrev = next
-        ? next.progress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, -layouts.screen.width * 0.3],
-            extrapolate: 'clamp',
-        })
-        : 0;
-
-    const scalePrev = next
-        ? next.progress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 0.94],
-            extrapolate: 'clamp',
-        })
-        : 1;
-
-    const opacityPrev = next
-        ? next.progress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 0.6],
-            extrapolate: 'clamp',
-        })
-        : 1;
-
-    return {
-        cardStyle: {
-            transform: [
-                { translateX: progress },
-                { scale: scalePrev },
-            ],
-            opacity: opacityPrev,
-            shadowColor: '#000',
-            shadowOpacity,
-            shadowRadius: 20,
-            shadowOffset: { width: -5, height: 0 },
-        },
-    };
-};
-
-// Subtle fade-scale for modal-like screens
-const forFadeScale = ({ current }) => {
-    const opacity = current.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-    });
-
-    const scale = current.progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0.92, 1],
-        extrapolate: 'clamp',
-    });
-
-    return {
-        cardStyle: {
-            opacity,
-            transform: [{ scale }],
-        },
-    };
-};
 
 function AppStack({ isFirstLaunch }) {
     const { colors } = useTheme();
 
-    // ⚡ ULTRA-SMOOTH TIMING (Native iOS feel)
-    const nativeTransitionSpec = {
-        open: {
-            animation: 'spring',
-            config: {
-                stiffness: 1000,
-                damping: 500,
-                mass: 3,
-                overshootClamping: true,
-                restDisplacementThreshold: 10,
-                restSpeedThreshold: 10,
-            },
-        },
-        close: {
-            animation: 'spring',
-            config: {
-                stiffness: 1000,
-                damping: 500,
-                mass: 3,
-                overshootClamping: true,
-                restDisplacementThreshold: 10,
-                restSpeedThreshold: 10,
-            },
-        },
-    };
-
-    // Faster timing for snappy feel
-    const fastTimingSpec = {
-        open: {
-            animation: 'timing',
-            config: {
-                duration: 250,
-                easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-            },
-        },
-        close: {
-            animation: 'timing',
-            config: {
-                duration: 200,
-                easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-            },
-        },
-    };
-
+    // Native stack screen options - ultra smooth, platform-native animations
     const screenOptions = {
         headerShown: false,
-        cardStyle: { backgroundColor: colors.background },
+        contentStyle: { backgroundColor: colors.background },
+        // Native animations - much faster than JS-based
+        animation: 'slide_from_right',
+        // Enable native back gesture
         gestureEnabled: true,
-        gestureDirection: 'horizontal',
-        gestureResponseDistance: 100, // More responsive swipe back
-        // Premium transition
-        transitionSpec: fastTimingSpec,
-        cardStyleInterpolator: forSlideFromRight,
-        // Overlay for depth effect
-        cardOverlayEnabled: true,
-        cardShadowEnabled: true,
+        // Fullscreen gesture on Android
+        fullScreenGestureEnabled: true,
+        // Faster animation for snappy feel
+        animationDuration: 200,
+        // CRITICAL: Freeze background screens to prevent re-renders
+        freezeOnBlur: true,
     };
 
-    // Modal-style for certain screens
+    // Modal-style options for result/auth screens
     const modalOptions = {
         ...screenOptions,
-        cardStyleInterpolator: forFadeScale,
-        gestureDirection: 'vertical',
+        presentation: 'modal',
+        animation: 'slide_from_bottom',
+    };
+
+    // Fade animation for special transitions
+    const fadeOptions = {
+        ...screenOptions,
+        animation: 'fade',
     };
 
     return (
@@ -272,7 +162,7 @@ function AppStack({ isFirstLaunch }) {
             screenOptions={screenOptions}
         >
             {/* Onboarding */}
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} options={fadeOptions} />
 
             {/* Main */}
             <Stack.Screen name="Home" component={HomeScreen} />
@@ -389,15 +279,34 @@ export default function AppNavigator() {
     const [currentRoute, setCurrentRoute] = React.useState(null);
 
     React.useEffect(() => {
-        AsyncStorage.getItem('hasLaunched').then(value => {
-            if (value === null) {
-                setIsFirstLaunch(true);
-                setCurrentRoute('Onboarding');
-            } else {
+        console.log('--- NAVIGATOR INIT ---');
+        // Add a safety timeout to prevent permanent freeze if AsyncStorage hangs
+        const timeout = setTimeout(() => {
+            if (isFirstLaunch === null) {
+                console.log('--- STORAGE TIMEOUT: FORCING INITIALIZATION ---');
                 setIsFirstLaunch(false);
                 setCurrentRoute('Home');
             }
-        });
+        }, 1500);
+
+        AsyncStorage.getItem('hasLaunched')
+            .then(value => {
+                clearTimeout(timeout);
+                console.log('--- STORAGE READY, value:', value);
+                if (value === null) {
+                    setIsFirstLaunch(true);
+                    setCurrentRoute('Onboarding');
+                } else {
+                    setIsFirstLaunch(false);
+                    setCurrentRoute('Home');
+                }
+            })
+            .catch(err => {
+                clearTimeout(timeout);
+                console.log('--- STORAGE ERROR:', err);
+                setIsFirstLaunch(false);
+                setCurrentRoute('Home');
+            });
     }, []);
 
     const handleNavigate = (screen) => {
@@ -440,4 +349,3 @@ export default function AppNavigator() {
         </NavigationContainer>
     );
 }
-

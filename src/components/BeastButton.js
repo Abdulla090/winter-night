@@ -1,15 +1,13 @@
 import React, { useMemo } from 'react';
-import { Text, View, StyleSheet, Platform } from 'react-native';
-import { MotiPressable } from 'moti/interactions';
-import { MotiView } from 'moti';
+import { Text, View, StyleSheet, Platform, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
 
 /**
- * ✨ BeastButton - Premium button with native-feel haptics and animations
- * Ultra-responsive with 60fps spring animations
+ * ✨ BeastButton - Premium button with native-feel haptics
+ * Uses TouchableOpacity for reliable cross-platform behavior
  */
 export const BeastButton = ({
     onPress,
@@ -52,7 +50,6 @@ export const BeastButton = ({
 
     const handlePress = () => {
         if (disabled || loading) return;
-        // Light haptic for premium feel
         if (Platform.OS !== 'web') {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
@@ -60,27 +57,15 @@ export const BeastButton = ({
     };
 
     return (
-        <MotiPressable
+        <TouchableOpacity
             onPress={handlePress}
             disabled={disabled || loading}
-            animate={({ pressed, hovered }) => {
-                'worklet';
-                return {
-                    scale: disabled ? 1 : pressed ? 0.96 : hovered ? 1.02 : 1,
-                    opacity: disabled ? 0.6 : pressed ? 0.9 : 1,
-                };
-            }}
-            transition={{
-                type: 'spring',
-                damping: 20,
-                stiffness: 400,
-                mass: 0.5,
-            }}
+            activeOpacity={disabled ? 1 : 0.85}
             style={[
                 {
                     borderRadius: layout.radius.xl,
                     overflow: 'hidden',
-                    width: style?.width,
+                    opacity: disabled ? 0.6 : 1,
                     ...layout.shadows.gold,
                     shadowColor: variant === 'primary' && !disabled ? colors.brand.gold : 'transparent',
                 },
@@ -98,79 +83,28 @@ export const BeastButton = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 10,
-                    position: 'relative',
-                    overflow: 'hidden',
                 }}
             >
-                {/* Premium Sheen Effect - Only on primary, not disabled */}
-                {variant === 'primary' && !disabled && (
-                    <MotiView
-                        from={{ translateX: -80, opacity: 0 }}
-                        animate={{ translateX: 200, opacity: 0.25 }}
-                        transition={{
-                            type: 'timing',
-                            duration: 1200,
-                            loop: true,
-                            repeatReverse: false,
-                            delay: 2500,
-                        }}
-                        style={{
-                            position: 'absolute',
-                            width: 16,
-                            height: '200%',
-                            backgroundColor: '#FFF',
-                            transform: [{ skewX: '-20deg' }],
-                            zIndex: 0,
-                        }}
-                    />
-                )}
-
                 {loading ? (
-                    <MotiView
-                        from={{ rotate: '0deg' }}
-                        animate={{ rotate: '360deg' }}
-                        transition={{
-                            type: 'timing',
-                            duration: 800,
-                            loop: true,
-                        }}
-                        style={styles.loader}
-                    >
-                        <View style={[styles.loaderDot, { backgroundColor: textColor }]} />
-                    </MotiView>
+                    <ActivityIndicator size="small" color={textColor} />
                 ) : (
                     <>
-                        {Icon && <Icon size={18} color={textColor} style={{ zIndex: 1 }} />}
+                        {Icon && <Icon size={18} color={textColor} />}
                         <Text style={{
                             color: textColor,
                             fontSize,
                             fontWeight: '700',
                             letterSpacing: 0.3,
-                            zIndex: 1,
                         }}>
                             {title}
                         </Text>
                     </>
                 )}
             </LinearGradient>
-        </MotiPressable>
+        </TouchableOpacity>
     );
 };
 
-const styles = StyleSheet.create({
-    loader: {
-        width: 20,
-        height: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    loaderDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        position: 'absolute',
-        top: 0,
-    },
-});
+const styles = StyleSheet.create({});
 
 export default BeastButton;

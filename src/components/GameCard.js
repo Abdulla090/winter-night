@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View, Dimensions, Platform } from 'react-native';
-import { MotiView } from 'moti';
-import { MotiPressable } from 'moti/interactions';
+import { StyleSheet, Text, View, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
@@ -10,8 +8,8 @@ import { layout } from '../theme/layout';
 const { width } = Dimensions.get('window');
 
 /**
- * ✨ GameCard - Premium animated game card
- * Smooth spring animations with staggered reveals
+ * ✨ GameCard - Premium game card
+ * Uses TouchableOpacity for reliable cross-platform behavior
  */
 export default function GameCard({
     title,
@@ -45,40 +43,16 @@ export default function GameCard({
         onPress?.();
     };
 
-    // Stagger delay - fast but noticeable
-    const staggerDelay = Math.min(index * 40, 300);
-
     return (
-        <MotiView
-            from={{ opacity: 0, translateY: 16, scale: 0.98 }}
-            animate={{ opacity: 1, translateY: 0, scale: 1 }}
-            transition={{
-                type: 'spring',
-                damping: 18,
-                stiffness: 200,
-                mass: 0.6,
-                delay: staggerDelay,
-            }}
+        <View
             style={[
                 isGrid ? styles.gridWrapper : styles.listWrapper,
                 style
             ]}
         >
-            <MotiPressable
+            <TouchableOpacity
                 onPress={handlePress}
-                animate={({ pressed, hovered }) => {
-                    'worklet';
-                    return {
-                        scale: pressed ? 0.97 : hovered ? 1.02 : 1,
-                        opacity: pressed ? 0.95 : 1,
-                    };
-                }}
-                transition={{
-                    type: 'spring',
-                    damping: 15,
-                    stiffness: 350,
-                    mass: 0.4,
-                }}
+                activeOpacity={0.85}
                 style={[
                     isGrid ? styles.gridContainer : styles.listContainer,
                     {
@@ -146,8 +120,8 @@ export default function GameCard({
                         />
                     )}
                 </View>
-            </MotiPressable>
-        </MotiView>
+            </TouchableOpacity>
+        </View>
     );
 }
 

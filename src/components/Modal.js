@@ -6,10 +6,11 @@ import {
     Modal as RNModal,
     Platform,
     Pressable,
+    TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { X } from 'lucide-react-native';
-import { MotiView, MotiPressable } from 'moti';
+import { MotiView } from 'moti';
 import * as Haptics from 'expo-haptics';
 import Animated, {
     useAnimatedStyle,
@@ -124,20 +125,9 @@ export default function Modal({
                     <View style={styles.contentContainer}>
                         {/* Close Button */}
                         {showClose && (
-                            <MotiPressable
+                            <TouchableOpacity
                                 onPress={handleClose}
-                                animate={({ pressed }) => {
-                                    'worklet';
-                                    return {
-                                        scale: pressed ? 0.9 : 1,
-                                        opacity: pressed ? 0.7 : 1,
-                                    };
-                                }}
-                                transition={{
-                                    type: 'spring',
-                                    damping: 20,
-                                    stiffness: 400,
-                                }}
+                                activeOpacity={0.7}
                                 style={[
                                     styles.closeButton,
                                     isKurdish ? { left: layout.spacing.md } : { right: layout.spacing.md }
@@ -146,7 +136,7 @@ export default function Modal({
                                 <View style={[styles.closeBtnCircle, { backgroundColor: colors.surfaceHighlight }]}>
                                     <X size={18} color={colors.text.secondary} strokeWidth={2.5} />
                                 </View>
-                            </MotiPressable>
+                            </TouchableOpacity>
                         )}
 
                         {/* Icon */}

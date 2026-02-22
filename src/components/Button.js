@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View, Text, Platform } from 'react-native';
+import { StyleSheet, View, Text, Platform, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiPressable } from 'moti/interactions';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
 
 /**
- * ✨ Button - Premium animated button with native-feel interactions
- * Ultra-responsive with smooth spring animations and haptic feedback
+ * ✨ Button - Premium button with native-feel interactions
+ * Uses TouchableOpacity for reliable cross-platform behavior
  */
 export default function Button({
     title,
@@ -52,22 +51,10 @@ export default function Button({
     };
 
     return (
-        <MotiPressable
+        <TouchableOpacity
             onPress={handlePress}
             disabled={disabled || loading}
-            animate={({ pressed, hovered }) => {
-                'worklet';
-                return {
-                    scale: disabled ? 1 : pressed ? 0.96 : hovered ? 1.02 : 1,
-                    opacity: disabled ? 0.6 : pressed ? 0.9 : 1,
-                };
-            }}
-            transition={{
-                type: 'spring',
-                damping: 18,
-                stiffness: 380,
-                mass: 0.5,
-            }}
+            activeOpacity={disabled ? 1 : 0.85}
             style={[
                 styles.container,
                 {
@@ -75,6 +62,7 @@ export default function Button({
                     backgroundColor: isOutline ? 'transparent' : undefined,
                     borderColor: isOutline ? colors.border : undefined,
                     borderWidth: isOutline ? 1 : 0,
+                    opacity: disabled ? 0.6 : 1,
                 },
                 !isOutline && !disabled && styles.shadow,
                 style
@@ -106,7 +94,7 @@ export default function Button({
                     {title}
                 </Text>
             </LinearGradient>
-        </MotiPressable>
+        </TouchableOpacity>
     );
 }
 

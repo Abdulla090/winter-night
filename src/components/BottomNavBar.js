@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { Home, Compass, HelpCircle, User } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -88,6 +89,7 @@ const NavItem = memo(({ tab, isActive, onPress, isDark }) => {
 export function BottomNavBar({ currentRoute = 'Home', onNavigate }) {
     const { isDark } = useTheme();
     const { isRTL } = useLanguage();
+    const insets = useSafeAreaInsets();
 
     // Standard order: Home is primary (leftmost in LTR)
     // For RTL: we reverse the array so Home appears on the right
@@ -118,6 +120,9 @@ export function BottomNavBar({ currentRoute = 'Home', onNavigate }) {
         borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#E2E8F0',
     };
 
+    // Dynamic bottom position accounting for safe area (gesture bar on Android)
+    const bottomPosition = Math.max(insets.bottom, 12) + 12;
+
     return (
         <MotiView
             from={{ translateY: 100, opacity: 0 }}
@@ -129,7 +134,7 @@ export function BottomNavBar({ currentRoute = 'Home', onNavigate }) {
                 mass: 0.8,
                 delay: 100,
             }}
-            style={[styles.wrapper, { pointerEvents: 'box-none' }]}
+            style={[styles.wrapper, { bottom: bottomPosition, pointerEvents: 'box-none' }]}
         >
             <View style={[styles.bar, barStyle]}>
                 {tabs.map((tab) => (
@@ -149,7 +154,7 @@ export function BottomNavBar({ currentRoute = 'Home', onNavigate }) {
 const styles = StyleSheet.create({
     wrapper: {
         position: 'absolute',
-        bottom: Platform.select({ ios: 30, android: 20, web: 24 }),
+        // bottom is set dynamically using useSafeAreaInsets
         left: 0,
         right: 0,
         alignItems: 'center',

@@ -12,8 +12,6 @@ import {
     Image
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView } from 'moti';
-import { MotiPressable } from 'moti/interactions';
 import * as Haptics from 'expo-haptics';
 import {
     User,
@@ -58,42 +56,19 @@ const Header = ({ isKurdish, navigation, colors, isDark }) => {
         navigation.goBack();
     }, [navigation]);
 
-    const iconContent = isKurdish ? (
-        <ArrowRight size={24} color={arrowColor} />
-    ) : (
-        <ArrowLeft size={24} color={arrowColor} />
-    );
-
     return (
         <View style={styles.header}>
-            {Platform.OS === 'web' ? (
-                <TouchableOpacity
-                    onPress={handleGoBack}
-                    activeOpacity={0.7}
-                    style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
-                >
-                    {iconContent}
-                </TouchableOpacity>
-            ) : (
-                <MotiPressable
-                    onPress={handleGoBack}
-                    animate={({ pressed }) => {
-                        'worklet';
-                        return {
-                            scale: pressed ? 0.9 : 1,
-                            opacity: pressed ? 0.7 : 1,
-                        };
-                    }}
-                    transition={{
-                        type: 'spring',
-                        damping: 20,
-                        stiffness: 400,
-                    }}
-                    style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
-                >
-                    {iconContent}
-                </MotiPressable>
-            )}
+            <TouchableOpacity
+                onPress={handleGoBack}
+                activeOpacity={0.7}
+                style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
+            >
+                {isKurdish ? (
+                    <ArrowRight size={24} color={arrowColor} />
+                ) : (
+                    <ArrowLeft size={24} color={arrowColor} />
+                )}
+            </TouchableOpacity>
 
             <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                 {isKurdish ? 'هەموو یارییەکان' : 'All Games'}
@@ -199,35 +174,39 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
         navigation.navigate(item.screen);
     }, [navigation, item.screen]);
 
-    const cardContent = (
-        <>
+    return (
+        <TouchableOpacity
+            onPress={handlePress}
+            activeOpacity={0.85}
+            style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }]}
+        >
             {/* Top Visual Box */}
             <View style={styles.cardVisual}>
                 {item.image ? (
                     <Image
                         source={item.image}
-                        style={{ width: '100%', height: '100%', borderRadius: 16 }}
+                        style={styles.cardImage}
                         resizeMode="cover"
                     />
                 ) : (
                     <LinearGradient
                         colors={item.colors || ['#4C1D95', '#5B21B6']}
-                        style={[StyleSheet.absoluteFill, { borderRadius: 16 }]}
+                        style={StyleSheet.absoluteFill}
                     >
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={styles.cardIconFallback}>
                             <Icon size={52} color="rgba(255,255,255,0.8)" />
                         </View>
                     </LinearGradient>
                 )}
 
                 {/* Rating Badge */}
-                <View style={[styles.ratingBadge, { position: 'absolute', top: 8, left: 8 }]}>
+                <View style={styles.ratingBadge}>
                     <Star size={10} color="#FFD700" fill="#FFD700" />
                     <Text style={styles.ratingText}>{item.rating || '4.5'}</Text>
                 </View>
 
                 {item.isNew && (
-                    <View style={[styles.newBadge, { backgroundColor: badgeBg, position: 'absolute', top: 8, right: 8 }]}>
+                    <View style={[styles.newBadge, { backgroundColor: badgeBg }]}>
                         <Text style={[styles.newText, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'نوێ' : 'NEW'}
                         </Text>
@@ -256,41 +235,7 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
                     </View>
                 </View>
             </View>
-        </>
-    );
-
-    // Use TouchableOpacity on web (fixes scroll), MotiPressable on native (smooth animations)
-    if (Platform.OS === 'web') {
-        return (
-            <TouchableOpacity
-                onPress={handlePress}
-                activeOpacity={0.8}
-                style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }]}
-            >
-                {cardContent}
-            </TouchableOpacity>
-        );
-    }
-
-    return (
-        <MotiPressable
-            onPress={handlePress}
-            animate={({ pressed }) => {
-                'worklet';
-                return {
-                    scale: pressed ? 0.96 : 1,
-                    opacity: pressed ? 0.9 : 1,
-                };
-            }}
-            transition={{
-                type: 'spring',
-                damping: 20,
-                stiffness: 400,
-            }}
-            style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }]}
-        >
-            {cardContent}
-        </MotiPressable>
+        </TouchableOpacity>
     );
 });
 
@@ -595,16 +540,10 @@ export default function AllGamesScreen({ navigation }) {
                     )}
                     showsVerticalScrollIndicator={false}
                     // ✨ Native Performance Optimizations
-                    removeClippedSubviews={true}
+                    removeClippedSubviews={Platform.OS !== 'web'}
                     initialNumToRender={6}
                     maxToRenderPerBatch={4}
-                    windowSize={5}
-                    updateCellsBatchingPeriod={50}
-                    getItemLayout={(data, index) => ({
-                        length: 240, // Increased height estimate
-                        offset: 240 * Math.floor(index / 2),
-                        index,
-                    })}
+                    windowSize={7}
                     ListEmptyComponent={
                         <View style={{ alignItems: 'center', paddingTop: 40 }}>
                             <Text style={{ color: colors.text.muted, fontSize: 16 }}>
@@ -697,23 +636,31 @@ const styles = StyleSheet.create({
 
     // Card
     cardContainer: {
-        flex: 1,
         backgroundColor: '#160925',
-        borderRadius: 22, // Slightly tighter radius
-        padding: 8, // Less internal padding = wider content
+        borderRadius: 22,
+        padding: 8,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.05)',
         marginBottom: 8,
-        // Removed maxWidth to let it fill calculated width
     },
     cardVisual: {
-        height: 160, // Even taller visual area
-        borderRadius: 20,
+        height: 160,
+        borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 14,
-        position: 'relative',
-        overflow: 'hidden',
+        overflow: 'hidden', // This handles image clipping on Android
+        backgroundColor: '#1A0B2E', // Fallback bg while image loads
+    },
+    cardImage: {
+        width: '100%',
+        height: '100%',
+        // NO borderRadius here — parent overflow:hidden handles clipping on Android
+    },
+    cardIconFallback: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     cardInfo: {
         paddingHorizontal: 6,

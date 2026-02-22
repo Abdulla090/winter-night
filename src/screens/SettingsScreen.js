@@ -10,7 +10,7 @@ import {
     Platform,
     Alert
 } from 'react-native';
-import { MotiPressable } from 'moti/interactions';
+
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -91,21 +91,10 @@ export default function SettingsScreen({ navigation }) {
         }, [onPress, showToggle]);
 
         return (
-            <MotiPressable
+            <TouchableOpacity
                 onPress={handlePress}
                 disabled={showToggle}
-                animate={({ pressed }) => {
-                    'worklet';
-                    return {
-                        scale: pressed && !showToggle ? 0.98 : 1,
-                        opacity: pressed && !showToggle ? 0.8 : 1,
-                    };
-                }}
-                transition={{
-                    type: 'spring',
-                    damping: 20,
-                    stiffness: 400,
-                }}
+                activeOpacity={showToggle ? 1 : 0.7}
                 style={styles.row}
             >
                 <View style={[styles.iconBox, { backgroundColor: accentBg }]}>
@@ -126,7 +115,7 @@ export default function SettingsScreen({ navigation }) {
                 {showChevron && (
                     isRTL ? <ChevronLeft size={20} color={colors.text.muted} /> : <ChevronRight size={20} color={colors.text.muted} />
                 )}
-            </MotiPressable>
+            </TouchableOpacity>
         );
     };
 
@@ -213,27 +202,16 @@ export default function SettingsScreen({ navigation }) {
                 </View>
 
                 {/* Logout */}
-                <MotiPressable
+                <TouchableOpacity
                     onPress={handleLogout}
-                    animate={({ pressed }) => {
-                        'worklet';
-                        return {
-                            scale: pressed ? 0.97 : 1,
-                            opacity: pressed ? 0.8 : 1,
-                        };
-                    }}
-                    transition={{
-                        type: 'spring',
-                        damping: 20,
-                        stiffness: 400,
-                    }}
+                    activeOpacity={0.7}
                     style={[styles.logoutBtn, { borderColor: colors.brand.crimson }]}
                 >
                     <LogOut size={20} color={colors.brand.crimson} />
                     <Text style={[styles.logoutText, { color: colors.brand.crimson }]}>
                         {t('settings.logout', language)}
                     </Text>
-                </MotiPressable>
+                </TouchableOpacity>
 
                 {/* Version */}
                 <Text style={[styles.version, { color: colors.text.muted }]}>

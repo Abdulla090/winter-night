@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -31,6 +31,9 @@
         "projectId": "f091bbeb-87e2-4905-9e06-e8719c44b1ce"
       }
     },
-    "owner": "abdullla0900"
+    "owner": "abdullla0900",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

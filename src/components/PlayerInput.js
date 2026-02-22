@@ -1,13 +1,10 @@
 import React, { useState, useCallback, memo } from 'react';
-import { StyleSheet, View, TextInput, Text, Platform, Pressable } from 'react-native';
-import { MotiView } from 'moti';
-import { MotiPressable } from 'moti/interactions';
+import { StyleSheet, View, TextInput, Text, Platform, TouchableOpacity } from 'react-native';
 import { Plus, X, UserPlus } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { layout } from '../theme/layout';
-import { SPRING_SNAPPY, PRESS_SCALE } from '../lib/animations';
 
 // Memoized player chip for performance
 const PlayerChip = memo(({ player, isCurrentUser, isKurdish, colors, onRemove, rowDirection }) => {
@@ -19,16 +16,9 @@ const PlayerChip = memo(({ player, isCurrentUser, isKurdish, colors, onRemove, r
     }, [onRemove]);
 
     return (
-        <MotiPressable
+        <TouchableOpacity
             onPress={handlePress}
-            animate={({ pressed }) => {
-                'worklet';
-                return {
-                    scale: pressed ? 0.92 : 1,
-                    opacity: pressed ? 0.8 : 1,
-                };
-            }}
-            transition={SPRING_SNAPPY}
+            activeOpacity={0.7}
             style={[
                 styles.playerChip,
                 {
@@ -45,7 +35,7 @@ const PlayerChip = memo(({ player, isCurrentUser, isKurdish, colors, onRemove, r
                 {player}{isCurrentUser ? (isKurdish ? ' (من)' : ' (me)') : ''}
             </Text>
             <X size={14} color={isCurrentUser ? colors.accent : colors.text.muted} style={{ marginHorizontal: 4 }} />
-        </MotiPressable>
+        </TouchableOpacity>
     );
 });
 
@@ -115,23 +105,16 @@ export default function PlayerInput({
                         }
                     </Text>
                     {canAddMe && (
-                        <MotiPressable
+                        <TouchableOpacity
                             onPress={handleAddMe}
-                            animate={({ pressed }) => {
-                                'worklet';
-                                return {
-                                    scale: pressed ? 0.95 : 1,
-                                    opacity: pressed ? 0.8 : 1,
-                                };
-                            }}
-                            transition={SPRING_SNAPPY}
+                            activeOpacity={0.7}
                             style={[styles.addMeButton, { backgroundColor: colors.accent + '20', borderColor: colors.accent }]}
                         >
                             <UserPlus size={14} color={colors.accent} />
                             <Text style={[styles.addMeText, { color: colors.accent }]}>
                                 {isKurdish ? 'خۆم زیاد بکە' : 'Add Me'}
                             </Text>
-                        </MotiPressable>
+                        </TouchableOpacity>
                     )}
                 </View>
             )}
@@ -155,30 +138,18 @@ export default function PlayerInput({
                     onSubmitEditing={handleAdd}
                     returnKeyType="done"
                 />
-                <MotiPressable
+                <TouchableOpacity
                     onPress={handleAdd}
                     disabled={!canAdd}
-                    animate={({ pressed }) => {
-                        'worklet';
-                        return {
-                            scale: pressed && canAdd ? PRESS_SCALE : 1,
-                            opacity: !canAdd ? 0.5 : pressed ? 0.9 : 1,
-                        };
-                    }}
-                    transition={SPRING_SNAPPY}
-                    style={[styles.addButton, { backgroundColor: colors.brand.gold }]}
+                    activeOpacity={canAdd ? 0.7 : 1}
+                    style={[styles.addButton, { backgroundColor: colors.brand.gold, opacity: canAdd ? 1 : 0.5 }]}
                 >
                     <Plus size={24} color="#FFF" />
-                </MotiPressable>
+                </TouchableOpacity>
             </View>
 
             {players && (
-                <MotiView
-                    from={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ type: 'timing', duration: 200 }}
-                    style={[styles.playersList, { flexDirection: rowDirection, flexWrap: 'wrap' }]}
-                >
+                <View style={[styles.playersList, { flexDirection: rowDirection, flexWrap: 'wrap' }]}>
                     {players.map((player, index) => (
                         <PlayerChip
                             key={`${player}-${index}`}
@@ -190,7 +161,7 @@ export default function PlayerInput({
                             onRemove={() => removePlayer(index)}
                         />
                     ))}
-                </MotiView>
+                </View>
             )}
 
             {players && count < minPlayers && (

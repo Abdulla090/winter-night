@@ -13,7 +13,7 @@ import {
     TextInput
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView, MotiPressable } from 'moti';
+
 import * as Haptics from 'expo-haptics';
 import {
     Bell,
@@ -458,13 +458,12 @@ export default function HomeScreen({ navigation }) {
                         </TouchableOpacity>
                     </View>
 
-                    <ScrollView
+                    <FlatList
                         horizontal
+                        data={isKurdish ? [...featuredGames].reverse() : featuredGames}
+                        keyExtractor={(item) => item.id}
                         showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                            paddingHorizontal: 4,
-                            flexDirection: isKurdish ? 'row-reverse' : 'row',
-                        }}
+                        contentContainerStyle={{ paddingHorizontal: 4 }}
                         decelerationRate="fast"
                         snapToInterval={306}
                         snapToAlignment="start"
@@ -472,8 +471,7 @@ export default function HomeScreen({ navigation }) {
                         disableIntervalMomentum={true}
                         directionalLockEnabled={true}
                         style={{ marginBottom: 28 }}
-                    >
-                        {featuredGames.map((item, index) => (
+                        renderItem={({ item, index }) => (
                             <ImmersiveFeaturedCard
                                 key={item.id}
                                 item={item}
@@ -483,8 +481,8 @@ export default function HomeScreen({ navigation }) {
                                 isDark={isDark}
                                 onPress={() => navigation.navigate(item.screen)}
                             />
-                        ))}
-                    </ScrollView>
+                        )}
+                    />
 
                     {/* 4. Continue Playing */}
                     <View style={styles.sectionHeader}>

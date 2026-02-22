@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
-import { MotiPressable } from 'moti/interactions';
-import * as Haptics from 'expo-haptics';
+import { StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import * as Haptics from 'expo-haptics';
 import { layout } from '../theme/layout';
 
 /**
  * ✨ PressableCard - Premium animated card with native-feel interactions
- * Smooth press feedback with haptics and spring animations
+ * Uses TouchableOpacity for reliable cross-platform press feedback
  */
 export const PressableCard = ({
     children,
@@ -16,7 +15,6 @@ export const PressableCard = ({
     variant = 'default', // 'default' | 'subtle' | 'elevated'
     disabled = false,
     haptic = true,
-    scaleAmount = 0.98, // How much to scale on press
 }) => {
     const { colors, isDark } = useTheme();
 
@@ -55,35 +53,23 @@ export const PressableCard = ({
     };
 
     return (
-        <MotiPressable
+        <TouchableOpacity
             onPress={handlePress}
             disabled={disabled}
-            animate={({ pressed, hovered }) => {
-                'worklet';
-                return {
-                    scale: disabled ? 1 : pressed ? scaleAmount : hovered ? 1.01 : 1,
-                    opacity: disabled ? 0.6 : pressed ? 0.95 : 1,
-                    translateY: pressed ? 1 : 0,
-                };
-            }}
-            transition={{
-                type: 'spring',
-                damping: 18,
-                stiffness: 350,
-                mass: 0.5,
-            }}
+            activeOpacity={disabled ? 1 : 0.85}
             style={[
                 styles.container,
                 {
                     backgroundColor: getBackgroundColor(),
                     borderColor: getBorderColor(),
+                    opacity: disabled ? 0.6 : 1,
                 },
                 variant === 'elevated' && styles.elevated,
                 style,
             ]}
         >
             {children}
-        </MotiPressable>
+        </TouchableOpacity>
     );
 };
 
