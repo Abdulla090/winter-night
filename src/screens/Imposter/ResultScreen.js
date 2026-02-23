@@ -6,14 +6,15 @@ import {
     ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AlertCircle } from 'lucide-react-native';
+import { AlertCircle, Trophy, Skull, CheckCircle2, XCircle } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { GradientBackground, Button } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../localization/translations';
 
 export default function ImposterResultScreen({ navigation, route }) {
-    const { imposters, word, players } = route.params;
+    const { imposters, word, players, votedPlayer, isCaught } = route.params;
     const { language, isKurdish } = useLanguage();
 
     // RTL styles
@@ -24,37 +25,105 @@ export default function ImposterResultScreen({ navigation, route }) {
             <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
                 <ScrollView contentContainerStyle={styles.content}>
 
-                    <View style={styles.headerIcon}>
-                        <AlertCircle size={64} color={COLORS.accent.danger} />
-                    </View>
+                    {/* Result Banner */}
+                    <MotiView
+                        from={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ type: 'spring', delay: 100 }}
+                        style={[styles.resultBanner, isCaught ? styles.winBanner : styles.loseBanner]}
+                    >
+                        {isCaught ? (
+                            <Trophy size={60} color="#FFD700" />
+                        ) : (
+                            <Skull size={60} color={COLORS.accent.danger} />
+                        )}
+                        <Text style={[styles.resultTitle, isKurdish && styles.kurdishFont]}>
+                            {isCaught
+                                ? (isKurdish ? 'جاسوس دۆزرایەوە!' : 'Imposter Caught!')
+                                : (isKurdish ? 'جاسوس سەرکەوت!' : 'Imposter Escaped!')}
+                        </Text>
+                        <Text style={[styles.resultSubtitle, isKurdish && styles.kurdishFont]}>
+                            {isCaught
+                                ? (isKurdish ? 'ئێوە توانیتان جاسوسەکە بدۆزنەوە.' : 'You successfully found the imposter.')
+                                : (isKurdish ? 'کەسێکی بێتاوانتان دەرکرد، جاسوسەکە سەرکەوت!' : 'An innocent person was voted out. Imposter wins!')}
+                        </Text>
+                    </MotiView>
 
-                    <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'جاسوسەکە کێ بوو...' : 'The Imposter Was...'}
-                    </Text>
-
-                    <View style={[styles.imposterContainer, { flexDirection: rowDirection }]}>
-                        {imposters.map((player, index) => (
-                            <View key={index} style={styles.imposterTag}>
-                                <Text style={[styles.imposterName, isKurdish && styles.kurdishFont]}>
-                                    {player}
+                    {/* Voted Player Info */}
+                    <MotiView
+                        from={{ opacity: 0, translateY: 20 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ type: 'timing', delay: 300 }}
+                        style={styles.votedCard}
+                    >
+                        <Text style={[styles.votedLabel, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'دەنگتان دا بۆ:' : 'You voted for:'}
+                        </Text>
+                        <Text style={[styles.votedName, isKurdish && styles.kurdishFont]}>{votedPlayer}</Text>
+                        {isCaught ? (
+                            <View style={[styles.correctBadge, { flexDirection: rowDirection }]}>
+                                <CheckCircle2 size={20} color="#FFF" />
+                                <Text style={[styles.correctText, isKurdish && styles.kurdishFont]}>
+                                    {isKurdish ? 'ڕاستە' : 'Correct'}
                                 </Text>
                             </View>
-                        ))}
-                    </View>
+                        ) : (
+                            <View style={[styles.wrongBadge, { flexDirection: rowDirection }]}>
+                                <XCircle size={20} color="#FFF" />
+                                <Text style={[styles.wrongText, isKurdish && styles.kurdishFont]}>
+                                    {isKurdish ? 'هەڵەیە' : 'Incorrect'}
+                                </Text>
+                            </View>
+                        )}
+                    </MotiView>
+
+                    <MotiView
+                        from={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 500 }}
+                        style={{ width: '100%', alignItems: 'center' }}
+                    >
+                        <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'جاسوسەکە کێ بوو...' : 'The Imposter Was...'}
+                        </Text>
+
+                        <View style={[styles.imposterContainer, { flexDirection: rowDirection }]}>
+                            {imposters.map((player, index) => (
+                                <MotiView
+                                    key={index}
+                                    from={{ opacity: 0, scale: 0.5 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ type: 'spring', delay: 700 + (index * 150) }}
+                                    style={styles.imposterTag}
+                                >
+                                    <Text style={[styles.imposterName, isKurdish && styles.kurdishFont]}>
+                                        {player}
+                                    </Text>
+                                </MotiView>
+                            ))}
+                        </View>
+                    </MotiView>
 
                     <View style={styles.divider} />
 
-                    <Text style={[styles.wordLabel, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'وشەی نهێنی' : 'The Secret Word'}
-                    </Text>
-                    <View style={styles.wordBox}>
-                        <Text style={[styles.wordText, isKurdish && styles.kurdishFont]}>
-                            {word?.word}
+                    <MotiView
+                        from={{ opacity: 0, translateY: 20 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ delay: 1000 }}
+                        style={{ width: '100%', alignItems: 'center' }}
+                    >
+                        <Text style={[styles.wordLabel, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'وشەی نهێنی' : 'The Secret Word'}
                         </Text>
-                        <Text style={[styles.wordHint, isKurdish && styles.kurdishFont]}>
-                            {word?.hint}
-                        </Text>
-                    </View>
+                        <View style={styles.wordBox}>
+                            <Text style={[styles.wordText, isKurdish && styles.kurdishFont]}>
+                                {word?.word}
+                            </Text>
+                            <Text style={[styles.wordHint, isKurdish && styles.kurdishFont]}>
+                                {word?.hint}
+                            </Text>
+                        </View>
+                    </MotiView>
 
                     {/* Buttons inside scroll */}
                     <View style={{ marginTop: SPACING.xl, width: '100%' }}>
@@ -106,6 +175,57 @@ const styles = StyleSheet.create({
     imposterName: {
         color: '#FFF', ...FONTS.bold, fontSize: 18,
     },
+
+    resultBanner: {
+        width: '100%',
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.xl,
+        alignItems: 'center',
+        marginBottom: SPACING.lg,
+    },
+    winBanner: {
+        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+        borderWidth: 2,
+        borderColor: COLORS.accent.success,
+    },
+    loseBanner: {
+        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+        borderWidth: 2,
+        borderColor: COLORS.accent.danger,
+    },
+    resultTitle: { color: COLORS.text.primary, ...FONTS.large, marginTop: SPACING.md, textAlign: 'center' },
+    resultSubtitle: { color: COLORS.text.muted, textAlign: 'center', marginTop: 8 },
+
+    votedCard: {
+        width: '100%',
+        backgroundColor: COLORS.background.card,
+        borderRadius: BORDER_RADIUS.lg,
+        padding: SPACING.lg,
+        alignItems: 'center',
+        marginBottom: SPACING.xl,
+    },
+    votedLabel: { color: COLORS.text.muted, fontSize: 12, marginBottom: 4 },
+    votedName: { color: COLORS.text.primary, ...FONTS.title, marginBottom: SPACING.sm },
+    correctBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: COLORS.accent.success,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+    },
+    correctText: { color: '#FFF', ...FONTS.medium },
+    wrongBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: COLORS.accent.danger,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+    },
+    wrongText: { color: '#FFF', ...FONTS.medium },
 
     divider: {
         height: 1, width: '100%', backgroundColor: COLORS.background.border,

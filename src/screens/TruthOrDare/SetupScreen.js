@@ -60,9 +60,9 @@ export default function TruthOrDareSetupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={[styles.screen, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
             {/* Header */}
-            <View style={[styles.header, { flexDirection: rowDirection }]}>
+            <View style={[styles.header, { flexDirection: rowDirection, backgroundColor: colors.background, borderBottomColor: colors.border }]}>
                 <BackButton onPress={() => navigation.goBack()} />
                 <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('truthOrDare.title', language)}
@@ -110,12 +110,13 @@ export default function TruthOrDareSetupScreen({ navigation }) {
                             </View>
                             <Text style={[
                                 styles.intensityName,
+                                { color: colors.text.primary },
                                 selectedIntensity === level.key && { color: level.color },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getIntensityName(level.key)}
                             </Text>
-                            <Text style={[styles.intensityDesc, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.intensityDesc, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {getIntensityDesc(level.key)}
                             </Text>
                         </TouchableOpacity>
@@ -123,14 +124,14 @@ export default function TruthOrDareSetupScreen({ navigation }) {
                 </View>
 
                 {/* How to Play */}
-                <View style={styles.rulesCard}>
+                <View style={[styles.rulesCard, { backgroundColor: colors.surface }]}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
                         <Gamepad2 size={20} color={COLORS.accent.purple} />
                         <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
                     </View>
-                    <Text style={[styles.rulesText, rtlStyles, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.rulesText, { color: colors.text.muted }, rtlStyles, isKurdish && styles.kurdishFont]}>
                         {t('truthOrDare.howToPlayRules', language)}
                     </Text>
                 </View>
@@ -152,14 +153,13 @@ export default function TruthOrDareSetupScreen({ navigation }) {
                     )}
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background.dark,
     },
     header: {
         flexDirection: 'row',
@@ -167,12 +167,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.dark,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
         minHeight: 60,
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 24 },
+    title: { ...FONTS.title, fontSize: 24 },
 
     scrollView: { flex: 1 },
     scrollContent: {
@@ -181,7 +179,7 @@ const styles = StyleSheet.create({
     },
 
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
+        ...FONTS.medium,
         marginBottom: SPACING.md, marginTop: SPACING.lg,
         textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
     },
@@ -190,7 +188,7 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     intensityCard: {
-        backgroundColor: COLORS.background.card,
+        // backgroundColor: dynamic
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.lg,
         alignItems: 'center',
@@ -202,11 +200,10 @@ const styles = StyleSheet.create({
         alignItems: 'center', justifyContent: 'center',
         marginBottom: SPACING.sm,
     },
-    intensityName: { color: COLORS.text.primary, ...FONTS.bold, fontSize: 18, marginBottom: 4 },
-    intensityDesc: { color: COLORS.text.muted, fontSize: 13, textAlign: 'center' },
+    intensityName: { ...FONTS.bold, fontSize: 18, marginBottom: 4 },
+    intensityDesc: { fontSize: 13, textAlign: 'center' },
 
     rulesCard: {
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
         marginTop: SPACING.lg,
@@ -218,7 +215,7 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.sm,
     },
     rulesTitle: { color: COLORS.accent.purple, ...FONTS.medium },
-    rulesText: { color: COLORS.text.muted, lineHeight: 22 },
+    rulesText: { lineHeight: 22 },
 
     buttonContainer: {
         marginTop: SPACING.xl,

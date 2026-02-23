@@ -13,6 +13,7 @@ import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getRandomTruth, getRandomDare } from '../../constants/truthOrDareData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useGameRoom } from '../../context/GameRoomContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
@@ -42,6 +43,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
     const { players: contextPlayers, currentRoom, gameState, updateGameState, leaveRoom } = useGameRoom();
     const { user } = useAuth();
     const { language, isKurdish } = useLanguage();
+    const { colors, isDark } = useTheme();
 
     // Determine mode
     const routeParams = route?.params || {};
@@ -222,11 +224,11 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
             <GradientBackground>
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                     <View style={[styles.header, { flexDirection: rowDirection }]}>
-                        <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                            <X size={24} color={COLORS.text.secondary} />
+                        <TouchableOpacity style={[styles.exitBtn, { backgroundColor: colors.surface }]} onPress={handleEndGame}>
+                            <X size={24} color={colors.text.secondary} />
                         </TouchableOpacity>
-                        <View style={styles.roundBadge}>
-                            <Text style={[styles.roundText, isKurdish && styles.kurdishFont]}>
+                        <View style={[styles.roundBadge, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                            <Text style={[styles.roundText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                 {t('common.round', language)} {Math.floor(currentPlayerIndex / players.length) + 1}
                             </Text>
                         </View>
@@ -235,27 +237,27 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
 
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <AnimatedCard delay={100} style={[styles.playerBadge, { flexDirection: rowDirection }]}>
-                            <User size={16} color={COLORS.accent.purple} />
-                            <Text style={[styles.playerBadgeText, isKurdish && styles.kurdishFont]}>
+                            <User size={16} color={colors.brand.primary} />
+                            <Text style={[styles.playerBadgeText, { color: colors.brand.primary }, isKurdish && styles.kurdishFont]}>
                                 {currentPlayer}{isKurdish ? ' نۆرەبەتی' : "'s Turn"}
                             </Text>
                         </AnimatedCard>
 
                         {/* Show waiting message if not your turn in multiplayer */}
                         {isMultiplayer && !isMyTurn && (
-                            <GlassCard intensity={40} style={styles.waitingCard}>
-                                <ActivityIndicator size="small" color={COLORS.accent.primary} />
-                                <Text style={styles.waitingText}>
+                            <GlassCard intensity={isDark ? 30 : 50} style={styles.waitingCard}>
+                                <ActivityIndicator size="small" color={colors.brand.primary} />
+                                <Text style={[styles.waitingText, { color: colors.text.secondary }]}>
                                     {isKurdish ? `چاوەڕوانی ${currentPlayer}...` : `Waiting for ${currentPlayer}...`}
                                 </Text>
                             </GlassCard>
                         )}
 
                         <AnimatedCard delay={200}>
-                            <Text style={[styles.chooseTitle, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.chooseTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                 {isKurdish ? 'ڕاستی یان هەوەس؟' : 'Truth or Dare?'}
                             </Text>
-                            <Text style={[styles.chooseSubtitle, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.chooseSubtitle, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {isMultiplayer && !isMyTurn
                                     ? (isKurdish ? `${currentPlayer} دەبێت هەڵبژێرێت` : `${currentPlayer} must choose`)
                                     : (isKurdish ? 'بە وریایی هەڵبژێرە...' : 'Make your choice wisely...')}
@@ -270,7 +272,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                 disabled={isMultiplayer && !isMyTurn}
                             >
                                 <GlassCard
-                                    intensity={30}
+                                    intensity={isDark ? 20 : 60}
                                     style={[
                                         styles.choiceCard,
                                         styles.truthCard,
@@ -280,7 +282,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     <View style={styles.iconCircleBlue}>
                                         <MessageCircle size={32} color="#3b82f6" />
                                     </View>
-                                    <Text style={[styles.choiceText, { color: '#3b82f6' }, isKurdish && styles.kurdishFont]}>
+                                    <Text style={[styles.choiceText, { color: isDark ? '#60a5fa' : '#3b82f6' }, isKurdish && styles.kurdishFont]}>
                                         {t('common.truth', language)}
                                     </Text>
                                 </GlassCard>
@@ -293,7 +295,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                 disabled={isMultiplayer && !isMyTurn}
                             >
                                 <GlassCard
-                                    intensity={30}
+                                    intensity={isDark ? 20 : 60}
                                     style={[
                                         styles.choiceCard,
                                         styles.dareCard,
@@ -303,25 +305,25 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     <View style={styles.iconCircleRed}>
                                         <Zap size={32} color="#ef4444" />
                                     </View>
-                                    <Text style={[styles.choiceText, { color: '#ef4444' }, isKurdish && styles.kurdishFont]}>
+                                    <Text style={[styles.choiceText, { color: isDark ? '#f87171' : '#ef4444' }, isKurdish && styles.kurdishFont]}>
                                         {t('common.dare', language)}
                                     </Text>
                                 </GlassCard>
                             </TouchableOpacity>
                         </View>
 
-                        <GlassCard delay={500} style={styles.scoresCard} intensity={20}>
-                            <Text style={[styles.scoresTitle, isKurdish && styles.kurdishFont]}>
+                        <GlassCard delay={500} style={styles.scoresCard} intensity={isDark ? 20 : 60}>
+                            <Text style={[styles.scoresTitle, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {isKurdish ? 'ڕیزبەندی' : 'Leaderboard'}
                             </Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 {Object.entries(scores)
                                     .sort(([, a], [, b]) => b - a)
                                     .map(([name, score], index) => (
-                                        <View key={name} style={styles.scoreItem}>
+                                        <View key={name} style={[styles.scoreItem, { backgroundColor: colors.surfaceHighlight }]}>
                                             <Text style={styles.scoreRank}>#{index + 1}</Text>
-                                            <Text style={[styles.scoreName, isKurdish && styles.kurdishFont]}>{name}</Text>
-                                            <Text style={styles.scoreValue}>{score}</Text>
+                                            <Text style={[styles.scoreName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{name}</Text>
+                                            <Text style={[styles.scoreValue, { color: colors.brand.success }]}>{score}</Text>
                                         </View>
                                     ))
                                 }
@@ -356,10 +358,10 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                 </Text>
                             </View>
 
-                            <Text style={[styles.playerLabel, isKurdish && styles.kurdishFont]}>{currentPlayer}</Text>
+                            <Text style={[styles.playerLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>{currentPlayer}</Text>
 
-                            <GlassCard intensity={45} style={[styles.challengeCard, { borderColor: accentColor }]}>
-                                <Text style={[styles.challengeText, isKurdish && styles.kurdishFont]}>{currentChallenge}</Text>
+                            <GlassCard intensity={isDark ? 40 : 80} style={[styles.challengeCard, { borderColor: accentColor }]}>
+                                <Text style={[styles.challengeText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentChallenge}</Text>
                             </GlassCard>
 
                             {/* Only active player can mark complete/skip */}
@@ -385,7 +387,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                             ) : (
                                 <View style={styles.waitingCard}>
                                     <ActivityIndicator size="small" color={accentColor} />
-                                    <Text style={styles.waitingText}>
+                                    <Text style={[styles.waitingText, { color: colors.text.secondary }]}>
                                         {isKurdish ? `چاوەڕوانی ${currentPlayer}...` : `Waiting for ${currentPlayer} to respond...`}
                                     </Text>
                                 </View>
@@ -396,8 +398,8 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                                     style={[styles.newChallengeBtn, { flexDirection: rowDirection }]}
                                     onPress={handleNewChallenge}
                                 >
-                                    <RefreshCw size={18} color={COLORS.text.muted} />
-                                    <Text style={[styles.newChallengeText, isKurdish && styles.kurdishFont]}>
+                                    <RefreshCw size={18} color={colors.text.muted} />
+                                    <Text style={[styles.newChallengeText, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                         {isKurdish
                                             ? `${isTruth ? 'ڕاستی' : 'هەوەس'}ی نوێ وەربگرە`
                                             : `Get New ${isTruth ? 'Truth' : 'Dare'}`
@@ -422,34 +424,33 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <AnimatedCard delay={100}>
                             <View style={styles.completeBadge}>
-                                <CheckCircle size={80} color={COLORS.accent.success} />
+                                <CheckCircle size={80} color={colors.brand.success} />
                             </View>
                         </AnimatedCard>
 
                         <AnimatedCard delay={200}>
-                            <Text style={[styles.completeTitle, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.completeTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                 {isKurdish ? 'نۆرەبەت تەواو بوو!' : 'Turn Complete!'}
                             </Text>
-                            <Text style={[styles.completeSubtitle, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.completeSubtitle, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                 {isKurdish ? `خاڵی ${currentPlayer}: ${scores[currentPlayer] || 0}` : `${currentPlayer}'s score: ${scores[currentPlayer] || 0}`}
                             </Text>
                         </AnimatedCard>
 
                         <AnimatedCard delay={300} style={styles.actionRow}>
-                            {/* Only active player or host can proceed */}
                             {(!isMultiplayer || isMyTurn) ? (
                                 <Button
                                     title={isKurdish ? 'یاریزانی دواتر' : 'Next Player'}
                                     onPress={handleNext}
-                                    gradient={[COLORS.accent.primary, '#2563eb']}
+                                    gradient={[colors.brand.primary, colors.brand.primary]}
                                     icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                     style={{ flex: 1 }}
                                     isKurdish={isKurdish}
                                 />
                             ) : (
                                 <View style={styles.waitingCard}>
-                                    <ActivityIndicator size="small" color={COLORS.accent.primary} />
-                                    <Text style={styles.waitingText}>
+                                    <ActivityIndicator size="small" color={colors.brand.primary} />
+                                    <Text style={[styles.waitingText, { color: colors.text.secondary }]}>
                                         {isKurdish ? 'چاوەڕوانی...' : 'Waiting...'}
                                     </Text>
                                 </View>
@@ -458,7 +459,7 @@ export default function TruthOrDarePlayScreen({ navigation, route }) {
 
                         <AnimatedCard delay={400}>
                             <TouchableOpacity style={styles.endGameBtn} onPress={handleEndGame}>
-                                <Text style={[styles.endGameText, isKurdish && styles.kurdishFont]}>
+                                <Text style={[styles.endGameText, { color: colors.brand.error }, isKurdish && styles.kurdishFont]}>
                                     {isKurdish ? 'یاری تەواو بکە و ئەنجامەکان ببینە' : 'End Game & See Results'}
                                 </Text>
                             </TouchableOpacity>
@@ -489,18 +490,15 @@ const styles = StyleSheet.create({
     },
     exitBtn: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
     roundBadge: {
-        backgroundColor: COLORS.background.card,
         paddingVertical: 6,
         paddingHorizontal: 16,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: COLORS.background.border,
     },
-    roundText: { color: COLORS.text.secondary, ...FONTS.medium },
+    roundText: { ...FONTS.medium },
     playerBadge: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -513,7 +511,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'rgba(139, 92, 246, 0.3)',
     },
-    playerBadgeText: { color: COLORS.accent.purple, ...FONTS.bold },
+    playerBadgeText: { ...FONTS.bold },
     waitingCard: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -525,11 +523,10 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     waitingText: {
-        color: COLORS.text.secondary,
         ...FONTS.medium,
     },
-    chooseTitle: { color: COLORS.text.primary, ...FONTS.large, marginBottom: 8, textAlign: 'center' },
-    chooseSubtitle: { color: COLORS.text.muted, marginBottom: SPACING.xl, textAlign: 'center' },
+    chooseTitle: { ...FONTS.large, marginBottom: 8, textAlign: 'center' },
+    chooseSubtitle: { marginBottom: SPACING.xl, textAlign: 'center' },
     choiceRow: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -580,19 +577,18 @@ const styles = StyleSheet.create({
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
     },
-    scoresTitle: { color: COLORS.text.muted, fontSize: 12, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 },
+    scoresTitle: { fontSize: 12, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 },
     scoreItem: {
         alignItems: 'center',
         marginRight: 16,
-        backgroundColor: COLORS.background.secondary,
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 12,
         minWidth: 80,
     },
-    scoreRank: { color: COLORS.accent.warning, fontSize: 10, fontWeight: '700', marginBottom: 2 },
-    scoreName: { color: COLORS.text.primary, ...FONTS.medium, fontSize: 14, marginBottom: 2 },
-    scoreValue: { color: COLORS.accent.success, fontWeight: '700', fontSize: 16 },
+    scoreRank: { color: '#eab308', fontSize: 10, fontWeight: '700', marginBottom: 2 },
+    scoreName: { ...FONTS.medium, fontSize: 14, marginBottom: 2 },
+    scoreValue: { fontWeight: '700', fontSize: 16 },
     typeBadge: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -603,7 +599,7 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.md,
     },
     typeBadgeText: { ...FONTS.bold, fontSize: 14, letterSpacing: 1 },
-    playerLabel: { color: COLORS.text.secondary, ...FONTS.medium, marginBottom: SPACING.lg },
+    playerLabel: { ...FONTS.medium, marginBottom: SPACING.lg },
     challengeCard: {
         width: '100%',
         borderRadius: BORDER_RADIUS.xl,
@@ -616,7 +612,6 @@ const styles = StyleSheet.create({
         ...SHADOWS.medium,
     },
     challengeText: {
-        color: COLORS.text.primary,
         ...FONTS.title,
         fontSize: 24,
         textAlign: 'center',
@@ -633,14 +628,14 @@ const styles = StyleSheet.create({
         marginTop: SPACING.lg,
         padding: SPACING.sm,
     },
-    newChallengeText: { color: COLORS.text.muted, ...FONTS.medium },
+    newChallengeText: { ...FONTS.medium },
     completeBadge: { marginBottom: SPACING.md },
-    completeTitle: { color: COLORS.text.primary, ...FONTS.large, marginBottom: 8 },
-    completeSubtitle: { color: COLORS.text.muted, marginBottom: SPACING.xl },
+    completeTitle: { ...FONTS.large, marginBottom: 8 },
+    completeSubtitle: { marginBottom: SPACING.xl },
     endGameBtn: {
         marginTop: SPACING.lg,
         padding: SPACING.sm,
     },
-    endGameText: { color: COLORS.accent.danger, ...FONTS.medium },
+    endGameText: { ...FONTS.medium },
     kurdishFont: { fontFamily: 'Rabar' },
 });

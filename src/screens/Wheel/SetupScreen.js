@@ -17,7 +17,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
 import { layout } from '../../theme/layout';
-import { COLORS } from '../../constants/theme';
 
 export default function SetupScreen({ navigation }) {
     const { language, isKurdish } = useLanguage();
@@ -73,8 +72,8 @@ export default function SetupScreen({ navigation }) {
                     animate={{ opacity: 1, scale: 1 }}
                     style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}
                 >
-                    <View style={[styles.heroIcon, { backgroundColor: (COLORS.games?.wheel || '#ec4899') + '20' }]}>
-                        <Circle size={48} color={COLORS.games?.wheel || '#ec4899'} strokeWidth={1.5} />
+                    <View style={[styles.heroIcon, { backgroundColor: (colors.brand.primary || '#ec4899') + '20' }]}>
+                        <Circle size={48} color={colors.brand.primary || '#ec4899'} strokeWidth={1.5} />
                     </View>
                 </MotiView>
 
@@ -101,7 +100,7 @@ export default function SetupScreen({ navigation }) {
                             transition={{ delay: index * 50 }}
                         >
                             <GlassCard style={[styles.optionItem, { flexDirection: rowDirection }]}>
-                                <View style={[styles.optionBadge, { backgroundColor: COLORS.games?.wheel || '#ec4899' }]}>
+                                <View style={[styles.optionBadge, { backgroundColor: colors.brand.primary || '#ec4899' }]}>
                                     <Text style={styles.optionIndex}>{index + 1}</Text>
                                 </View>
                                 <Text style={[styles.optionText, { color: colors.text.primary, textAlign: isRTL ? 'right' : 'left' }]}>

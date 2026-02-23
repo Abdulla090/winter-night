@@ -67,35 +67,52 @@ export default function PartnersPlayScreen({ navigation, route }) {
     if (phase === 'end') {
         return (
             <AnimatedScreen>
-                <MotiView
-                    from={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    style={styles.centerContent}
-                >
-                    <View style={[styles.endIconContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                <View style={styles.centerContent}>
+                    <MotiView
+                        from={{ opacity: 0, scale: 0.5, translateY: 50 }}
+                        animate={{ opacity: 1, scale: 1, translateY: 0 }}
+                        transition={{ type: 'spring', damping: 15 }}
+                        style={[styles.endIconContainer, { backgroundColor: colors.surfaceHighlight }]}
+                    >
                         <Trophy size={64} color={colors.brand.gold} />
-                    </View>
+                    </MotiView>
 
-                    <Text style={[styles.endTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'ئەنجام' : 'Results'}
-                    </Text>
+                    <MotiView
+                        from={{ opacity: 0, translateY: 20 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ type: 'spring', delay: 200, damping: 15 }}
+                    >
+                        <Text style={[styles.endTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                            {isKurdish ? 'ئەنجام' : 'Results'}
+                        </Text>
+                    </MotiView>
 
-                    <View style={styles.scoreContainer}>
+                    <MotiView
+                        from={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ type: 'spring', delay: 400, damping: 15 }}
+                        style={styles.scoreContainer}
+                    >
                         <Text style={[styles.scoreBig, { color: colors.brand.primary }]}>{score}</Text>
                         <Text style={[styles.subText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'خاڵی کۆکراوە' : 'Total Points'}
                         </Text>
-                    </View>
+                    </MotiView>
 
-                    <View style={{ width: '100%', paddingHorizontal: layout.spacing.xl }}>
+                    <MotiView
+                        from={{ opacity: 0, translateY: 30 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ type: 'spring', delay: 600, damping: 15 }}
+                        style={{ width: '100%', paddingHorizontal: layout.spacing.xl }}
+                    >
                         <BeastButton
                             title={isKurdish ? 'تەواو' : 'Finish'}
                             onPress={() => navigation.navigate('Home')}
                             size="lg"
                             variant="primary"
                         />
-                    </View>
-                </MotiView>
+                    </MotiView>
+                </View>
             </AnimatedScreen>
         );
     }
@@ -181,18 +198,29 @@ export default function PartnersPlayScreen({ navigation, route }) {
                         {isKurdish ? `پرسیاری ${currentQIndex + 1}` : `QUESTION ${currentQIndex + 1}`}
                     </Text>
 
-                    <GlassCard
-                        style={[styles.questionCard, { borderColor: colors.border }]}
-                        intensity={40}
+                    <MotiView
+                        from={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ type: 'spring', damping: 15 }}
                     >
-                        <AlertCircle size={32} color={colors.brand.secondary} style={{ marginBottom: 16 }} />
-                        <Text style={[styles.questionText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                            {qText}
-                        </Text>
-                    </GlassCard>
+                        <GlassCard
+                            style={[styles.questionCard, { borderColor: colors.border }]}
+                            intensity={40}
+                        >
+                            <AlertCircle size={32} color={colors.brand.secondary} style={{ marginBottom: 16 }} />
+                            <Text style={[styles.questionText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                                {qText}
+                            </Text>
+                        </GlassCard>
+                    </MotiView>
 
                     {/* Logic Section */}
-                    <View style={styles.playerSection}>
+                    <MotiView
+                        from={{ opacity: 0, translateY: 15 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ delay: 200 }}
+                        style={styles.playerSection}
+                    >
                         <View style={[styles.avatarCircle, { backgroundColor: phase % 2 !== 0 ? colors.brand.primary : colors.brand.secondary }]}>
                             <Text style={styles.avatarText}>{activePlayerName.charAt(0)}</Text>
                         </View>
@@ -202,13 +230,14 @@ export default function PartnersPlayScreen({ navigation, route }) {
                         <Text style={[styles.instruction, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                             {instruction}
                         </Text>
-                    </View>
+                    </MotiView>
 
                     {!isGuessing ? (
                         <MotiView
                             from={{ opacity: 0, translateY: 20 }}
                             animate={{ opacity: 1, translateY: 0 }}
-                            style={{ w: '100%' }}
+                            transition={{ delay: 400 }}
+                            style={{ width: '100%' }}
                         >
                             <GlassCard intensity={10} style={{ padding: 0 }}>
                                 <TextInput
@@ -239,6 +268,7 @@ export default function PartnersPlayScreen({ navigation, route }) {
                         <MotiView
                             from={{ opacity: 0, translateY: 20 }}
                             animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ delay: 300 }}
                             style={styles.revealSection}
                         >
                             <GlassCard style={{ width: '100%', marginBottom: layout.spacing.lg }}>
@@ -250,24 +280,30 @@ export default function PartnersPlayScreen({ navigation, route }) {
                                 </Text>
                             </GlassCard>
 
-                            <Text style={[styles.askText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                                {isKurdish ? 'ڕاستت کرد؟' : 'Did you guess correctly?'}
-                            </Text>
+                            <MotiView
+                                from={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 800 }}
+                            >
+                                <Text style={[styles.askText, { color: colors.text.primary, textAlign: 'center' }, isKurdish && styles.kurdishFont]}>
+                                    {isKurdish ? 'ڕاستت کرد؟' : 'Did you guess correctly?'}
+                                </Text>
 
-                            <View style={styles.decisionRow}>
-                                <BeastButton
-                                    variant="danger"
-                                    icon={X}
-                                    onPress={() => phase === 2 ? handlePhase2Submit(false) : handlePhase4Submit(false)}
-                                    style={styles.decisionBtn}
-                                />
-                                <BeastButton
-                                    variant="success"
-                                    icon={Check}
-                                    onPress={() => phase === 2 ? handlePhase2Submit(true) : handlePhase4Submit(true)}
-                                    style={styles.decisionBtn}
-                                />
-                            </View>
+                                <View style={styles.decisionRow}>
+                                    <BeastButton
+                                        variant="danger"
+                                        icon={X}
+                                        onPress={() => phase === 2 ? handlePhase2Submit(false) : handlePhase4Submit(false)}
+                                        style={styles.decisionBtn}
+                                    />
+                                    <BeastButton
+                                        variant="success"
+                                        icon={Check}
+                                        onPress={() => phase === 2 ? handlePhase2Submit(true) : handlePhase4Submit(true)}
+                                        style={styles.decisionBtn}
+                                    />
+                                </View>
+                            </MotiView>
                         </MotiView>
                     )}
 

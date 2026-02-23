@@ -14,66 +14,83 @@ import {
     Check,
 } from 'lucide-react-native';
 
+import { MotiView, AnimatePresence } from 'moti';
 import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
-// Simple instant reveal - NO hold, NO animation
+// Simple instant reveal with MotiView animation
 const RoleCard = ({ player, isImpostor, word, onConfirm, isKurdish, colors, isDark }) => {
     const [revealed, setRevealed] = useState(false);
 
     return (
         <View style={styles.cardWrap}>
-            {!revealed ? (
-                // Hidden state - just tap to reveal
-                <View style={[styles.hiddenCard, { backgroundColor: isDark ? '#1A1A2E' : '#F0F0F0' }]}>
-                    <View style={[styles.playerBadge, { backgroundColor: player.color }]}>
-                        <Text style={styles.playerBadgeText}>{player.name}</Text>
-                    </View>
-
-                    <EyeOff size={48} color={colors.text.muted} style={{ marginVertical: 24 }} />
-
-                    <TouchableOpacity
-                        style={styles.tapBtn}
-                        onPress={() => setRevealed(true)}
-                        activeOpacity={0.8}
+            <AnimatePresence exitBeforeEnter>
+                {!revealed ? (
+                    // Hidden state
+                    <MotiView
+                        key="hidden"
+                        from={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ type: 'spring', damping: 15 }}
+                        style={[styles.hiddenCard, { backgroundColor: isDark ? '#1A1A2E' : '#F0F0F0' }]}
                     >
-                        <Text style={styles.tapBtnText}>
-                            {isKurdish ? 'تاپ بکە بۆ بینین' : 'Tap to see your role'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            ) : (
-                // Revealed state - instant, no animation
-                <View style={[styles.revealedCard, { backgroundColor: isImpostor ? '#DC2626' : '#059669' }]}>
-                    <View style={[styles.playerBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                        <Text style={styles.playerBadgeText}>{player.name}</Text>
-                    </View>
+                        <View style={[styles.playerBadge, { backgroundColor: player.color }]}>
+                            <Text style={styles.playerBadgeText}>{player.name}</Text>
+                        </View>
 
-                    {isImpostor ? (
-                        <>
-                            <EyeOff size={48} color="#FFF" style={{ marginVertical: 20 }} />
-                            <Text style={styles.roleTitle}>{isKurdish ? 'دزەکار' : 'IMPOSTOR'}</Text>
-                            <Text style={styles.roleDesc}>
-                                {isKurdish ? 'نازانیت چی بکێشیت' : "You don't know what to draw"}
+                        <EyeOff size={48} color={colors.text.muted} style={{ marginVertical: 24 }} />
+
+                        <TouchableOpacity
+                            style={styles.tapBtn}
+                            onPress={() => setRevealed(true)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.tapBtnText}>
+                                {isKurdish ? 'تاپ بکە بۆ بینین' : 'Tap to see your role'}
                             </Text>
-                        </>
-                    ) : (
-                        <>
-                            <Eye size={48} color="#FFF" style={{ marginVertical: 20 }} />
-                            <Text style={styles.wordLabel}>{isKurdish ? 'بکێشە:' : 'Draw:'}</Text>
-                            <Text style={styles.theWord}>{word}</Text>
-                        </>
-                    )}
+                        </TouchableOpacity>
+                    </MotiView>
+                ) : (
+                    // Revealed state
+                    <MotiView
+                        key="revealed"
+                        from={{ opacity: 0, scale: 0.9, rotateY: '90deg' }}
+                        animate={{ opacity: 1, scale: 1, rotateY: '0deg' }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ type: 'spring', damping: 15 }}
+                        style={[styles.revealedCard, { backgroundColor: isImpostor ? '#DC2626' : '#059669' }]}
+                    >
+                        <View style={[styles.playerBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                            <Text style={styles.playerBadgeText}>{player.name}</Text>
+                        </View>
 
-                    <TouchableOpacity style={styles.gotItBtn} onPress={onConfirm} activeOpacity={0.8}>
-                        <Check size={18} color="#FFF" />
-                        <Text style={styles.gotItText}>{isKurdish ? 'تێگەیشتم' : 'Got it'}</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+                        {isImpostor ? (
+                            <>
+                                <EyeOff size={48} color="#FFF" style={{ marginVertical: 20 }} />
+                                <Text style={styles.roleTitle}>{isKurdish ? 'دزەکار' : 'IMPOSTOR'}</Text>
+                                <Text style={styles.roleDesc}>
+                                    {isKurdish ? 'نازانیت چی بکێشیت' : "You don't know what to draw"}
+                                </Text>
+                            </>
+                        ) : (
+                            <>
+                                <Eye size={48} color="#FFF" style={{ marginVertical: 20 }} />
+                                <Text style={styles.wordLabel}>{isKurdish ? 'بکێشە:' : 'Draw:'}</Text>
+                                <Text style={styles.theWord}>{word}</Text>
+                            </>
+                        )}
+
+                        <TouchableOpacity style={styles.gotItBtn} onPress={onConfirm} activeOpacity={0.8}>
+                            <Check size={18} color="#FFF" />
+                            <Text style={styles.gotItText}>{isKurdish ? 'تێگەیشتم' : 'Got it'}</Text>
+                        </TouchableOpacity>
+                    </MotiView>
+                )}
+            </AnimatePresence>
         </View>
     );
 };
@@ -157,12 +174,17 @@ export default function ImpostorDrawRoleReveal({ navigation, route }) {
                             isDark={isDark}
                         />
                     ) : (
-                        <View style={[styles.allDoneBox, { backgroundColor: isDark ? '#1A1A2E' : '#F0F0F0' }]}>
+                        <MotiView
+                            from={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ type: 'spring', delay: 200 }}
+                            style={[styles.allDoneBox, { backgroundColor: isDark ? '#1A1A2E' : '#F0F0F0' }]}
+                        >
                             <Check size={48} color="#10B981" />
                             <Text style={[styles.allDoneText, { color: colors.text.primary }]}>
                                 {isKurdish ? 'هەمووان ئامادەن!' : 'All Ready!'}
                             </Text>
-                        </View>
+                        </MotiView>
                     )}
                 </View>
 

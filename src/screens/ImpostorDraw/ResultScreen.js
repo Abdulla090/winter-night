@@ -71,12 +71,17 @@ const VoteResultCard = ({ player, votesReceived, isImpostor, wasCorrectVote, col
 );
 
 // Scoreboard Entry
-const ScoreEntry = ({ player, score, rank, isWinner, colors, isDark }) => (
-    <View style={[
-        styles.scoreEntry,
-        { backgroundColor: isDark ? '#1A0B2E' : '#FFF' },
-        isWinner && { borderColor: '#FFD700', borderWidth: 2 },
-    ]}>
+const ScoreEntry = ({ player, score, rank, isWinner, colors, isDark, delay }) => (
+    <MotiView
+        from={{ opacity: 0, translateX: -20 }}
+        animate={{ opacity: 1, translateX: 0 }}
+        transition={{ type: 'spring', delay, damping: 15 }}
+        style={[
+            styles.scoreEntry,
+            { backgroundColor: isDark ? '#1A0B2E' : '#FFF' },
+            isWinner && { borderColor: '#FFD700', borderWidth: 2 },
+        ]}
+    >
         <View style={styles.scoreRank}>
             {rank === 1 ? (
                 <Crown size={20} color="#FFD700" fill="#FFD700" />
@@ -95,7 +100,7 @@ const ScoreEntry = ({ player, score, rank, isWinner, colors, isDark }) => (
             <Star size={16} color="#FFD700" fill="#FFD700" />
             <Text style={styles.scorePointsText}>{score}</Text>
         </View>
-    </View>
+    </MotiView>
 );
 
 export default function ImpostorDrawResult({ navigation, route }) {
@@ -235,15 +240,21 @@ export default function ImpostorDrawResult({ navigation, route }) {
 
                     <View style={styles.voteResults}>
                         {players.map((player, index) => (
-                            <VoteResultCard
+                            <MotiView
                                 key={index}
-                                player={player}
-                                votesReceived={voteCounts[index]}
-                                isImpostor={showImpostor && index === impostorIndex}
-                                wasCorrectVote={votes[index] === impostorIndex}
-                                colors={colors}
-                                isDark={isDark}
-                            />
+                                from={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ type: 'spring', delay: index * 100 }}
+                            >
+                                <VoteResultCard
+                                    player={player}
+                                    votesReceived={voteCounts[index]}
+                                    isImpostor={showImpostor && index === impostorIndex}
+                                    wasCorrectVote={votes[index] === impostorIndex}
+                                    colors={colors}
+                                    isDark={isDark}
+                                />
+                            </MotiView>
                         ))}
                     </View>
                 </View>
@@ -316,6 +327,7 @@ export default function ImpostorDrawResult({ navigation, route }) {
                                     isWinner={rank === 0}
                                     colors={colors}
                                     isDark={isDark}
+                                    delay={300 + (rank * 100)}
                                 />
                             ))}
                         </View>

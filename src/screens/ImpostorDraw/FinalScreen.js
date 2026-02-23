@@ -85,8 +85,13 @@ const PodiumPlace = ({ player, score, place, delay }) => {
 };
 
 // Other Player Score Card
-const OtherPlayerCard = ({ player, score, rank, colors, isDark }) => (
-    <View style={[styles.otherPlayerCard, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}>
+const OtherPlayerCard = ({ player, score, rank, colors, isDark, delay }) => (
+    <MotiView
+        from={{ opacity: 0, translateX: -20 }}
+        animate={{ opacity: 1, translateX: 0 }}
+        transition={{ type: 'spring', delay }}
+        style={[styles.otherPlayerCard, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}
+    >
         <Text style={[styles.otherRank, { color: colors.text.muted }]}>#{rank}</Text>
         <View style={[styles.otherAvatar, { backgroundColor: player.color }]}>
             <Text style={styles.otherAvatarText}>{player.name.charAt(0)}</Text>
@@ -96,7 +101,7 @@ const OtherPlayerCard = ({ player, score, rank, colors, isDark }) => (
             <Star size={14} color="#FFD700" fill="#FFD700" />
             <Text style={styles.otherScoreText}>{score}</Text>
         </View>
-    </View>
+    </MotiView>
 );
 
 export default function ImpostorDrawFinal({ navigation, route }) {
@@ -136,7 +141,7 @@ export default function ImpostorDrawFinal({ navigation, route }) {
                 <MotiView
                     from={{ opacity: 0, translateY: -20 }}
                     animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ delay: 400 }}
+                    transition={{ type: 'spring', delay: 400 }}
                 >
                     <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                         {isKurdish ? 'یاری تەواو بوو!' : 'Game Over!'}
@@ -188,13 +193,19 @@ export default function ImpostorDrawFinal({ navigation, route }) {
                                 rank={index + 4}
                                 colors={colors}
                                 isDark={isDark}
+                                delay={1000 + (index * 150)}
                             />
                         ))}
                     </View>
                 )}
 
                 {/* Action Buttons */}
-                <View style={styles.actionsContainer}>
+                <MotiView
+                    from={{ opacity: 0, translateY: 30 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'spring', delay: 1000 }}
+                    style={styles.actionsContainer}
+                >
                     <TouchableOpacity
                         activeOpacity={0.9}
                         onPress={() => navigation.navigate('ImpostorDrawSetup')}
@@ -220,7 +231,7 @@ export default function ImpostorDrawFinal({ navigation, route }) {
                             {isKurdish ? 'ماڵەوە' : 'Home'}
                         </Text>
                     </TouchableOpacity>
-                </View>
+                </MotiView>
             </View>
         </AnimatedScreen>
     );

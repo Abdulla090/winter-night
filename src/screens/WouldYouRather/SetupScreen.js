@@ -59,8 +59,8 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
-            <View style={[styles.header, { flexDirection: rowDirection }]}>
+        <SafeAreaView style={[styles.screen, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
+            <View style={[styles.header, { flexDirection: rowDirection, backgroundColor: colors.background, borderBottomColor: colors.border }]}>
                 <BackButton onPress={() => navigation.goBack()} />
                 <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('wouldYouRather.title', language)}
@@ -82,7 +82,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                     language={language}
                 />
 
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
+                <Text style={[styles.sectionTitle, { color: colors.text.secondary }, rtlStyles, isKurdish && styles.kurdishFont]}>
                     {t('common.chooseCategory', language)}
                 </Text>
                 <View style={[styles.categoryGrid, { flexDirection: rowDirection, flexWrap: 'wrap' }]}>
@@ -91,6 +91,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                             key={cat.key}
                             style={[
                                 styles.categoryCard,
+                                { backgroundColor: colors.surface },
                                 selectedCategory === cat.key && {
                                     borderColor: cat.color,
                                     backgroundColor: `${cat.color}15`
@@ -101,6 +102,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                             {getIcon(cat.icon, cat.color)}
                             <Text style={[
                                 styles.categoryName,
+                                { color: colors.text.primary },
                                 selectedCategory === cat.key && { color: cat.color },
                                 isKurdish && styles.kurdishFont
                             ]}>
@@ -110,14 +112,14 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                     ))}
                 </View>
 
-                <View style={styles.rulesCard}>
+                <View style={[styles.rulesCard, { backgroundColor: colors.surface }]}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <ArrowLeftRight size={20} color={COLORS.accent.info} />
-                        <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
+                        <ArrowLeftRight size={20} color={colors.brand.info} />
+                        <Text style={[styles.rulesTitle, { color: colors.brand.info }, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
                     </View>
-                    <Text style={[styles.rulesText, rtlStyles, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.rulesText, { color: colors.text.muted }, rtlStyles, isKurdish && styles.kurdishFont]}>
                         {isKurdish
                             ? '• دۆخێک لەگەڵ دوو هەڵبژاردە دەردەکەوێت\n• هەر یاریزانێک A یان B هەڵدەبژێرێت\n• ببینە کێ هاوڕان و کێ جیاوازە\n• سەبارەت بە هەڵبژاردەکانتان مشتومڕ بکەن و خۆشی بکەن!'
                             : "• A dilemma appears with two choices\n• Each player picks Option A or B\n• See who agrees and who disagrees\n• Debate your choices and have fun!"
@@ -130,7 +132,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                         title={t('common.start', language)}
                         onPress={startGame}
                         disabled={!canStart}
-                        gradient={[COLORS.accent.info, COLORS.accent.info]}
+                        gradient={[colors.brand.info, colors.brand.info]}
                         icon={<ArrowLeftRight size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
@@ -141,29 +143,26 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    screen: { flex: 1, backgroundColor: COLORS.background.dark },
+    screen: { flex: 1 },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.dark,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
         minHeight: 60,
     },
     backButton: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 20 },
+    title: { ...FONTS.title, fontSize: 20 },
     placeholder: { width: 44 },
     scrollView: { flex: 1 },
     scrollContent: { padding: SPACING.lg, paddingBottom: 120 },
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
+        ...FONTS.medium,
         marginBottom: SPACING.md, marginTop: SPACING.lg,
         textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
     },
@@ -174,16 +173,14 @@ const styles = StyleSheet.create({
     },
     categoryCard: {
         width: '47%',
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
         alignItems: 'center',
         borderWidth: 2,
         borderColor: 'transparent',
     },
-    categoryName: { color: COLORS.text.primary, ...FONTS.medium, marginTop: 8 },
+    categoryName: { ...FONTS.medium, marginTop: 8 },
     rulesCard: {
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
         marginTop: SPACING.lg,
@@ -194,8 +191,8 @@ const styles = StyleSheet.create({
         gap: SPACING.sm,
         marginBottom: SPACING.sm,
     },
-    rulesTitle: { color: COLORS.accent.info, ...FONTS.medium },
-    rulesText: { color: COLORS.text.muted, lineHeight: 22 },
+    rulesTitle: { ...FONTS.medium },
+    rulesText: { lineHeight: 22 },
     buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
     kurdishFont: { fontFamily: 'Rabar' },
 });

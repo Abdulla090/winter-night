@@ -3,13 +3,15 @@ import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Trophy, Skull, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
 
 export default function NeverHaveIEverResultScreen({ navigation, route }) {
     const { players, fingerCounts, statementsUsed } = route.params;
     const { language, isKurdish } = useLanguage();
+    const { colors } = useTheme();
 
     const rowDirection = isKurdish ? 'row-reverse' : 'row';
     const textAlign = isKurdish ? 'right' : 'left';
@@ -30,39 +32,39 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
             <ScrollView contentContainerStyle={styles.content}>
-                <View style={[styles.winnerBanner, isKurdish && styles.kurdishBorder]}>
+                <View style={[styles.winnerBanner, { backgroundColor: colors.brand.warning + '25', borderColor: colors.brand.warning }, isKurdish && styles.kurdishBorder]}>
                     <Trophy size={60} color="#FFD700" />
-                    <Text style={[styles.winnerLabel, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.winnerLabel, { color: colors.brand.warning }, isKurdish && styles.kurdishFont]}>
                         {t('neverHaveIEver.mostInnocent', language)}
                     </Text>
-                    <Text style={[styles.winnerName, isKurdish && styles.kurdishFont]}>{winner[0]}</Text>
-                    <Text style={[styles.winnerScore, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.winnerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{winner[0]}</Text>
+                    <Text style={[styles.winnerScore, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                         {winner[1]} {t('neverHaveIEver.fingersRemaining', language)}
                     </Text>
                 </View>
 
                 {loser && loser[1] < winner[1] && (
-                    <View style={[styles.loserBanner, { flexDirection: rowDirection }]}>
-                        <Skull size={32} color={COLORS.accent.danger} />
+                    <View style={[styles.loserBanner, { backgroundColor: colors.surface }, { flexDirection: rowDirection }]}>
+                        <Skull size={32} color={colors.brand.error} />
                         <View style={isKurdish && { alignItems: 'flex-end' }}>
-                            <Text style={[styles.loserLabel, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.loserLabel, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {t('neverHaveIEver.mostExperienced', language)}
                             </Text>
-                            <Text style={[styles.loserName, isKurdish && styles.kurdishFont]}>{loser[0]}</Text>
+                            <Text style={[styles.loserName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{loser[0]}</Text>
                         </View>
                     </View>
                 )}
 
-                <Text style={[styles.sectionTitle, isKurdish && { alignSelf: 'flex-end' }, isKurdish && styles.kurdishFont]}>
+                <Text style={[styles.sectionTitle, { color: colors.text.secondary }, isKurdish && { alignSelf: 'flex-end' }, isKurdish && styles.kurdishFont]}>
                     {t('neverHaveIEver.finalStandings', language)}
                 </Text>
                 <View style={styles.standings}>
                     {sortedPlayers.map(([name, fingers], index) => (
-                        <View key={name} style={[styles.standingItem, { flexDirection: rowDirection }]}>
-                            <Text style={styles.standingRank}>#{index + 1}</Text>
-                            <Text style={[styles.standingName, isKurdish && styles.kurdishFont, { textAlign }]}>{name}</Text>
+                        <View key={name} style={[styles.standingItem, { backgroundColor: colors.surface }, { flexDirection: rowDirection }]}>
+                            <Text style={[styles.standingRank, { color: colors.brand.warning }]}>#{index + 1}</Text>
+                            <Text style={[styles.standingName, { color: colors.text.primary }, isKurdish && styles.kurdishFont, { textAlign }]}>{name}</Text>
                             <View style={[styles.fingerDisplay, { flexDirection: rowDirection }]}>
                                 {[...Array(5)].map((_, i) => (
                                     <Text key={i} style={styles.fingerEmoji}>
@@ -74,17 +76,17 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
                     ))}
                 </View>
 
-                <View style={[styles.statsCard, { flexDirection: rowDirection }]}>
+                <View style={[styles.statsCard, { backgroundColor: colors.surface }, { flexDirection: rowDirection }]}>
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{statementsUsed}</Text>
-                        <Text style={[styles.statLabel, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.statValue, { color: colors.text.primary }]}>{statementsUsed}</Text>
+                        <Text style={[styles.statLabel, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                             {t('neverHaveIEver.statements', language)}
                         </Text>
                     </View>
-                    <View style={styles.statDivider} />
+                    <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{players.length}</Text>
-                        <Text style={[styles.statLabel, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.statValue, { color: colors.text.primary }]}>{players.length}</Text>
+                        <Text style={[styles.statLabel, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                             {t('common.players', language)}
                         </Text>
                     </View>
@@ -94,7 +96,7 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
                     <Button
                         title={t('common.playAgain', language)}
                         onPress={playAgain}
-                        gradient={[COLORS.accent.warning, COLORS.accent.warning]}
+                        gradient={[colors.brand.warning, colors.brand.warning]}
                         icon={<RefreshCw size={20} color="#FFF" />}
                         style={{ flex: 1, marginRight: isKurdish ? 0 : 8, marginLeft: isKurdish ? 8 : 0 }}
                         isKurdish={isKurdish}
@@ -113,64 +115,57 @@ export default function NeverHaveIEverResultScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: COLORS.background.dark },
+    container: { flex: 1 },
     content: { padding: SPACING.lg, paddingBottom: 100, alignItems: 'center' },
     winnerBanner: {
         width: '100%',
-        backgroundColor: 'rgba(245, 158, 11, 0.15)',
         borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.xl,
         alignItems: 'center',
         marginBottom: SPACING.lg,
         borderWidth: 2,
-        borderColor: COLORS.accent.warning,
     },
-    winnerLabel: { color: COLORS.accent.warning, ...FONTS.medium, textTransform: 'uppercase', letterSpacing: 2, marginTop: 8 },
-    winnerName: { color: COLORS.text.primary, ...FONTS.large, marginTop: 4 },
-    winnerScore: { color: COLORS.text.muted, marginTop: 4 },
+    winnerLabel: { ...FONTS.medium, textTransform: 'uppercase', letterSpacing: 2, marginTop: 8 },
+    winnerName: { ...FONTS.large, marginTop: 4 },
+    winnerScore: { marginTop: 4 },
     loserBanner: {
         width: '100%',
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
-        flexDirection: 'row',
         alignItems: 'center',
         gap: SPACING.md,
         marginBottom: SPACING.lg,
     },
-    loserLabel: { color: COLORS.text.muted, fontSize: 12 },
-    loserName: { color: COLORS.text.primary, ...FONTS.medium },
+    loserLabel: { fontSize: 12 },
+    loserName: { ...FONTS.medium },
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
+        ...FONTS.medium,
         textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
-        alignSelf: 'flex-start', marginBottom: SPACING.md,
+        marginBottom: SPACING.md,
     },
     standings: { width: '100%', marginBottom: SPACING.lg },
     standingItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.md,
         padding: SPACING.md,
         marginBottom: 8,
     },
-    standingRank: { color: COLORS.accent.warning, ...FONTS.bold, width: 30 },
-    standingName: { flex: 1, color: COLORS.text.primary, ...FONTS.medium },
-    fingerDisplay: { flexDirection: 'row', gap: 2 },
+    standingRank: { ...FONTS.bold, width: 30 },
+    standingName: { flex: 1, ...FONTS.medium },
+    fingerDisplay: { gap: 2 },
     fingerEmoji: { fontSize: 16 },
     statsCard: {
         width: '100%',
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.lg,
-        flexDirection: 'row',
         justifyContent: 'space-around',
         marginBottom: SPACING.lg,
     },
     statItem: { alignItems: 'center' },
-    statValue: { color: COLORS.text.primary, ...FONTS.large },
-    statLabel: { color: COLORS.text.muted, fontSize: 12, marginTop: 4 },
-    statDivider: { width: 1, backgroundColor: COLORS.background.border },
-    buttonRow: { flexDirection: 'row', width: '100%', marginTop: SPACING.md },
+    statValue: { ...FONTS.large },
+    statLabel: { fontSize: 12, marginTop: 4 },
+    statDivider: { width: 1 },
+    buttonRow: { width: '100%', marginTop: SPACING.md },
     kurdishFont: { fontFamily: 'Rabar' },
 });

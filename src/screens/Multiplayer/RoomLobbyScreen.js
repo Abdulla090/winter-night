@@ -21,8 +21,6 @@ import { useGameRoom } from '../../context/GameRoomContext';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { supabase } from '../../lib/supabase';
-
 // Available games for multiplayer
 const MULTIPLAYER_GAMES = [
     { id: 'truthordare', name: 'Truth or Dare', nameKu: 'ڕاستی یان بوێری', icon: 'Flame', color: '#ef4444', available: true },
@@ -44,51 +42,26 @@ export default function RoomLobbyScreen({ navigation }) {
     const { colors, isRTL } = useTheme();
     const { isKurdish } = useLanguage();
     const [showGamePicker, setShowGamePicker] = useState(false);
-    const [roomData, setRoomData] = useState(currentRoom);
 
-    // Sync roomData with context updates immediately
+    // Use currentRoom directly from context (no duplicate subscription needed)
+    const roomData = currentRoom;
+
+    // Redirect if no room (room deleted, host left, etc.)
+    const isMounted = React.useRef(false);
     useEffect(() => {
-        if (currentRoom) {
-            setRoomData(currentRoom);
+        if (isMounted.current && !currentRoom) {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+            });
         }
-    }, [currentRoom]);
-
-    // Subscribe to room changes (for game selection updates)
-    useEffect(() => {
-        if (!currentRoom) return;
-
-        const roomChannel = supabase
-            .channel(`room:${currentRoom.id}`)
-            .on(
-                'postgres_changes',
-                {
-                    event: 'UPDATE',
-                    schema: 'public',
-                    table: 'game_rooms',
-                    filter: `id=eq.${currentRoom.id}`,
-                },
-                (payload) => {
-                    setRoomData(payload.new);
-                }
-            )
-            .subscribe();
-
-        return () => {
-            roomChannel.unsubscribe();
-        };
-    }, [currentRoom?.id]);
-
-    // Redirect if no room
-    useEffect(() => {
-        if (!currentRoom) {
-            navigation.replace('Home');
-        }
+        isMounted.current = true;
     }, [currentRoom]);
 
     // Watch for game start
     useEffect(() => {
         if (gameState?.game_phase === 'playing') {
-            const gameType = roomData?.game_type || currentRoom?.game_type; // Fallback to context
+            const gameType = currentRoom?.game_type;
             const gameScreen = getGameScreen(gameType);
 
             console.log('Game Starting:', { gameType, gameScreen });
@@ -160,23 +133,41 @@ export default function RoomLobbyScreen({ navigation }) {
     };
 
     const handleLeaveRoom = () => {
-        Alert.alert(
-            isKurdish ? 'دەرچوون لە ژوور' : 'Leave Room',
-            isKurdish
+        const doLeave = async () => {
+            try {
+                await leaveRoom();
+            } catch (e) {
+                // Still navigate away even if cleanup fails
+            }
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+            });
+        };
+
+        if (Platform.OS === 'web') {
+            const msg = isKurdish
                 ? 'دڵنیایت دەتەوێت لە ژوورەکە دەربچیت؟'
-                : 'Are you sure you want to leave this room?',
-            [
-                { text: isKurdish ? 'نەخێر' : 'Cancel', style: 'cancel' },
-                {
-                    text: isKurdish ? 'بەڵێ' : 'Leave',
-                    style: 'destructive',
-                    onPress: async () => {
-                        await leaveRoom();
-                        navigation.replace('Home');
+                : 'Are you sure you want to leave this room?';
+            if (window.confirm(msg)) {
+                doLeave();
+            }
+        } else {
+            Alert.alert(
+                isKurdish ? 'دەرچوون لە ژوور' : 'Leave Room',
+                isKurdish
+                    ? 'دڵنیایت دەتەوێت لە ژوورەکە دەربچیت؟'
+                    : 'Are you sure you want to leave this room?',
+                [
+                    { text: isKurdish ? 'نەخێر' : 'Cancel', style: 'cancel' },
+                    {
+                        text: isKurdish ? 'بەڵێ' : 'Leave',
+                        style: 'destructive',
+                        onPress: doLeave,
                     },
-                },
-            ]
-        );
+                ]
+            );
+        }
     };
 
     const handleSelectGame = async (game) => {

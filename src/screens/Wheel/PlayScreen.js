@@ -19,8 +19,8 @@ import Animated, {
     withDecay
 } from 'react-native-reanimated';
 import Svg, { Path, G, Text as SvgText } from 'react-native-svg';
-import { GradientBackground, Button, BackButton } from '../../components';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
+import { GradientBackground, Button, BackButton, GlassCard } from '../../components';
+import { SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { t } from '../../localization/translations';
@@ -196,20 +196,20 @@ export default function PlayScreen({ navigation, route }) {
 
                         {/* Center Cap */}
                         <View style={[styles.centerCap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                            <View style={[styles.centerKnob, { backgroundColor: COLORS.games.wheel || '#ec4899' }]} />
+                            <View style={[styles.centerKnob, { backgroundColor: colors.brand.primary || '#ec4899' }]} />
                         </View>
                     </View>
 
                     {/* Result */}
                     {winner && (
-                        <View style={styles.resultContainer}>
+                        <GlassCard style={styles.resultContainer}>
                             <Text style={[styles.winnerLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                 {t('wheel.winner', language) || "Winner:"}
                             </Text>
-                            <Text style={[styles.winnerText, { color: colors.accent }, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.winnerText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                 {winner}
                             </Text>
-                        </View>
+                        </GlassCard>
                     )}
                 </View>
 
@@ -218,7 +218,7 @@ export default function PlayScreen({ navigation, route }) {
                         title={isSpinning ? (t('wheel.spinning', language) || "Spinning...") : (t('wheel.spin', language) || "SPIN")}
                         onPress={spinWheel}
                         disabled={isSpinning}
-                        gradient={[COLORS.games.wheel || '#ec4899', '#db2777']}
+                        gradient={[colors.brand.primary || '#ec4899', colors.brand.primary || '#db2777']}
                         style={styles.spinButton}
                         isKurdish={isKurdish}
                     />
@@ -285,8 +285,6 @@ const styles = StyleSheet.create({
         marginTop: SPACING.xl,
         alignItems: 'center',
         padding: SPACING.lg,
-        borderRadius: BORDER_RADIUS.lg,
-        backgroundColor: 'rgba(0,0,0,0.05)',
         minWidth: 200,
     },
     winnerLabel: {

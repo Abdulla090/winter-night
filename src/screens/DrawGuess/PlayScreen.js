@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Paintbrush, Clock, Trash2, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react-native';
@@ -9,6 +9,9 @@ import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomWord } from '../../constants/drawingData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useGameRoom } from '../../context/GameRoomContext';
+import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
 const { width } = Dimensions.get('window');
@@ -17,9 +20,28 @@ const CANVAS_SIZE = width - 48;
 const DRAW_COLORS = ['#FFFFFF', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#000000'];
 
 export default function DrawGuessPlayScreen({ navigation, route }) {
-    const { players, category, roundTime } = route.params;
+    // Multiplayer context
+    const { players: contextPlayers, currentRoom, gameState, updateGameState, leaveRoom, isHost } = useGameRoom();
+    const { user } = useAuth();
     const { language, isKurdish } = useLanguage();
+    const { colors, isRTL } = useTheme();
 
+    // Determine mode
+    const routeParams = route?.params || {};
+    const isMultiplayer = !!currentRoom && !routeParams.players;
+
+    // Get players list
+    const players = isMultiplayer
+        ? (contextPlayers?.map(p => p.player?.username || 'Player') || ['Player 1', 'Player 2'])
+        : (routeParams.players || ['Player 1', 'Player 2']);
+
+    const category = routeParams.category || gameState?.state?.category || 'general';
+    const roundTime = routeParams.roundTime || gameState?.state?.roundTime || 60;
+
+    const rowDirection = isKurdish ? 'row-reverse' : 'row';
+    const textAlign = isKurdish ? 'right' : 'left';
+
+    // Local game state
     const [phase, setPhase] = useState('reveal'); // 'reveal', 'drawing', 'result'
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [currentWord, setCurrentWord] = useState('');
@@ -31,8 +53,19 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
     const [roundNumber, setRoundNumber] = useState(1);
 
     const timerRef = useRef(null);
-    const rowDirection = isKurdish ? 'row-reverse' : 'row';
-    const textAlign = isKurdish ? 'right' : 'left';
+
+    // Multiplayer sync for scores
+    const syncScores = useCallback(async (newScores) => {
+        if (!isMultiplayer) return;
+        await updateGameState({
+            scores: newScores,
+            current_question: {
+                ...gameState?.current_question,
+                round: roundNumber,
+                player_index: currentPlayerIndex,
+            },
+        });
+    }, [isMultiplayer, gameState, updateGameState, roundNumber, currentPlayerIndex]);
 
     useEffect(() => {
         if (phase === 'reveal') {
@@ -84,14 +117,16 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
         setPaths([]);
     };
 
-    const handleGuessed = (correct) => {
+    const handleGuessed = async (correct) => {
         if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         clearInterval(timerRef.current);
+        const newScores = { ...scores };
         if (correct) {
-            setScores(prev => ({
-                ...prev,
-                [players[currentPlayerIndex]]: prev[players[currentPlayerIndex]] + 1
-            }));
+            newScores[players[currentPlayerIndex]] = (newScores[players[currentPlayerIndex]] || 0) + 1;
+            setScores(newScores);
+        }
+        if (isMultiplayer) {
+            await syncScores(newScores);
         }
         setPhase('result');
     };
@@ -108,7 +143,10 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
         setCurrentPath([]);
     };
 
-    const handleEndGame = () => {
+    const handleEndGame = async () => {
+        if (isMultiplayer) {
+            await leaveRoom();
+        }
         navigation.replace('DrawGuessResult', {
             players,
             scores,
@@ -137,19 +175,19 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                             </Text>
                         </View>
 
-                        <Text style={[styles.label, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                             {t('common.passPhoneTo', language)}
                         </Text>
-                        <Text style={[styles.playerName, isKurdish && styles.kurdishFont]}>{currentPlayer}</Text>
+                        <Text style={[styles.playerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentPlayer}</Text>
 
-                        <GlassCard intensity={30} style={styles.wordCard}>
-                            <Text style={[styles.wordLabel, isKurdish && styles.kurdishFont]}>
+                        <GlassCard intensity={30} style={[styles.wordCard, { borderColor: colors.brand.info }]}>
+                            <Text style={[styles.wordLabel, { color: colors.brand.info }, isKurdish && styles.kurdishFont]}>
                                 {t('common.yourWord', language)}
                             </Text>
-                            <Text style={[styles.wordText, isKurdish && styles.kurdishFont]}>{currentWord}</Text>
+                            <Text style={[styles.wordText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentWord}</Text>
                         </GlassCard>
 
-                        <Text style={[styles.instruction, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.instruction, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                             {isKurdish
                                 ? `ڕێگەمەدە کەسەکانی‌تر بیبینن!\nتۆ ${roundTime} چرکەت هەیە بۆ وێنەکێشان.`
                                 : `Don't let others see!\nYou have ${roundTime} seconds to draw.`
@@ -159,7 +197,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                         <Button
                             title={t('drawGuess.draw', language)}
                             onPress={handleStartDrawing}
-                            gradient={[COLORS.accent.info, COLORS.accent.info]}
+                            gradient={[colors.brand.info, colors.brand.info]}
                             icon={<Paintbrush size={20} color="#FFF" />}
                             isKurdish={isKurdish}
                         />
@@ -178,19 +216,20 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                     {/* Header */}
                     <View style={[styles.drawHeader, { flexDirection: rowDirection }]}>
-                        <View style={[styles.timerBadge, { flexDirection: rowDirection }]}>
+                        <View style={[styles.timerBadge, { backgroundColor: colors.surface }, { flexDirection: rowDirection }]}>
                             <Clock
                                 size={18}
-                                color={timeLeft <= 10 ? COLORS.accent.danger : COLORS.text.primary}
+                                color={timeLeft <= 10 ? colors.brand.error : colors.text.primary}
                             />
                             <Text style={[
                                 styles.timerText,
-                                timeLeft <= 10 && styles.timerDanger
+                                { color: colors.text.primary },
+                                timeLeft <= 10 && [styles.timerDanger, { color: colors.brand.error }]
                             ]}>{timeLeft}{isKurdish ? 'چ' : 's'}</Text>
                         </View>
 
-                        <TouchableOpacity style={styles.clearBtn} onPress={clearCanvas}>
-                            <Trash2 size={20} color={COLORS.accent.danger} />
+                        <TouchableOpacity style={[styles.clearBtn, { backgroundColor: colors.surface }]} onPress={clearCanvas}>
+                            <Trash2 size={20} color={colors.brand.error} />
                         </TouchableOpacity>
                     </View>
 
@@ -239,11 +278,15 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                     {/* Actions */}
                     <View style={styles.actionRow}>
                         <TouchableOpacity
-                            style={[styles.guessBtn, { flexDirection: rowDirection }]}
+                            style={[
+                                styles.guessBtn,
+                                { backgroundColor: colors.brand.success + '15', borderColor: colors.brand.success },
+                                { flexDirection: rowDirection }
+                            ]}
                             onPress={() => handleGuessed(true)}
                         >
-                            <CheckCircle2 size={24} color={COLORS.accent.success} />
-                            <Text style={[styles.guessBtnText, isKurdish && styles.kurdishFont]}>
+                            <CheckCircle2 size={24} color={colors.brand.success} />
+                            <Text style={[styles.guessBtnText, { color: colors.brand.success }, isKurdish && styles.kurdishFont]}>
                                 {t('drawGuess.someoneGuessed', language)}
                             </Text>
                         </TouchableOpacity>
@@ -262,27 +305,27 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                     <ScrollView contentContainerStyle={styles.centerContent}>
                         <View style={styles.resultBanner}>
-                            <Paintbrush size={48} color={COLORS.accent.info} />
-                            <Text style={[styles.resultTitle, isKurdish && styles.kurdishFont]}>
+                            <Paintbrush size={48} color={colors.brand.info} />
+                            <Text style={[styles.resultTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                 {t('drawGuess.roundComplete', language)}
                             </Text>
-                            <Text style={[styles.wordReveal, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.wordReveal, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {t('drawGuess.theWordWas', language)}
-                                <Text style={styles.wordHighlight}>{currentWord}</Text>
+                                <Text style={[styles.wordHighlight, { color: colors.brand.info }]}>{currentWord}</Text>
                             </Text>
                         </View>
 
                         {/* Scores */}
                         <GlassCard intensity={20} style={styles.scoresCard}>
-                            <Text style={[styles.scoresTitle, isKurdish && styles.kurdishFont, { textAlign }]}>
+                            <Text style={[styles.scoresTitle, { color: colors.text.muted }, isKurdish && styles.kurdishFont, { textAlign }]}>
                                 {isKurdish ? 'خاڵەکانی ئێستا' : 'Current Scores'}
                             </Text>
                             {Object.entries(scores)
                                 .sort(([, a], [, b]) => b - a)
                                 .map(([name, score]) => (
-                                    <View key={name} style={[styles.scoreRow, { flexDirection: rowDirection }]}>
-                                        <Text style={[styles.scoreName, isKurdish && styles.kurdishFont]}>{name}</Text>
-                                        <Text style={styles.scoreValue}>{score}</Text>
+                                    <View key={name} style={[styles.scoreRow, { borderBottomColor: colors.border, flexDirection: rowDirection }]}>
+                                        <Text style={[styles.scoreName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{name}</Text>
+                                        <Text style={[styles.scoreValue, { color: colors.brand.success }]}>{score}</Text>
                                     </View>
                                 ))
                             }
@@ -292,13 +335,13 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                             <Button
                                 title={t('drawGuess.nextRound', language)}
                                 onPress={handleNext}
-                                gradient={[COLORS.accent.info, COLORS.accent.info]}
-                                icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
+                                gradient={[colors.brand.info, colors.brand.info]}
+                                icon={isRTL ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                 style={{ marginBottom: SPACING.md }}
                                 isKurdish={isKurdish}
                             />
                             <TouchableOpacity style={styles.endGameBtn} onPress={handleEndGame}>
-                                <Text style={[styles.endGameText, isKurdish && styles.kurdishFont]}>
+                                <Text style={[styles.endGameText, { color: colors.brand.error }, isKurdish && styles.kurdishFont]}>
                                     {t('drawGuess.endGameResults', language)}
                                 </Text>
                             </TouchableOpacity>
@@ -322,26 +365,25 @@ const styles = StyleSheet.create({
         paddingBottom: 100,
     },
     badge: {
-        backgroundColor: COLORS.background.card,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         paddingVertical: 6,
         paddingHorizontal: 16,
         borderRadius: 100,
         marginBottom: 32
     },
-    badgeText: { color: COLORS.text.secondary, ...FONTS.medium, fontSize: 13 },
-    label: { color: COLORS.text.secondary, ...FONTS.medium, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
-    playerName: { color: COLORS.text.primary, ...FONTS.large, fontSize: 36, marginBottom: 32, textAlign: 'center' },
+    badgeText: { ...FONTS.medium, fontSize: 13 },
+    label: { ...FONTS.medium, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
+    playerName: { ...FONTS.large, fontSize: 36, marginBottom: 32, textAlign: 'center' },
     wordCard: {
         borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.xl,
         marginBottom: SPACING.lg,
         borderWidth: 1,
-        borderColor: COLORS.accent.info,
         alignItems: 'center',
     },
-    wordLabel: { color: COLORS.accent.info, ...FONTS.medium, marginBottom: 8 },
-    wordText: { color: COLORS.text.primary, ...FONTS.large, fontSize: 32 },
-    instruction: { color: COLORS.text.muted, textAlign: 'center', marginBottom: 32, lineHeight: 24 },
+    wordLabel: { ...FONTS.medium, marginBottom: 8 },
+    wordText: { ...FONTS.large, fontSize: 32 },
+    instruction: { textAlign: 'center', marginBottom: 32, lineHeight: 24 },
 
     // Drawing Phase
     drawHeader: {
@@ -354,16 +396,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
-        backgroundColor: COLORS.background.card,
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 20,
     },
-    timerText: { color: COLORS.text.primary, ...FONTS.bold, fontSize: 18 },
-    timerDanger: { color: COLORS.accent.danger },
+    timerText: { ...FONTS.bold, fontSize: 18 },
+    timerDanger: {},
     clearBtn: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
     canvasContainer: {
@@ -400,41 +440,38 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        backgroundColor: 'rgba(16, 185, 129, 0.15)',
         paddingVertical: SPACING.md,
         paddingHorizontal: SPACING.lg,
         borderRadius: BORDER_RADIUS.lg,
         borderWidth: 2,
-        borderColor: COLORS.accent.success,
     },
-    guessBtnText: { color: COLORS.accent.success, ...FONTS.medium },
+    guessBtnText: { ...FONTS.medium },
 
     // Result Phase
     resultBanner: {
         alignItems: 'center',
         marginBottom: SPACING.lg,
     },
-    resultTitle: { color: COLORS.text.primary, ...FONTS.large, marginTop: SPACING.md },
-    wordReveal: { color: COLORS.text.muted, marginTop: 8 },
-    wordHighlight: { color: COLORS.accent.info, ...FONTS.bold },
+    resultTitle: { ...FONTS.large, marginTop: SPACING.md },
+    wordReveal: { marginTop: 8 },
+    wordHighlight: { ...FONTS.bold },
     scoresCard: {
         width: '100%',
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.lg,
         marginBottom: SPACING.lg,
     },
-    scoresTitle: { color: COLORS.text.muted, fontSize: 12, textTransform: 'uppercase', marginBottom: SPACING.md },
+    scoresTitle: { fontSize: 12, textTransform: 'uppercase', marginBottom: SPACING.md },
     scoreRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 8,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
     },
-    scoreName: { color: COLORS.text.primary, ...FONTS.medium },
-    scoreValue: { color: COLORS.accent.success, ...FONTS.bold },
+    scoreName: { ...FONTS.medium },
+    scoreValue: { ...FONTS.bold },
     actionButtons: { width: '100%' },
     endGameBtn: { alignSelf: 'center', padding: SPACING.sm },
-    endGameText: { color: COLORS.accent.danger, ...FONTS.medium },
+    endGameText: { ...FONTS.medium },
     kurdishFont: { fontFamily: 'Rabar' },
 });

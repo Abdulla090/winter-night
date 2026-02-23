@@ -26,43 +26,49 @@ const { width } = Dimensions.get('window');
 const CANVAS_SIZE = (width - 60) / 2;
 
 // Player Drawing Card for Voting
-const VotingCard = ({ player, playerIndex, drawings, isSelected, onVote, colors, isDark }) => (
-    <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => onVote(playerIndex)}
-        style={[
-            styles.votingCard,
-            { backgroundColor: isDark ? '#1A0B2E' : '#FFF' },
-            isSelected && { borderColor: '#EF4444', borderWidth: 3 },
-        ]}
+const VotingCard = ({ player, playerIndex, drawings, isSelected, onVote, colors, isDark, delay }) => (
+    <MotiView
+        from={{ opacity: 0, scale: 0.8, translateY: 20 }}
+        animate={{ opacity: 1, scale: 1, translateY: 0 }}
+        transition={{ type: 'spring', delay, damping: 15 }}
     >
-        {/* Player Header */}
-        <View style={[styles.votingCardHeader, { backgroundColor: player.color }]}>
-            <Text style={styles.votingCardName}>{player.name}</Text>
-            {isSelected && (
-                <View style={styles.selectedBadge}>
-                    <Check size={14} color="#FFF" />
-                </View>
-            )}
-        </View>
+        <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => onVote(playerIndex)}
+            style={[
+                styles.votingCard,
+                { backgroundColor: isDark ? '#1A0B2E' : '#FFF' },
+                isSelected && { borderColor: '#EF4444', borderWidth: 3 },
+            ]}
+        >
+            {/* Player Header */}
+            <View style={[styles.votingCardHeader, { backgroundColor: player.color }]}>
+                <Text style={styles.votingCardName}>{player.name}</Text>
+                {isSelected && (
+                    <View style={styles.selectedBadge}>
+                        <Check size={14} color="#FFF" />
+                    </View>
+                )}
+            </View>
 
-        {/* Drawing Preview */}
-        <View style={styles.votingCardCanvas}>
-            <Svg width="100%" height="100%" viewBox={`0 0 ${width - 32} ${width - 32}`}>
-                {drawings?.map((stroke, index) => (
-                    <Path
-                        key={index}
-                        d={stroke.path}
-                        stroke={stroke.color}
-                        strokeWidth={stroke.size}
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
-                ))}
-            </Svg>
-        </View>
-    </TouchableOpacity>
+            {/* Drawing Preview */}
+            <View style={styles.votingCardCanvas}>
+                <Svg width="100%" height="100%" viewBox={`0 0 ${width - 32} ${width - 32}`}>
+                    {drawings?.map((stroke, index) => (
+                        <Path
+                            key={index}
+                            d={stroke.path}
+                            stroke={stroke.color}
+                            strokeWidth={stroke.size}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    ))}
+                </Svg>
+            </View>
+        </TouchableOpacity>
+    </MotiView>
 );
 
 // Current Voter Indicator
@@ -240,6 +246,7 @@ export default function ImpostorDrawVote({ navigation, route }) {
                                     onVote={handleVoteSelect}
                                     colors={colors}
                                     isDark={isDark}
+                                    delay={300 + (index * 100)}
                                 />
                             ))}
                         </View>

@@ -82,27 +82,37 @@ const CategoryCard = ({ category, isSelected, onSelect, colors, isDark }) => (
     <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => onSelect(category)}
-        style={[
-            styles.categoryCard,
-            {
-                backgroundColor: isDark ? '#1A0B2E' : '#FFF',
+        style={[styles.categoryCardWrapper]}
+    >
+        <MotiView
+            animate={{
+                scale: isSelected ? 1.05 : 1,
                 borderColor: isSelected ? colors.primary : (isDark ? 'rgba(255,255,255,0.08)' : '#E2E8F0'),
                 borderWidth: isSelected ? 2 : 1,
-            }
-        ]}
-    >
-        <Text style={styles.categoryIcon}>{WORD_CATEGORIES[category].icon}</Text>
-        <Text style={[
-            styles.categoryName,
-            { color: isSelected ? colors.primary : colors.text.primary }
-        ]}>
-            {WORD_CATEGORIES[category].name.en}
-        </Text>
-        {isSelected && (
-            <View style={[styles.checkBadge, { backgroundColor: colors.primary }]}>
-                <Sparkles size={12} color="#FFF" />
-            </View>
-        )}
+            }}
+            transition={{ type: 'spring' }}
+            style={[
+                styles.categoryCard,
+                { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }
+            ]}
+        >
+            <Text style={styles.categoryIcon}>{WORD_CATEGORIES[category].icon}</Text>
+            <Text style={[
+                styles.categoryName,
+                { color: isSelected ? colors.primary : colors.text.primary }
+            ]}>
+                {WORD_CATEGORIES[category].name.en}
+            </Text>
+            {isSelected && (
+                <MotiView
+                    from={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    style={[styles.checkBadge, { backgroundColor: colors.primary }]}
+                >
+                    <Sparkles size={12} color="#FFF" />
+                </MotiView>
+            )}
+        </MotiView>
     </TouchableOpacity>
 );
 
@@ -215,7 +225,12 @@ export default function ImpostorDrawSetup({ navigation }) {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
 
                 {/* Header */}
-                <View style={styles.header}>
+                <MotiView
+                    from={{ opacity: 0, translateY: -20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 400 }}
+                    style={styles.header}
+                >
                     <TouchableOpacity
                         style={[styles.backBtn, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}
                         onPress={() => navigation.goBack()}
@@ -233,7 +248,7 @@ export default function ImpostorDrawSetup({ navigation }) {
                     </View>
 
                     <View style={{ width: 44 }} />
-                </View>
+                </MotiView>
 
                 {/* Players Section */}
                 <View style={styles.section}>
@@ -371,14 +386,20 @@ export default function ImpostorDrawSetup({ navigation }) {
                 </View>
 
                 {/* Start Button */}
-                <TouchableOpacity activeOpacity={0.9} onPress={handleStartGame} style={styles.startBtnWrap}>
-                    <LinearGradient colors={['#D900FF', '#7000FF']} style={styles.startBtn}>
-                        <Play size={24} color="#FFF" fill="#FFF" />
-                        <Text style={[styles.startBtnText, isKurdish && styles.kurdishFont]}>
-                            {isKurdish ? 'دەستپێکردن' : 'Start Game'}
-                        </Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                <MotiView
+                    from={{ opacity: 0, translateY: 30 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'spring', delay: 400 }}
+                >
+                    <TouchableOpacity activeOpacity={0.9} onPress={handleStartGame} style={styles.startBtnWrap}>
+                        <LinearGradient colors={['#D900FF', '#7000FF']} style={styles.startBtn}>
+                            <Play size={24} color="#FFF" fill="#FFF" />
+                            <Text style={[styles.startBtnText, isKurdish && styles.kurdishFont]}>
+                                {isKurdish ? 'دەستپێکردن' : 'Start Game'}
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </MotiView>
 
             </ScrollView>
         </AnimatedScreen>
@@ -493,8 +514,11 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 12,
     },
+    categoryCardWrapper: {
+        width: '47.5%',
+    },
     categoryCard: {
-        width: '47%',
+        width: '100%',
         padding: 16,
         borderRadius: 16,
         alignItems: 'center',

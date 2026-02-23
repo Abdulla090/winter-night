@@ -10,6 +10,7 @@ import {
     ActivityIndicator,
     Alert,
     Animated,
+    ScrollView,
 } from 'react-native';
 import { Mail, Lock, Eye, EyeOff, Gamepad2 } from 'lucide-react-native';
 
@@ -19,10 +20,13 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { layout } from '../../theme/layout';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, route }) {
     const { signIn, loading } = useAuth();
     const { colors, isRTL } = useTheme();
     const { isKurdish } = useLanguage();
+
+    // Get the return screen (where to go back after login)
+    const returnTo = route?.params?.returnTo || null;
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -38,32 +42,33 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        console.log('Attempting login with:', email);
         setIsLoggingIn(true);
 
         try {
             const { data, error } = await signIn(email, password);
-            console.log('Login result:', { data, error });
 
             if (error) {
-                console.log('Login error:', error);
                 Alert.alert(
                     isKurdish ? 'چوونەژوورەوە سەرکەوتوو نەبوو' : 'Login Failed',
                     error.message || 'Invalid credentials'
                 );
             } else if (data?.user) {
-                console.log('Login successful! User:', data.user.email);
-                Alert.alert(
-                    isKurdish ? 'سەرکەوتوو' : 'Success',
-                    isKurdish ? 'چوویتەوە ژوورەوە' : 'Login successful!',
-                    [{ text: 'OK', onPress: () => navigation.replace('Home') }]
-                );
+                // Navigate back to where the user came from, or Home
+                if (returnTo) {
+                    navigation.replace(returnTo);
+                } else if (navigation.canGoBack()) {
+                    navigation.goBack();
+                } else {
+                    navigation.replace('Home');
+                }
             } else {
-                console.log('No user returned, but no error either');
-                navigation.replace('Home');
+                if (returnTo) {
+                    navigation.replace(returnTo);
+                } else {
+                    navigation.replace('Home');
+                }
             }
         } catch (err) {
-            console.log('Caught error during login:', err);
             Alert.alert('Error', err.message || 'Something went wrong');
         } finally {
             setIsLoggingIn(false);
@@ -72,7 +77,7 @@ export default function LoginScreen({ navigation }) {
 
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
-    // Native fade-in animation (replaces MotiView)
+    // Native fade-in animation
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
     useEffect(() => {
@@ -85,87 +90,95 @@ export default function LoginScreen({ navigation }) {
     return (
         <AnimatedScreen>
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior="padding"
                 style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 30}
             >
-                {/* Header */}
-                <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <BackButton onPress={() => navigation.goBack()} />
-                    <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
-                        {isKurdish ? 'چوونەژوورەوە' : 'Sign In'}
-                    </Text>
-                    <View style={{ width: 44 }} />
-                </View>
-
-                {/* Hero */}
-                <Animated.View
-                    style={[styles.heroContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+                    keyboardShouldPersistTaps="handled"
+                    keyboardDismissMode="interactive"
+                    showsVerticalScrollIndicator={false}
+                    bounces={false}
                 >
-                    <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
-                        <Gamepad2 size={48} color={colors.accent} strokeWidth={1.5} />
-                    </View>
-                    <Text style={[styles.title, { color: colors.text.primary }]}>
-                        {isKurdish ? 'بەخێربێیتەوە' : 'Welcome Back'}
-                    </Text>
-                    <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
-                        {isKurdish ? 'بچۆ ژوورەوە بۆ یاری کردن' : 'Sign in to play with friends'}
-                    </Text>
-                </Animated.View>
-
-                {/* Form */}
-                <GlassCard style={styles.formCard}>
-                    <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
-                        <Mail size={20} color={colors.text.muted} />
-                        <TextInput
-                            style={[styles.input, { color: colors.text.primary, textAlign: isRTL ? 'right' : 'left' }]}
-                            placeholder={isKurdish ? 'ئیمەیڵ' : 'Email'}
-                            placeholderTextColor={colors.text.muted}
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                        />
+                    <View style={[styles.header, { flexDirection: rowDirection }]}>
+                        <BackButton onPress={() => navigation.goBack()} />
+                        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+                            {isKurdish ? 'چوونەژوورەوە' : 'Sign In'}
+                        </Text>
+                        <View style={{ width: 44 }} />
                     </View>
 
-                    <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
-                        <Lock size={20} color={colors.text.muted} />
-                        <TextInput
-                            style={[styles.input, { color: colors.text.primary, textAlign: isRTL ? 'right' : 'left' }]}
-                            placeholder={isKurdish ? 'وشەی نهێنی' : 'Password'}
-                            placeholderTextColor={colors.text.muted}
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry={!showPassword}
-                        />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                            {showPassword ?
-                                <EyeOff size={20} color={colors.text.muted} /> :
-                                <Eye size={20} color={colors.text.muted} />
-                            }
+                    {/* Hero */}
+                    <Animated.View
+                        style={[styles.heroContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}
+                    >
+                        <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
+                            <Gamepad2 size={48} color={colors.accent} strokeWidth={1.5} />
+                        </View>
+                        <Text style={[styles.title, { color: colors.text.primary }]}>
+                            {isKurdish ? 'بەخێربێیتەوە' : 'Welcome Back'}
+                        </Text>
+                        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'بچۆ ژوورەوە بۆ یاری کردن' : 'Sign in to play with friends'}
+                        </Text>
+                    </Animated.View>
+
+                    {/* Form */}
+                    <GlassCard style={styles.formCard}>
+                        <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
+                            <Mail size={20} color={colors.text.muted} />
+                            <TextInput
+                                style={[styles.input, { color: colors.text.primary, textAlign: isRTL ? 'right' : 'left' }]}
+                                placeholder={isKurdish ? 'ئیمەیڵ' : 'Email'}
+                                placeholderTextColor={colors.text.muted}
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                            />
+                        </View>
+
+                        <View style={[styles.inputContainer, { flexDirection: rowDirection }]}>
+                            <Lock size={20} color={colors.text.muted} />
+                            <TextInput
+                                style={[styles.input, { color: colors.text.primary, textAlign: isRTL ? 'right' : 'left' }]}
+                                placeholder={isKurdish ? 'وشەی نهێنی' : 'Password'}
+                                placeholderTextColor={colors.text.muted}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={!showPassword}
+                            />
+                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                {showPassword ?
+                                    <EyeOff size={20} color={colors.text.muted} /> :
+                                    <Eye size={20} color={colors.text.muted} />
+                                }
+                            </TouchableOpacity>
+                        </View>
+                    </GlassCard>
+
+                    <BeastButton
+                        title={isLoggingIn ? (isKurdish ? 'چاوەڕوان بە...' : 'Signing In...') : (isKurdish ? 'چوونەژوورەوە' : 'Sign In')}
+                        onPress={handleLogin}
+                        variant="primary"
+                        size="lg"
+                        disabled={isLoggingIn}
+                        style={{ marginTop: layout.spacing.xl, opacity: isLoggingIn ? 0.7 : 1 }}
+                    />
+
+                    {/* Sign Up Link */}
+                    <View style={[styles.footer, { flexDirection: rowDirection }]}>
+                        <Text style={[styles.footerText, { color: colors.text.secondary }]}>
+                            {isKurdish ? 'هەژمارت نییە؟' : "Don't have an account?"}
+                        </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                            <Text style={[styles.linkText, { color: colors.accent }]}>
+                                {isKurdish ? 'تۆمارکردن' : 'Sign Up'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
-                </GlassCard>
-
-                <BeastButton
-                    title={isLoggingIn ? (isKurdish ? 'چاوەڕوان بە...' : 'Signing In...') : (isKurdish ? 'چوونەژوورەوە' : 'Sign In')}
-                    onPress={handleLogin}
-                    variant="primary"
-                    size="lg"
-                    disabled={isLoggingIn}
-                    style={{ marginTop: layout.spacing.xl, opacity: isLoggingIn ? 0.7 : 1 }}
-                />
-
-                {/* Sign Up Link */}
-                <View style={[styles.footer, { flexDirection: rowDirection }]}>
-                    <Text style={[styles.footerText, { color: colors.text.secondary }]}>
-                        {isKurdish ? 'هەژمارت نییە؟' : "Don't have an account?"}
-                    </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                        <Text style={[styles.linkText, { color: colors.accent }]}>
-                            {isKurdish ? 'تۆمارکردن' : 'Sign Up'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                </ScrollView>
             </KeyboardAvoidingView>
         </AnimatedScreen>
     );

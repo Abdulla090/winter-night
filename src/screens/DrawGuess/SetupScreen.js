@@ -40,8 +40,8 @@ export default function DrawGuessSetupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
-            <View style={[styles.header, { flexDirection: rowDirection }]}>
+        <SafeAreaView style={[styles.screen, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
+            <View style={[styles.header, { flexDirection: rowDirection, backgroundColor: colors.background, borderBottomColor: colors.border }]}>
                 <BackButton onPress={() => navigation.goBack()} />
                 <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('drawGuess.title', language)}
@@ -63,7 +63,7 @@ export default function DrawGuessSetupScreen({ navigation }) {
                     language={language}
                 />
 
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
+                <Text style={[styles.sectionTitle, { color: colors.text.secondary }, rtlStyles, isKurdish && styles.kurdishFont]}>
                     {isKurdish ? 'ئاستی زەحمەتی وشە' : 'Word Difficulty'}
                 </Text>
                 <View style={[styles.categoryGrid, { flexDirection: rowDirection, flexWrap: 'wrap' }]}>
@@ -72,7 +72,11 @@ export default function DrawGuessSetupScreen({ navigation }) {
                             key={cat.key}
                             style={[
                                 styles.categoryCard,
-                                selectedCategory === cat.key && styles.categorySelected
+                                { backgroundColor: colors.surface },
+                                selectedCategory === cat.key && [
+                                    styles.categorySelected,
+                                    { borderColor: colors.brand.info, backgroundColor: colors.brand.info + '15' }
+                                ]
                             ]}
                             onPress={() => {
                                 if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -84,25 +88,26 @@ export default function DrawGuessSetupScreen({ navigation }) {
                                 return (
                                     <IconComp
                                         size={24}
-                                        color={selectedCategory === cat.key ? COLORS.accent.primary : COLORS.text.secondary}
+                                        color={selectedCategory === cat.key ? colors.brand.info : colors.text.secondary}
                                     />
                                 );
                             })()}
                             <Text style={[
                                 styles.categoryName,
-                                selectedCategory === cat.key && styles.categoryNameSelected,
+                                { color: colors.text.primary },
+                                selectedCategory === cat.key && [styles.categoryNameSelected, { color: colors.brand.info }],
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat)}
                             </Text>
-                            <Text style={[styles.categoryCount, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.categoryCount, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {cat.count} {isKurdish ? 'وشە' : 'words'}
                             </Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
+                <Text style={[styles.sectionTitle, { color: colors.text.secondary }, rtlStyles, isKurdish && styles.kurdishFont]}>
                     {isKurdish ? 'کات بۆ هەر قۆناغێک' : 'Time Per Round'}
                 </Text>
                 <View style={[styles.timeOptions, { flexDirection: rowDirection }]}>
@@ -111,7 +116,8 @@ export default function DrawGuessSetupScreen({ navigation }) {
                             key={time}
                             style={[
                                 styles.timeOption,
-                                roundTime === time && styles.timeOptionSelected
+                                { backgroundColor: colors.surface },
+                                roundTime === time && [styles.timeOptionSelected, { borderColor: colors.brand.info, backgroundColor: colors.brand.info + '15' }]
                             ]}
                             onPress={() => {
                                 if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -120,7 +126,8 @@ export default function DrawGuessSetupScreen({ navigation }) {
                         >
                             <Text style={[
                                 styles.timeOptionText,
-                                roundTime === time && styles.timeOptionTextSelected
+                                { color: colors.text.secondary },
+                                roundTime === time && [styles.timeOptionTextSelected, { color: colors.brand.info }]
                             ]}>
                                 {time}{isKurdish ? 'چ' : 's'}
                             </Text>
@@ -128,14 +135,14 @@ export default function DrawGuessSetupScreen({ navigation }) {
                     ))}
                 </View>
 
-                <View style={styles.rulesCard}>
+                <View style={[styles.rulesCard, { backgroundColor: colors.surface }]}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Paintbrush size={20} color={COLORS.accent.info} />
-                        <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
+                        <Paintbrush size={20} color={colors.brand.info} />
+                        <Text style={[styles.rulesTitle, { color: colors.brand.info }, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
                     </View>
-                    <Text style={[styles.rulesText, rtlStyles, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.rulesText, { color: colors.text.muted }, rtlStyles, isKurdish && styles.kurdishFont]}>
                         {isKurdish
                             ? '• یەک یاریزان وشەی نهێنی وێنەدەکێشێت\n• کەسەکانی تر هەوڵ دەدەن بیزانن\n• ئەمە وەکو تەختەی وێنە بەکاربهێنە!\n• پیت و ژمارە قەدەغەیە!'
                             : "• One player draws a secret word\n• Others try to guess what it is\n• Use this as your drawing board!\n• No letters or numbers allowed!"
@@ -148,7 +155,7 @@ export default function DrawGuessSetupScreen({ navigation }) {
                         title={t('common.start', language)}
                         onPress={startGame}
                         disabled={!canStart}
-                        gradient={[COLORS.accent.info, COLORS.accent.info]}
+                        gradient={[colors.brand.info, colors.brand.info]}
                         icon={<Paintbrush size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
@@ -159,29 +166,26 @@ export default function DrawGuessSetupScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    screen: { flex: 1, backgroundColor: COLORS.background.dark },
+    screen: { flex: 1 },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.dark,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
         minHeight: 60,
     },
     backButton: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 24 },
+    title: { ...FONTS.title, fontSize: 24 },
     placeholder: { width: 44 },
     scrollView: { flex: 1 },
     scrollContent: { padding: SPACING.lg, paddingBottom: 120 },
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
+        ...FONTS.medium,
         marginBottom: SPACING.md, marginTop: SPACING.lg,
         textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
     },
@@ -192,7 +196,6 @@ const styles = StyleSheet.create({
     },
     categoryCard: {
         width: '47%',
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
         alignItems: 'center',
@@ -200,19 +203,17 @@ const styles = StyleSheet.create({
         borderColor: 'transparent',
     },
     categorySelected: {
-        borderColor: COLORS.accent.info,
-        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+        borderWidth: 2,
     },
-    categoryName: { color: COLORS.text.primary, ...FONTS.medium, marginTop: 8, textAlign: 'center' },
-    categoryNameSelected: { color: COLORS.accent.info },
-    categoryCount: { color: COLORS.text.muted, fontSize: 12, marginTop: 4 },
+    categoryName: { ...FONTS.medium, marginTop: 8, textAlign: 'center' },
+    categoryNameSelected: {},
+    categoryCount: { fontSize: 12, marginTop: 4 },
     timeOptions: {
         flexDirection: 'row',
         gap: 12,
     },
     timeOption: {
         flex: 1,
-        backgroundColor: COLORS.background.card,
         paddingVertical: SPACING.md,
         borderRadius: BORDER_RADIUS.md,
         alignItems: 'center',
@@ -220,13 +221,11 @@ const styles = StyleSheet.create({
         borderColor: 'transparent',
     },
     timeOptionSelected: {
-        borderColor: COLORS.accent.info,
-        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+        borderWidth: 2,
     },
-    timeOptionText: { color: COLORS.text.secondary, ...FONTS.bold },
-    timeOptionTextSelected: { color: COLORS.accent.info },
+    timeOptionText: { ...FONTS.bold },
+    timeOptionTextSelected: {},
     rulesCard: {
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
         marginTop: SPACING.lg,
@@ -237,8 +236,8 @@ const styles = StyleSheet.create({
         gap: SPACING.sm,
         marginBottom: SPACING.sm,
     },
-    rulesTitle: { color: COLORS.accent.info, ...FONTS.medium },
-    rulesText: { color: COLORS.text.muted, lineHeight: 22 },
+    rulesTitle: { ...FONTS.medium },
+    rulesText: { lineHeight: 22 },
     buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
     kurdishFont: { fontFamily: 'Rabar' },
 });

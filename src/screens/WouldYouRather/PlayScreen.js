@@ -9,6 +9,7 @@ import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomQuestion } from '../../constants/wouldYouRatherData';
 import { useLanguage } from '../../context/LanguageContext';
 import { useGameRoom } from '../../context/GameRoomContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
@@ -19,6 +20,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
     const { players: contextPlayers, currentRoom, gameState, updateGameState, leaveRoom, isHost } = useGameRoom();
     const { user } = useAuth();
     const { language, isKurdish } = useLanguage();
+    const { colors } = useTheme();
 
     const routeParams = route?.params || {};
     const isMultiplayer = !!currentRoom && !routeParams.players;
@@ -147,9 +149,9 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
 
     if (!currentQuestion) {
         return (
-            <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-                <ActivityIndicator size="large" color={COLORS.accent.info} />
-                <Text style={styles.loadingText}>{isKurdish ? 'چاوەڕوان...' : 'Loading...'}</Text>
+            <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={colors.brand.info} />
+                <Text style={[styles.loadingText, { color: colors.text.secondary }]}>{isKurdish ? 'چاوەڕوان...' : 'Loading...'}</Text>
             </SafeAreaView>
         );
     }
@@ -158,11 +160,11 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
         <GradientBackground>
             <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                 <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                        <X size={24} color={COLORS.text.secondary} />
+                    <TouchableOpacity style={[styles.exitBtn, { backgroundColor: colors.surface }]} onPress={handleEndGame}>
+                        <X size={24} color={colors.text.secondary} />
                     </TouchableOpacity>
-                    <View style={styles.questionBadge}>
-                        <Text style={[styles.questionText, isKurdish && styles.kurdishFont]}>
+                    <View style={[styles.questionBadge, { backgroundColor: colors.surface }]}>
+                        <Text style={[styles.questionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? `پرسیاری ${questionCount}` : `Question ${questionCount}`}
                         </Text>
                     </View>
@@ -170,7 +172,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                 </View>
 
                 <ScrollView contentContainerStyle={styles.content}>
-                    <Text style={[styles.title, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                         {isKurdish ? 'بە باشترت دەزانی...' : 'Would You Rather...'}
                     </Text>
 
@@ -180,18 +182,19 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                             style={[
                                 styles.optionCard,
                                 styles.optionA,
-                                showResults && votesForA >= votesForB && styles.winningOption
+                                { backgroundColor: colors.brand.info + '15', borderColor: colors.brand.info + '40' },
+                                showResults && votesForA >= votesForB && [styles.winningOption, { borderColor: colors.brand.info }]
                             ]}
                             onPress={() => !showResults && handleVote(isMultiplayer ? myUsername : players[0], 'a')}
                             disabled={showResults}
                         >
-                            <Text style={[styles.optionLabel, { color: '#3b82f6' }]}>A</Text>
-                            <Text style={[styles.optionText, isKurdish && styles.kurdishFont]}>{currentQuestion.a}</Text>
+                            <Text style={[styles.optionLabel, { color: colors.brand.info }]}>A</Text>
+                            <Text style={[styles.optionText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentQuestion.a}</Text>
                             {showResults && (
-                                <View style={[styles.resultBar, { flexDirection: rowDirection }]}>
+                                <View style={[styles.resultBar, { backgroundColor: colors.surfaceHighlight, flexDirection: rowDirection }]}>
                                     <View style={[
                                         styles.resultFill,
-                                        styles.fillA,
+                                        { backgroundColor: colors.brand.info },
                                         {
                                             width: `${totalVotes ? (votesForA / totalVotes) * 100 : 0}%`,
                                             left: isKurdish ? undefined : 0,
@@ -207,8 +210,8 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                     </Animated.View>
 
                     {/* VS */}
-                    <View style={styles.vsContainer}>
-                        <Text style={styles.vsText}>VS</Text>
+                    <View style={[styles.vsContainer, { backgroundColor: colors.surface }]}>
+                        <Text style={[styles.vsText, { color: colors.text.primary }]}>VS</Text>
                     </View>
 
                     {/* Option B */}
@@ -217,18 +220,19 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                             style={[
                                 styles.optionCard,
                                 styles.optionB,
-                                showResults && votesForB >= votesForA && styles.winningOption
+                                { backgroundColor: colors.brand.error + '15', borderColor: colors.brand.error + '40' },
+                                showResults && votesForB >= votesForA && [styles.winningOption, { borderColor: colors.brand.error }]
                             ]}
                             onPress={() => !showResults && handleVote(isMultiplayer ? myUsername : players[0], 'b')}
                             disabled={showResults}
                         >
-                            <Text style={[styles.optionLabel, { color: '#ef4444' }]}>B</Text>
-                            <Text style={[styles.optionText, isKurdish && styles.kurdishFont]}>{currentQuestion.b}</Text>
+                            <Text style={[styles.optionLabel, { color: colors.brand.error }]}>B</Text>
+                            <Text style={[styles.optionText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentQuestion.b}</Text>
                             {showResults && (
-                                <View style={[styles.resultBar, { flexDirection: rowDirection }]}>
+                                <View style={[styles.resultBar, { backgroundColor: colors.surfaceHighlight, flexDirection: rowDirection }]}>
                                     <View style={[
                                         styles.resultFill,
-                                        styles.fillB,
+                                        { backgroundColor: colors.brand.error },
                                         {
                                             width: `${totalVotes ? (votesForB / totalVotes) * 100 : 0}%`,
                                             left: isKurdish ? undefined : 0,
@@ -246,15 +250,15 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                     {/* Player Votes Status */}
                     {!showResults && (
                         <View style={styles.votingSection}>
-                            <Text style={[styles.votingTitle, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.votingTitle, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {isMultiplayer
                                     ? (isKurdish ? 'هەلبژاردنی یاریزانەکان' : 'Player Votes')
                                     : (isKurdish ? 'کلیک بکە بۆ دەنگدان' : 'Tap to vote')}
                             </Text>
                             <View style={styles.playerVotes}>
                                 {players.map((player) => (
-                                    <View key={player} style={[styles.playerVoteRow, { flexDirection: rowDirection }]}>
-                                        <Text style={[styles.playerName, isKurdish && styles.kurdishFont]}>
+                                    <View key={player} style={[styles.playerVoteRow, { backgroundColor: colors.surface, flexDirection: rowDirection }]}>
+                                        <Text style={[styles.playerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                             {player} {player === myUsername && isMultiplayer ? (isKurdish ? '(تۆ)' : '(You)') : ''}
                                         </Text>
                                         {isMultiplayer ? (
@@ -263,12 +267,12 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                                                 {votes[player] ? (
                                                     <View style={[
                                                         styles.votedBadge,
-                                                        { backgroundColor: votes[player] === 'a' ? '#3b82f6' : '#ef4444' }
+                                                        { backgroundColor: votes[player] === 'a' ? colors.brand.info : colors.brand.error }
                                                     ]}>
                                                         <Text style={styles.votedText}>{votes[player].toUpperCase()}</Text>
                                                     </View>
                                                 ) : (
-                                                    <Text style={styles.waitingVote}>
+                                                    <Text style={[styles.waitingVote, { color: colors.text.muted }]}>
                                                         {isKurdish ? 'چاوەڕوان...' : 'Waiting...'}
                                                     </Text>
                                                 )}
@@ -279,26 +283,28 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                                                 <TouchableOpacity
                                                     style={[
                                                         styles.voteBtn,
-                                                        styles.voteBtnA,
-                                                        votes[player] === 'a' && styles.voteBtnActiveA
+                                                        { borderColor: colors.brand.info + '60' },
+                                                        votes[player] === 'a' && { backgroundColor: colors.brand.info, borderColor: colors.brand.info }
                                                     ]}
                                                     onPress={() => handleVote(player, 'a')}
                                                 >
                                                     <Text style={[
                                                         styles.voteBtnText,
+                                                        { color: colors.text.muted },
                                                         votes[player] === 'a' && styles.voteBtnTextActive
                                                     ]}>A</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                     style={[
                                                         styles.voteBtn,
-                                                        styles.voteBtnB,
-                                                        votes[player] === 'b' && styles.voteBtnActiveB
+                                                        { borderColor: colors.brand.error + '60' },
+                                                        votes[player] === 'b' && { backgroundColor: colors.brand.error, borderColor: colors.brand.error }
                                                     ]}
                                                     onPress={() => handleVote(player, 'b')}
                                                 >
                                                     <Text style={[
                                                         styles.voteBtnText,
+                                                        { color: colors.text.muted },
                                                         votes[player] === 'b' && styles.voteBtnTextActive
                                                     ]}>B</Text>
                                                 </TouchableOpacity>
@@ -314,20 +320,20 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                     {showResults && (
                         <View style={styles.resultSection}>
                             <View style={[styles.resultSummary, { flexDirection: rowDirection }]}>
-                                <View style={styles.resultTeam}>
-                                    <Text style={[styles.teamLabel, isKurdish && styles.kurdishFont, { color: '#3b82f6', textAlign }]}>
+                                <View style={[styles.resultTeam, { backgroundColor: colors.surface }]}>
+                                    <Text style={[styles.teamLabel, isKurdish && styles.kurdishFont, { color: colors.brand.info, textAlign }]}>
                                         {isKurdish ? 'تیمی A' : 'Team A'}
                                     </Text>
                                     {players.filter(p => votes[p] === 'a').map(p => (
-                                        <Text key={p} style={[styles.teamPlayer, isKurdish && styles.kurdishFont, { textAlign }]}>{p}</Text>
+                                        <Text key={p} style={[styles.teamPlayer, { color: colors.text.secondary }, isKurdish && styles.kurdishFont, { textAlign }]}>{p}</Text>
                                     ))}
                                 </View>
-                                <View style={styles.resultTeam}>
-                                    <Text style={[styles.teamLabel, isKurdish && styles.kurdishFont, { color: '#ef4444', textAlign }]}>
+                                <View style={[styles.resultTeam, { backgroundColor: colors.surface }]}>
+                                    <Text style={[styles.teamLabel, isKurdish && styles.kurdishFont, { color: colors.brand.error, textAlign }]}>
                                         {isKurdish ? 'تیمی B' : 'Team B'}
                                     </Text>
                                     {players.filter(p => votes[p] === 'b').map(p => (
-                                        <Text key={p} style={[styles.teamPlayer, isKurdish && styles.kurdishFont, { textAlign }]}>{p}</Text>
+                                        <Text key={p} style={[styles.teamPlayer, { color: colors.text.secondary }, isKurdish && styles.kurdishFont, { textAlign }]}>{p}</Text>
                                     ))}
                                 </View>
                             </View>
@@ -342,7 +348,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                                     title={isKurdish ? 'ئەنجامەکان نیشان بدە' : 'Reveal Results'}
                                     onPress={handleReveal}
                                     disabled={!allVoted}
-                                    gradient={[COLORS.accent.info, '#0284c7']}
+                                    gradient={[colors.brand.info, colors.brand.info]}
                                     icon={<Eye size={20} color="#FFF" />}
                                     isKurdish={isKurdish}
                                 />
@@ -352,7 +358,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                                 <Button
                                     title={isKurdish ? 'پرسیاری دواتر' : 'Next Question'}
                                     onPress={handleNext}
-                                    gradient={[COLORS.accent.success, '#059669']}
+                                    gradient={[colors.brand.success, colors.brand.success]}
                                     icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                     isKurdish={isKurdish}
                                 />
@@ -360,7 +366,7 @@ export default function WouldYouRatherPlayScreen({ navigation, route }) {
                         )}
 
                         {isMultiplayer && !isHost && !showResults && (
-                            <Text style={styles.waitingHostText}>
+                            <Text style={[styles.waitingHostText, { color: colors.text.muted }]}>
                                 {allVoted
                                     ? (isKurdish ? 'چاوەڕوانی خاوەنی ژوور بۆ پیشاندان' : 'Waiting for host to reveal...')
                                     : (isKurdish ? 'چاوەڕوانی دەنگدانی هەموان' : 'Waiting for everyone to vote...')}
@@ -384,28 +390,24 @@ const styles = StyleSheet.create({
     },
     exitBtn: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
     questionBadge: {
-        backgroundColor: COLORS.background.card,
         paddingVertical: 6,
         paddingHorizontal: 16,
         borderRadius: 20,
     },
-    questionText: { color: COLORS.text.secondary, ...FONTS.medium },
+    questionText: { ...FONTS.medium },
     content: {
         padding: SPACING.lg,
         paddingBottom: 100,
         alignItems: 'center',
     },
     loadingText: {
-        color: COLORS.text.secondary,
         ...FONTS.medium,
         marginTop: SPACING.md,
     },
     title: {
-        color: COLORS.text.primary,
         ...FONTS.large,
         marginBottom: SPACING.lg,
     },
@@ -416,14 +418,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
     },
-    optionA: {
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        borderColor: 'rgba(59, 130, 246, 0.3)',
-    },
-    optionB: {
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        borderColor: 'rgba(239, 68, 68, 0.3)',
-    },
+    optionA: {},
+    optionB: {},
     winningOption: {
         borderWidth: 4,
     },
@@ -433,7 +429,6 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     optionText: {
-        color: COLORS.text.primary,
         ...FONTS.title,
         fontSize: 18,
         textAlign: 'center',
@@ -442,7 +437,6 @@ const styles = StyleSheet.create({
     resultBar: {
         width: '100%',
         height: 30,
-        backgroundColor: COLORS.background.secondary,
         borderRadius: 15,
         marginTop: SPACING.md,
         overflow: 'hidden',
@@ -454,8 +448,8 @@ const styles = StyleSheet.create({
         bottom: 0,
         borderRadius: 15,
     },
-    fillA: { backgroundColor: '#3b82f6' },
-    fillB: { backgroundColor: '#ef4444' },
+    fillA: {},
+    fillB: {},
     resultPercent: {
         color: '#FFF',
         ...FONTS.bold,
@@ -465,18 +459,16 @@ const styles = StyleSheet.create({
     vsContainer: {
         width: 50, height: 50,
         borderRadius: 25,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: SPACING.md,
     },
-    vsText: { color: COLORS.text.primary, ...FONTS.bold, fontSize: 18 },
+    vsText: { ...FONTS.bold, fontSize: 18 },
     votingSection: {
         width: '100%',
         marginTop: SPACING.lg,
     },
     votingTitle: {
-        color: COLORS.text.muted,
         textAlign: 'center',
         marginBottom: SPACING.md,
     },
@@ -485,11 +477,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.md,
         padding: SPACING.md,
     },
-    playerName: { color: COLORS.text.primary, ...FONTS.medium, flex: 1 },
+    playerName: { ...FONTS.medium, flex: 1 },
     voteStatus: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -505,7 +496,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     waitingVote: {
-        color: COLORS.text.muted,
         ...FONTS.medium,
         fontSize: 12,
     },
@@ -517,11 +507,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 2,
     },
-    voteBtnA: { borderColor: 'rgba(59, 130, 246, 0.3)' },
-    voteBtnB: { borderColor: 'rgba(239, 68, 68, 0.3)' },
-    voteBtnActiveA: { backgroundColor: '#3b82f6', borderColor: '#3b82f6' },
-    voteBtnActiveB: { backgroundColor: '#ef4444', borderColor: '#ef4444' },
-    voteBtnText: { color: COLORS.text.muted, ...FONTS.bold },
+    voteBtnA: {},
+    voteBtnB: {},
+    voteBtnActiveA: {},
+    voteBtnActiveB: {},
+    voteBtnText: { ...FONTS.bold },
     voteBtnTextActive: { color: '#FFF' },
     resultSection: { width: '100%', marginTop: SPACING.lg },
     resultSummary: {
@@ -530,18 +520,16 @@ const styles = StyleSheet.create({
     },
     resultTeam: {
         flex: 1,
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
     },
     teamLabel: { ...FONTS.medium, marginBottom: 8 },
-    teamPlayer: { color: COLORS.text.secondary, marginBottom: 4 },
+    teamPlayer: { marginBottom: 4 },
     actionContainer: {
         width: '100%',
         marginTop: SPACING.lg,
     },
     waitingHostText: {
-        color: COLORS.text.muted,
         ...FONTS.medium,
         textAlign: 'center',
         marginTop: SPACING.md,

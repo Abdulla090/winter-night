@@ -1,42 +1,124 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Eye, Skull, List, Clock, Hand, User, CheckCircle2, AlarmClock, UserCircle2 } from 'lucide-react-native';
+import { Eye, Skull, List, Clock, Hand, User, CheckCircle2, AlarmClock, UserCircle2, MapPin } from 'lucide-react-native';
 import * as Icons from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
+import { MotiView, AnimatePresence } from 'moti';
 import { Button, Modal, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomLocation, getAllLocations } from '../../constants/spyfallData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useGameRoom } from '../../context/GameRoomContext';
+import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
 const { width } = Dimensions.get('window');
 
 export default function SpyfallPlayScreen({ navigation, route }) {
-    const { players, gameDuration, spyCount } = route.params;
+    // Multiplayer context
+    const { players: contextPlayers, currentRoom, gameState, updateGameState, leaveRoom, isHost } = useGameRoom();
+    const { user } = useAuth();
     const { language, isKurdish } = useLanguage();
+    const { colors } = useTheme();
+
+    // Determine mode
+    const routeParams = route?.params || {};
+    const isMultiplayer = !!currentRoom && !routeParams.players;
+
+    // Get players list
+    const players = isMultiplayer
+        ? (contextPlayers?.map(p => p.player?.username || 'Player') || ['Player 1', 'Player 2'])
+        : (routeParams.players || ['Player 1', 'Player 2']);
+
+    const gameDuration = routeParams.gameDuration || gameState?.state?.gameDuration || 5;
+    const spyCount = routeParams.spyCount || gameState?.state?.spyCount || 1;
 
     // Game state
-    const [phase, setPhase] = useState('reveal'); // 'reveal', 'playing', 'voting'
+    const [localPhase, setLocalPhase] = useState('reveal');
     const [currentRevealIndex, setCurrentRevealIndex] = useState(0);
     const [showRole, setShowRole] = useState(false);
-    const [gameData, setGameData] = useState(null);
+    const [localGameData, setLocalGameData] = useState(null);
     const [timeLeft, setTimeLeft] = useState(gameDuration * 60);
     const [showVoteModal, setShowVoteModal] = useState(false);
     const [showLocationsModal, setShowLocationsModal] = useState(false);
     const [votedPlayer, setVotedPlayer] = useState(null);
+    const [showSpyGuessModal, setShowSpyGuessModal] = useState(false);
+    const [selectedLocationGuess, setSelectedLocationGuess] = useState(null);
 
     const timerRef = useRef(null);
     const pulseAnim = useRef(new Animated.Value(1)).current;
+
+    // Multiplayer state
+    const phase = isMultiplayer
+        ? (gameState?.current_question?.phase || 'reveal')
+        : localPhase;
+    const revealIndex = isMultiplayer
+        ? (gameState?.current_question?.reveal_index || 0)
+        : currentRevealIndex;
+    const gameData = isMultiplayer
+        ? (gameState?.state?.gameData || null)
+        : localGameData;
+
+    // My identity in multiplayer
+    const myUsername = isMultiplayer
+        ? contextPlayers?.find(p => p.player_id === user?.id)?.player?.username
+        : null;
+    const isMyTurnToReveal = isMultiplayer
+        ? (players[revealIndex] === myUsername)
+        : true;
 
     // RTL styles
     const rowDirection = isKurdish ? 'row-reverse' : 'row';
     const textAlign = isKurdish ? 'right' : 'left';
 
+    // Sync game state for multiplayer
+    const syncGameState = useCallback(async (updates) => {
+        if (!isMultiplayer) return;
+        await updateGameState({
+            current_question: {
+                ...gameState?.current_question,
+                ...updates.current_question,
+            },
+            state: {
+                ...gameState?.state,
+                ...updates.state,
+            },
+        });
+    }, [isMultiplayer, gameState, updateGameState]);
+
     // Initialize game on mount
     useEffect(() => {
-        initializeGame();
+        if (isMultiplayer) {
+            if (isHost && !gameState?.state?.gameData) {
+                const location = getRandomLocation(language);
+                const spyIndices = [];
+                while (spyIndices.length < spyCount) {
+                    const randomIndex = Math.floor(Math.random() * players.length);
+                    if (!spyIndices.includes(randomIndex)) spyIndices.push(randomIndex);
+                }
+                const playerRoles = players.map((player, index) => {
+                    const isSpy = spyIndices.includes(index);
+                    const role = isSpy ? (isKurdish ? 'جاسوس' : 'Spy') : location.roles[Math.floor(Math.random() * location.roles.length)];
+                    return { name: player, isSpy, role };
+                });
+                updateGameState({
+                    state: {
+                        gameData: { location, playerRoles, spyIndices },
+                        gameDuration,
+                        spyCount,
+                    },
+                    current_question: {
+                        phase: 'reveal',
+                        reveal_index: 0,
+                    },
+                });
+            }
+        } else {
+            initializeGame();
+        }
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
@@ -73,7 +155,7 @@ export default function SpyfallPlayScreen({ navigation, route }) {
             return { name: player, isSpy, role };
         });
 
-        setGameData({
+        setLocalGameData({
             location,
             playerRoles,
             spyIndices,
@@ -85,7 +167,11 @@ export default function SpyfallPlayScreen({ navigation, route }) {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
                     clearInterval(timerRef.current);
-                    setPhase('voting');
+                    if (isMultiplayer) {
+                        syncGameState({ current_question: { phase: 'voting' } });
+                    } else {
+                        setLocalPhase('voting');
+                    }
                     return 0;
                 }
                 return prev - 1;
@@ -93,16 +179,36 @@ export default function SpyfallPlayScreen({ navigation, route }) {
         }, 1000);
     };
 
-    const handleRevealComplete = () => {
+    const handleRevealComplete = async () => {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        if (currentRevealIndex < players.length - 1) {
-            setCurrentRevealIndex(currentRevealIndex + 1);
-            setShowRole(false);
+
+        if (isMultiplayer) {
+            if (revealIndex < players.length - 1) {
+                setShowRole(false);
+                await syncGameState({
+                    current_question: { reveal_index: revealIndex + 1, phase: 'reveal' },
+                });
+            } else {
+                await syncGameState({ current_question: { phase: 'playing' } });
+                startTimer();
+            }
         } else {
-            setPhase('playing');
-            startTimer();
+            if (currentRevealIndex < players.length - 1) {
+                setCurrentRevealIndex(currentRevealIndex + 1);
+                setShowRole(false);
+            } else {
+                setLocalPhase('playing');
+                startTimer();
+            }
         }
     };
+
+    // Start timer when phase changes to playing (for non-host in multiplayer)
+    useEffect(() => {
+        if (isMultiplayer && phase === 'playing' && !timerRef.current) {
+            startTimer();
+        }
+    }, [phase]);
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
@@ -115,22 +221,78 @@ export default function SpyfallPlayScreen({ navigation, route }) {
         setVotedPlayer(playerIndex);
     };
 
-    const confirmVote = () => {
+    const confirmVote = async () => {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const isCaught = gameData.spyIndices.includes(votedPlayer);
+
+        if (isMultiplayer) {
+            await updateGameState({
+                game_phase: 'finished',
+                state: {
+                    ...gameState?.state,
+                    result: { votedPlayer, spyCaught: isCaught, spyGuessedLocation: false, spyGuessCorrect: false },
+                },
+            });
+        }
+
         navigation.replace('SpyfallResult', {
             gameData,
             players,
             votedPlayer,
             spyCaught: isCaught,
+            spyGuessedLocation: false,
+            spyGuessCorrect: false,
         });
     };
+
+    const confirmSpyGuess = async () => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        const isCorrect = selectedLocationGuess === gameData.location.key;
+
+        if (isMultiplayer) {
+            await updateGameState({
+                game_phase: 'finished',
+                state: {
+                    ...gameState?.state,
+                    result: { votedPlayer: null, spyCaught: !isCorrect, spyGuessedLocation: true, spyGuessCorrect: isCorrect },
+                },
+            });
+        }
+
+        navigation.replace('SpyfallResult', {
+            gameData,
+            players,
+            votedPlayer: null,
+            spyCaught: !isCorrect,
+            spyGuessedLocation: true,
+            spyGuessCorrect: isCorrect,
+        });
+    };
+
+    // Watch for game finish from other players
+    useEffect(() => {
+        if (isMultiplayer && gameState?.game_phase === 'finished' && gameState?.state?.result) {
+            const r = gameState.state.result;
+            navigation.replace('SpyfallResult', {
+                gameData: gameState.state.gameData,
+                players,
+                votedPlayer: r.votedPlayer,
+                spyCaught: r.spyCaught,
+                spyGuessedLocation: r.spyGuessedLocation,
+                spyGuessCorrect: r.spyGuessCorrect,
+            });
+        }
+    }, [gameState?.game_phase]);
 
     // ========================
     // REVEAL PHASE
     // ========================
     if (phase === 'reveal' && gameData) {
-        const currentPlayer = gameData.playerRoles[currentRevealIndex];
+        // In multiplayer, find MY role; in single-player, show current reveal player
+        const currentRevealPlayer = gameData.playerRoles[revealIndex];
+        const myRole = isMultiplayer
+            ? gameData.playerRoles.find(p => p.name === myUsername)
+            : currentRevealPlayer;
 
         return (
             <GradientBackground>
@@ -139,77 +301,103 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                         <View style={styles.badge}>
                             <Text style={[styles.badgeText, isKurdish && styles.kurdishFont]}>
                                 {isKurdish
-                                    ? `یاریزان ${currentRevealIndex + 1} لە ${players.length}`
-                                    : `Player ${currentRevealIndex + 1} of ${players.length}`
+                                    ? `یاریزان ${revealIndex + 1} لە ${players.length}`
+                                    : `Player ${revealIndex + 1} of ${players.length}`
                                 }
                             </Text>
                         </View>
 
-                        <Text style={[styles.label, isKurdish && styles.kurdishFont]}>
-                            {t('common.passPhoneTo', language)}
-                        </Text>
-                        <Text style={[styles.playerName, isKurdish && styles.kurdishFont]}>{currentPlayer.name}</Text>
-
-                        {!showRole ? (
-                            <>
-                                <Text style={[styles.instruction, isKurdish && styles.kurdishFont]}>
-                                    {isKurdish
-                                        ? 'لێ بدە بۆ بینینی نۆرەی خۆت.\nبە نهێنی بیهێڵەرەوە!'
-                                        : 'Tap to reveal your role.\nKeep it secret!'
-                                    }
+                        {isMultiplayer && !isMyTurnToReveal ? (
+                            // Waiting for another player
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={[styles.label, isKurdish && styles.kurdishFont]}>
+                                    {isKurdish ? `چاوەڕوانی ${currentRevealPlayer?.name}...` : `Waiting for ${currentRevealPlayer?.name}...`}
                                 </Text>
-                                <Button
-                                    title={isKurdish ? 'نۆرەکەم ببینە' : "Reveal My Role"}
-                                    onPress={() => {
-                                        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                        setShowRole(true);
-                                    }}
-                                    gradient={[COLORS.accent.success, COLORS.accent.success]}
-                                    icon={<Eye size={20} color="#FFF" />}
-                                    isKurdish={isKurdish}
-                                />
-                            </>
-                        ) : (
-                            <View style={styles.roleContainer}>
-                                {currentPlayer.isSpy ? (
-                                    <GlassCard intensity={30} style={styles.spyCard}>
-                                        <Skull size={48} color={COLORS.accent.danger} />
-                                        <Text style={[styles.spyText, isKurdish && styles.kurdishFont]}>
-                                            {t('common.youAreSpy', language)}
-                                        </Text>
-                                        <Text style={[styles.spyHint, isKurdish && styles.kurdishFont]}>
-                                            {t('spyfall.figureOut', language)}
-                                        </Text>
-                                    </GlassCard>
-                                ) : (
-                                    <GlassCard intensity={30} style={styles.infoCard}>
-                                        <View style={[styles.infoRow, isKurdish && { alignItems: 'flex-end' }]}>
-                                            <Text style={[styles.infoLabel, isKurdish && styles.kurdishFont]}>
-                                                {t('common.location', language)}:
-                                            </Text>
-                                            <Text style={[styles.infoValue, isKurdish && styles.kurdishFont]}>
-                                                {gameData.location.name}
-                                            </Text>
-                                        </View>
-                                        <View style={styles.divider} />
-                                        <View style={[styles.infoRow, isKurdish && { alignItems: 'flex-end' }]}>
-                                            <Text style={[styles.infoLabel, isKurdish && styles.kurdishFont]}>
-                                                {isKurdish ? 'نۆرەی تۆ:' : 'Your Role:'}
-                                            </Text>
-                                            <Text style={[styles.infoValue, isKurdish && styles.kurdishFont]}>
-                                                {currentPlayer.role}
-                                            </Text>
-                                        </View>
-                                    </GlassCard>
-                                )}
-                                <Button
-                                    title={t('common.ready', language)}
-                                    onPress={handleRevealComplete}
-                                    gradient={[COLORS.accent.primary, COLORS.accent.primary]}
-                                    style={{ marginTop: SPACING.lg }}
-                                    isKurdish={isKurdish}
-                                />
+                                <ActivityIndicator size="large" color={colors.brand.primary} style={{ marginTop: 24 }} />
                             </View>
+                        ) : (
+                            <>
+                                <Text style={[styles.label, isKurdish && styles.kurdishFont]}>
+                                    {isMultiplayer
+                                        ? (isKurdish ? 'نۆرەی تۆیە!' : "It's your turn!")
+                                        : t('common.passPhoneTo', language)}
+                                </Text>
+                                <Text style={[styles.playerName, isKurdish && styles.kurdishFont]}>
+                                    {isMultiplayer ? myUsername : currentRevealPlayer.name}
+                                </Text>
+
+                                {!showRole ? (
+                                    <MotiView
+                                        from={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ type: 'spring' }}
+                                        style={{ alignItems: 'center' }}
+                                    >
+                                        <Text style={[styles.instruction, isKurdish && styles.kurdishFont]}>
+                                            {isKurdish
+                                                ? 'لێ بدە بۆ بینینی نۆرەی خۆت.\nبە نهێنی بیهێڵەرەوە!'
+                                                : 'Tap to reveal your role.\nKeep it secret!'
+                                            }
+                                        </Text>
+                                        <Button
+                                            title={isKurdish ? 'نۆرەکەم ببینە' : "Reveal My Role"}
+                                            onPress={() => {
+                                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                                setShowRole(true);
+                                            }}
+                                            gradient={[COLORS.accent.success, COLORS.accent.success]}
+                                            icon={<Eye size={20} color="#FFF" />}
+                                            isKurdish={isKurdish}
+                                        />
+                                    </MotiView>
+                                ) : (
+                                    <MotiView
+                                        from={{ opacity: 0, scale: 0.8, rotateY: '90deg' }}
+                                        animate={{ opacity: 1, scale: 1, rotateY: '0deg' }}
+                                        transition={{ type: 'spring', damping: 14 }}
+                                        style={styles.roleContainer}
+                                    >
+                                        {myRole?.isSpy ? (
+                                            <GlassCard intensity={30} style={styles.spyCard}>
+                                                <Skull size={48} color={COLORS.accent.danger} />
+                                                <Text style={[styles.spyText, isKurdish && styles.kurdishFont]}>
+                                                    {t('common.youAreSpy', language)}
+                                                </Text>
+                                                <Text style={[styles.spyHint, isKurdish && styles.kurdishFont]}>
+                                                    {t('spyfall.figureOut', language)}
+                                                </Text>
+                                            </GlassCard>
+                                        ) : (
+                                            <GlassCard intensity={30} style={styles.infoCard}>
+                                                <View style={[styles.infoRow, isKurdish && { alignItems: 'flex-end' }]}>
+                                                    <Text style={[styles.infoLabel, isKurdish && styles.kurdishFont]}>
+                                                        {t('common.location', language)}:
+                                                    </Text>
+                                                    <Text style={[styles.infoValue, isKurdish && styles.kurdishFont]}>
+                                                        {gameData.location.name}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.divider} />
+                                                <View style={[styles.infoRow, isKurdish && { alignItems: 'flex-end' }]}>
+                                                    <Text style={[styles.infoLabel, isKurdish && styles.kurdishFont]}>
+                                                        {isKurdish ? 'نۆرەی تۆ:' : 'Your Role:'}
+                                                    </Text>
+                                                    <Text style={[styles.infoValue, isKurdish && styles.kurdishFont]}>
+                                                        {myRole?.role}
+                                                    </Text>
+                                                </View>
+                                            </GlassCard>
+                                        )}
+                                        <Button
+                                            title={t('common.ready', language)}
+                                            onPress={handleRevealComplete}
+                                            gradient={[COLORS.accent.primary, COLORS.accent.primary]}
+                                            style={{ marginTop: SPACING.lg }}
+                                            isKurdish={isKurdish}
+                                        />
+                                    </MotiView>
+                                )}
+                            </>
                         )}
                     </ScrollView>
                 </SafeAreaView>
@@ -243,15 +431,27 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                             </Text>
                         </Animated.View>
 
-                        <TouchableOpacity
-                            style={[styles.voteBtn, { flexDirection: rowDirection }]}
-                            onPress={() => setShowVoteModal(true)}
-                        >
-                            <Hand size={20} color="#FFF" />
-                            <Text style={[styles.voteBtnText, isKurdish && styles.kurdishFont]}>
-                                {t('common.vote', language)}
-                            </Text>
-                        </TouchableOpacity>
+                        <View style={{ flexDirection: rowDirection, gap: 8 }}>
+                            <TouchableOpacity
+                                style={[styles.voteBtn, { flexDirection: rowDirection, backgroundColor: COLORS.accent.warning }]}
+                                onPress={() => setShowSpyGuessModal(true)}
+                            >
+                                <MapPin size={20} color="#FFF" />
+                                <Text style={[styles.voteBtnText, isKurdish && styles.kurdishFont, { display: width > 350 ? 'flex' : 'none' }]}>
+                                    {isKurdish ? 'جاسوس' : 'Guess'}
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.voteBtn, { flexDirection: rowDirection }]}
+                                onPress={() => setShowVoteModal(true)}
+                            >
+                                <Hand size={20} color="#FFF" />
+                                <Text style={[styles.voteBtnText, isKurdish && styles.kurdishFont]}>
+                                    {t('common.vote', language)}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                     <ScrollView contentContainerStyle={styles.playContent}>
@@ -350,6 +550,57 @@ export default function SpyfallPlayScreen({ navigation, route }) {
                                 );
                             })}
                         </ScrollView>
+                    </Modal>
+
+                    {/* Spy Guess Modal */}
+                    <Modal
+                        visible={showSpyGuessModal}
+                        onClose={() => { setShowSpyGuessModal(false); setSelectedLocationGuess(null); }}
+                        title={isKurdish ? 'پێشبینیکردنی شوێن' : "Spy: Guess Location"}
+                        isKurdish={isKurdish}
+                    >
+                        <Text style={[styles.gameSubtitle, isKurdish && styles.kurdishFont, { marginBottom: 16 }]}>
+                            {isKurdish
+                                ? 'ئەگەر تۆ جاسوسیت، کام شوێنە ڕاستە؟ (ئەگەر هەڵە بکەیت دەدۆڕێیت!)'
+                                : 'If you are the spy, guess the location! (If wrong, you lose!)'}
+                        </Text>
+                        <ScrollView style={styles.locationsList}>
+                            {getAllLocations(language).map((loc) => {
+                                const IconComponent = Icons[loc.icon] || Icons.HelpCircle;
+                                return (
+                                    <TouchableOpacity
+                                        key={loc.key}
+                                        style={[
+                                            styles.locationItem,
+                                            { flexDirection: rowDirection },
+                                            selectedLocationGuess === loc.key && styles.voteItemSelected
+                                        ]}
+                                        onPress={() => setSelectedLocationGuess(loc.key)}
+                                    >
+                                        <IconComponent size={20} color={selectedLocationGuess === loc.key ? COLORS.accent.success : COLORS.accent.primary} />
+                                        <Text style={[
+                                            styles.locationItemText,
+                                            isKurdish && styles.kurdishFont,
+                                            selectedLocationGuess === loc.key && { color: COLORS.accent.success, fontWeight: 'bold' }
+                                        ]}>
+                                            {loc.name}
+                                        </Text>
+                                        {selectedLocationGuess === loc.key && (
+                                            <CheckCircle2 size={24} color={COLORS.accent.success} style={isKurdish ? { marginRight: 'auto' } : { marginLeft: 'auto' }} />
+                                        )}
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </ScrollView>
+                        <Button
+                            title={isKurdish ? 'دووپاتکردنەوەی پێشبینی' : "Confirm Guess"}
+                            onPress={confirmSpyGuess}
+                            disabled={selectedLocationGuess === null}
+                            gradient={[COLORS.accent.warning, COLORS.accent.danger]}
+                            style={{ marginTop: SPACING.md }}
+                            icon={<MapPin size={20} color="#FFF" />}
+                            isKurdish={isKurdish}
+                        />
                     </Modal>
                 </SafeAreaView>
             </GradientBackground>

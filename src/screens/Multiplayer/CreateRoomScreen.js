@@ -29,24 +29,26 @@ export default function CreateRoomScreen({ navigation }) {
     const [roomCode, setRoomCode] = useState('');
     const { joinRoom } = useGameRoom();
 
-    // If not authenticated, navigate to Login immediately when screen mounts
+    // If not authenticated, navigate to Login with returnTo
     useEffect(() => {
         if (initialized && !user) {
-            navigation.replace('Login');
+            navigation.navigate('Login', { returnTo: 'CreateRoom' });
         }
     }, [initialized, user]);
 
-    // Watch for room creation success via context state
+    // Watch for room available (e.g. set by joinRoom via context)
     useEffect(() => {
         if (currentRoom) {
-            console.log('currentRoom detected, navigating to RoomLobby:', currentRoom.id);
-            navigation.replace('RoomLobby');
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }, { name: 'RoomLobby' }],
+            });
         }
     }, [currentRoom]);
 
     const handleCreateRoom = async () => {
         if (!user) {
-            navigation.replace('Login');
+            navigation.navigate('Login', { returnTo: 'CreateRoom' });
             return;
         }
 
@@ -58,29 +60,29 @@ export default function CreateRoomScreen({ navigation }) {
             return;
         }
 
-        console.log('Creating room with name:', roomName);
         try {
             const result = await createRoom(null, roomName);
-            console.log('Create room result:', result);
 
             if (result?.success) {
-                console.log('Room created successfully, navigating to lobby');
-                navigation.replace('RoomLobby');
+                // createRoom sets currentRoom, useEffect above will navigate
+                // But as a fallback, navigate directly too
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }, { name: 'RoomLobby' }],
+                });
             } else {
                 const errorMsg = result?.error || error || 'Failed to create room';
-                console.log('Room creation failed:', errorMsg);
                 Alert.alert(isKurdish ? 'هەڵە' : 'Error', errorMsg);
                 clearError();
             }
         } catch (err) {
-            console.log('handleCreateRoom caught error:', err);
             Alert.alert(isKurdish ? 'هەڵە' : 'Error', err.message || 'Something went wrong');
         }
     };
 
     const handleJoinRoom = async () => {
         if (!user) {
-            navigation.replace('Login');
+            navigation.navigate('Login', { returnTo: 'CreateRoom' });
             return;
         }
 
@@ -92,12 +94,13 @@ export default function CreateRoomScreen({ navigation }) {
             return;
         }
 
-        console.log('Joining room with code:', roomCode);
         const result = await joinRoom(roomCode);
-        console.log('Join room result:', result);
 
         if (result?.success) {
-            navigation.replace('RoomLobby');
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }, { name: 'RoomLobby' }],
+            });
         } else {
             const errorMsg = result?.error || error || 'Failed to join room';
             Alert.alert(isKurdish ? 'هەڵە' : 'Error', errorMsg);
@@ -110,13 +113,14 @@ export default function CreateRoomScreen({ navigation }) {
     return (
         <AnimatedScreen>
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
                 style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 30}
             >
                 <ScrollView
-                    contentContainerStyle={{ flexGrow: 1 }}
+                    contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
                     keyboardShouldPersistTaps="handled"
+                    keyboardDismissMode="interactive"
                     showsVerticalScrollIndicator={false}
                     bounces={false}
                 >

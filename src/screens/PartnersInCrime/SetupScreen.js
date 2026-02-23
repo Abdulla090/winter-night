@@ -53,14 +53,20 @@ export default function PartnersSetupScreen({ navigation }) {
 
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 {/* Instructions */}
-                <GlassCard style={{ marginBottom: layout.spacing.xl }}>
-                    <Text style={[styles.sectionTitle, { color: colors.accent, marginBottom: 8 }, isKurdish && styles.kurdishFont]}>
-                        {t('common.howToPlay', language)}
-                    </Text>
-                    <Text style={[styles.instructionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
-                        {t('partners.description', language)}
-                    </Text>
-                </GlassCard>
+                <MotiView
+                    from={{ opacity: 0, translateY: -20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 400 }}
+                >
+                    <GlassCard style={{ marginBottom: layout.spacing.xl }}>
+                        <Text style={[styles.sectionTitle, { color: colors.accent, marginBottom: 8 }, isKurdish && styles.kurdishFont]}>
+                            {t('common.howToPlay', language)}
+                        </Text>
+                        <Text style={[styles.instructionText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                            {t('partners.description', language)}
+                        </Text>
+                    </GlassCard>
+                </MotiView>
 
                 {/* Names */}
                 <View style={[styles.sectionHeader, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -115,45 +121,57 @@ export default function PartnersSetupScreen({ navigation }) {
                 </Text>
 
                 <View style={styles.categoriesGrid}>
-                    {partnersData.map((cat) => {
+                    {partnersData.map((cat, index) => {
                         const isSelected = selectedCategory.id === cat.id;
                         return (
-                            <TouchableOpacity
+                            <MotiView
                                 key={cat.id}
-                                onPress={() => setSelectedCategory(cat)}
-                                activeOpacity={0.8}
+                                from={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ type: 'spring', delay: index * 100 }}
                                 style={{ width: '48%' }}
                             >
-                                <GlassCard
-                                    style={[
-                                        styles.categoryCard,
-                                        isSelected && { borderColor: colors.accent, borderWidth: 1, backgroundColor: colors.accent + '20' }
-                                    ]}
-                                    intensity={isSelected ? 30 : 15}
+                                <TouchableOpacity
+                                    onPress={() => setSelectedCategory(cat)}
+                                    activeOpacity={0.8}
                                 >
-                                    {getIcon(cat.id, isSelected ? colors.accent : colors.text.secondary)}
-                                    <Text style={[
-                                        styles.categoryText,
-                                        { color: isSelected ? colors.text.primary : colors.text.secondary, marginTop: 8 },
-                                        isKurdish && styles.kurdishFont
-                                    ]}>
-                                        {cat.title[language]}
-                                    </Text>
-                                </GlassCard>
-                            </TouchableOpacity>
+                                    <GlassCard
+                                        style={[
+                                            styles.categoryCard,
+                                            isSelected && { borderColor: colors.accent, borderWidth: 1, backgroundColor: colors.accent + '20' }
+                                        ]}
+                                        intensity={isSelected ? 30 : 15}
+                                    >
+                                        {getIcon(cat.id, isSelected ? colors.accent : colors.text.secondary)}
+                                        <Text style={[
+                                            styles.categoryText,
+                                            { color: isSelected ? colors.text.primary : colors.text.secondary, marginTop: 8 },
+                                            isKurdish && styles.kurdishFont
+                                        ]}>
+                                            {cat.title[language]}
+                                        </Text>
+                                    </GlassCard>
+                                </TouchableOpacity>
+                            </MotiView>
                         );
                     })}
                 </View>
 
-                <BeastButton
-                    variant={player1 && player2 ? 'primary' : 'ghost'}
-                    title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
-                    onPress={handleStart}
-                    disabled={!player1.trim() || !player2.trim()}
-                    size="lg"
-                    style={{ marginTop: layout.spacing.xl }}
-                    icon={Play}
-                />
+                <MotiView
+                    from={{ opacity: 0, translateY: 30 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'spring', delay: 400 }}
+                >
+                    <BeastButton
+                        variant={player1 && player2 ? 'primary' : 'ghost'}
+                        title={isKurdish ? 'دەست پێ بکە' : 'Start Game'}
+                        onPress={handleStart}
+                        disabled={!player1.trim() || !player2.trim()}
+                        size="lg"
+                        style={{ marginTop: layout.spacing.xl }}
+                        icon={Play}
+                    />
+                </MotiView>
 
             </ScrollView>
         </AnimatedScreen>

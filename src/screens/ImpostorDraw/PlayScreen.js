@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
+import { MotiView } from 'moti';
 import {
     Eraser,
     Undo2,
@@ -36,12 +37,22 @@ const COLORS = ['#000000', '#EF4444', '#F97316', '#10B981', '#3B82F6', '#8B5CF6'
 // READY SCREEN - Just name, NO impostor hint!
 // ============================================
 const ReadyScreen = ({ player, playerIndex, totalPlayers, onReady, isKurdish, colors }) => (
-    <View style={styles.readyContainer}>
+    <MotiView
+        from={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', delay: 100 }}
+        style={styles.readyContainer}
+    >
         <Text style={styles.playerNum}>{playerIndex + 1} / {totalPlayers}</Text>
 
-        <View style={[styles.avatar, { backgroundColor: player.color }]}>
+        <MotiView
+            from={{ rotate: '-180deg' }}
+            animate={{ rotate: '0deg' }}
+            transition={{ type: 'spring', delay: 300, damping: 12 }}
+            style={[styles.avatar, { backgroundColor: player.color }]}
+        >
             <Text style={styles.avatarText}>{player.name.charAt(0)}</Text>
-        </View>
+        </MotiView>
 
         <Text style={[styles.playerName, { color: colors.text.primary }]}>{player.name}</Text>
 
@@ -54,7 +65,7 @@ const ReadyScreen = ({ player, playerIndex, totalPlayers, onReady, isKurdish, co
                 <Text style={styles.goBtnText}>{isKurdish ? 'دەستپێبکە' : 'GO'}</Text>
             </LinearGradient>
         </TouchableOpacity>
-    </View>
+    </MotiView>
 );
 
 // ============================================
@@ -78,16 +89,24 @@ const DrawingPhase = ({
     colors,
     isDark,
 }) => (
-    <View style={styles.drawContainer}>
+    <MotiView
+        from={{ opacity: 0, translateY: 20 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        style={styles.drawContainer}
+    >
         <View style={styles.drawHeader}>
             <View style={[styles.nameBadge, { backgroundColor: player.color }]}>
                 <Text style={styles.nameBadgeText}>{player.name}</Text>
                 <Text style={styles.nameBadgeSub}>{playerIndex + 1}/{totalPlayers}</Text>
             </View>
-            <View style={[styles.timer, { backgroundColor: timeLeft <= 3 ? '#EF4444' : '#10B981' }]}>
+            <MotiView
+                animate={{ scale: timeLeft <= 3 ? [1, 1.2, 1] : 1 }}
+                transition={{ type: 'timing', duration: 500, loop: timeLeft <= 3 }}
+                style={[styles.timer, { backgroundColor: timeLeft <= 3 ? '#EF4444' : '#10B981' }]}
+            >
                 <Clock size={14} color="#FFF" />
                 <Text style={styles.timerText}>{timeLeft}s</Text>
-            </View>
+            </MotiView>
         </View>
 
         <View style={[styles.canvas, { backgroundColor: isDark ? '#1E1E2E' : '#FFF' }]} {...panHandlers}>
@@ -114,23 +133,38 @@ const DrawingPhase = ({
         </View>
 
         {showColors && (
-            <View style={[styles.colorRow, { backgroundColor: isDark ? '#1A1A2E' : '#FFF' }]}>
+            <MotiView
+                from={{ height: 0, opacity: 0 }}
+                animate={{ height: 72, opacity: 1 }}
+                style={[styles.colorRow, { backgroundColor: isDark ? '#1A1A2E' : '#FFF' }]}
+            >
                 {COLORS.map(c => (
                     <TouchableOpacity key={c} onPress={() => { setBrushColor(c); setShowColors(false); setIsEraser(false); }}>
                         <View style={[styles.colorItem, { backgroundColor: c }, brushColor === c && styles.colorItemOn]} />
                     </TouchableOpacity>
                 ))}
-            </View>
+            </MotiView>
         )}
-    </View>
+    </MotiView>
 );
 
 // ============================================
 // ALL DONE - Button to go to voting
 // ============================================
 const AllDoneScreen = ({ strokes, onGoToVoting, isKurdish, colors, isDark }) => (
-    <View style={styles.doneContainer}>
-        <CheckCircle size={60} color="#10B981" />
+    <MotiView
+        from={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', delay: 100 }}
+        style={styles.doneContainer}
+    >
+        <MotiView
+            from={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', delay: 300, damping: 10 }}
+        >
+            <CheckCircle size={60} color="#10B981" />
+        </MotiView>
 
         <Text style={[styles.doneTitle, { color: colors.text.primary }]}>
             {isKurdish ? 'کێشان تەواو بوو!' : 'Drawing Complete!'}
@@ -141,36 +175,57 @@ const AllDoneScreen = ({ strokes, onGoToVoting, isKurdish, colors, isDark }) => 
         </Text>
 
         {/* Show final drawing */}
-        <View style={[styles.doneCanvas, { backgroundColor: isDark ? '#1E1E2E' : '#FFF' }]}>
+        <MotiView
+            from={{ opacity: 0, translateY: 20 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ delay: 500 }}
+            style={[styles.doneCanvas, { backgroundColor: isDark ? '#1E1E2E' : '#FFF' }]}
+        >
             <Svg width="100%" height="100%" viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`} preserveAspectRatio="xMidYMid meet">
                 {strokes.map((s, i) => (
                     <Path key={i} d={s.path} stroke={s.color} strokeWidth={s.size} fill="none" strokeLinecap="round" strokeLinejoin="round" />
                 ))}
             </Svg>
-        </View>
+        </MotiView>
 
-        <TouchableOpacity onPress={onGoToVoting} style={styles.votingBtn} activeOpacity={0.8}>
-            <LinearGradient colors={['#D900FF', '#7000FF']} style={styles.votingBtnInner}>
-                <Text style={styles.votingBtnText}>
-                    {isKurdish ? 'بڕۆ بۆ دەنگدان' : 'Go to Voting'}
-                </Text>
-                <ChevronRight size={22} color="#FFF" />
-            </LinearGradient>
-        </TouchableOpacity>
-    </View>
+        <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 800 }}
+            style={{ width: '100%' }}
+        >
+            <TouchableOpacity onPress={onGoToVoting} style={styles.votingBtn} activeOpacity={0.8}>
+                <LinearGradient colors={['#D900FF', '#7000FF']} style={styles.votingBtnInner}>
+                    <Text style={styles.votingBtnText}>
+                        {isKurdish ? 'بڕۆ بۆ دەنگدان' : 'Go to Voting'}
+                    </Text>
+                    <ChevronRight size={22} color="#FFF" />
+                </LinearGradient>
+            </TouchableOpacity>
+        </MotiView>
+    </MotiView>
 );
 
 // ============================================
 // VOTING PAGE - Full page with timer + reveal
 // ============================================
 const VotingPage = ({ timeLeft, strokes, onReveal, isKurdish, colors, isDark }) => (
-    <View style={styles.votingContainer}>
+    <MotiView
+        from={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={styles.votingContainer}
+    >
         {/* Big Timer Circle */}
-        <View style={[styles.bigTimer, { backgroundColor: timeLeft <= 10 ? '#EF4444' : '#D900FF' }]}>
+        <MotiView
+            from={{ scale: 0.8 }}
+            animate={{ scale: timeLeft <= 10 ? [1, 1.1, 1] : 1 }}
+            transition={{ type: 'spring', loop: timeLeft <= 10 }}
+            style={[styles.bigTimer, { backgroundColor: timeLeft <= 10 ? '#EF4444' : '#D900FF' }]}
+        >
             <Clock size={28} color="#FFF" />
             <Text style={styles.bigTimerText}>{timeLeft}</Text>
             <Text style={styles.bigTimerLabel}>{isKurdish ? 'چرکە' : 'seconds'}</Text>
-        </View>
+        </MotiView>
 
         <Text style={[styles.votingTitle, { color: colors.text.primary }]}>
             {isKurdish ? 'کاتی گفتوگۆ' : 'Discussion Time'}
@@ -192,45 +247,80 @@ const VotingPage = ({ timeLeft, strokes, onReveal, isKurdish, colors, isDark }) 
         </View>
 
         {/* Reveal Button */}
-        <TouchableOpacity onPress={onReveal} style={styles.revealBtn} activeOpacity={0.8}>
-            <LinearGradient colors={['#EF4444', '#DC2626']} style={styles.revealBtnInner}>
-                <Eye size={22} color="#FFF" />
-                <Text style={styles.revealBtnText}>
-                    {isKurdish ? 'دزەکار پیشان بدە' : 'Reveal Impostor'}
-                </Text>
-            </LinearGradient>
-        </TouchableOpacity>
-    </View>
+        <MotiView
+            from={{ opacity: 0, translateY: 20 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ delay: 500 }}
+            style={{ width: '100%' }}
+        >
+            <TouchableOpacity onPress={onReveal} style={styles.revealBtn} activeOpacity={0.8}>
+                <LinearGradient colors={['#EF4444', '#DC2626']} style={styles.revealBtnInner}>
+                    <Eye size={22} color="#FFF" />
+                    <Text style={styles.revealBtnText}>
+                        {isKurdish ? 'دزەکار پیشان بدە' : 'Reveal Impostor'}
+                    </Text>
+                </LinearGradient>
+            </TouchableOpacity>
+        </MotiView>
+    </MotiView>
 );
 
 // ============================================
 // RESULT - Shows who was impostor + word
 // ============================================
 const ResultScreen = ({ impostor, word, onDone, isKurdish, colors }) => (
-    <View style={styles.resultContainer}>
-        <View style={styles.resultIcon}>
+    <MotiView
+        from={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        style={styles.resultContainer}
+    >
+        <MotiView
+            from={{ rotate: '-180deg', scale: 0 }}
+            animate={{ rotate: '0deg', scale: 1 }}
+            transition={{ type: 'spring', damping: 10, delay: 200 }}
+            style={styles.resultIcon}
+        >
             <EyeOff size={44} color="#FFF" />
-        </View>
+        </MotiView>
 
         <Text style={[styles.resultLabel, { color: colors.text.secondary }]}>
             {isKurdish ? 'دزەکار:' : 'The Impostor was:'}
         </Text>
 
-        <View style={[styles.resultBadge, { backgroundColor: impostor.color }]}>
+        <MotiView
+            from={{ opacity: 0, translateY: 20 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ delay: 500 }}
+            style={[styles.resultBadge, { backgroundColor: impostor.color }]}
+        >
             <Text style={styles.resultName}>{impostor.name}</Text>
-        </View>
+        </MotiView>
 
-        <Text style={[styles.resultWordLabel, { color: colors.text.secondary }]}>
-            {isKurdish ? 'وشەکە:' : 'The word was:'}
-        </Text>
-        <Text style={[styles.resultWord, { color: colors.text.primary }]}>{word}</Text>
+        <MotiView
+            from={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1000 }}
+            style={{ alignItems: 'center' }}
+        >
+            <Text style={[styles.resultWordLabel, { color: colors.text.secondary }]}>
+                {isKurdish ? 'وشەکە:' : 'The word was:'}
+            </Text>
+            <Text style={[styles.resultWord, { color: colors.text.primary }]}>{word}</Text>
+        </MotiView>
 
-        <TouchableOpacity onPress={onDone} style={styles.doneBtn} activeOpacity={0.8}>
-            <LinearGradient colors={['#10B981', '#059669']} style={styles.doneBtnInner}>
-                <Text style={styles.doneBtnText}>{isKurdish ? 'تەواو' : 'Done'}</Text>
-            </LinearGradient>
-        </TouchableOpacity>
-    </View>
+        <MotiView
+            from={{ opacity: 0, translateY: 30 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ delay: 1500 }}
+            style={{ width: '100%' }}
+        >
+            <TouchableOpacity onPress={onDone} style={styles.doneBtn} activeOpacity={0.8}>
+                <LinearGradient colors={['#10B981', '#059669']} style={styles.doneBtnInner}>
+                    <Text style={styles.doneBtnText}>{isKurdish ? 'تەواو' : 'Done'}</Text>
+                </LinearGradient>
+            </TouchableOpacity>
+        </MotiView>
+    </MotiView>
 );
 
 // ============================================

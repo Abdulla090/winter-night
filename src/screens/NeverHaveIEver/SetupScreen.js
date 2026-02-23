@@ -52,8 +52,8 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
-            <View style={[styles.header, { flexDirection: rowDirection }]}>
+        <SafeAreaView style={[styles.screen, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
+            <View style={[styles.header, { flexDirection: rowDirection, backgroundColor: colors.background, borderBottomColor: colors.border }]}>
                 <BackButton onPress={() => navigation.goBack()} />
                 <Text style={[styles.title, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                     {t('neverHaveIEver.title', language)}
@@ -75,7 +75,7 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
                     language={language}
                 />
 
-                <Text style={[styles.sectionTitle, rtlStyles, isKurdish && styles.kurdishFont]}>
+                <Text style={[styles.sectionTitle, { color: colors.text.secondary }, rtlStyles, isKurdish && styles.kurdishFont]}>
                     {t('truthOrDare.chooseIntensity', language)}
                 </Text>
                 <View style={styles.intensityGrid}>
@@ -84,6 +84,7 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
                             key={level.key}
                             style={[
                                 styles.intensityCard,
+                                { backgroundColor: colors.surface },
                                 selectedIntensity === level.key && {
                                     borderColor: level.color,
                                     backgroundColor: `${level.color}15`
@@ -102,26 +103,27 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
                             </View>
                             <Text style={[
                                 styles.intensityName,
+                                { color: colors.text.primary },
                                 selectedIntensity === level.key && { color: level.color },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getIntensityName(level.key)}
                             </Text>
-                            <Text style={[styles.intensityDesc, isKurdish && styles.kurdishFont]}>
+                            <Text style={[styles.intensityDesc, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                                 {getIntensityDesc(level.key)}
                             </Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <View style={styles.rulesCard}>
+                <View style={[styles.rulesCard, { backgroundColor: colors.surface }]}>
                     <View style={[styles.rulesHeader, { flexDirection: rowDirection }]}>
-                        <Hand size={20} color={COLORS.accent.warning} />
-                        <Text style={[styles.rulesTitle, isKurdish && styles.kurdishFont]}>
+                        <Hand size={20} color={colors.brand.warning} />
+                        <Text style={[styles.rulesTitle, { color: colors.brand.warning }, isKurdish && styles.kurdishFont]}>
                             {t('common.howToPlay', language)}
                         </Text>
                     </View>
-                    <Text style={[styles.rulesText, rtlStyles, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.rulesText, { color: colors.text.muted }, rtlStyles, isKurdish && styles.kurdishFont]}>
                         {isKurdish
                             ? '• ڕستەیەک لەسەر شاشەکە دەردەکەوێت\n• ئەگەر تۆ کردووتبێت، پەنجەیەک دابەزێنە\n• یەکەم کەسێک کە هەموو ٥ پەنجەی دادەبەزێنێت دەدۆڕێت!\n• یان تەنها بۆ خۆشی و چیرۆک یاری بکەن!'
                             : "• A statement appears on screen\n• If you HAVE done it, put a finger down\n• The first person to lose all 5 fingers loses!\n• Or just play for fun and stories!"
@@ -134,7 +136,7 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
                         title={t('common.start', language)}
                         onPress={startGame}
                         disabled={!canStart}
-                        gradient={[COLORS.accent.warning, COLORS.accent.warning]}
+                        gradient={[colors.brand.warning, colors.brand.warning]}
                         icon={<Hand size={20} color="#FFF" />}
                         isKurdish={isKurdish}
                     />
@@ -145,35 +147,31 @@ export default function NeverHaveIEverSetupScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    screen: { flex: 1, backgroundColor: COLORS.background.dark },
+    screen: { flex: 1 },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.dark,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.background.border,
         minHeight: 60,
     },
     backButton: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
-    title: { color: COLORS.text.primary, ...FONTS.title, fontSize: 22 },
+    title: { ...FONTS.title, fontSize: 22 },
     placeholder: { width: 44 },
     scrollView: { flex: 1 },
     scrollContent: { padding: SPACING.lg, paddingBottom: 120 },
     sectionTitle: {
-        color: COLORS.text.secondary, ...FONTS.medium,
+        ...FONTS.medium,
         marginBottom: SPACING.md, marginTop: SPACING.lg,
         textTransform: 'uppercase', fontSize: 13, letterSpacing: 1,
     },
     intensityGrid: { gap: 12 },
     intensityCard: {
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.lg,
         alignItems: 'center',
@@ -185,10 +183,9 @@ const styles = StyleSheet.create({
         alignItems: 'center', justifyContent: 'center',
         marginBottom: SPACING.sm,
     },
-    intensityName: { color: COLORS.text.primary, ...FONTS.bold, fontSize: 18, marginBottom: 4 },
-    intensityDesc: { color: COLORS.text.muted, fontSize: 13 },
+    intensityName: { ...FONTS.bold, fontSize: 18, marginBottom: 4 },
+    intensityDesc: { fontSize: 13 },
     rulesCard: {
-        backgroundColor: COLORS.background.card,
         borderRadius: BORDER_RADIUS.lg,
         padding: SPACING.md,
         marginTop: SPACING.lg,
@@ -199,8 +196,8 @@ const styles = StyleSheet.create({
         gap: SPACING.sm,
         marginBottom: SPACING.sm,
     },
-    rulesTitle: { color: COLORS.accent.warning, ...FONTS.medium },
-    rulesText: { color: COLORS.text.muted, lineHeight: 22 },
+    rulesTitle: { ...FONTS.medium },
+    rulesText: { lineHeight: 22 },
     buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
     kurdishFont: { fontFamily: 'Rabar' },
 });

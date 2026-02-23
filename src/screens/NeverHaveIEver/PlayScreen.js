@@ -9,6 +9,7 @@ import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomStatement } from '../../constants/neverHaveIEverData';
 import { useLanguage } from '../../context/LanguageContext';
 import { useGameRoom } from '../../context/GameRoomContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
@@ -19,6 +20,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
     const { players: contextPlayers, currentRoom, gameState, updateGameState, leaveRoom, isHost } = useGameRoom();
     const { user } = useAuth();
     const { language, isKurdish } = useLanguage();
+    const { colors } = useTheme();
 
     const routeParams = route?.params || {};
     const isMultiplayer = !!currentRoom && !routeParams.players;
@@ -154,9 +156,9 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
 
     if (!currentStatement && isMultiplayer) {
         return (
-            <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-                <ActivityIndicator size="large" color={COLORS.accent.warning} />
-                <Text style={styles.loadingText}>{isKurdish ? 'چاوەڕوان...' : 'Loading...'}</Text>
+            <SafeAreaView style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={colors.brand.warning} />
+                <Text style={[styles.loadingText, { color: colors.text.secondary }]}>{isKurdish ? 'چاوەڕوان...' : 'Loading...'}</Text>
             </SafeAreaView>
         );
     }
@@ -166,40 +168,40 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
             <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                 {/* Header */}
                 <View style={[styles.header, { flexDirection: rowDirection }]}>
-                    <TouchableOpacity style={styles.exitBtn} onPress={handleEndGame}>
-                        <X size={24} color={COLORS.text.secondary} />
+                    <TouchableOpacity style={[styles.exitBtn, { backgroundColor: colors.surface }]} onPress={handleEndGame}>
+                        <X size={24} color={colors.text.secondary} />
                     </TouchableOpacity>
                     <View style={styles.headerCenter}>
-                        <Text style={styles.headerTitle}>
+                        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
                             {isKurdish ? 'هەرگیز نەمکردووە' : 'Never Have I Ever'}
                         </Text>
                     </View>
                     <TouchableOpacity
-                        style={styles.scoresBtn}
+                        style={[styles.scoresBtn, { backgroundColor: colors.surface }]}
                         onPress={() => {
                             if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             setShowScores(!showScores);
                         }}
                     >
-                        <Users size={20} color={COLORS.text.secondary} />
+                        <Users size={20} color={colors.text.secondary} />
                     </TouchableOpacity>
                 </View>
 
                 <ScrollView contentContainerStyle={styles.content}>
                     {/* Statement Card */}
                     <Animated.View style={{ transform: [{ translateX: slideAnim }], width: '100%' }}>
-                        <GlassCard intensity={30} style={styles.statementCard}>
-                            <Text style={[styles.neverText, isKurdish && styles.kurdishFont, { textAlign }]}>
+                        <GlassCard intensity={30} style={[styles.statementCard, { backgroundColor: colors.brand.warning + '10', borderColor: colors.brand.warning + '40' }]}>
+                            <Text style={[styles.neverText, { color: colors.brand.warning }, isKurdish && styles.kurdishFont, { textAlign }]}>
                                 {isKurdish ? 'هەرگیز ئەوەم نەکردووە...' : 'Never have I ever...'}
                             </Text>
-                            <Text style={[styles.statementText, isKurdish && styles.kurdishFont, { textAlign }]}>
+                            <Text style={[styles.statementText, { color: colors.text.primary }, isKurdish && styles.kurdishFont, { textAlign }]}>
                                 {currentStatement.replace('Never have I ever ', '')}
                             </Text>
                         </GlassCard>
                     </Animated.View>
 
                     {/* Instructions */}
-                    <Text style={[styles.instruction, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.instruction, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                         {isKurdish
                             ? 'ئەگەر ئەوەت کردبێت، پەنجەیەک دابەزێنە'
                             : 'Put a finger down if you\'ve done it'}
@@ -209,21 +211,22 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                     {showScores && (
                         <View style={styles.fingersContainer}>
                             {players.map((player) => (
-                                <View key={player} style={styles.fingerRow}>
+                                <View key={player} style={[styles.fingerRow, { backgroundColor: colors.surface, borderColor: colors.surfaceHighlight }]}>
                                     <Text style={[
                                         styles.fingerPlayerName,
+                                        { color: colors.text.primary },
                                         isKurdish && styles.kurdishFont,
-                                        (fingerCounts[player] || 5) === 0 && styles.outPlayer
+                                        (fingerCounts[player] || 5) === 0 && [styles.outPlayer, { color: colors.brand.error }]
                                     ]}>
                                         {player} {player === myUsername && isMultiplayer ? (isKurdish ? '(تۆ)' : '(You)') : ''}
                                     </Text>
                                     <View style={[styles.fingerControls, { flexDirection: rowDirection }]}>
                                         <TouchableOpacity
-                                            style={[styles.fingerBtn, !canAdjust(player) && styles.disabledBtn]}
+                                            style={[styles.fingerBtn, { backgroundColor: colors.surfaceHighlight }, !canAdjust(player) && styles.disabledBtn]}
                                             onPress={() => handleFingerDown(player)}
                                             disabled={!canAdjust(player)}
                                         >
-                                            <Minus size={20} color="#FFF" />
+                                            <Minus size={20} color={colors.text.primary} />
                                         </TouchableOpacity>
                                         <View style={[styles.fingerDisplay, { flexDirection: rowDirection }]}>
                                             {[...Array(5)].map((_, i) => (
@@ -233,11 +236,11 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                                             ))}
                                         </View>
                                         <TouchableOpacity
-                                            style={[styles.fingerBtn, !canAdjust(player) && styles.disabledBtn]}
+                                            style={[styles.fingerBtn, { backgroundColor: colors.surfaceHighlight }, !canAdjust(player) && styles.disabledBtn]}
                                             onPress={() => handleFingerUp(player)}
                                             disabled={!canAdjust(player)}
                                         >
-                                            <Plus size={20} color="#FFF" />
+                                            <Plus size={20} color={colors.text.primary} />
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -247,9 +250,9 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
 
                     {/* Game Over Notice */}
                     {gameOver && (
-                        <View style={[styles.gameOverBanner, { flexDirection: rowDirection }]}>
-                            <Skull size={24} color={COLORS.accent.danger} />
-                            <Text style={[styles.gameOverText, isKurdish && styles.kurdishFont]}>
+                        <View style={[styles.gameOverBanner, { backgroundColor: colors.brand.error + '25' }, { flexDirection: rowDirection }]}>
+                            <Skull size={24} color={colors.brand.error} />
+                            <Text style={[styles.gameOverText, { color: colors.brand.error }, isKurdish && styles.kurdishFont]}>
                                 {playersOut.join(', ')} {playersOut.length > 1
                                     ? (isKurdish ? 'دەرچوون' : 'are out!')
                                     : (isKurdish ? 'دەرچوو' : 'is out!')}
@@ -263,7 +266,7 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                             <Button
                                 title={isKurdish ? 'دەربڕینی دواتر' : 'Next Statement'}
                                 onPress={getNextStatement}
-                                gradient={[COLORS.accent.warning, '#d97706']}
+                                gradient={[colors.brand.warning, colors.brand.warning]}
                                 icon={isKurdish ? <ArrowLeft size={20} color="#FFF" /> : <ArrowRight size={20} color="#FFF" />}
                                 isKurdish={isKurdish}
                             />
@@ -271,12 +274,12 @@ export default function NeverHaveIEverPlayScreen({ navigation, route }) {
                     )}
 
                     {isMultiplayer && !isHost && (
-                        <Text style={styles.waitingText}>
+                        <Text style={[styles.waitingText, { color: colors.text.muted }]}>
                             {isKurdish ? 'خاوەنی ژوور دەربڕینی دواتر دەگوازێتەوە' : 'Host controls the next statement'}
                         </Text>
                     )}
 
-                    <Text style={[styles.statementCounter, isKurdish && styles.kurdishFont]}>
+                    <Text style={[styles.statementCounter, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                         {statementsUsed} {isKurdish ? 'دەربڕین' : 'statements'}
                     </Text>
                 </ScrollView>
@@ -295,7 +298,6 @@ const styles = StyleSheet.create({
     },
     exitBtn: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
     headerCenter: {
@@ -303,13 +305,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     headerTitle: {
-        color: COLORS.text.primary,
         ...FONTS.bold,
         fontSize: 16,
     },
     scoresBtn: {
         width: 44, height: 44, borderRadius: 22,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center', justifyContent: 'center',
     },
     content: {
@@ -319,7 +319,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        color: COLORS.text.secondary,
         ...FONTS.medium,
         marginTop: SPACING.md,
     },
@@ -327,25 +326,20 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: SPACING.xl,
         borderWidth: 1,
-        borderColor: 'rgba(245, 158, 11, 0.3)', // Warning color tint
         marginBottom: SPACING.lg,
-        backgroundColor: 'rgba(245, 158, 11, 0.05)',
     },
     neverText: {
-        color: COLORS.accent.warning,
         ...FONTS.medium,
         textTransform: 'uppercase',
         letterSpacing: 1,
         marginBottom: SPACING.sm,
     },
     statementText: {
-        color: COLORS.text.primary,
         ...FONTS.large,
         fontSize: 24,
         lineHeight: 34,
     },
     instruction: {
-        color: COLORS.text.muted,
         textAlign: 'center',
         marginBottom: SPACING.lg,
     },
@@ -354,21 +348,17 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.lg,
     },
     fingerRow: {
-        backgroundColor: 'rgba(255,255,255,0.05)',
         borderRadius: BORDER_RADIUS.md,
         padding: SPACING.md,
         marginBottom: 8,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.05)',
     },
     fingerPlayerName: {
-        color: COLORS.text.primary,
         ...FONTS.medium,
         marginBottom: 8,
         textAlign: 'center',
     },
     outPlayer: {
-        color: COLORS.accent.danger,
         textDecorationLine: 'line-through',
     },
     fingerControls: {
@@ -379,7 +369,6 @@ const styles = StyleSheet.create({
     },
     fingerBtn: {
         width: 36, height: 36, borderRadius: 18,
-        backgroundColor: COLORS.background.secondary,
         alignItems: 'center', justifyContent: 'center',
     },
     disabledBtn: {
@@ -394,25 +383,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        backgroundColor: 'rgba(239, 68, 68, 0.15)',
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: BORDER_RADIUS.lg,
         marginBottom: SPACING.lg,
     },
-    gameOverText: { color: COLORS.accent.danger, ...FONTS.medium },
+    gameOverText: { ...FONTS.medium },
     actionContainer: {
         width: '100%',
         marginTop: SPACING.md,
     },
     waitingText: {
-        color: COLORS.text.muted,
         ...FONTS.medium,
         textAlign: 'center',
         marginTop: SPACING.md,
     },
     statementCounter: {
-        color: COLORS.text.muted,
         fontSize: 12,
         marginTop: SPACING.md,
     },

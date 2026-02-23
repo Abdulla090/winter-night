@@ -20,10 +20,12 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { layout } from '../../theme/layout';
 
-export default function SignUpScreen({ navigation }) {
+export default function SignUpScreen({ navigation, route }) {
     const { signUp, loading } = useAuth();
     const { colors, isRTL } = useTheme();
     const { isKurdish } = useLanguage();
+
+    const returnTo = route?.params?.returnTo || null;
 
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
@@ -75,7 +77,17 @@ export default function SignUpScreen({ navigation }) {
             Alert.alert(
                 isKurdish ? 'سەرکەوتوو بوو!' : 'Welcome!',
                 isKurdish ? 'هەژمارت دروستکرا. ئێستا دەتوانیت یاری بکەیت!' : 'Account created. You can now play!',
-                [{ text: 'OK', onPress: () => navigation.replace('Home') }]
+                [{
+                    text: 'OK', onPress: () => {
+                        if (returnTo) {
+                            navigation.replace(returnTo);
+                        } else if (navigation.canGoBack()) {
+                            navigation.goBack();
+                        } else {
+                            navigation.replace('Home');
+                        }
+                    }
+                }]
             );
         }
     };
@@ -195,7 +207,7 @@ export default function SignUpScreen({ navigation }) {
                         <Text style={[styles.footerText, { color: colors.text.secondary }]}>
                             {isKurdish ? 'پێشتر هەژمارت هەیە؟' : 'Already have an account?'}
                         </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Login', returnTo ? { returnTo } : undefined)}>
                             <Text style={[styles.linkText, { color: colors.accent }]}>
                                 {isKurdish ? 'چوونەژوورەوە' : 'Sign In'}
                             </Text>
