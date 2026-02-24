@@ -30,7 +30,7 @@ const NavItem = memo(({ tab, isActive, onPress, isDark }) => {
         ? ['#D900FF', '#B026FF']
         : ['#0EA5E9', '#38BDF8'];
 
-    const inactiveColor = isDark ? '#6B5A8A' : '#94A3B8';
+    const inactiveColor = isDark ? '#C0B8D0' : '#94A3B8';
     const borderColor = isDark ? '#0F0518' : '#F0F8FF';
 
     return (

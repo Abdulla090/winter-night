@@ -237,7 +237,7 @@ const InfoCard = ({ icon: Icon, title, value, color, isDark }) => (
             <Icon size={20} color={color} />
         </View>
         <Text style={[styles.infoValue, { color }]}>{value}</Text>
-        <Text style={[styles.infoTitle, { color: isDark ? '#B8A6D9' : '#64748B' }]}>{title}</Text>
+        <Text style={[styles.infoTitle, { color: isDark ? '#E8E0F0' : '#64748B' }]}>{title}</Text>
     </View>
 );
 

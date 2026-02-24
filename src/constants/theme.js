@@ -1,16 +1,18 @@
 // Migrated legacy constants to use the new Theme system values where possible
 // This file ensures backward compatibility for components we haven't refactored yet.
+// ⚠️ IMPORTANT: These map to DARK mode colors since the app defaults to dark mode
+// and all game screens render on the dark gradient background.
 
 import { colors as newColors } from '../theme/colors';
 import { layout } from '../theme/layout';
 
 export const COLORS = {
   background: {
-    dark: newColors.light.background, // Mapped to new light default
-    primary: newColors.light.surface,
-    secondary: newColors.light.surfaceHighlight,
-    card: newColors.light.surface,
-    border: newColors.light.border,
+    dark: newColors.dark.background,
+    primary: newColors.dark.surface,
+    secondary: newColors.dark.surfaceHighlight,
+    card: newColors.dark.surface,
+    border: newColors.dark.border,
   },
   accent: {
     primary: newColors.brand.crimson,
@@ -34,10 +36,10 @@ export const COLORS = {
     wheel: ['#ec4899', '#be185d'],
   },
   text: {
-    primary: newColors.light.text.primary,
-    secondary: newColors.light.text.secondary,
-    muted: newColors.light.text.muted,
-    inverse: newColors.light.text.inverse,
+    primary: newColors.dark.text.primary,       // #FFFFFF - white text
+    secondary: newColors.dark.text.secondary,   // #E8E0F0 - bright white-lavender
+    muted: newColors.dark.text.muted,           // #C0B8D0 - light silver-purple
+    inverse: newColors.dark.text.inverse,       // #0F0518 - dark
   },
 };
 
@@ -71,8 +73,8 @@ export const KURDISH_FONTS = {
 
 export const GLASS = {
   default: {
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Updated for light mode
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)', // Dark mode glass
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     borderWidth: 1,
   },
 };

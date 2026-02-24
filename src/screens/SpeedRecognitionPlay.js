@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
     },
     correctAnswerText: {
         fontSize: 18,
-        color: '#B8A6D9',
+        color: '#E8E0F0',
         marginTop: 8,
     },
 

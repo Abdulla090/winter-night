@@ -30,11 +30,11 @@ const PlayerChip = memo(({ player, isCurrentUser, isKurdish, colors, onRemove, r
         >
             <Text style={[
                 styles.playerName,
-                { color: isCurrentUser ? colors.accent : colors.text.primary }
+                { color: isCurrentUser ? '#FFFFFF' : colors.text.primary }
             ]}>
                 {player}{isCurrentUser ? (isKurdish ? ' (من)' : ' (me)') : ''}
             </Text>
-            <X size={14} color={isCurrentUser ? colors.accent : colors.text.muted} style={{ marginHorizontal: 4 }} />
+            <X size={14} color={isCurrentUser ? '#FFFFFF' : colors.text.muted} style={{ marginHorizontal: 4 }} />
         </TouchableOpacity>
     );
 });
@@ -110,8 +110,8 @@ export default function PlayerInput({
                             activeOpacity={0.7}
                             style={[styles.addMeButton, { backgroundColor: colors.accent + '20', borderColor: colors.accent }]}
                         >
-                            <UserPlus size={14} color={colors.accent} />
-                            <Text style={[styles.addMeText, { color: colors.accent }]}>
+                            <UserPlus size={14} color="#FFF" />
+                            <Text style={[styles.addMeText, { color: '#FFF' }]}>
                                 {isKurdish ? 'خۆم زیاد بکە' : 'Add Me'}
                             </Text>
                         </TouchableOpacity>
@@ -165,7 +165,7 @@ export default function PlayerInput({
             )}
 
             {players && count < minPlayers && (
-                <Text style={[styles.hint, { textAlign: alignStyle, color: colors.brand.crimson }]}>
+                <Text style={[styles.hint, { textAlign: alignStyle, color: '#FF6B6B' }]}>
                     {isKurdish
                         ? `${minPlayers - count} یاریزانی تر زیاد بکە`
                         : `Add ${minPlayers - count} more player${(minPlayers - count) > 1 ? 's' : ''}`

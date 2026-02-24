@@ -36,7 +36,7 @@ export const FloatingNavBar = ({ activeTab = 'home' }) => {
                         </LinearGradient>
                     </View>
                 ) : (
-                    <IconComponent size={24} color="#6B5A8A" />
+                    <IconComponent size={24} color="#C0B8D0" />
                 )}
             </TouchableOpacity>
         );

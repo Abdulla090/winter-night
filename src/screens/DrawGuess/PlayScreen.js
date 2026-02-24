@@ -5,6 +5,8 @@ import { Paintbrush, Clock, Trash2, CheckCircle2, ArrowRight, ArrowLeft } from '
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { MotiView } from 'moti';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomWord } from '../../constants/drawingData';
@@ -165,27 +167,107 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
     // REVEAL PHASE
     // ========================
     if (phase === 'reveal') {
+        const CARD_W = width - 64;
         return (
             <GradientBackground>
                 <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                    <ScrollView contentContainerStyle={styles.centerContent}>
-                        <View style={styles.badge}>
-                            <Text style={[styles.badgeText, isKurdish && styles.kurdishFont]}>
-                                {t('common.round', language)} {roundNumber}
-                            </Text>
-                        </View>
+                    <ScrollView contentContainerStyle={styles.centerContent} showsVerticalScrollIndicator={false}>
+                        {/* Progress Badge */}
+                        <MotiView
+                            from={{ opacity: 0, translateY: -10 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ type: 'timing', duration: 300 }}
+                        >
+                            <View style={styles.badge}>
+                                <Text style={[styles.badgeText, { color: '#93C5FD' }, isKurdish && styles.kurdishFont]}>
+                                    {t('common.round', language)} {roundNumber}
+                                </Text>
+                            </View>
+                        </MotiView>
 
+                        {/* Pass To Label */}
                         <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                             {t('common.passPhoneTo', language)}
                         </Text>
                         <Text style={[styles.playerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentPlayer}</Text>
 
-                        <GlassCard intensity={30} style={[styles.wordCard, { borderColor: colors.brand.info }]}>
-                            <Text style={[styles.wordLabel, { color: colors.brand.info }, isKurdish && styles.kurdishFont]}>
-                                {t('common.yourWord', language)}
-                            </Text>
-                            <Text style={[styles.wordText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>{currentWord}</Text>
-                        </GlassCard>
+                        {/* Premium Word Card */}
+                        <MotiView
+                            from={{ opacity: 0, scale: 0.85 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ type: 'spring', damping: 14, stiffness: 120 }}
+                            style={{ alignItems: 'center', marginBottom: 24 }}
+                        >
+                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                {/* Glow */}
+                                <MotiView
+                                    from={{ opacity: 0.3, scale: 0.98 }}
+                                    animate={{ opacity: 0.7, scale: 1.03 }}
+                                    transition={{ type: 'timing', duration: 1500, loop: true }}
+                                    style={{
+                                        position: 'absolute',
+                                        width: CARD_W + 20, height: 260,
+                                        borderRadius: 30,
+                                        backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                                    }}
+                                />
+
+                                <LinearGradient
+                                    colors={['#1E3A5F', '#1D4ED8', '#3B82F6', '#1D4ED8', '#1E3A5F']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                        width: CARD_W,
+                                        borderRadius: 24, alignItems: 'center',
+                                        paddingVertical: 28, paddingHorizontal: 24,
+                                        borderWidth: 2, borderColor: '#3B82F6',
+                                        overflow: 'hidden',
+                                    }}
+                                >
+                                    {/* Top Label */}
+                                    <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', paddingVertical: 6, paddingHorizontal: 20, borderRadius: 20, marginBottom: 16 }}>
+                                        <Text style={[{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase' }, isKurdish && styles.kurdishFont]}>
+                                            {t('common.yourWord', language)}
+                                        </Text>
+                                    </View>
+
+                                    {/* Paintbrush Icon */}
+                                    <MotiView
+                                        from={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ type: 'spring', delay: 200, damping: 10 }}
+                                        style={{
+                                            width: 80, height: 80, borderRadius: 40,
+                                            alignItems: 'center', justifyContent: 'center',
+                                            borderWidth: 2, marginBottom: 16,
+                                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                            borderColor: 'rgba(59, 130, 246, 0.4)',
+                                        }}
+                                    >
+                                        <Paintbrush size={40} color="#93C5FD" strokeWidth={1.5} />
+                                    </MotiView>
+
+                                    {/* The Word */}
+                                    <MotiView
+                                        from={{ opacity: 0, translateY: 10 }}
+                                        animate={{ opacity: 1, translateY: 0 }}
+                                        transition={{ delay: 350 }}
+                                    >
+                                        <Text style={[{
+                                            color: '#FFFFFF', fontSize: 38, fontWeight: '900',
+                                            textAlign: 'center', letterSpacing: 1,
+                                            textShadowColor: 'rgba(0,0,0,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4,
+                                        }, isKurdish && styles.kurdishFont]}>
+                                            {currentWord}
+                                        </Text>
+                                    </MotiView>
+
+                                    {/* Corner Marks */}
+                                    <View style={{ position: 'absolute', top: 12, left: 12, width: 20, height: 20, borderLeftWidth: 2, borderTopWidth: 2, borderColor: '#3B82F660', borderTopLeftRadius: 4 }} />
+                                    <View style={{ position: 'absolute', bottom: 12, right: 12, width: 20, height: 20, borderRightWidth: 2, borderBottomWidth: 2, borderColor: '#3B82F660', borderBottomRightRadius: 4 }} />
+                                </LinearGradient>
+                            </View>
+                        </MotiView>
 
                         <Text style={[styles.instruction, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
                             {isKurdish
@@ -194,13 +276,24 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                             }
                         </Text>
 
-                        <Button
-                            title={t('drawGuess.draw', language)}
+                        {/* Start Drawing Button */}
+                        <TouchableOpacity
                             onPress={handleStartDrawing}
-                            gradient={[colors.brand.info, colors.brand.info]}
-                            icon={<Paintbrush size={20} color="#FFF" />}
-                            isKurdish={isKurdish}
-                        />
+                            activeOpacity={0.8}
+                            style={{ borderRadius: 20, overflow: 'hidden', elevation: 6, shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 10 }}
+                        >
+                            <LinearGradient
+                                colors={['#3B82F6', '#2563EB', '#1D4ED8']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 16, paddingHorizontal: 40, borderRadius: 20 }}
+                            >
+                                <Paintbrush size={22} color="#FFF" />
+                                <Text style={[{ color: '#FFF', fontSize: 17, fontWeight: '700' }, isKurdish && styles.kurdishFont]}>
+                                    {t('drawGuess.draw', language)}
+                                </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
                     </ScrollView>
                 </SafeAreaView>
             </GradientBackground>

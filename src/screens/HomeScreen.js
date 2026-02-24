@@ -126,7 +126,7 @@ const SearchBar = ({ isKurdish, colors, isDark, onSearchPress, onFilterPress }) 
     const searchBg = isDark ? '#170B26' : '#FFFFFF';
     const searchBorder = isDark ? '#2D1B4E' : '#E2E8F0';
     const filterColor = isDark ? '#D900FF' : colors.primary;
-    const searchIconColor = isDark ? '#6B5A8A' : colors.text.muted;
+    const searchIconColor = isDark ? '#C0B8D0' : colors.text.muted;
 
     return (
         <View style={styles.searchContainer}>
@@ -259,7 +259,7 @@ const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
     const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
     const playBtnBg = isDark ? 'rgba(217, 0, 255, 0.15)' : 'rgba(14, 165, 233, 0.1)';
     const playIconColor = isDark ? '#D900FF' : colors.primary;
-    const metaColor = isDark ? '#6B5A8A' : colors.text.muted;
+    const metaColor = isDark ? '#C0B8D0' : colors.text.muted;
 
     return (
         <View
@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     welcomeSubtitle: {
-        color: '#6B5A8A', // Muted Purple
+        color: '#C0B8D0', // Light silver-purple
         fontSize: 12,
         fontWeight: '500',
         marginBottom: 2,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
     },
     searchPlaceholder: {
         flex: 1,
-        color: '#6B5A8A',
+        color: '#C0B8D0',
         fontSize: 15,
         fontWeight: '500',
     },
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     continueMetaText: {
-        color: '#6B5A8A',
+        color: '#C0B8D0',
         fontSize: 12,
         fontWeight: '500',
     },

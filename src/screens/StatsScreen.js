@@ -512,12 +512,12 @@ const GameCard = ({ game, onPress, isDark, isKurdish }) => (
                 <Text style={[styles.gameName, { color: isDark ? '#FFF' : '#1E293B' }, isKurdish && styles.kurdishFont]}>
                     {isKurdish ? game.nameKu : game.name}
                 </Text>
-                <Text style={[styles.gameDetails, { color: isDark ? '#94A3B8' : '#64748B' }]}>
+                <Text style={[styles.gameDetails, { color: isDark ? '#CBD5E1' : '#64748B' }]}>
                     {game.players} players • {game.time}
                 </Text>
             </View>
         </View>
-        <ChevronRight size={20} color={isDark ? '#6B5A8A' : '#94A3B8'} />
+        <ChevronRight size={20} color={isDark ? '#C0B8D0' : '#94A3B8'} />
     </TouchableOpacity>
 );
 

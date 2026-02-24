@@ -36,14 +36,14 @@ export const colors = {
     surfaceHighlight: '#2D1B4E', // Highlight for active elements
     text: {
       primary: '#FFFFFF',
-      secondary: '#B8A6D9', // Light purple texture for secondary text
-      muted: '#6B5A8A', // Muted purple gray
+      secondary: '#E8E0F0', // Bright white-lavender — very readable
+      muted: '#C0B8D0', // Light silver-purple — clearly visible
       inverse: '#0F0518',
     },
     border: '#3D2262', // Purple border
     borderGlow: 'rgba(217, 0, 255, 0.5)', // Pink glow
     primary: '#D900FF', // Hot Pink (Buttons, Active Icons)
-    accent: '#7000FF', // Vivid Purple (Secondary accents)
+    accent: '#D0B4FF', // Bright Lavender (clearly visible on dark bg)
   },
 
   // Gradient presets for buttons and cards

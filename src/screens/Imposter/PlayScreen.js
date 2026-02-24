@@ -6,12 +6,14 @@ import {
     TouchableOpacity,
     ScrollView,
     ActivityIndicator,
-    Platform
+    Platform,
+    Dimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Fingerprint, EyeOff, Type, MessageCircle, Hand, CheckCircle2 } from 'lucide-react-native';
+import { Fingerprint, EyeOff, Type, MessageCircle, Hand, CheckCircle2, Shield, ShieldAlert, Eye, Sparkles, Lock } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { MotiView } from 'moti';
+import { LinearGradient } from 'expo-linear-gradient';
 import { GradientBackground, Button, GlassCard, Modal } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { getRandomWord } from '../../constants/imposterWords';
@@ -234,129 +236,327 @@ export default function ImposterPlayScreen({ navigation, route }) {
 
     // --- RENDER --- (Distribution Phase)
     if (phase === 'reveal' || phase === 'viewing') {
+        const showingImposter = isMultiplayer ? amIImposter : isImposter;
+
         return (
             <GradientBackground>
                 <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
                     <ScrollView
                         style={styles.scrollContainer}
                         contentContainerStyle={styles.centerContent}
-                        showsVerticalScrollIndicator={true}
+                        showsVerticalScrollIndicator={false}
                         bounces={true}
                     >
-                        {/* Player Badge */}
-                        <View style={[styles.badge, { backgroundColor: colors.surface }]}>
-                            <Text style={[styles.badgeText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                        {/* Progress Indicator */}
+                        <MotiView
+                            from={{ opacity: 0, translateY: -10 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ type: 'timing', duration: 300 }}
+                            style={styles.progressRow}
+                        >
+                            {players.map((_, i) => (
+                                <View
+                                    key={i}
+                                    style={[
+                                        styles.progressDot,
+                                        i < currentPlayerIdx && styles.progressDotDone,
+                                        i === currentPlayerIdx && styles.progressDotActive,
+                                    ]}
+                                />
+                            ))}
+                        </MotiView>
+
+                        <View style={styles.progressLabel}>
+                            <Text style={[styles.progressLabelText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                 {t('common.player', language)} {currentPlayerIdx + 1}/{players.length}
                             </Text>
                         </View>
 
                         {phase === 'reveal' ? (
+                            /* ═══════════════════════════════ */
+                            /* CARD BACK — TAP TO REVEAL       */
+                            /* ═══════════════════════════════ */
                             <MotiView
-                                from={{ opacity: 0, scale: 0.9 }}
+                                from={{ opacity: 0, scale: 0.85 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ type: 'spring' }}
-                                style={{ alignItems: 'center' }}
+                                transition={{ type: 'spring', damping: 14, stiffness: 120 }}
+                                style={styles.revealSection}
                             >
                                 {isMultiplayer && !isMyTurnToReveal ? (
-                                    // Other players wait
-                                    <View style={{ alignItems: 'center' }}>
-                                        <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                                    <View style={styles.waitingBox}>
+                                        <MotiView
+                                            from={{ rotate: '0deg' }}
+                                            animate={{ rotate: '360deg' }}
+                                            transition={{ type: 'timing', duration: 2000, loop: true }}
+                                        >
+                                            <Lock size={32} color={colors.text.muted} />
+                                        </MotiView>
+                                        <Text style={[styles.waitingLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                             {isKurdish ? `چاوەڕوانی ${currentPlayer}...` : `Waiting for ${currentPlayer}...`}
                                         </Text>
-                                        <ActivityIndicator size="large" color={colors.brand.primary} style={{ marginTop: 24 }} />
+                                        <ActivityIndicator size="small" color={colors.brand.primary} style={{ marginTop: 12 }} />
                                     </View>
                                 ) : (
                                     <>
-                                        <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                                        {/* Card Back Design */}
+                                        <View style={styles.cardBackOuter}>
+                                            {/* Pulsing Glow Ring */}
+                                            <MotiView
+                                                from={{ opacity: 0.3, scale: 1 }}
+                                                animate={{ opacity: 0.8, scale: 1.15 }}
+                                                transition={{ type: 'timing', duration: 1500, loop: true }}
+                                                style={styles.glowRing}
+                                            />
+
+                                            <LinearGradient
+                                                colors={['#1A0B2E', '#2D1B4E', '#1A0B2E']}
+                                                style={styles.cardBack}
+                                            >
+                                                {/* Decorative Pattern */}
+                                                <View style={styles.cardBackPattern}>
+                                                    <View style={styles.patternLine} />
+                                                    <View style={[styles.patternLine, { transform: [{ rotate: '60deg' }] }]} />
+                                                    <View style={[styles.patternLine, { transform: [{ rotate: '120deg' }] }]} />
+                                                </View>
+
+                                                {/* Center Icon */}
+                                                <MotiView
+                                                    from={{ scale: 0.9, opacity: 0.5 }}
+                                                    animate={{ scale: 1.05, opacity: 1 }}
+                                                    transition={{ type: 'timing', duration: 1200, loop: true }}
+                                                    style={styles.cardBackIconWrap}
+                                                >
+                                                    <View style={styles.cardBackIconCircle}>
+                                                        <EyeOff size={36} color="#E8D5FF" />
+                                                    </View>
+                                                </MotiView>
+
+                                                {/* "?" Symbol */}
+                                                <Text style={styles.cardBackQuestion}>?</Text>
+
+                                                {/* Corner Decorations */}
+                                                <View style={[styles.cornerDeco, styles.cornerTL]} />
+                                                <View style={[styles.cornerDeco, styles.cornerTR]} />
+                                                <View style={[styles.cornerDeco, styles.cornerBL]} />
+                                                <View style={[styles.cornerDeco, styles.cornerBR]} />
+                                            </LinearGradient>
+                                        </View>
+
+                                        {/* Player Name */}
+                                        <Text style={[styles.passLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                             {isMultiplayer
                                                 ? (isKurdish ? 'نۆرەی تۆیە!' : "It's your turn!")
                                                 : t('common.passPhoneTo', language)}
                                         </Text>
-                                        <Text style={[styles.playerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                                        <Text style={[styles.revealPlayerName, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                                             {currentPlayer}
                                         </Text>
-                                        <Text style={[styles.instruction, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
-                                            {t('common.keepItSecret', language)}{'\n'}{t('common.tapToReveal', language)}
+                                        <Text style={[styles.revealInstruction, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
+                                            {t('common.keepItSecret', language)}
                                         </Text>
 
-                                        <Button
-                                            title={t('common.reveal', language)}
+                                        {/* Reveal Button */}
+                                        <TouchableOpacity
                                             onPress={handleReveal}
-                                            gradient={[COLORS.accent.danger, COLORS.accent.danger]}
-                                            icon={<Fingerprint size={24} color="#FFF" />}
-                                            style={{ minWidth: 200 }}
-                                            isKurdish={isKurdish}
-                                        />
+                                            activeOpacity={0.8}
+                                            style={styles.revealBtnOuter}
+                                        >
+                                            <MotiView
+                                                from={{ scale: 1 }}
+                                                animate={{ scale: 1.05 }}
+                                                transition={{ type: 'timing', duration: 800, loop: true }}
+                                            >
+                                                <LinearGradient
+                                                    colors={['#EF4444', '#DC2626', '#B91C1C']}
+                                                    start={{ x: 0, y: 0 }}
+                                                    end={{ x: 1, y: 1 }}
+                                                    style={styles.revealBtn}
+                                                >
+                                                    <Fingerprint size={28} color="#FFF" />
+                                                    <Text style={[styles.revealBtnText, isKurdish && styles.kurdishFont]}>
+                                                        {t('common.reveal', language)}
+                                                    </Text>
+                                                </LinearGradient>
+                                            </MotiView>
+                                        </TouchableOpacity>
                                     </>
                                 )}
                             </MotiView>
                         ) : (
+                            /* ═══════════════════════════════ */
+                            /* CARD FRONT — ROLE REVEALED      */
+                            /* ═══════════════════════════════ */
                             <MotiView
-                                from={{ opacity: 0, scale: 0.8, rotateY: '90deg' }}
+                                from={{ opacity: 0, scale: 0.7, rotateY: '90deg' }}
                                 animate={{ opacity: 1, scale: 1, rotateY: '0deg' }}
-                                transition={{ type: 'spring', damping: 14 }}
-                                style={{ alignItems: 'center', width: '100%' }}
+                                transition={{ type: 'spring', damping: 12, stiffness: 100 }}
+                                style={styles.revealSection}
                             >
                                 {isMultiplayer && !isMyTurnToReveal ? (
-                                    // Other players see waiting
-                                    <View style={{ alignItems: 'center' }}>
-                                        <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
+                                    <View style={styles.waitingBox}>
+                                        <Eye size={32} color={colors.text.muted} />
+                                        <Text style={[styles.waitingLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
                                             {isKurdish ? `${currentPlayer} ڕۆڵەکەی خۆی دەبینێت...` : `${currentPlayer} is viewing their role...`}
                                         </Text>
-                                        <ActivityIndicator size="large" color={colors.brand.primary} style={{ marginTop: 24 }} />
+                                        <ActivityIndicator size="small" color={colors.brand.primary} style={{ marginTop: 12 }} />
                                     </View>
                                 ) : (
                                     <>
-                                        <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
-                                            {isKurdish ? 'ڕۆڵی نهێنی تۆ' : 'Your Secret Role'}
-                                        </Text>
+                                        {/* ── Premium Role Card ── */}
+                                        <View style={styles.roleCardOuter}>
+                                            {/* Glow Effect Behind Card */}
+                                            <MotiView
+                                                from={{ opacity: 0.4, scale: 0.95 }}
+                                                animate={{ opacity: 0.8, scale: 1.02 }}
+                                                transition={{ type: 'timing', duration: 1500, loop: true }}
+                                                style={[
+                                                    styles.roleCardGlow,
+                                                    { backgroundColor: showingImposter ? 'rgba(239, 68, 68, 0.25)' : 'rgba(59, 130, 246, 0.25)' }
+                                                ]}
+                                            />
 
-                                        {/* Secret Card — in multiplayer show MY role */}
-                                        <GlassCard intensity={30} style={[
-                                            styles.card,
-                                            (isMultiplayer ? amIImposter : isImposter)
-                                                ? styles.imposterCard
-                                                : styles.crewCard
-                                        ]}>
-                                            {(isMultiplayer ? amIImposter : isImposter) ? (
-                                                <EyeOff size={48} color={COLORS.accent.danger} style={{ marginBottom: 16 }} />
-                                            ) : (
-                                                <Type size={48} color={colors.brand.primary} style={{ marginBottom: 16 }} />
-                                            )}
+                                            <LinearGradient
+                                                colors={showingImposter
+                                                    ? ['#7F1D1D', '#991B1B', '#B91C1C', '#991B1B', '#7F1D1D']
+                                                    : ['#1E3A5F', '#1D4ED8', '#3B82F6', '#1D4ED8', '#1E3A5F']
+                                                }
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 1, y: 1 }}
+                                                style={[
+                                                    styles.roleCard,
+                                                    { borderColor: showingImposter ? '#EF4444' : '#3B82F6' }
+                                                ]}
+                                            >
+                                                {/* Top Label */}
+                                                <View style={[styles.roleTopLabel, {
+                                                    backgroundColor: showingImposter ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.3)'
+                                                }]}>
+                                                    <Text style={[styles.roleTopLabelText, isKurdish && styles.kurdishFont]}>
+                                                        {isKurdish ? 'ڕۆڵی نهێنی تۆ' : 'YOUR SECRET ROLE'}
+                                                    </Text>
+                                                </View>
 
-                                            {(isMultiplayer ? amIImposter : isImposter) ? (
-                                                <>
-                                                    <Text style={[styles.roleTitle, isKurdish && styles.kurdishFont]}>
-                                                        {isKurdish ? 'جاسوس' : 'IMPOSTER'}
-                                                    </Text>
-                                                    <Text style={[styles.roleDesc, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
-                                                        {isKurdish
-                                                            ? 'خۆت بشارەوە. نەهێڵە بزانن کە وشەکەت نازانیت.'
-                                                            : "Blend in. Don't let them know you don't know the word."}
-                                                    </Text>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Text style={[styles.wordLabel, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
-                                                        {isKurdish ? 'وشەکە:' : 'The Word Is:'}
-                                                    </Text>
-                                                    <Text style={[styles.secretWord, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                                                        {gameWord?.word}
-                                                    </Text>
-                                                    <Text style={[styles.wordHint, { color: colors.text.muted }, isKurdish && styles.kurdishFont]}>
-                                                        {gameWord?.hint}
-                                                    </Text>
-                                                </>
-                                            )}
-                                        </GlassCard>
+                                                {/* Icon Section */}
+                                                <MotiView
+                                                    from={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    transition={{ type: 'spring', delay: 200, damping: 10 }}
+                                                    style={[styles.roleIconContainer, {
+                                                        backgroundColor: showingImposter
+                                                            ? 'rgba(239, 68, 68, 0.2)'
+                                                            : 'rgba(59, 130, 246, 0.2)',
+                                                        borderColor: showingImposter
+                                                            ? 'rgba(239, 68, 68, 0.4)'
+                                                            : 'rgba(59, 130, 246, 0.4)',
+                                                    }]}
+                                                >
+                                                    {showingImposter ? (
+                                                        <ShieldAlert size={56} color="#FCA5A5" strokeWidth={1.5} />
+                                                    ) : (
+                                                        <Shield size={56} color="#93C5FD" strokeWidth={1.5} />
+                                                    )}
+                                                </MotiView>
 
-                                        <Button
-                                            title={isKurdish ? 'بیشارەوە و بیدە' : 'Hide & Pass'}
+                                                {/* Role Title */}
+                                                <MotiView
+                                                    from={{ opacity: 0, translateY: 10 }}
+                                                    animate={{ opacity: 1, translateY: 0 }}
+                                                    transition={{ delay: 300 }}
+                                                >
+                                                    <Text style={[styles.roleCardTitle, {
+                                                        color: showingImposter ? '#FCA5A5' : '#93C5FD'
+                                                    }, isKurdish && styles.kurdishFont]}>
+                                                        {showingImposter
+                                                            ? (isKurdish ? '🕵️ جاسوس' : '🕵️ IMPOSTER')
+                                                            : (isKurdish ? '✅ ئەندام' : '✅ CREW')}
+                                                    </Text>
+                                                </MotiView>
+
+                                                {/* Divider */}
+                                                <View style={[styles.roleDivider, {
+                                                    backgroundColor: showingImposter
+                                                        ? 'rgba(252, 165, 165, 0.3)'
+                                                        : 'rgba(147, 197, 253, 0.3)'
+                                                }]} />
+
+                                                {/* Content Section */}
+                                                <MotiView
+                                                    from={{ opacity: 0, translateY: 15 }}
+                                                    animate={{ opacity: 1, translateY: 0 }}
+                                                    transition={{ delay: 450 }}
+                                                    style={{ alignItems: 'center', width: '100%' }}
+                                                >
+                                                    {showingImposter ? (
+                                                        <>
+                                                            <Text style={[styles.roleDescText, isKurdish && styles.kurdishFont]}>
+                                                                {isKurdish
+                                                                    ? 'خۆت بشارەوە. نەهێڵە بزانن\nکە وشەکەت نازانیت.'
+                                                                    : "Blend in. Don't let them know\nyou don't know the word."}
+                                                            </Text>
+                                                            <View style={styles.tipPill}>
+                                                                <Sparkles size={14} color="#FBBF24" />
+                                                                <Text style={[styles.tipPillText, isKurdish && styles.kurdishFont]}>
+                                                                    {isKurdish ? 'ئاگاداری وتارەکانی تریان بە' : 'Listen carefully to others'}
+                                                                </Text>
+                                                            </View>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            {/* Category Pill */}
+                                                            <View style={styles.categoryPill}>
+                                                                <Text style={[styles.categoryPillText, isKurdish && styles.kurdishFont]}>
+                                                                    {gameWord?.category || (isKurdish ? 'گشتی' : 'General')}
+                                                                </Text>
+                                                            </View>
+
+                                                            {/* The Word */}
+                                                            <Text style={[styles.secretWordText, isKurdish && styles.kurdishFont]}>
+                                                                {gameWord?.word}
+                                                            </Text>
+
+                                                            {/* Hint */}
+                                                            {gameWord?.hint && (
+                                                                <View style={styles.hintBox}>
+                                                                    <Text style={[styles.hintLabel, isKurdish && styles.kurdishFont]}>
+                                                                        {isKurdish ? '💡 ئامۆژگاری' : '💡 Hint'}
+                                                                    </Text>
+                                                                    <Text style={[styles.hintText, isKurdish && styles.kurdishFont]}>
+                                                                        {gameWord?.hint}
+                                                                    </Text>
+                                                                </View>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </MotiView>
+
+                                                {/* Corner Marks */}
+                                                <View style={[styles.cornerMark, styles.cornerMarkTL, {
+                                                    borderColor: showingImposter ? '#EF444460' : '#3B82F660'
+                                                }]} />
+                                                <View style={[styles.cornerMark, styles.cornerMarkBR, {
+                                                    borderColor: showingImposter ? '#EF444460' : '#3B82F660'
+                                                }]} />
+                                            </LinearGradient>
+                                        </View>
+
+                                        {/* Hide & Pass Button */}
+                                        <TouchableOpacity
                                             onPress={handleNext}
-                                            gradient={[colors.brand.primary, colors.brand.primary]}
-                                            style={{ minWidth: 200 }}
-                                            isKurdish={isKurdish}
-                                        />
+                                            activeOpacity={0.8}
+                                            style={styles.hidePassBtnOuter}
+                                        >
+                                            <LinearGradient
+                                                colors={['#D900FF', '#9333EA', '#7C3AED']}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 1, y: 1 }}
+                                                style={styles.hidePassBtn}
+                                            >
+                                                <EyeOff size={22} color="#FFF" />
+                                                <Text style={[styles.hidePassBtnText, isKurdish && styles.kurdishFont]}>
+                                                    {isKurdish ? 'بیشارەوە و بیدە' : 'Hide & Pass'}
+                                                </Text>
+                                            </LinearGradient>
+                                        </TouchableOpacity>
                                     </>
                                 )}
                             </MotiView>
@@ -464,51 +664,357 @@ export default function ImposterPlayScreen({ navigation, route }) {
     );
 }
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = SCREEN_WIDTH - 64;
+
 const styles = StyleSheet.create({
     container: { flex: 1 },
     scrollContainer: { flex: 1 },
     centerContent: {
-        flexGrow: 1, alignItems: 'center', padding: SPACING.xl, paddingVertical: 40,
+        flexGrow: 1, alignItems: 'center', padding: SPACING.lg, paddingVertical: 24,
         paddingBottom: 100
     },
 
-    badge: {
-        paddingVertical: 6, paddingHorizontal: 16,
-        borderRadius: 100, marginBottom: 32,
-    },
-    badgeText: { ...FONTS.medium, fontSize: 13 },
-
-    label: {
-        ...FONTS.medium,
-        marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1,
-    },
-    playerName: {
-        ...FONTS.large, fontSize: 40,
-        marginBottom: 24, textAlign: 'center',
-    },
-    instruction: {
-        textAlign: 'center',
-        marginBottom: 48, lineHeight: 24,
-    },
-
-    card: {
-        width: '100%',
-        padding: SPACING.xl,
-        borderRadius: BORDER_RADIUS.xl,
+    /* ── Progress Dots ── */
+    progressRow: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 48,
-        borderWidth: 1,
+        justifyContent: 'center',
+        gap: 8,
+        marginBottom: 8,
     },
-    imposterCard: { borderColor: COLORS.accent.danger },
-    crewCard: { borderColor: COLORS.accent.primary },
+    progressDot: {
+        width: 10, height: 10,
+        borderRadius: 5,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)',
+    },
+    progressDotDone: {
+        backgroundColor: '#10B981',
+        borderColor: '#10B981',
+    },
+    progressDotActive: {
+        backgroundColor: '#D0B4FF',
+        borderColor: '#D0B4FF',
+        width: 24,
+        borderRadius: 5,
+    },
+    progressLabel: { marginBottom: 20 },
+    progressLabelText: { ...FONTS.medium, fontSize: 13, letterSpacing: 1 },
 
-    roleTitle: { color: COLORS.accent.danger, ...FONTS.large, fontSize: 32, marginBottom: 12 },
-    roleDesc: { textAlign: 'center', lineHeight: 24 },
+    /* ── Reveal Section Wrapper ── */
+    revealSection: {
+        alignItems: 'center',
+        width: '100%',
+    },
 
-    wordLabel: { marginBottom: 8 },
-    secretWord: { ...FONTS.large, fontSize: 36, marginBottom: 8 },
-    wordHint: { fontSize: 14 },
+    /* ── Waiting State ── */
+    waitingBox: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 60,
+    },
+    waitingLabel: {
+        ...FONTS.medium,
+        fontSize: 16,
+        marginTop: 16,
+        textAlign: 'center',
+    },
 
+    /* ═══════════════════════════════ */
+    /* CARD BACK (Tap to Reveal)       */
+    /* ═══════════════════════════════ */
+    cardBackOuter: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16,
+    },
+    glowRing: {
+        position: 'absolute',
+        width: CARD_WIDTH + 16,
+        height: CARD_WIDTH * 0.85 + 16,
+        borderRadius: 28,
+        backgroundColor: 'rgba(208, 180, 255, 0.2)',
+    },
+    cardBack: {
+        width: CARD_WIDTH,
+        height: CARD_WIDTH * 0.85,
+        borderRadius: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: 'rgba(208, 180, 255, 0.4)',
+        overflow: 'hidden',
+    },
+    cardBackPattern: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    patternLine: {
+        position: 'absolute',
+        width: 160,
+        height: 1,
+        backgroundColor: 'rgba(208, 180, 255, 0.2)',
+    },
+    cardBackIconWrap: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    cardBackIconCircle: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'rgba(208, 180, 255, 0.15)',
+        borderWidth: 2,
+        borderColor: 'rgba(208, 180, 255, 0.4)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    cardBackQuestion: {
+        fontSize: 36,
+        fontWeight: '900',
+        color: 'rgba(208, 180, 255, 0.25)',
+        position: 'absolute',
+        bottom: 20,
+    },
+
+    /* Corner Decorations */
+    cornerDeco: {
+        position: 'absolute',
+        width: 20,
+        height: 20,
+        borderColor: 'rgba(208, 180, 255, 0.5)',
+    },
+    cornerTL: { top: 14, left: 14, borderLeftWidth: 2, borderTopWidth: 2, borderTopLeftRadius: 6 },
+    cornerTR: { top: 14, right: 14, borderRightWidth: 2, borderTopWidth: 2, borderTopRightRadius: 6 },
+    cornerBL: { bottom: 14, left: 14, borderLeftWidth: 2, borderBottomWidth: 2, borderBottomLeftRadius: 6 },
+    cornerBR: { bottom: 14, right: 14, borderRightWidth: 2, borderBottomWidth: 2, borderBottomRightRadius: 6 },
+
+    /* ── Before-Reveal Text ── */
+    passLabel: {
+        ...FONTS.medium,
+        fontSize: 14,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 6,
+    },
+    revealPlayerName: {
+        ...FONTS.title,
+        fontSize: 36,
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    revealInstruction: {
+        textAlign: 'center',
+        lineHeight: 22,
+        fontSize: 14,
+        marginBottom: 28,
+    },
+
+    /* ── Reveal Button ── */
+    revealBtnOuter: {
+        borderRadius: 20,
+        overflow: 'hidden',
+        elevation: 8,
+        shadowColor: '#EF4444',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+    },
+    revealBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 12,
+        paddingVertical: 16,
+        paddingHorizontal: 40,
+        borderRadius: 20,
+    },
+    revealBtnText: {
+        color: '#FFF',
+        fontSize: 18,
+        fontWeight: '700',
+        letterSpacing: 1,
+    },
+
+    /* ═══════════════════════════════ */
+    /* CARD FRONT (Role Revealed)       */
+    /* ═══════════════════════════════ */
+    roleCardOuter: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 28,
+    },
+    roleCardGlow: {
+        position: 'absolute',
+        width: CARD_WIDTH + 24,
+        height: 420,
+        borderRadius: 30,
+    },
+    roleCard: {
+        width: CARD_WIDTH,
+        minHeight: 340,
+        borderRadius: 24,
+        alignItems: 'center',
+        paddingVertical: 24,
+        paddingHorizontal: 20,
+        borderWidth: 2,
+        overflow: 'hidden',
+    },
+    roleTopLabel: {
+        paddingVertical: 6,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        marginBottom: 20,
+    },
+    roleTopLabelText: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 11,
+        fontWeight: '700',
+        letterSpacing: 2,
+        textTransform: 'uppercase',
+    },
+    roleIconContainer: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        marginBottom: 16,
+    },
+    roleCardTitle: {
+        fontSize: 28,
+        fontWeight: '900',
+        letterSpacing: 2,
+        textAlign: 'center',
+        marginBottom: 12,
+    },
+    roleDivider: {
+        width: '60%',
+        height: 1,
+        marginVertical: 16,
+    },
+    roleDescText: {
+        color: 'rgba(255,255,255,0.8)',
+        fontSize: 15,
+        textAlign: 'center',
+        lineHeight: 24,
+        marginBottom: 16,
+    },
+    tipPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: 'rgba(251, 191, 36, 0.15)',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(251, 191, 36, 0.3)',
+    },
+    tipPillText: {
+        color: '#FBBF24',
+        fontSize: 13,
+        fontWeight: '600',
+    },
+
+    /* ── Crew Word Display ── */
+    categoryPill: {
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        paddingVertical: 4,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        marginBottom: 12,
+    },
+    categoryPillText: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 12,
+        fontWeight: '600',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+    },
+    secretWordText: {
+        color: '#FFFFFF',
+        fontSize: 42,
+        fontWeight: '900',
+        textAlign: 'center',
+        letterSpacing: 1,
+        marginBottom: 12,
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 2 },
+        textShadowRadius: 4,
+    },
+    hintBox: {
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    hintLabel: {
+        color: 'rgba(255,255,255,0.5)',
+        fontSize: 11,
+        fontWeight: '700',
+        letterSpacing: 1,
+        marginBottom: 4,
+    },
+    hintText: {
+        color: 'rgba(255,255,255,0.8)',
+        fontSize: 14,
+        textAlign: 'center',
+    },
+
+    /* ── Corner Marks on Role Card ── */
+    cornerMark: {
+        position: 'absolute',
+        width: 20,
+        height: 20,
+    },
+    cornerMarkTL: {
+        top: 12, left: 12,
+        borderLeftWidth: 2, borderTopWidth: 2,
+        borderTopLeftRadius: 4,
+    },
+    cornerMarkBR: {
+        bottom: 12, right: 12,
+        borderRightWidth: 2, borderBottomWidth: 2,
+        borderBottomRightRadius: 4,
+    },
+
+    /* ── Hide & Pass Button ── */
+    hidePassBtnOuter: {
+        borderRadius: 20,
+        overflow: 'hidden',
+        elevation: 6,
+        shadowColor: '#D900FF',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.35,
+        shadowRadius: 10,
+    },
+    hidePassBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        paddingVertical: 16,
+        paddingHorizontal: 40,
+        borderRadius: 20,
+    },
+    hidePassBtnText: {
+        color: '#FFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+
+    /* ═══════════════════════════════ */
+    /* DISCUSSION PHASE                 */
+    /* ═══════════════════════════════ */
     header: { padding: SPACING.lg, alignItems: 'center' },
     headerTitle: { textTransform: 'uppercase', letterSpacing: 2 },
 
@@ -544,3 +1050,4 @@ const styles = StyleSheet.create({
     voteItemText: { ...FONTS.medium },
     kurdishFont: { fontFamily: 'Rabar' },
 });
+

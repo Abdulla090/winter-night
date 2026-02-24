@@ -10,15 +10,18 @@ import { layout } from '../theme/layout';
  * Works identically on Web and Android with solid gradient backgrounds
  */
 export default function GradientBackground({ children, style }) {
-    const { colors, mode } = useTheme();
+    const { colors, mode, isDark } = useTheme();
 
-    // Force "Winter Night" Professional Dark Palette
-    // Deep Purple -> Darker Purple -> Almost Black
-    const gradientColors = ['#2D1B4E', '#1A0B2E', '#0F0518'];
+    // Theme-aware gradient backgrounds
+    const gradientColors = isDark
+        ? ['#2D1B4E', '#1A0B2E', '#0F0518'] // Deep Purple -> Almost Black (dark mode)
+        : ['#E0F2FE', '#F0F8FF', '#F8FAFC']; // Sky Blue -> Alice Blue (light mode)
+
+    const bgColor = isDark ? '#0F0518' : '#F0F8FF';
 
     return (
-        <View style={[styles.container, { backgroundColor: '#0F0518' }, style]}>
-            <StatusBar style="light" backgroundColor="#0F0518" />
+        <View style={[styles.container, { backgroundColor: bgColor }, style]}>
+            <StatusBar style={isDark ? "light" : "dark"} backgroundColor={bgColor} />
 
             <LinearGradient
                 colors={gradientColors}
