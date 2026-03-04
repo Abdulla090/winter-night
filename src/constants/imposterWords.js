@@ -152,6 +152,32 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Writing', ku: 'نووسین' }, hint: { en: 'Creating text', ku: 'دروستکردنی دەق' } },
         ],
     },
+    sports: {
+        name: { en: 'Sports', ku: 'وەرزش' },
+        icon: 'Trophy',
+        words: [
+            { word: { en: 'Soccer', ku: 'تۆپی پێ' }, hint: { en: 'World popular sport', ku: 'وەرزشی باو لە جیهان' } },
+            { word: { en: 'Basketball', ku: 'باسکەتبۆڵ' }, hint: { en: 'Hoop sport', ku: 'وەرزشی حەلقە' } },
+            { word: { en: 'Tennis', ku: 'تێنس' }, hint: { en: 'Racket sport', ku: 'وەرزشی ڕاکێت' } },
+            { word: { en: 'Boxing', ku: 'بۆکسێن' }, hint: { en: 'Combat sport', ku: 'وەرزشی جەنگی' } },
+            { word: { en: 'Swimming', ku: 'مەلەکردن' }, hint: { en: 'Water sport', ku: 'وەرزشی ئاو' } },
+            { word: { en: 'Golf', ku: 'گۆڵف' }, hint: { en: 'Club and ball', ku: 'تۆپ و دار' } },
+            { word: { en: 'Volleyball', ku: 'بالەتۆپ' }, hint: { en: 'Net sport', ku: 'وەرزشی تۆڕ' } },
+            { word: { en: 'Baseball', ku: 'بەیسبۆڵ' }, hint: { en: 'American pastime', ku: 'وەرزشی ئەمریکی' } },
+            { word: { en: 'Skiing', ku: 'سکی' }, hint: { en: 'Winter sport', ku: 'وەرزشی زستانە' } },
+            { word: { en: 'Wrestling', ku: 'زۆرانبازی' }, hint: { en: 'Grappling sport', ku: 'وەرزشی دەسبەدەست' } },
+            { word: { en: 'Surfing', ku: 'سێرفکردن' }, hint: { en: 'Wave riding', ku: 'سواری شەپۆل' } },
+            { word: { en: 'Cycling', ku: 'پاسکیلسواری' }, hint: { en: 'Bike race', ku: 'پێشبڕکێی پاسکیل' } },
+            { word: { en: 'Hockey', ku: 'هۆکی' }, hint: { en: 'Ice sport', ku: 'وەرزشی سەهۆڵ' } },
+            { word: { en: 'Karate', ku: 'کاراتێ' }, hint: { en: 'Martial art', ku: 'هونەری جەنگی' } },
+            { word: { en: 'Rugby', ku: 'ڕەگبی' }, hint: { en: 'Oval ball sport', ku: 'وەرزشی تۆپی هێلکەیی' } },
+            { word: { en: 'Badminton', ku: 'بادمینتۆن' }, hint: { en: 'Shuttle sport', ku: 'وەرزشی پەڕە' } },
+            { word: { en: 'Archery', ku: 'تیروکەوان' }, hint: { en: 'Arrow shooting', ku: 'فڕێدانی تیر' } },
+            { word: { en: 'Fencing', ku: 'شمشێربازی' }, hint: { en: 'Sword sport', ku: 'وەرزشی شمشێر' } },
+            { word: { en: 'Gymnastics', ku: 'جیمناستیک' }, hint: { en: 'Flexibility sport', ku: 'وەرزشی نەرمی' } },
+            { word: { en: 'Skateboarding', ku: 'سکەیتبۆردینگ' }, hint: { en: 'Board tricks', ku: 'فێلی تەختەیی' } },
+        ],
+    },
 };
 
 // Helper to get text based on language

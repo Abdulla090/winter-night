@@ -51,6 +51,10 @@ export const translations = {
             title: { en: 'Draw & Guess', ku: 'وێنە و مەتەڵ' },
             description: { en: 'Draw and let others guess', ku: 'وێنەکێشە و بهێڵە کەسەکانی‌تر بیزانن' },
         },
+        familyFeud: {
+            title: { en: 'Family Feud', ku: 'مشتومڕی خێزانی' },
+            description: { en: 'Name the most popular answers!', ku: 'باوترین وەڵامەکان بدۆزەرەوە!' },
+        },
     },
 
     // ============================================
@@ -371,6 +375,32 @@ export const translations = {
     partnersInCrime: {
         title: { en: 'Partners in Crime', ku: 'هەوکاڕ لە تاوان' },
         description: { en: 'Match answers with your partner', ku: 'وەڵامەکانت لەگەڵ هاوڕێکەت بگونجێنە' },
+    },
+    // ============================================
+    // FAMILY FEUD
+    // ============================================
+    familyFeud: {
+        title: { en: 'Family Feud', ku: 'مشتومڕی خێزانی' },
+        description: { en: 'Name the most popular answers!', ku: 'باوترین وەڵامەکان بدۆزەرەوە!' },
+        team1: { en: 'Team 1', ku: 'تیمی یەکەم' },
+        team2: { en: 'Team 2', ku: 'تیمی دووەم' },
+        enterTeamName: { en: 'Enter team name', ku: 'ناوی تیم بنووسە' },
+        startGame: { en: 'Start Game', ku: 'یاریەکە دەست پێ بکە' },
+        nextQuestion: { en: 'Next Question', ku: 'پرسیاری دواتر' },
+        awardTo: { en: 'Award To', ku: 'پێدانی خاڵ بە' },
+        giveStrike: { en: 'Give Strike', ku: 'لێدانێک بدە' },
+        winner: { en: 'Winner:', ku: 'براوە:' },
+        points: { en: 'Points', ku: 'خاڵەکان' },
+        faceOff: { en: 'Face-Off', ku: 'فەیس-ئۆف' },
+        passOrPlay: { en: 'Play or Pass?', ku: 'یاری یان پاس؟' },
+        mainRound: { en: 'Main Round', ku: 'قۆناغی سەرەکی' },
+        steal: { en: 'Steal!', ku: 'دزینی خاڵ!' },
+        strike: { en: 'Strike!', ku: 'سترایک!' },
+        fastMoney: { en: 'Fast Money', ku: 'پارەی خێرا' },
+        suddenDeath: { en: 'Sudden Death', ku: 'مردنی لەناکاو' },
+        round: { en: 'Round', ku: 'قۆناغ' },
+        double: { en: 'Double Points ×2', ku: 'خاڵی دووبرابەر ×٢' },
+        triple: { en: 'Triple Points ×3', ku: 'خاڵی سێبرابەر ×٣' },
     },
 };
 

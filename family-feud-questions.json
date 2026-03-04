@@ -1,0 +1,768 @@
+[
+    {
+        "question": "Name a famous Kurdish food served at weddings (Dawat).",
+        "answers": [
+            {
+                "text": "Biryani / Brinj",
+                "points": 45
+            },
+            {
+                "text": "Fasolia & Rice",
+                "points": 25
+            },
+            {
+                "text": "Qaisi / Apricot Stew",
+                "points": 15
+            },
+            {
+                "text": "Meat / Gosht",
+                "points": 10
+            },
+            {
+                "text": "Naan / Bread",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a city or place people go to for a picnic (Seyran) on Friday.",
+        "answers": [
+            {
+                "text": "Shaqlawa",
+                "points": 35
+            },
+            {
+                "text": "Bekhal / Gali Ali Beg",
+                "points": 25
+            },
+            {
+                "text": "Dukan",
+                "points": 20
+            },
+            {
+                "text": "Amedi / Solav",
+                "points": 10
+            },
+            {
+                "text": "Ahmed Awa",
+                "points": 5
+            },
+            {
+                "text": "Chami Rezan",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something you find in every Kurdish guest room (Mewan).",
+        "answers": [
+            {
+                "text": "Tea / Chaya",
+                "points": 40
+            },
+            {
+                "text": "Fruit Bowl / Miwa",
+                "points": 25
+            },
+            {
+                "text": "Sunflower Seeds / Gulabarozha",
+                "points": 15
+            },
+            {
+                "text": "Tissue Box / Kleenex",
+                "points": 10
+            },
+            {
+                "text": "Remote Control",
+                "points": 5
+            },
+            {
+                "text": "Cigarettes",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a legendary Kurdish singer everyone loves.",
+        "answers": [
+            {
+                "text": "Hassan Zirak",
+                "points": 50
+            },
+            {
+                "text": "Zakaria Abdulla",
+                "points": 20
+            },
+            {
+                "text": "Mamlê",
+                "points": 10
+            },
+            {
+                "text": "Hama Jaza",
+                "points": 10
+            },
+            {
+                "text": "Xalil Sediqi",
+                "points": 5
+            },
+            {
+                "text": "Dashni Murad",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a gift you bring when visiting a newborn baby.",
+        "answers": [
+            {
+                "text": "Gold / Zêr",
+                "points": 55
+            },
+            {
+                "text": "Money / Para",
+                "points": 25
+            },
+            {
+                "text": "Clothes / Jli Mndal",
+                "points": 10
+            },
+            {
+                "text": "Sweets / Shirini",
+                "points": 5
+            },
+            {
+                "text": "Diapers",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something Kurdish dads do as soon as they get home.",
+        "answers": [
+            {
+                "text": "Change into comfortable clothes (Dishdasha/Sharwal)",
+                "points": 35
+            },
+            {
+                "text": "Ask for Tea (Cha)",
+                "points": 30
+            },
+            {
+                "text": "Watch News (Rudaw/NRT)",
+                "points": 20
+            },
+            {
+                "text": "Sleep / Nap",
+                "points": 10
+            },
+            {
+                "text": "Complain about traffic",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a fruit that is very popular in Kurdistan.",
+        "answers": [
+            {
+                "text": "Pomegranate / Hanar",
+                "points": 35
+            },
+            {
+                "text": "Watermelon / Shuti",
+                "points": 25
+            },
+            {
+                "text": "Grapes / Tirî",
+                "points": 20
+            },
+            {
+                "text": "Fig / Hanjir",
+                "points": 10
+            },
+            {
+                "text": "Apple / Sêw",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name something you need to make Dolma.",
+        "answers": [
+            {
+                "text": "Vine Leaves / Galamêw",
+                "points": 40
+            },
+            {
+                "text": "Rice / Brinj",
+                "points": 25
+            },
+            {
+                "text": "Meat / Gosht",
+                "points": 15
+            },
+            {
+                "text": "Spices / Baharat",
+                "points": 10
+            },
+            {
+                "text": "Onion / Piaz",
+                "points": 5
+            },
+            {
+                "text": "Lemon Salt",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a Kurdish dialect.",
+        "answers": [
+            {
+                "text": "Sorani",
+                "points": 45
+            },
+            {
+                "text": "Badini / Kurmanji",
+                "points": 35
+            },
+            {
+                "text": "Hawrami",
+                "points": 10
+            },
+            {
+                "text": "Kalhuri",
+                "points": 5
+            },
+            {
+                "text": "Lori",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something people do during Newroz.",
+        "answers": [
+            {
+                "text": "Light a Fire / Agir",
+                "points": 40
+            },
+            {
+                "text": "Dance / Halparke",
+                "points": 30
+            },
+            {
+                "text": "Wear Kurdish Clothes / Jli Kurdi",
+                "points": 20
+            },
+            {
+                "text": "Go for a Picnic / Seyran",
+                "points": 5
+            },
+            {
+                "text": "Visit Akre",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a job that is very common in Kurdistan.",
+        "answers": [
+            {
+                "text": "Taxi Driver",
+                "points": 35
+            },
+            {
+                "text": "Peshmerga / Police",
+                "points": 25
+            },
+            {
+                "text": "Shopkeeper / Dukandar",
+                "points": 20
+            },
+            {
+                "text": "Barber",
+                "points": 10
+            },
+            {
+                "text": "Teacher / Mamosta",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name something a Kurdish mother says to her son.",
+        "answers": [
+            {
+                "text": "\"Get married!\" / Zhin bhena",
+                "points": 40
+            },
+            {
+                "text": "\"Eat more!\" / Bixo",
+                "points": 25
+            },
+            {
+                "text": "\"Don't stay out late!\"",
+                "points": 15
+            },
+            {
+                "text": "\"Study hard!\"",
+                "points": 10
+            },
+            {
+                "text": "\"Where are you?\"",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name a famous football club Kurds support (besides local teams).",
+        "answers": [
+            {
+                "text": "Real Madrid",
+                "points": 45
+            },
+            {
+                "text": "Barcelona",
+                "points": 40
+            },
+            {
+                "text": "Manchester United",
+                "points": 5
+            },
+            {
+                "text": "Bayern Munich",
+                "points": 5
+            },
+            {
+                "text": "Juventus",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something you see on a Kurdish breakfast table.",
+        "answers": [
+            {
+                "text": "Tea / Chaya",
+                "points": 35
+            },
+            {
+                "text": "Cheese / Panir",
+                "points": 25
+            },
+            {
+                "text": "Yogurt / Mast",
+                "points": 15
+            },
+            {
+                "text": "Bread / Naan",
+                "points": 15
+            },
+            {
+                "text": "Cream & Honey / Qaimax u Asel",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name a popular Kurdish name for a boy.",
+        "answers": [
+            {
+                "text": "Muhammed",
+                "points": 30
+            },
+            {
+                "text": "Ahmed",
+                "points": 20
+            },
+            {
+                "text": "Yusuf",
+                "points": 15
+            },
+            {
+                "text": "Ali",
+                "points": 10
+            },
+            {
+                "text": "Omer",
+                "points": 10
+            },
+            {
+                "text": "Alan / Ari",
+                "points": 15
+            }
+        ]
+    },
+    {
+        "question": "Name a popular Kurdish name for a girl.",
+        "answers": [
+            {
+                "text": "Fatima",
+                "points": 25
+            },
+            {
+                "text": "Maryam",
+                "points": 20
+            },
+            {
+                "text": "Sara",
+                "points": 15
+            },
+            {
+                "text": "Lya",
+                "points": 10
+            },
+            {
+                "text": "Banaz / Shanaz",
+                "points": 15
+            },
+            {
+                "text": "Dina",
+                "points": 15
+            }
+        ]
+    },
+    {
+        "question": "Name a city known for its pomegranates.",
+        "answers": [
+            {
+                "text": "Halabja",
+                "points": 80
+            },
+            {
+                "text": "Sharazoor",
+                "points": 10
+            },
+            {
+                "text": "Zakho",
+                "points": 5
+            },
+            {
+                "text": "Ranya",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something a Kurdish driver always does.",
+        "answers": [
+            {
+                "text": "Honk the horn",
+                "points": 40
+            },
+            {
+                "text": "Ignore traffic lights",
+                "points": 25
+            },
+            {
+                "text": "Smoke cigarettes",
+                "points": 15
+            },
+            {
+                "text": "Listen to loud music",
+                "points": 10
+            },
+            {
+                "text": "Talk on the phone",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name something you buy from the Bazaar.",
+        "answers": [
+            {
+                "text": "Clothes / Jil",
+                "points": 30
+            },
+            {
+                "text": "Vegetables / Sawza",
+                "points": 25
+            },
+            {
+                "text": "Gold / Zêr",
+                "points": 20
+            },
+            {
+                "text": "Spices / Baharat",
+                "points": 15
+            },
+            {
+                "text": "Shoes / Pilaw",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name a type of bread you eat in Kurdistan.",
+        "answers": [
+            {
+                "text": "Naani Tiri (Thin bread)",
+                "points": 45
+            },
+            {
+                "text": "Samoon",
+                "points": 30
+            },
+            {
+                "text": "Naani Hewrami",
+                "points": 15
+            },
+            {
+                "text": "Naani Roghni",
+                "points": 5
+            },
+            {
+                "text": "Kulera",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something students hate about school/university.",
+        "answers": [
+            {
+                "text": "Exams / Imtihan",
+                "points": 50
+            },
+            {
+                "text": "Waking up early",
+                "points": 20
+            },
+            {
+                "text": "Homework / Wajibat",
+                "points": 15
+            },
+            {
+                "text": "Strict Teachers",
+                "points": 10
+            },
+            {
+                "text": "No holidays",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a famous Kurdish TV Channel.",
+        "answers": [
+            {
+                "text": "Rudaw",
+                "points": 40
+            },
+            {
+                "text": "NRT",
+                "points": 30
+            },
+            {
+                "text": "Kurdistan 24",
+                "points": 15
+            },
+            {
+                "text": "Kurdsat",
+                "points": 10
+            },
+            {
+                "text": "Ava",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something you find in a Kurdish wedding hall.",
+        "answers": [
+            {
+                "text": "Loud Speakers / DJ",
+                "points": 35
+            },
+            {
+                "text": "Dance floor (Shayi)",
+                "points": 30
+            },
+            {
+                "text": "Photographer / Cameraman",
+                "points": 15
+            },
+            {
+                "text": "Cake",
+                "points": 10
+            },
+            {
+                "text": "Kids running around",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name a gift you give for Newroz.",
+        "answers": [
+            {
+                "text": "Clothes / Jli Kurdi",
+                "points": 50
+            },
+            {
+                "text": "Sweets / Shirini",
+                "points": 20
+            },
+            {
+                "text": "Flowers / Gull",
+                "points": 15
+            },
+            {
+                "text": "Perfume",
+                "points": 10
+            },
+            {
+                "text": "Money",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a famous historical site in Kurdistan.",
+        "answers": [
+            {
+                "text": "Erbil Citadel / Qalat",
+                "points": 55
+            },
+            {
+                "text": "Shanidar Cave",
+                "points": 15
+            },
+            {
+                "text": "Amna Suraka",
+                "points": 10
+            },
+            {
+                "text": "Sherwana Castle",
+                "points": 10
+            },
+            {
+                "text": "Dukan Dam",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name something Kurds drink in the summer to cool down.",
+        "answers": [
+            {
+                "text": "Mastaw / Doogh",
+                "points": 45
+            },
+            {
+                "text": "Water / Awi Sard",
+                "points": 25
+            },
+            {
+                "text": "Pepsi / Cola",
+                "points": 15
+            },
+            {
+                "text": "Fruit Juice",
+                "points": 10
+            },
+            {
+                "text": "Sharbat (Raisin Juice)",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a game Kurdish men play in the teahouse (Chayxana).",
+        "answers": [
+            {
+                "text": "Dominoes",
+                "points": 50
+            },
+            {
+                "text": "Tawla / Backgammon",
+                "points": 30
+            },
+            {
+                "text": "Cards / Concan",
+                "points": 15
+            },
+            {
+                "text": "Dama",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name something you take with you when you leave the house.",
+        "answers": [
+            {
+                "text": "Phone / Mobile",
+                "points": 40
+            },
+            {
+                "text": "Keys / Klel",
+                "points": 25
+            },
+            {
+                "text": "Wallet / Juzdan",
+                "points": 20
+            },
+            {
+                "text": "Money / Para",
+                "points": 10
+            },
+            {
+                "text": "Cigarettes",
+                "points": 5
+            }
+        ]
+    },
+    {
+        "question": "Name a reason why the internet is slow in Kurdistan.",
+        "answers": [
+            {
+                "text": "Weak Signal / Hat nia",
+                "points": 40
+            },
+            {
+                "text": "Did not pay the bill",
+                "points": 25
+            },
+            {
+                "text": "Too many people using it",
+                "points": 15
+            },
+            {
+                "text": "Rain / Bad Weather",
+                "points": 10
+            },
+            {
+                "text": "Government cut it off (Exams)",
+                "points": 10
+            }
+        ]
+    },
+    {
+        "question": "Name something distinctive about Kurdish clothing (Men).",
+        "answers": [
+            {
+                "text": "Pishten / Sash (Waist belt)",
+                "points": 45
+            },
+            {
+                "text": "Jamana / Turban",
+                "points": 25
+            },
+            {
+                "text": "Klash (Shoes)",
+                "points": 15
+            },
+            {
+                "text": "Kawa / Jacket",
+                "points": 10
+            },
+            {
+                "text": "Rank u Chokh",
+                "points": 5
+            }
+        ]
+    }
+]

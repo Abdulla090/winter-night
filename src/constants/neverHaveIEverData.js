@@ -35,7 +35,16 @@ export const STATEMENTS = {
         { en: "Never have I ever stayed up for 24 hours straight", ku: "هەرگیز ٢٤ کاتژمێر بەردەوام بێدار نەماومەتەوە" },
         { en: "Never have I ever ridden a motorcycle", ku: "هەرگیز سواری مۆتۆڕسەیکل نەبوومە" },
         { en: "Never have I ever won a competition", ku: "هەرگیز پێشبڕکێیەکم نەبردووە" },
-        { en: "Never have I ever learned to play an instrument", ku: "هەرگیز فێربوونی لێدانی ئامێری میوزیکم نەکردووە" }
+        { en: "Never have I ever learned to play an instrument", ku: "هەرگیز فێربوونی لێدانی ئامێری میوزیکم نەکردووە" },
+        { en: "Never have I ever been on live television", ku: "هەرگیز لە تەلەفزیۆنی ڕاستەوخۆدا نەبوومە" },
+        { en: "Never have I ever met a celebrity", ku: "هەرگیز بە کەسێکی ناودارەوە نەبوومە" },
+        { en: "Never have I ever broken a bone", ku: "هەرگیز ئێسکم نەشکاوە" },
+        { en: "Never have I ever been camping", ku: "هەرگیز کامپینگم نەکردووە" },
+        { en: "Never have I ever dyed my hair", ku: "هەرگیز قژم نەبۆیەکردووە" },
+        { en: "Never have I ever gone snorkeling", ku: "هەرگیز سنۆرکلینگم نەکردووە" },
+        { en: "Never have I ever eaten an entire pizza by myself", ku: "هەرگیز پیتزایەکی تەواوم بە تەنها نەخواردووە" },
+        { en: "Never have I ever been lost in a foreign country", ku: "هەرگیز لە وڵاتێکی بیانیدا وینەبوومە" },
+        { en: "Never have I ever cooked a meal for more than 10 people", ku: "هەرگیز چێشتم بۆ زیاتر لە ١٠ کەس نەلێناوە" }
     ],
     spicy: [
         { en: "Never have I ever ghosted someone", ku: "هەرگیز کەسێکم وانەکردووە بەبێ وەڵام" },
@@ -103,7 +112,14 @@ export const STATEMENTS = {
         { en: "Never have I ever lost a friendship over something stupid", ku: "هەرگیز هاوڕێییەکم لە دەست نەداوە لەسەر شتێکی گەمژانە" },
         { en: "Never have I ever been kicked out of somewhere", ku: "هەرگیز لە شوێنێکەوە دەرم نەکراوە" },
         { en: "Never have I ever been escorted by police", ku: "هەرگیز پۆلیس بەڕێوەیی نەکردووم" },
-        { en: "Never have I ever had a secret admirer", ku: "هەرگیز کەسی نهێنییم نەبووە کە حەزی لێم بکات" }
+        { en: "Never have I ever had a secret admirer", ku: "هەرگیز کەسی نهێنییم نەبووە کە حەزی لێم بکات" },
+        { en: "Never have I ever been caught lying to my parents", ku: "هەرگیز دەستگیرم نەکراوە کە درۆ لەگەڵ دایک و باوکم بکەم" },
+        { en: "Never have I ever faked being happy", ku: "هەرگیز وانەم نەخستەوە چوون خۆشم" },
+        { en: "Never have I ever betrayed someone's trust", ku: "هەرگیز باوەڕی کەسێکم نەشکاندووە" },
+        { en: "Never have I ever had a panic attack", ku: "هەرگیز ڕووداوی پانیکم نەبووە" },
+        { en: "Never have I ever been jealous of a best friend", ku: "هەرگیز بۆچوونم لە باشترین هاوڕێم نەبووە" },
+        { en: "Never have I ever cried watching a movie", ku: "هەرگیز لە کاتی فیلم بینیندا نەگریاومە" },
+        { en: "Never have I ever told someone else's secret", ku: "هەرگیز نهێنیی کەسێکی ترم نەگۆتووە" }
     ]
 };
 

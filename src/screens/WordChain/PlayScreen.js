@@ -10,8 +10,14 @@ import { useLanguage } from '../../context/LanguageContext';
 import { layout } from '../../theme/layout';
 
 const STARTING_WORDS = {
-    en: ['Fire', 'Water', 'Time', 'Love', 'House', 'Car', 'Phone', 'Music', 'School', 'Food'],
-    ku: ['ئاگر', 'ئاو', 'کات', 'خۆشەویستی', 'خانوو', 'سەیارە', 'مۆبایل', 'مۆسیقا', 'قوتابخانە', 'خواردن']
+    en: ['Fire', 'Water', 'Time', 'Love', 'House', 'Car', 'Phone', 'Music', 'School', 'Food',
+        'Star', 'Moon', 'Snow', 'Rain', 'Book', 'Tree', 'Bird', 'Fish', 'King', 'Game',
+        'Wind', 'Rock', 'Gold', 'Road', 'Ship', 'Ball', 'Lion', 'Bear', 'Ring', 'Door',
+        'Cloud', 'Heart', 'Sun', 'Dream', 'Light'],
+    ku: ['ئاگر', 'ئاو', 'کات', 'خۆشەویستی', 'خانوو', 'سەیارە', 'مۆبایل', 'مۆسیقا', 'قوتابخانە', 'خواردن',
+        'ئەستێرە', 'مانگ', 'بەفر', 'باران', 'کتێب', 'دار', 'باڵندە', 'ماسی', 'پاشا', 'یاری',
+        'با', 'بەرد', 'زێڕ', 'ڕێگا', 'کەشتی', 'تۆپ', 'شێر', 'ورچ', 'ئەنگوستیلە', 'دەرگا',
+        'هەور', 'دڵ', 'خۆر', 'خەو', 'ڕووناکی']
 };
 
 export default function WordChainPlayScreen({ navigation }) {

@@ -227,6 +227,62 @@ export const LOCATIONS = {
             { en: 'Visa Applicant', ku: 'داواکاری ڤیزا' },
         ],
     },
+    bakery: {
+        name: { en: 'Bakery', ku: 'نانەوایی' },
+        icon: 'Cake',
+        roles: [
+            { en: 'Baker', ku: 'نانەوا' },
+            { en: 'Pastry Chef', ku: 'سەرچێشتلێنەری شیرینی' },
+            { en: 'Cashier', ku: 'کاشێر' },
+            { en: 'Customer', ku: 'کڕیار' },
+            { en: 'Delivery Driver', ku: 'شۆفێری دیلیڤەری' },
+            { en: 'Decorator', ku: 'ڕازاندنەوەکار' },
+            { en: 'Manager', ku: 'بەڕێوەبەر' },
+            { en: 'Supplier', ku: 'دابینکەر' },
+        ],
+    },
+    gym: {
+        name: { en: 'Gym', ku: 'هۆڵی وەرزش' },
+        icon: 'Dumbbell',
+        roles: [
+            { en: 'Personal Trainer', ku: 'ڕاهێنەری تایبەت' },
+            { en: 'Bodybuilder', ku: 'جەستەساز' },
+            { en: 'Yoga Instructor', ku: 'مامۆستای یۆگا' },
+            { en: 'Receptionist', ku: 'پێشوازیکەر' },
+            { en: 'Boxer', ku: 'بۆکسەر' },
+            { en: 'Swimmer', ku: 'مەلەوان' },
+            { en: 'Janitor', ku: 'پاککەرەوە' },
+            { en: 'Member', ku: 'ئەندام' },
+        ],
+    },
+    farm: {
+        name: { en: 'Farm', ku: 'کێڵگە' },
+        icon: 'Tractor',
+        roles: [
+            { en: 'Farmer', ku: 'جوتیار' },
+            { en: 'Rancher', ku: 'شوانە' },
+            { en: 'Veterinarian', ku: 'پزیشکی ئاژەڵ' },
+            { en: 'Tractor Driver', ku: 'شۆفێری تراکتۆر' },
+            { en: 'Harvester', ku: 'دروونەکار' },
+            { en: 'Beekeeper', ku: 'هەنگبنەوان' },
+            { en: 'Shepherd', ku: 'شوان' },
+            { en: 'Buyer', ku: 'کڕیار' },
+        ],
+    },
+    museum: {
+        name: { en: 'Museum', ku: 'مۆزەخانە' },
+        icon: 'Building',
+        roles: [
+            { en: 'Curator', ku: 'سەرپەرشتیار' },
+            { en: 'Tour Guide', ku: 'ڕێبەر' },
+            { en: 'Security Guard', ku: 'پاسەوان' },
+            { en: 'Artist', ku: 'هونەرمەند' },
+            { en: 'Visitor', ku: 'سەردانکەر' },
+            { en: 'Photographer', ku: 'وێنەگر' },
+            { en: 'Restorer', ku: 'نۆژەنکەرەوە' },
+            { en: 'Gift Shop Clerk', ku: 'کارمەندی دوکانی دیاری' },
+        ],
+    },
 };
 
 // Helper function to get text based on language

@@ -262,6 +262,19 @@ export default function AllGamesScreen({ navigation }) {
     // Real Games Data
     const GAMES = [
         {
+            id: 'familyfeud',
+            title: isKurdish ? 'پرس ١٠٠' : 'Family Feud',
+            screen: 'FamilyFeudSetup',
+            colors: ['#1F2937', '#111827'],
+            Icon: Users,
+            rating: '4.9',
+            time: '20',
+            players: '2+',
+            isNew: true,
+            category: 'social',
+            image: gameImages.familyfeud
+        },
+        {
             id: 'truthordare',
             title: isKurdish ? 'ڕاستی یان ئازار' : 'Truth or Dare',
             screen: 'TruthOrDareSetup',

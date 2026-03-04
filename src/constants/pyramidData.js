@@ -158,6 +158,86 @@ export const PYRAMID_DATA = [
             { en: 'Boots', ku: 'پوت' },
             { en: 'Sweater', ku: 'بلوز' }
         ]
+    },
+    {
+        id: 'category_9',
+        title: { en: 'Fruits', ku: 'میوەکان' },
+        items: [
+            { en: 'Apple', ku: 'سێو' },
+            { en: 'Banana', ku: 'مۆز' },
+            { en: 'Orange', ku: 'پرتەقاڵ' },
+            { en: 'Strawberry', ku: 'تووفرینگی' },
+            { en: 'Grapes', ku: 'ترێ' },
+            { en: 'Watermelon', ku: 'شووتی' },
+            { en: 'Mango', ku: 'مانگۆ' },
+            { en: 'Pineapple', ku: 'ئەناناس' },
+            { en: 'Cherry', ku: 'گێلاس' },
+            { en: 'Peach', ku: 'قۆخ' },
+            { en: 'Lemon', ku: 'لیمۆ' },
+            { en: 'Pear', ku: 'هرمی' },
+            { en: 'Coconut', ku: 'گوێزی هیند' },
+            { en: 'Kiwi', ku: 'کیوی' }
+        ]
+    },
+    {
+        id: 'category_10',
+        title: { en: 'Jobs/Professions', ku: 'پیشەکان' },
+        items: [
+            { en: 'Doctor', ku: 'پزیشک' },
+            { en: 'Teacher', ku: 'مامۆستا' },
+            { en: 'Engineer', ku: 'ئەندازیار' },
+            { en: 'Farmer', ku: 'جوتیار' },
+            { en: 'Police', ku: 'پۆلیس' },
+            { en: 'Chef', ku: 'چێشتلێنەر' },
+            { en: 'Pilot', ku: 'فڕۆکەوان' },
+            { en: 'Driver', ku: 'شۆفێر' },
+            { en: 'Singer', ku: 'گۆرانیبێژ' },
+            { en: 'Nurse', ku: 'پەرستار' },
+            { en: 'Lawyer', ku: 'پارێزەر' },
+            { en: 'Artist', ku: 'هونەرمەند' },
+            { en: 'Dentist', ku: 'دکتۆری ددان' },
+            { en: 'Baker', ku: 'نانەوا' }
+        ]
+    },
+    {
+        id: 'category_11',
+        title: { en: 'Kitchen Items', ku: 'کەلوپەلی چێشتخانە' },
+        items: [
+            { en: 'Spoon', ku: 'کەوچک' },
+            { en: 'Fork', ku: 'چەتاڵ' },
+            { en: 'Knife', ku: 'چەقۆ' },
+            { en: 'Plate', ku: 'قاپ' },
+            { en: 'Cup', ku: 'پیاڵە' },
+            { en: 'Pan', ku: 'تاوە' },
+            { en: 'Pot', ku: 'مەنجەل' },
+            { en: 'Oven', ku: 'فڕن' },
+            { en: 'Fridge', ku: 'سەلاجە' },
+            { en: 'Blender', ku: 'بلێندەر' },
+            { en: 'Toaster', ku: 'تۆستەر' },
+            { en: 'Microwave', ku: 'مایکرۆوەیڤ' },
+            { en: 'Salt', ku: 'خوێ' },
+            { en: 'Sugar', ku: 'شەکر' }
+        ]
+    },
+    {
+        id: 'category_12',
+        title: { en: 'Body Parts', ku: 'ئەندامەکانی جەستە' },
+        items: [
+            { en: 'Head', ku: 'سەر' },
+            { en: 'Hand', ku: 'دەست' },
+            { en: 'Foot', ku: 'پێ' },
+            { en: 'Eye', ku: 'چاو' },
+            { en: 'Ear', ku: 'گوێ' },
+            { en: 'Nose', ku: 'لووت' },
+            { en: 'Mouth', ku: 'دەم' },
+            { en: 'Heart', ku: 'دڵ' },
+            { en: 'Knee', ku: 'ئەژنۆ' },
+            { en: 'Teeth', ku: 'ددان' },
+            { en: 'Finger', ku: 'پەنجە' },
+            { en: 'Shoulder', ku: 'شان' },
+            { en: 'Neck', ku: 'مل' },
+            { en: 'Back', ku: 'پشت' }
+        ]
     }
 ];
 

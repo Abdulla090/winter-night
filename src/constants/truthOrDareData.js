@@ -85,7 +85,11 @@ export const TRUTHS = {
         { en: "Have you ever stolen money from your parents?", ku: "ئایا هەرگیز پارەت لە دایک و باوکت دزیوە؟" },
         { en: "What is the biggest lie you have told your best friend?", ku: "گەورەترین درۆ کە بە باشترین هاوڕێت وتووە چییە؟" },
         { en: "Have you ever been caught doing something you shouldn't?", ku: "ئایا هەرگیز گیراویت لە کاتی ئەنجامدانی کارێکی نەشیاو؟" },
-        { en: "What is a secret you will never tell your partner?", ku: "نهێنییەک کە هەرگیز بە هاوبەشەکەت ناڵێیت چییە؟" }
+        { en: "What is a secret you will never tell your partner?", ku: "نهێنییەک کە هەرگیز بە هاوبەشەکەت ناڵێیت چییە؟" },
+        { en: "What is the most embarrassing thing your parents caught you doing?", ku: "شەرمەزارکەرترین کار چییە کە دایک و باوکت گیراویتە لە کاتی ئەنجامی داندا؟" },
+        { en: "If you could erase one memory, what would it be?", ku: "ئەگەر دەتوانی بیرکردنەوەیەک بسڕیتەوە، چی دەبوو؟" },
+        { en: "What is the biggest sacrifice you have made for love?", ku: "گەورەترین قوربانی کە بۆ خۆشەویستیت کردووە چییە؟" },
+        { en: "Have you ever pretended to love someone?", ku: "ئایا هەرگیز وات دەخستەوە خۆشت دەوێت کاتێک خۆشت نەدەوێ؟" }
     ]
 };
 
@@ -169,7 +173,11 @@ export const DARES = {
         { en: "Send a break-up text to a random person (prank)", ku: "نامەی جیابوونەوە بۆ کەسێکی هەڕەمەکی بنێرە (گاڵتە)" },
         { en: "Let someone cut a small piece of your hair", ku: "ڕێگە بە کەسێک بدە پارچەیەکی بچووک لە قژت ببڕێت" },
         { en: "Lick the floor (or something equally gross)", ku: "زەوییەکە بڵێسەرەوە (یان شتێکی تر کە پیس بێت)" },
-        { en: "Let the group send a DM to your crush", ku: "ڕێگە بە گروپەکە بدە نامەیەک بۆ ئەو کەسە بنێرن کە حەزت لێیەتی" }
+        { en: "Let the group send a DM to your crush", ku: "ڕێگە بە گروپەکە بدە نامەیەک بۆ ئەو کەسە بنێرن کە حەزت لێیەتی" },
+        { en: "Let the group blindfold you and feed you mystery food", ku: "ڕێگە بە گروپەکە بدە چاوت بداخن و خواردنی ناسراو بتدەنە خۆیت" },
+        { en: "Act like a famous person and let others guess who", ku: "وەک کەسێکی ناودار ڕەفتار بکە و با ئەوانی تر خەمڵێنن" },
+        { en: "Switch phones with someone for 3 rounds", ku: "مۆبایلەکەت بگۆڕە لەگەڵ کەسێک بۆ ٣ قۆناغ" },
+        { en: "Talk only in emojis for the next 3 rounds", ku: "تەنها بە ئیمۆجی قسە بکە بۆ ٣ قۆناغی داهاتوو" }
     ]
 };
 

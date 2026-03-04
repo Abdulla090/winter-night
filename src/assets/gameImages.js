@@ -24,6 +24,7 @@ export const gameImages = {
     speedchallenge: require('../../assets/games/speedchallenge.png'),
     impostordraw: require('../../assets/games/impostordraw.png'),
     wronganswer: require('../../assets/games/wronganswer.png'),
+    familyfeud: require('../../assets/games/familyfeud.png'),
 };
 
 export default gameImages;

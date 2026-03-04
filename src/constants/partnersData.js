@@ -44,6 +44,36 @@ export const partnersData = [
             { q: { en: "Who is their celebrity crush?", ku: "کێیە خۆشەویستە ناودارەکەیان؟" } },
             { q: { en: "What is their biggest fear?", ku: "گەورەترین ترسیان چییە؟" } },
             { q: { en: "Which emoji do they use the most?", ku: "کام ئیمۆجی زۆرترین بەکاردەهێنن؟" } },
+            { q: { en: "What would their last meal be?", ku: "دوایین خواردنیان چی دەبێت؟" } },
+            { q: { en: "What is their dream car?", ku: "ئۆتۆمبێلی خەونەکانیان چییە؟" } },
+            { q: { en: "What would their dream job be?", ku: "کاری خەونەکانیان چییە؟" } },
+            { q: { en: "Are they a cat person or a dog person?", ku: "پشیلە حەز دەکەن یان سەگ؟" } },
+            { q: { en: "What is their go-to karaoke song?", ku: "گۆرانی کاریۆکەی دڵخوازیان چییە؟" } },
+        ]
+    },
+    {
+        id: 'preferences',
+        title: { en: 'Preferences', ku: 'هەڵبژاردنەکان' },
+        questions: [
+            { q: { en: "Do they prefer sweet or savory food?", ku: "خواردنی شیرین حەز دەکەن یان خوێ؟" } },
+            { q: { en: "Beach vacation or mountain vacation?", ku: "پشوو لە دەریا یان لە شاخ؟" } },
+            { q: { en: "Early bird or night owl?", ku: "بەیانیی زوو یان شەوان دوا؟" } },
+            { q: { en: "Books or movies?", ku: "کتێب یان فیلم؟" } },
+            { q: { en: "City life or countryside?", ku: "ژیانی شار یان لادێ؟" } },
+            { q: { en: "Text or call?", ku: "نامە یان پەیوەندی؟" } },
+            { q: { en: "Summer or winter?", ku: "هاوین یان زستان؟" } },
+        ]
+    },
+    {
+        id: 'deep',
+        title: { en: 'Deep Questions', ku: 'پرسیارە قووڵەکان' },
+        questions: [
+            { q: { en: "What is their biggest dream in life?", ku: "گەورەترین خەونیان لە ژیاندا چییە؟" } },
+            { q: { en: "What are they most grateful for?", ku: "بۆ چی زۆرترین سوپاسگوزارن؟" } },
+            { q: { en: "What would they change about their past?", ku: "چی دەگۆڕن لە ڕابردووی خۆیاندا؟" } },
+            { q: { en: "What makes them truly happy?", ku: "چی بە ڕاستی خۆشیان دەکات؟" } },
+            { q: { en: "What is their biggest life lesson?", ku: "گەورەترین وانەی ژیانیان چییە؟" } },
+            { q: { en: "If they could live anywhere, where would it be?", ku: "ئەگەر بتوانن لە هەر شوێنێک بژین، لە کوێ دەبوو؟" } },
         ]
     }
 ];

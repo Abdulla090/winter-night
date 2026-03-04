@@ -51,6 +51,10 @@ export const lyricsData = {
         { lyrics: "Shut up and dance with me", answer: "Walk the Moon - Shut Up and Dance", hint: "Don't dare look back" },
         { lyrics: "We found love in a hopeless place", answer: "Rihanna - We Found Love", hint: "Yellow diamonds" },
         { lyrics: "Despacito", answer: "Luis Fonsi - Despacito", hint: "Slowly in Spanish" },
+        { lyrics: "We don't talk about Bruno", answer: "Encanto - We Don't Talk About Bruno", hint: "Disney hit" },
+        { lyrics: "Stay with me, you don't need to run", answer: "Sam Smith - Stay With Me", hint: "Gospel choir" },
+        { lyrics: "I got the eye of the tiger", answer: "Katy Perry - Roar", hint: "Hear me roar" },
+        { lyrics: "Just gonna stand there and watch me burn", answer: "Eminem ft. Rihanna - Love the Way You Lie", hint: "Burning house" },
     ],
     rock: [
         { lyrics: "Is this the real life? Is this just fantasy?", answer: "Queen - Bohemian Rhapsody", hint: "Mama, just killed a man" },
@@ -68,6 +72,10 @@ export const lyricsData = {
         { lyrics: "Welcome to the jungle", answer: "Guns N' Roses - Welcome to the Jungle", hint: "We got fun and games" },
         { lyrics: "Highway to hell", answer: "AC/DC - Highway to Hell", hint: "No stop signs" },
         { lyrics: "Imagine all the people", answer: "John Lennon - Imagine", hint: "Living life in peace" },
+        { lyrics: "Stairway to heaven", answer: "Led Zeppelin - Stairway to Heaven", hint: "Lady who's sure" },
+        { lyrics: "Nothing else matters", answer: "Metallica - Nothing Else Matters", hint: "Trust I seek" },
+        { lyrics: "Smoke on the water", answer: "Deep Purple - Smoke on the Water", hint: "Iconic riff" },
+        { lyrics: "Back in black", answer: "AC/DC - Back in Black", hint: "Hit the sack" },
     ],
     rap: [
         { lyrics: "His palms are sweaty, knees weak, arms are heavy", answer: "Eminem - Lose Yourself", hint: "Mom's spaghetti" },
@@ -85,6 +93,10 @@ export const lyricsData = {
         { lyrics: "Super bass", answer: "Nicki Minaj - Super Bass", hint: "Boom badoom boom" },
         { lyrics: "California love", answer: "2Pac - California Love", hint: "Knows how to party" },
         { lyrics: "Hey ya!", answer: "OutKast - Hey Ya!", hint: "Shake it like a polaroid" },
+        { lyrics: "Sicko mode", answer: "Travis Scott - SICKO MODE", hint: "Sun is down" },
+        { lyrics: "Stronger", answer: "Kanye West - Stronger", hint: "That that don't kill me" },
+        { lyrics: "Juicy", answer: "Notorious B.I.G. - Juicy", hint: "It was all a dream" },
+        { lyrics: "In my feelings", answer: "Drake - In My Feelings", hint: "Kiki do you love me" },
     ],
     kurdish: [
         { lyrics: "Nazdar nazdar nazdary mn", answer: "Hassan Zirak - Nazdar", hint: "Classic folk song" },
@@ -102,6 +114,10 @@ export const lyricsData = {
         { lyrics: "Zana zana", answer: "Zana - Dance", hint: "Energetic beat" },
         { lyrics: "Lem bbura", answer: "Lem Bbura - Apology", hint: "Forgive me" },
         { lyrics: "Dli mn", answer: "Dli Mn - My Heart", hint: "Romantic" },
+        { lyrics: "Min hezim li te dike", answer: "Min Hezim - I Love You", hint: "Kurdish love" },
+        { lyrics: "Xeribi", answer: "Xeribi - Stranger", hint: "Exile feeling" },
+        { lyrics: "Hawraman", answer: "Hawraman - Mountain Song", hint: "Mountain region" },
+        { lyrics: "Kurdistan", answer: "Kurdistan - Patriotic Song", hint: "Homeland anthem" },
     ],
     classics: [
         { lyrics: "My heart will go on", answer: "Celine Dion - My Heart Will Go On", hint: "Titanic theme" },
@@ -119,6 +135,10 @@ export const lyricsData = {
         { lyrics: "Dancing queen", answer: "ABBA - Dancing Queen", hint: "Young and sweet, only 17" },
         { lyrics: "Stayin' alive", answer: "Bee Gees - Stayin' Alive", hint: "Disco walk" },
         { lyrics: "Careless whisper", answer: "George Michael - Careless Whisper", hint: "Guilty feet" },
+        { lyrics: "Bohemian rhapsody", answer: "Queen - Bohemian Rhapsody", hint: "Is this the real life" },
+        { lyrics: "Livin' la vida loca", answer: "Ricky Martin - Livin' La Vida Loca", hint: "She'll make you crazy" },
+        { lyrics: "I want to break free", answer: "Queen - I Want to Break Free", hint: "Mustache video" },
+        { lyrics: "Under pressure", answer: "Queen & David Bowie - Under Pressure", hint: "Ice ice baby sample" },
     ]
 };
 

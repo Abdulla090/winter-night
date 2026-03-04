@@ -110,7 +110,12 @@ export const QUESTIONS = {
         { a: { en: "Lose all of your money", ku: "هەموو پارەکەت بدۆڕێنیت" }, b: { en: "Lose all of your photos", ku: "هەموو وێنەکانت بدۆڕێنیت" } },
         { a: { en: "Have a reset button for your life", ku: "دووگمەی ڕیسێت بۆ ژیانت هەبێت" }, b: { en: "Have a save button for good moments", ku: "دووگمەی سەیڤ بۆ کاتە باشەکان هەبێت" } },
         { a: { en: "Be trapped in a horror movie", ku: "لە فیلمێکی ترسناکدا گیر بکەویت" }, b: { en: "Be trapped in a romantic comedy", ku: "لە فیلمێکی کۆمیدی ڕۆمانسیدا گیر بکەویت" } },
-        { a: { en: "Have your thoughts always broadcasted", ku: "بیرکردنەوەکانت هەمیشە بڵاو بکرێتەوە" }, b: { en: "Never be listened to", ku: "هەرگیز گوێت لێ نەگریت" } }
+        { a: { en: "Have your thoughts always broadcasted", ku: "بیرکردنەوەکانت هەمیشە بڵاو بکرێتەوە" }, b: { en: "Never be listened to", ku: "هەرگیز گوێت لێ نەگریت" } },
+        { a: { en: "Know the date of your own death", ku: "ڕۆژی مردنی خۆت بزانیت" }, b: { en: "Know the cause of your death", ku: "هۆکاری مردنی خۆت بزانیت" } },
+        { a: { en: "Live in a world without art", ku: "لە جیهانێکدا بژیت بەبێ هونەر" }, b: { en: "Live in a world without science", ku: "لە جیهانێکدا بژیت بەبێ زانست" } },
+        { a: { en: "Have the ability to change the past", ku: "توانای گۆڕینی ڕابردوو هەبێت" }, b: { en: "Have the ability to see the future", ku: "توانای بینینی داهاتوو هەبێت" } },
+        { a: { en: "Always tell the truth", ku: "هەمیشە ڕاستی بڵێیت" }, b: { en: "Always be lied to", ku: "هەمیشە درۆ لێت بکرێت" } },
+        { a: { en: "Be famous and miserable", ku: "ناوبانگ بیت و بەدبەخت بیت" }, b: { en: "Be unknown and happy", ku: "نەناسراو بیت و خۆش بیت" } }
     ]
 };
 

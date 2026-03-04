@@ -147,7 +147,12 @@ export const charadesData = {
         { word: { en: 'Writer', ku: 'نووسەر' } },
         { word: { en: 'Waiter', ku: 'گارسۆن' } },
         { word: { en: 'Baker', ku: 'نانەوا' } },
-        { word: { en: 'Driver', ku: 'شۆفێر' } }
+        { word: { en: 'Driver', ku: 'شۆفێر' } },
+        { word: { en: 'Electrician', ku: 'کارەباکار' } },
+        { word: { en: 'Plumber', ku: 'لوولەکار' } },
+        { word: { en: 'Carpenter', ku: 'نەجار' } },
+        { word: { en: 'Surgeon', ku: 'نەشتەرگەر' } },
+        { word: { en: 'Detective', ku: 'لێکۆڵەر' } }
     ],
     sports: [
         { word: { en: 'Soccer', ku: 'تۆپی پێ' } },
@@ -174,7 +179,12 @@ export const charadesData = {
         { word: { en: 'Skating', ku: 'خلیسکێنە' } },
         { word: { en: 'Wrestling', ku: 'زۆرانبازی' } },
         { word: { en: 'Gymnastics', ku: 'جیمناستیک' } },
-        { word: { en: 'Running', ku: 'ڕاکردن' } }
+        { word: { en: 'Running', ku: 'ڕاکردن' } },
+        { word: { en: 'Fencing', ku: 'شمشێربازی' } },
+        { word: { en: 'Archery', ku: 'تیروکەوان' } },
+        { word: { en: 'Diving', ku: 'چوونە ژێر ئاو' } },
+        { word: { en: 'Table Tennis', ku: 'تێنسی مێز' } },
+        { word: { en: 'Rock Climbing', ku: 'هەڵکشانی بەرد' } }
     ],
 };
 

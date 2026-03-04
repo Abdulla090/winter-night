@@ -244,6 +244,55 @@ export const forbiddenWords = {
                 ku: ['فەلسەفە', 'مانا', 'ژیان', 'بوون', 'مەبەست']
             }
         },
+        {
+            target: { en: 'Diplomacy', ku: 'دیپلۆماسی' },
+            forbidden: {
+                en: ['Negotiate', 'Peace', 'Country', 'Ambassador', 'Treaty'],
+                ku: ['دانوستان', 'ئاشتی', 'وڵات', 'باڵیۆز', 'ڕێککەوتن']
+            }
+        },
+        {
+            target: { en: 'Cryptocurrency', ku: 'کریپتۆکارەنسی' },
+            forbidden: {
+                en: ['Bitcoin', 'Digital', 'Money', 'Blockchain', 'Mining'],
+                ku: ['بیتکۆین', 'دیجیتاڵ', 'پارە', 'بلۆکچەین', 'کوەڵان']
+            }
+        },
+        {
+            target: { en: 'Artificial Intelligence', ku: 'ژیرایی دەستکرد' },
+            forbidden: {
+                en: ['Robot', 'Computer', 'Machine', 'Learning', 'Smart'],
+                ku: ['ڕۆبۆت', 'کۆمپیوتەر', 'ئامێر', 'فێربوون', 'زیرەک']
+            }
+        },
+        {
+            target: { en: 'Democracy', ku: 'دیموکراسی' },
+            forbidden: {
+                en: ['Vote', 'Election', 'People', 'Government', 'Freedom'],
+                ku: ['دەنگدان', 'هەڵبژاردن', 'خەڵک', 'حکومەت', 'ئازادی']
+            }
+        },
+        {
+            target: { en: 'Photosynthesis', ku: 'فۆتۆسینتەسیز' },
+            forbidden: {
+                en: ['Plant', 'Sun', 'Light', 'Oxygen', 'Green'],
+                ku: ['ڕووەک', 'خۆر', 'ڕووناکی', 'ئۆکسجین', 'سەوز']
+            }
+        },
+        {
+            target: { en: 'Renewable Energy', ku: 'وزەی نوێبووەوە' },
+            forbidden: {
+                en: ['Solar', 'Wind', 'Power', 'Clean', 'Green'],
+                ku: ['خۆر', 'با', 'هێز', 'پاک', 'سەوز']
+            }
+        },
+        {
+            target: { en: 'Social Media', ku: 'تۆڕی کۆمەڵایەتی' },
+            forbidden: {
+                en: ['Facebook', 'Instagram', 'Post', 'Like', 'Share'],
+                ku: ['فەیسبووک', 'ئینستاگرام', 'بڵاوکردنەوە', 'لایک', 'هاوبەشکردن']
+            }
+        },
     ],
 };
 

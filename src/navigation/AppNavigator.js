@@ -102,6 +102,12 @@ import WrongAnswerVote from '../screens/WrongAnswer/VoteScreen';
 import WrongAnswerResult from '../screens/WrongAnswer/ResultScreen';
 import WrongAnswerFinal from '../screens/WrongAnswer/FinalScreen';
 
+// Family Feud (COMPLETE)
+import FamilyFeudSetup from '../screens/FamilyFeud/SetupScreen';
+import FamilyFeudPlay from '../screens/FamilyFeud/PlayScreen';
+import FamilyFeudResult from '../screens/FamilyFeud/ResultScreen';
+import FamilyFeudFastMoney from '../screens/FamilyFeud/FastMoneyScreen';
+
 // Auth Screens
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignUpScreen from '../screens/Auth/SignUpScreen';
@@ -267,6 +273,12 @@ function AppStack({ isFirstLaunch }) {
             <Stack.Screen name="WrongAnswerVote" component={WrongAnswerVote} />
             <Stack.Screen name="WrongAnswerResult" component={WrongAnswerResult} options={modalOptions} />
             <Stack.Screen name="WrongAnswerFinal" component={WrongAnswerFinal} options={modalOptions} />
+
+            {/* Family Feud - COMPLETE */}
+            <Stack.Screen name="FamilyFeudSetup" component={FamilyFeudSetup} />
+            <Stack.Screen name="FamilyFeudPlay" component={FamilyFeudPlay} />
+            <Stack.Screen name="FamilyFeudResult" component={FamilyFeudResult} options={modalOptions} />
+            <Stack.Screen name="FamilyFeudFastMoney" component={FamilyFeudFastMoney} />
 
             {/* Auth Screens */}
             <Stack.Screen name="Login" component={LoginScreen} options={modalOptions} />

@@ -35,27 +35,32 @@ const WORD_CATEGORIES = {
     animals: {
         name: { en: 'Animals', ku: 'ئاژەڵەکان' },
         icon: '🐾',
-        words: ['Cat', 'Dog', 'Lion', 'Elephant', 'Fish', 'Bird', 'Snake', 'Monkey', 'Bear', 'Rabbit', 'Horse', 'Cow', 'Pig', 'Sheep', 'Chicken', 'Duck', 'Tiger', 'Giraffe', 'Zebra', 'Kangaroo'],
+        words: ['Cat', 'Dog', 'Lion', 'Elephant', 'Fish', 'Bird', 'Snake', 'Monkey', 'Bear', 'Rabbit', 'Horse', 'Cow', 'Pig', 'Sheep', 'Chicken', 'Duck', 'Tiger', 'Giraffe', 'Zebra', 'Kangaroo', 'Penguin', 'Dolphin', 'Whale', 'Parrot', 'Owl', 'Crocodile', 'Turtle', 'Octopus', 'Shark', 'Camel', 'Panda', 'Gorilla', 'Wolf', 'Fox', 'Deer', 'Peacock', 'Eagle', 'Scorpion', 'Bat', 'Frog'],
     },
     objects: {
         name: { en: 'Objects', ku: 'شتەکان' },
         icon: '📦',
-        words: ['Chair', 'Table', 'Phone', 'Computer', 'Book', 'Cup', 'Bottle', 'Key', 'Watch', 'Lamp', 'Umbrella', 'Bag', 'Shoe', 'Hat', 'Glasses', 'Camera', 'Guitar', 'Ball', 'Clock', 'Mirror'],
+        words: ['Chair', 'Table', 'Phone', 'Computer', 'Book', 'Cup', 'Bottle', 'Key', 'Watch', 'Lamp', 'Umbrella', 'Bag', 'Shoe', 'Hat', 'Glasses', 'Camera', 'Guitar', 'Ball', 'Clock', 'Mirror', 'Scissors', 'Pencil', 'Candle', 'Pillow', 'Ring', 'Map', 'Brush', 'Ladder', 'Bell', 'Wallet', 'Telescope', 'Compass', 'Drum', 'Crown', 'Sword', 'Shield', 'Anchor', 'Rope', 'Puzzle', 'Trophy'],
     },
     food: {
         name: { en: 'Food', ku: 'خواردن' },
         icon: '🍕',
-        words: ['Pizza', 'Burger', 'Apple', 'Banana', 'Cake', 'Ice Cream', 'Bread', 'Egg', 'Cheese', 'Tomato', 'Carrot', 'Orange', 'Grape', 'Cookie', 'Sandwich', 'Hotdog', 'Donut', 'Watermelon', 'Strawberry', 'Popcorn'],
+        words: ['Pizza', 'Burger', 'Apple', 'Banana', 'Cake', 'Ice Cream', 'Bread', 'Egg', 'Cheese', 'Tomato', 'Carrot', 'Orange', 'Grape', 'Cookie', 'Sandwich', 'Hotdog', 'Donut', 'Watermelon', 'Strawberry', 'Popcorn', 'Sushi', 'Pasta', 'Rice', 'Waffle', 'Pancake', 'Mango', 'Pineapple', 'Chocolate', 'Lemon', 'Cherry', 'Corn', 'Mushroom', 'Chicken Leg', 'Taco', 'Pretzel', 'Cupcake', 'Kebab', 'Soup', 'Salad', 'Candy'],
     },
     vehicles: {
         name: { en: 'Vehicles', ku: 'ئۆتۆمبێلەکان' },
         icon: '🚗',
-        words: ['Car', 'Bicycle', 'Bus', 'Train', 'Airplane', 'Boat', 'Motorcycle', 'Truck', 'Helicopter', 'Ship', 'Rocket', 'Scooter', 'Taxi', 'Ambulance', 'Fire Truck', 'Submarine', 'Tractor', 'Van', 'Jet', 'Balloon'],
+        words: ['Car', 'Bicycle', 'Bus', 'Train', 'Airplane', 'Boat', 'Motorcycle', 'Truck', 'Helicopter', 'Ship', 'Rocket', 'Scooter', 'Taxi', 'Ambulance', 'Fire Truck', 'Submarine', 'Tractor', 'Van', 'Jet', 'Balloon', 'Skateboard', 'Canoe', 'Sailboat', 'Spaceship', 'Police Car', 'Snowmobile', 'Golf Cart', 'Surfboard', 'Segway', 'Wheelchair'],
     },
     places: {
         name: { en: 'Places', ku: 'شوێنەکان' },
         icon: '🏠',
-        words: ['House', 'School', 'Hospital', 'Beach', 'Mountain', 'Park', 'Church', 'Castle', 'Bridge', 'Tower', 'Library', 'Museum', 'Restaurant', 'Hotel', 'Airport', 'Stadium', 'Zoo', 'Mall', 'Farm', 'Island'],
+        words: ['House', 'School', 'Hospital', 'Beach', 'Mountain', 'Park', 'Church', 'Castle', 'Bridge', 'Tower', 'Library', 'Museum', 'Restaurant', 'Hotel', 'Airport', 'Stadium', 'Zoo', 'Mall', 'Farm', 'Island', 'Desert', 'Forest', 'Cave', 'Lighthouse', 'Waterfall', 'Volcano', 'City', 'Village', 'Temple', 'Cinema', 'Bakery', 'Gym', 'Garden', 'Market', 'Theater'],
+    },
+    nature: {
+        name: { en: 'Nature', ku: 'سروشت' },
+        icon: '🌿',
+        words: ['Sun', 'Moon', 'Star', 'Cloud', 'Rain', 'Snow', 'Lightning', 'Rainbow', 'Mountain', 'River', 'Ocean', 'Flower', 'Tree', 'Leaf', 'Rock', 'Volcano', 'Tornado', 'Earthquake', 'Glacier', 'Waterfall', 'Cave', 'Desert', 'Forest', 'Sunset', 'Aurora'],
     },
 };
 

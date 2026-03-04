@@ -353,6 +353,7 @@ export default function HomeScreen({ navigation }) {
 
     const GAMES = [
         // Featured
+        { id: 'familyfeud', title: isKurdish ? 'پرس ١٠٠' : 'Family Feud', description: isKurdish ? 'وەڵامی باوترین وەڵامەکان بدۆزەرەوە' : 'Find the most popular answers', players: '2+', icon: 'users', gradient: ['#1F2937', '#111827'], screen: 'FamilyFeudSetup', featured: true, image: gameImages.familyfeud },
         { id: 'truthordare', title: t('games.truthOrDare.title', language), description: t('games.truthOrDare.description', language), players: '2-20', icon: 'flame', gradient: ['#F97316', '#C2410C'], screen: 'TruthOrDareSetup', featured: true, image: gameImages.truthordare },
         { id: 'pyramid', title: t('pyramid.title', language), description: t('pyramid.description', language), players: '4+', icon: 'triangle', gradient: ['#F59E0B', '#B45309'], screen: 'PyramidSetup', featured: true, image: gameImages.pyramid },
 
@@ -369,8 +370,8 @@ export default function HomeScreen({ navigation }) {
     ];
 
     const featuredGames = GAMES.filter(g => g.featured).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
-    const continueGames = GAMES.slice(2, 5).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
-    const categoryGames = GAMES.slice(5).map(g => ({
+    const continueGames = GAMES.slice(3, 6).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
+    const categoryGames = GAMES.slice(6).map(g => ({
         id: g.id, name: g.title, Icon: getIcon(g.icon), color: g.color || colors.primary, screen: g.screen, image: g.image
     }));
 
