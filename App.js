@@ -59,6 +59,8 @@ export default function App() {
     'Rabar-Medium': NotoNaskhArabic_500Medium,
     'Rabar-SemiBold': NotoNaskhArabic_600SemiBold,
     'Rabar-Bold': NotoNaskhArabic_700Bold,
+    // NRT Kurdish font
+    'NRT': require('./assets/fonts/NRT-Reg.ttf'),
   });
 
   // Timeout fallback: don't stay on splash forever (especially on web)
