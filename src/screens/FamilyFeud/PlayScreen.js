@@ -14,7 +14,7 @@ import { MotiView } from 'moti';
 import {
     PHASE, TOTAL_ROUNDS, createInitialState, getCurrentQuestion,
     getMultiplier, getMultiplierLabel, awardBankToTeam, advanceRound,
-    getFaceOffPlayers, getCurrentPlayer, nextMember, findAnswerOnBoard
+    getFaceOffPlayers, getCurrentPlayer, nextMember, findAnswerOnBoard, checkAnswerWithGemini
 } from './gameEngine';
 
 const haptic = (type = 'impact') => {
@@ -125,6 +125,8 @@ export default function PlayScreen({ navigation, route }) {
     const [input, setInput] = useState('');
     const [cdCount, setCdCount] = useState(5);
     const [cdActive, setCdActive] = useState(true);
+    const [isChecking, setIsChecking] = useState(false);
+    const [stealInput, setStealInput] = useState('');
     const xRef = useRef(null);
     const cdRef = useRef(null);
 
@@ -161,10 +163,12 @@ export default function PlayScreen({ navigation, route }) {
         xRef.current = setTimeout(() => setShowX(false), 1100);
     };
 
-    // ─── SUBMIT ANSWER (auto-match) ───
-    const submitAnswer = () => {
-        if (!input.trim()) return;
-        const idx = findAnswerOnBoard(q, input);
+    // ─── SUBMIT ANSWER (Gemini AI + local match) ───
+    const submitAnswer = async () => {
+        if (!input.trim() || isChecking) return;
+        setIsChecking(true);
+        const idx = await checkAnswerWithGemini(q, input);
+        setIsChecking(false);
 
         if (idx >= 0 && !gs.revealedAnswers[idx]) {
             // Correct, unrevealed answer
@@ -225,7 +229,10 @@ export default function PlayScreen({ navigation, route }) {
         setGs(s => {
             const rv = [...s.revealedAnswers]; rv[ai] = true;
             const bk = s.bank + q.answers[ai].points;
-            if (rv.every(Boolean)) { const u = awardBankToTeam({ ...s, revealedAnswers: rv, bank: bk }, s.controllingTeam); return { ...u, bank: 0, phase: PHASE.ROUND_END }; }
+            if (rv.every(Boolean)) {
+                const u = awardBankToTeam({ ...s, revealedAnswers: rv, bank: bk }, s.controllingTeam);
+                return { ...u, bank: 0, phase: PHASE.ROUND_END, revealedAnswers: rv };
+            }
             return { ...s, revealedAnswers: rv, bank: bk, ...nextMember(s) };
         });
     };
@@ -240,13 +247,34 @@ export default function PlayScreen({ navigation, route }) {
     };
 
     // ─── STEAL ───
-    const doSteal = (ok) => {
-        haptic(ok ? 'success' : 'error');
-        setGs(s => {
-            const st2 = s.controllingTeam === 1 ? 2 : 1;
-            const a = awardBankToTeam(s, ok ? st2 : s.controllingTeam);
-            return { ...a, bank: 0, phase: PHASE.ROUND_END };
-        });
+    const doSteal = async () => {
+        if (!stealInput.trim() || isChecking) return;
+        setIsChecking(true);
+        const idx = await checkAnswerWithGemini(q, stealInput);
+        setIsChecking(false);
+        setStealInput('');
+
+        const isCorrect = idx >= 0 && !gs.revealedAnswers[idx];
+
+        if (isCorrect) {
+            haptic('success');
+            setOkText(q.answers[idx].text); setShowOk(true);
+            setTimeout(() => setShowOk(false), 1200);
+        } else {
+            haptic('error');
+            flashX();
+        }
+
+        // Short delay so player sees the result
+        setTimeout(() => {
+            setGs(s => {
+                const stealTeam = s.controllingTeam === 1 ? 2 : 1;
+                const winner = isCorrect ? stealTeam : s.controllingTeam;
+                const a = awardBankToTeam(s, winner);
+                const allRevealed = new Array(s.revealedAnswers.length).fill(true);
+                return { ...a, bank: 0, phase: PHASE.ROUND_END, revealedAnswers: allRevealed };
+            });
+        }, isCorrect ? 1200 : 1100);
     };
 
     // ─── NEXT ROUND ───
@@ -399,34 +427,55 @@ export default function PlayScreen({ navigation, route }) {
                                     </ScrollView>
                                 )}
 
-                                {/* STEAL */}
+                                {/* STEAL — other team gets ONE chance to answer */}
                                 {gs.phase === PHASE.STEAL && (
                                     <ScrollView contentContainerStyle={st.pad} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                                         <Text style={[st.phTitle, { color: '#F59E0B' }, isKurdish && st.kf]}>🏴‍☠️ {isKurdish ? 'دزینی خاڵ!' : 'STEAL!'}</Text>
-                                        <Text style={[st.hint, isKurdish && st.kf]}>{stealName} — {gs.bank} {isKurdish ? 'خاڵ' : 'pts'}</Text>
+                                        <Text style={[st.hint, isKurdish && st.kf]}>
+                                            {stealName} — {isKurdish ? 'یەک هەل بۆ دزینی' : 'one chance to steal'} {gs.bank} {isKurdish ? 'خاڵ' : 'pts'}
+                                        </Text>
                                         <Strikes count={3} />
+                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>{q.question}</Text>
                                         <View style={st.board}>
                                             {q.answers.map((a, i) => <AnswerTile key={i} answer={a} index={i} isRevealed={gs.revealedAnswers[i]} isKurdish={isKurdish} />)}
                                         </View>
-                                        <View style={st.stealRow}>
-                                            <TouchableOpacity style={[st.stealBtn, { backgroundColor: '#059669' }]} onPress={() => doSteal(true)}>
-                                                <Text style={[st.stealTxt, isKurdish && st.kf]}>✅ {isKurdish ? 'لەسەر بۆردەکەیە' : 'On Board!'}</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={[st.stealBtn, { backgroundColor: '#DC2626' }]} onPress={() => doSteal(false)}>
-                                                <Text style={[st.stealTxt, isKurdish && st.kf]}>❌ {isKurdish ? 'نییە' : 'Not on Board!'}</Text>
+                                        <View style={st.inputRow}>
+                                            <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }, isChecking && { opacity: 0.5 }]}
+                                                editable={!isChecking}
+                                                placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your steal answer...'}
+                                                placeholderTextColor="#6B7280" value={stealInput}
+                                                onChangeText={setStealInput}
+                                                onSubmitEditing={doSteal} autoFocus />
+                                            <TouchableOpacity style={[st.sendBtn, { backgroundColor: '#F59E0B' }]} onPress={doSteal} disabled={isChecking}>
+                                                <Send size={20} color="#FFF" />
                                             </TouchableOpacity>
                                         </View>
+                                        <Text style={[st.stealNote, isKurdish && st.kf]}>
+                                            {isKurdish ? 'ئەگەر ڕاستە خاڵەکان بۆ ئێوەن، ئەگەر هەڵەیە خاڵەکان بۆ ' + ctrlName + ' دەمێنن' : 'Correct = steal points. Wrong = ' + ctrlName + ' keeps them.'}
+                                        </Text>
                                     </ScrollView>
                                 )}
 
-                                {/* ROUND END */}
+                                {/* ROUND END — show ALL answers as proof */}
                                 {gs.phase === PHASE.ROUND_END && (
-                                    <View style={st.center}>
+                                    <ScrollView contentContainerStyle={st.pad} showsVerticalScrollIndicator={false}>
                                         <MotiView from={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 12 }}>
                                             <Text style={[st.endTitle, isKurdish && st.kf]}>
                                                 {isKurdish ? `قۆناغی ${gs.round} تەواو بوو!` : `Round ${gs.round} Complete!`}
                                             </Text>
                                         </MotiView>
+
+                                        {/* Show the question */}
+                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>{q.question}</Text>
+
+                                        {/* Reveal ALL answers on the board as proof */}
+                                        <Text style={[st.revealLabel, isKurdish && st.kf]}>
+                                            {isKurdish ? '📋 هەموو وەڵامەکان:' : '📋 All Answers:'}
+                                        </Text>
+                                        <View style={st.board}>
+                                            {q.answers.map((a, i) => <AnswerTile key={i} answer={a} index={i} isRevealed={true} isKurdish={isKurdish} />)}
+                                        </View>
+
                                         <View style={st.endScores}>
                                             <View style={st.endTeam}>
                                                 <View style={[st.endDot, { backgroundColor: '#DC2626' }]} />
@@ -440,14 +489,14 @@ export default function PlayScreen({ navigation, route }) {
                                                 <Text style={st.endVal}>{gs.team2.score}</Text>
                                             </View>
                                         </View>
-                                        <TouchableOpacity onPress={doNext} activeOpacity={0.8}>
+                                        <TouchableOpacity onPress={doNext} activeOpacity={0.8} style={{ marginTop: 8 }}>
                                             <LinearGradient colors={['#F59E0B', '#D97706']} style={st.nextBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
                                                 <Text style={[st.nextTxt, isKurdish && st.kf]}>
                                                     {gs.round >= TOTAL_ROUNDS ? (isKurdish ? 'بینینی ئەنجام' : 'See Results') : (isKurdish ? `قۆناغی ${gs.round + 1} →` : `Round ${gs.round + 1} →`)}
                                                 </Text>
                                             </LinearGradient>
                                         </TouchableOpacity>
-                                    </View>
+                                    </ScrollView>
                                 )}
 
                                 {/* SUDDEN DEATH */}
@@ -549,12 +598,11 @@ const st = StyleSheet.create({
     popLabel: { color: '#FFF', fontSize: 17, fontWeight: '900', marginTop: 4 },
 
     // Steal
-    stealRow: { flexDirection: 'row', marginTop: 8 },
-    stealBtn: { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: 'center', marginHorizontal: 5, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)' },
-    stealTxt: { color: '#FFF', fontSize: 14, fontWeight: '800' },
+    stealNote: { color: '#6B7280', fontSize: 11, fontWeight: '600', textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
 
     // Round End
-    endTitle: { color: '#F59E0B', fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 20, letterSpacing: 0.5, textShadowColor: 'rgba(245,158,11,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 10 },
+    revealLabel: { color: '#94A3B8', fontSize: 14, fontWeight: '800', textAlign: 'center', marginBottom: 8, letterSpacing: 0.5 },
+    endTitle: { color: '#F59E0B', fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 12, letterSpacing: 0.5, textShadowColor: 'rgba(245,158,11,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 10 },
     endScores: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 28, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, paddingVertical: 20, paddingHorizontal: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
     endTeam: { alignItems: 'center', flex: 1 },
     endDot: { width: 10, height: 10, borderRadius: 5, marginBottom: 4 },
