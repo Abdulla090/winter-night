@@ -717,16 +717,16 @@ const styles = StyleSheet.create({
 
     // Section Headers
     sectionHeader: {
-        flexDirection: 'row-reverse', // RTL alignment visual trick
+        flexDirection: 'row-reverse',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 16,
-        paddingHorizontal: 4,
     },
     sectionTitle: {
         color: '#FFF',
+        flex: 1,
         fontSize: 20,
-        fontWeight: '800', // Extra bold like image
+        fontWeight: '800',
         letterSpacing: 0.5,
     },
     seeAllText: {
