@@ -885,9 +885,9 @@ const styles = StyleSheet.create({
 
     // Categories
     categoriesGrid: {
-        flexDirection: 'row-reverse',
+        flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 16,
+        gap: 12,
     },
     categoryCard: {
         flex: 1,
