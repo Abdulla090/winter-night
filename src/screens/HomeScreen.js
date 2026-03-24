@@ -525,8 +525,8 @@ export default function HomeScreen({ navigation }) {
                     </AnimatedPressable>
 
                     {/* 3. Featured Section */}
-                    <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                    <View style={[styles.sectionHeader, isKurdish && { flexDirection: 'row-reverse' }]}>
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary, textAlign: isKurdish ? 'right' : 'left' }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'یارییە باوەکان' : 'Featured Games'}
                         </Text>
                         <TouchableOpacity onPress={() => navigation.navigate('AllGames')}>
@@ -564,7 +564,7 @@ export default function HomeScreen({ navigation }) {
 
                     {/* 4. Continue Playing */}
                     <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary, textAlign: isKurdish ? 'right' : 'left', width: '100%' }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'بەردەوامی یاریەکان' : 'Continue Playing'}
                         </Text>
                     </View>
@@ -584,7 +584,7 @@ export default function HomeScreen({ navigation }) {
 
                     {/* 5. Categories */}
                     <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.sectionTitle, { color: colors.text.primary, textAlign: isKurdish ? 'right' : 'left', width: '100%' }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'هاوپۆلەکان' : 'Categories'}
                         </Text>
                     </View>
@@ -717,14 +717,14 @@ const styles = StyleSheet.create({
 
     // Section Headers
     sectionHeader: {
-        flexDirection: 'row-reverse',
+        flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 16,
     },
     sectionTitle: {
         color: '#FFF',
-        flex: 1,
+        flexShrink: 1,
         fontSize: 20,
         fontWeight: '800',
         letterSpacing: 0.5,
