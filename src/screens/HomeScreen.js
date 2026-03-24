@@ -6,6 +6,7 @@ import {
     View,
     Text,
     TouchableOpacity,
+    Pressable,
     StatusBar,
     FlatList,
     useWindowDimensions,
@@ -15,6 +16,13 @@ import {
     TextInput
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+} from 'react-native-reanimated';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 import * as Haptics from 'expo-haptics';
 import {
@@ -159,6 +167,10 @@ const SearchBar = ({ isKurdish, colors, isDark, onSearchPress, onFilterPress }) 
 };
 
 const ImmersiveFeaturedCard = ({ item, onPress, isKurdish, colors, isDark }) => {
+    // ✨ Spring press
+    const scale = useSharedValue(1);
+    const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
     // ☀️ Theme-appropriate overlay - lighter gradient for light mode
     const cardGradient = isDark
         ? (item.featured
@@ -169,19 +181,22 @@ const ImmersiveFeaturedCard = ({ item, onPress, isKurdish, colors, isDark }) => 
     // ☀️ Theme-aware button gradient
     const playBtnGradient = isDark
         ? ['#D900FF', '#B026FF']
-        : ['#0EA5E9', '#0284C7']; // Sky Blue gradient
+        : ['#0EA5E9', '#0284C7'];
 
     const badgeBg = isDark ? '#D900FF' : colors.primary;
-
-    // Light mode text should be dark for contrast on light overlay
     const titleColor = isDark ? '#FFF' : colors.text.primary;
     const subtitleColor = isDark ? 'rgba(255,255,255,0.7)' : colors.text.secondary;
 
     return (
-        <View
-            style={[styles.featuredCardContainer, !isDark && { borderColor: '#E2E8F0' }]}
+        <Animated.View
+            style={[styles.featuredCardContainer, !isDark && { borderColor: '#E2E8F0' }, animStyle]}
         >
-            <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={{ flex: 1 }}>
+            <AnimatedPressable
+                onPressIn={() => { scale.value = withSpring(0.97, { damping: 15, stiffness: 400 }); }}
+                onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
+                onPress={onPress}
+                style={{ flex: 1 }}
+            >
 
                 {/* Game Image Background */}
                 {item.image ? (
@@ -251,12 +266,16 @@ const ImmersiveFeaturedCard = ({ item, onPress, isKurdish, colors, isDark }) => 
                 <View style={styles.bgIconContainer}>
                     {item.Icon && <item.Icon size={200} color="rgba(255,255,255,0.06)" />}
                 </View>
-            </TouchableOpacity>
-        </View>
+            </AnimatedPressable>
+        </Animated.View>
     );
 };
 
 const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
+    // ✨ Spring press
+    const scale = useSharedValue(1);
+    const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
     // ☀️ Theme-aware colors
     const cardBg = isDark ? '#1A0B2E' : '#FFFFFF';
     const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
@@ -265,10 +284,15 @@ const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
     const metaColor = isDark ? '#C0B8D0' : colors.text.muted;
 
     return (
-        <View
-            style={[styles.continueCardContainer, { backgroundColor: cardBg, borderColor: cardBorder }]}
+        <Animated.View
+            style={[styles.continueCardContainer, { backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}
         >
-            <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={styles.continueRow}>
+            <AnimatedPressable
+                onPressIn={() => { scale.value = withSpring(0.97, { damping: 16, stiffness: 400 }); }}
+                onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
+                onPress={onPress}
+                style={styles.continueRow}
+            >
 
                 {/* 1. Play Button on Left */}
                 <View style={[styles.miniPlayBtn, { backgroundColor: playBtnBg }]}>
@@ -304,20 +328,26 @@ const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
                     </LinearGradient>
                 )}
 
-            </TouchableOpacity>
-        </View>
+            </AnimatedPressable>
+        </Animated.View>
     );
 };
 
 const CategoryCard = ({ item, onPress, isKurdish, colors, isDark }) => {
+    // ✨ Spring press
+    const scale = useSharedValue(1);
+    const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
     // ☀️ Theme-aware category card
     const cardBg = isDark ? '#1E1231' : '#FFFFFF';
     const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
 
     return (
-        <TouchableOpacity
-            style={[styles.categoryCard, { backgroundColor: cardBg, borderColor: cardBorder }]}
+        <AnimatedPressable
+            onPressIn={() => { scale.value = withSpring(0.94, { damping: 15, stiffness: 430 }); }}
+            onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
             onPress={onPress}
+            style={[styles.categoryCard, { backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}
         >
             <View style={[styles.categoryIconCircle, { backgroundColor: item.color + '20' }]}>
                 {item.Icon && <item.Icon size={26} color={item.color} />}
@@ -325,7 +355,7 @@ const CategoryCard = ({ item, onPress, isKurdish, colors, isDark }) => {
             <Text style={[styles.categoryText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                 {item.name}
             </Text>
-        </TouchableOpacity>
+        </AnimatedPressable>
     );
 };
 
@@ -458,9 +488,11 @@ export default function HomeScreen({ navigation }) {
                     />
 
                     {/* PLAY ONLINE - Prominent Card */}
-                    <TouchableOpacity
+                    <AnimatedPressable
                         style={[styles.playOnlineCard, !isDark && { borderColor: colors.border, borderWidth: 1 }]}
-                        activeOpacity={0.9}
+                        onPressIn={() => {
+                            // Slight scale for the whole banner
+                        }}
                         onPress={() => navigation.navigate('CreateRoom')}
                     >
                         <LinearGradient
@@ -490,7 +522,7 @@ export default function HomeScreen({ navigation }) {
                                 <Sparkles size={24} color="#FFF" />
                             </View>
                         </View>
-                    </TouchableOpacity>
+                    </AnimatedPressable>
 
                     {/* 3. Featured Section */}
                     <View style={styles.sectionHeader}>

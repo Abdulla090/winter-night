@@ -1,13 +1,21 @@
 import React, { useMemo } from 'react';
-import { Text, View, StyleSheet, Platform, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, Platform, Pressable, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+} from 'react-native-reanimated';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
- * ✨ BeastButton - Premium button with native-feel haptics
- * Uses TouchableOpacity for reliable cross-platform behavior
+ * ✨ BeastButton — Premium gradient button with Reanimated spring press.
+ * Runs on the UI thread — zero JS bridge cost. Replaces activeOpacity fade
+ * with a real physics-spring scale that feels alive and native.
  */
 export const BeastButton = ({
     onPress,
@@ -20,6 +28,12 @@ export const BeastButton = ({
     loading = false,
 }) => {
     const { colors, isRTL } = useTheme();
+
+    // Spring shared value
+    const scale = useSharedValue(1);
+    const animStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
 
     const gradientColors = useMemo(() => {
         if (disabled) return ['#4A4A4A', '#3A3A3A'];
@@ -37,10 +51,8 @@ export const BeastButton = ({
         if (variant === 'primary' || variant === 'ghost') return colors.text.primary;
         return '#FFFFFF';
     };
-
     const textColor = getTextColor();
 
-    // Size configurations
     const sizeConfig = {
         sm: { height: 40, paddingHorizontal: 18, fontSize: 14 },
         md: { height: 48, paddingHorizontal: 24, fontSize: 16 },
@@ -57,10 +69,17 @@ export const BeastButton = ({
     };
 
     return (
-        <TouchableOpacity
+        <AnimatedPressable
+            onPressIn={() => {
+                if (!disabled && !loading) {
+                    scale.value = withSpring(0.95, { damping: 14, stiffness: 420 });
+                }
+            }}
+            onPressOut={() => {
+                scale.value = withSpring(1, { damping: 12, stiffness: 320 });
+            }}
             onPress={handlePress}
             disabled={disabled || loading}
-            activeOpacity={disabled ? 1 : 0.85}
             style={[
                 {
                     borderRadius: layout.radius.xl,
@@ -69,7 +88,8 @@ export const BeastButton = ({
                     ...layout.shadows.gold,
                     shadowColor: variant === 'primary' && !disabled ? colors.brand.gold : 'transparent',
                 },
-                style
+                animStyle,
+                style,
             ]}
         >
             <LinearGradient
@@ -101,7 +121,7 @@ export const BeastButton = ({
                     </>
                 )}
             </LinearGradient>
-        </TouchableOpacity>
+        </AnimatedPressable>
     );
 };
 

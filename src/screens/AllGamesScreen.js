@@ -4,6 +4,7 @@ import {
     View,
     Text,
     TouchableOpacity,
+    Pressable,
     StatusBar,
     FlatList,
     useWindowDimensions,
@@ -12,6 +13,14 @@ import {
     Image
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+} from 'react-native-reanimated';
+import { AnimatedListItem } from '../components/AnimatedListItem';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 import * as Haptics from 'expo-haptics';
 import {
     User,
@@ -180,6 +189,12 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
     const badgeBg = isDark ? '#D900FF' : colors.primary;
     const metaColor = isDark ? '#8A8A8A' : colors.text.muted;
 
+    // ✨ Reanimated spring press — UI thread, zero bridge cost
+    const scale = useSharedValue(1);
+    const animStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
+
     const handlePress = useCallback(async () => {
         if (Platform.OS !== 'web') {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -200,10 +215,11 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
     }, [navigation, item]);
 
     return (
-        <TouchableOpacity
+        <AnimatedPressable
+            onPressIn={() => { scale.value = withSpring(0.96, { damping: 15, stiffness: 450 }); }}
+            onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
             onPress={handlePress}
-            activeOpacity={0.85}
-            style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }]}
+            style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}
         >
             {/* Top Visual Box */}
             <View style={[styles.cardVisual, isTwoColumns ? {} : { height: 260 }]}>
@@ -260,7 +276,7 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
                     </View>
                 </View>
             </View>
-        </TouchableOpacity>
+        </AnimatedPressable>
     );
 });
 
@@ -646,16 +662,18 @@ export default function AllGamesScreen({ route, navigation }) {
                             />
                         </View>
                     }
-                    renderItem={({ item }) => (
-                        <GameGridCard
-                            item={item}
-                            isKurdish={isKurdish}
-                            navigation={navigation}
-                            cardWidth={cardWidth}
-                            colors={colors}
-                            isDark={isDark}
-                            isTwoColumns={isTwoColumns}
-                        />
+                    renderItem={({ item, index }) => (
+                        <AnimatedListItem index={index} maxDelay={350}>
+                            <GameGridCard
+                                item={item}
+                                isKurdish={isKurdish}
+                                navigation={navigation}
+                                cardWidth={cardWidth}
+                                colors={colors}
+                                isDark={isDark}
+                                isTwoColumns={isTwoColumns}
+                            />
+                        </AnimatedListItem>
                     )}
                     showsVerticalScrollIndicator={false}
                     // ✨ Native Performance Optimizations

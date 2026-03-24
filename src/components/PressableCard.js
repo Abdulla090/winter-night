@@ -1,32 +1,57 @@
 import React from 'react';
-import { StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet, Platform } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
 import { layout } from '../theme/layout';
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+} from 'react-native-reanimated';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
- * ✨ PressableCard - Premium animated card with native-feel interactions
- * Uses TouchableOpacity for reliable cross-platform press feedback
+ * ✨ PressableCard — Spring press feedback running on the UI thread.
+ * Replaces TouchableOpacity.activeOpacity with a real physics spring scale,
+ * giving a premium, native-feel interaction at zero JS-thread cost.
+ *
+ * Props:
+ *  - scaleDown: how much to shrink on press (default 0.96)
+ *  - variant: 'default' | 'subtle' | 'elevated'
  */
 export const PressableCard = ({
     children,
     onPress,
     style,
-    variant = 'default', // 'default' | 'subtle' | 'elevated'
+    variant = 'default',
     disabled = false,
     haptic = true,
+    scaleDown = 0.96,
 }) => {
     const { colors, isDark } = useTheme();
+    const scale = useSharedValue(1);
+
+    const animStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
+
+    const handlePressIn = () => {
+        scale.value = withSpring(scaleDown, { damping: 15, stiffness: 450 });
+    };
+
+    const handlePressOut = () => {
+        scale.value = withSpring(1, { damping: 12, stiffness: 300 });
+    };
 
     const handlePress = () => {
         if (disabled) return;
         if (haptic && Platform.OS !== 'web') {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
         }
         onPress?.();
     };
 
-    // Card background based on variant and theme
     const getBackgroundColor = () => {
         if (isDark) {
             switch (variant) {
@@ -53,10 +78,11 @@ export const PressableCard = ({
     };
 
     return (
-        <TouchableOpacity
+        <AnimatedPressable
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
             onPress={handlePress}
             disabled={disabled}
-            activeOpacity={disabled ? 1 : 0.85}
             style={[
                 styles.container,
                 {
@@ -65,11 +91,12 @@ export const PressableCard = ({
                     opacity: disabled ? 0.6 : 1,
                 },
                 variant === 'elevated' && styles.elevated,
+                animStyle,
                 style,
             ]}
         >
             {children}
-        </TouchableOpacity>
+        </AnimatedPressable>
     );
 };
 
