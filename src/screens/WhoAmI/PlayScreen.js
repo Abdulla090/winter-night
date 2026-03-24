@@ -412,5 +412,5 @@ const styles = StyleSheet.create({
 
     row: { flexDirection: 'row', width: '100%' },
     resultText: { ...FONTS.title, marginTop: 16 },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

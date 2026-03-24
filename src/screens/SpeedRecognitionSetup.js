@@ -1,3 +1,4 @@
+import { BackButton } from '../components/BackButton';
 import React, { useState } from 'react';
 import {
     View,
@@ -244,7 +245,7 @@ const InfoCard = ({ icon: Icon, title, value, color, isDark }) => (
 // --- MAIN SCREEN ---
 export default function SpeedRecognitionSetup({ navigation }) {
     const { language, isKurdish } = useLanguage();
-    const { colors, isDark } = useTheme();
+    const { colors, isDark, isRTL } = useTheme();
 
     // Game settings state
     const [gameMode, setGameMode] = useState('numbers'); // flags, numbers, mixed
@@ -268,13 +269,8 @@ export default function SpeedRecognitionSetup({ navigation }) {
                 contentContainerStyle={{ paddingBottom: 40 }}
             >
                 {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        style={[styles.backBtn, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <ChevronLeft size={24} color={colors.text.primary} />
-                    </TouchableOpacity>
+                <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <BackButton onPress={() => navigation.goBack()} />
 
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <Text style={[
@@ -708,7 +704,5 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
 
-    kurdishFont: {
-        fontFamily: 'System',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

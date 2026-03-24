@@ -251,5 +251,5 @@ const styles = StyleSheet.create({
     },
 
     footer: { padding: SPACING.lg },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

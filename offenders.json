@@ -1,0 +1,13 @@
+[
+  "src\\screens\\AllGamesScreen.js",
+  "src\\screens\\Dama\\PlayScreen.js",
+  "src\\screens\\EmojiDecoder\\PlayScreen.js",
+  "src\\screens\\FamilyFeud\\SetupScreen.js",
+  "src\\screens\\ImpostorDraw\\SetupScreen.js",
+  "src\\screens\\SeBerd\\PlayScreen.js",
+  "src\\screens\\SettingsScreen.js",
+  "src\\screens\\SheshBesh\\PlayScreen.js",
+  "src\\screens\\SpeedRecognitionSetup.js",
+  "src\\screens\\WouldYouRather\\SetupScreen.js",
+  "src\\screens\\WrongAnswer\\SetupScreen.js"
+]

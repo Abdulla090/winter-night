@@ -224,14 +224,14 @@ export const familyFeudQuestions = {
             ]
         },
         {
-            question: "Name something you'd find in a classroom.",
+            question: "Name something a teacher confiscates from students.",
             answers: [
-                { text: "Desks / Chairs", points: 32 },
-                { text: "Whiteboard / Chalkboard", points: 24 },
-                { text: "Books / Textbooks", points: 18 },
-                { text: "Teacher", points: 12 },
-                { text: "Clock", points: 8 },
-                { text: "Computer", points: 6 },
+                { text: "Phone", points: 42 },
+                { text: "Gum", points: 20 },
+                { text: "Toys", points: 14 },
+                { text: "Notes / Letters", points: 10 },
+                { text: "Candy", points: 8 },
+                { text: "Earbuds", points: 6 },
             ]
         },
         {
@@ -246,14 +246,14 @@ export const familyFeudQuestions = {
             ]
         },
         {
-            question: "Name something people are afraid of.",
+            question: "Name something people check before leaving the house.",
             answers: [
-                { text: "Spiders / Bugs", points: 28 },
-                { text: "Heights", points: 24 },
-                { text: "Snakes", points: 18 },
-                { text: "Public Speaking", points: 14 },
-                { text: "Darkness", points: 10 },
-                { text: "Death", points: 6 },
+                { text: "Phone / Wallet / Keys", points: 38 },
+                { text: "Appearance / Mirror", points: 22 },
+                { text: "Locked the door", points: 16 },
+                { text: "Weather", points: 12 },
+                { text: "Stove / Oven off", points: 8 },
+                { text: "Time", points: 4 },
             ]
         },
         {
@@ -276,6 +276,118 @@ export const familyFeudQuestions = {
                 { text: "Peas", points: 12 },
                 { text: "Cauliflower", points: 8 },
                 { text: "Asparagus", points: 4 },
+            ]
+        },
+        {
+            question: "Name something you'd find in a hotel room.",
+            answers: [
+                { text: "Bed", points: 35 },
+                { text: "TV", points: 22 },
+                { text: "Towels", points: 16 },
+                { text: "Bible / Book", points: 10 },
+                { text: "Mini fridge", points: 8 },
+                { text: "Safe", points: 5 },
+                { text: "Iron", points: 4 },
+            ]
+        },
+        {
+            question: "Name a reason someone might call in sick.",
+            answers: [
+                { text: "Cold / Flu", points: 38 },
+                { text: "Headache", points: 20 },
+                { text: "Stomach ache", points: 16 },
+                { text: "Faking it", points: 12 },
+                { text: "Doctor appointment", points: 8 },
+                { text: "Back pain", points: 6 },
+            ]
+        },
+        {
+            question: "Name something that makes a lot of noise.",
+            answers: [
+                { text: "Construction", points: 28 },
+                { text: "Baby crying", points: 22 },
+                { text: "Dog barking", points: 18 },
+                { text: "Car horn", points: 14 },
+                { text: "Thunder", points: 10 },
+                { text: "Alarm clock", points: 8 },
+            ]
+        },
+        {
+            question: "Name an excuse for speeding.",
+            answers: [
+                { text: "Late for work", points: 38 },
+                { text: "Didn't see the sign", points: 22 },
+                { text: "Emergency", points: 18 },
+                { text: "Going with traffic", points: 12 },
+                { text: "Bathroom urgency", points: 6 },
+                { text: "New to area", points: 4 },
+            ]
+        },
+        {
+            question: "Name something at a gas station.",
+            answers: [
+                { text: "Gas pumps", points: 35 },
+                { text: "Snacks / Candy", points: 22 },
+                { text: "Drinks / Coffee", points: 16 },
+                { text: "Restroom", points: 12 },
+                { text: "Car wash", points: 8 },
+                { text: "Lottery tickets", points: 7 },
+            ]
+        },
+        {
+            question: "Name a common new year's resolution.",
+            answers: [
+                { text: "Lose weight", points: 42 },
+                { text: "Save money", points: 22 },
+                { text: "Eat healthier", points: 14 },
+                { text: "Quit smoking", points: 10 },
+                { text: "Read more", points: 7 },
+                { text: "Travel more", points: 5 },
+            ]
+        },
+        {
+            question: "Name something you take to the gym.",
+            answers: [
+                { text: "Water bottle", points: 32 },
+                { text: "Towel", points: 24 },
+                { text: "Phone / Headphones", points: 18 },
+                { text: "Gym bag", points: 12 },
+                { text: "Change of clothes", points: 8 },
+                { text: "Protein shake", points: 6 },
+            ]
+        },
+        {
+            question: "Name a popular board game.",
+            answers: [
+                { text: "Monopoly", points: 38 },
+                { text: "Chess", points: 22 },
+                { text: "Scrabble", points: 14 },
+                { text: "Clue", points: 10 },
+                { text: "Risk", points: 8 },
+                { text: "Checkers", points: 8 },
+            ]
+        },
+        {
+            question: "Name something in a kitchen drawer.",
+            answers: [
+                { text: "Knives / Utensils", points: 35 },
+                { text: "Can opener", points: 20 },
+                { text: "Batteries", points: 14 },
+                { text: "Tape / Scissors", points: 12 },
+                { text: "Menus / Flyers", points: 10 },
+                { text: "Rubber bands", points: 5 },
+                { text: "Pens", points: 4 },
+            ]
+        },
+        {
+            question: "Name something you'd find in a school backpack.",
+            answers: [
+                { text: "Books / Notebooks", points: 35 },
+                { text: "Pencils / Pens", points: 22 },
+                { text: "Lunch / Snacks", points: 16 },
+                { text: "Phone", points: 12 },
+                { text: "Water bottle", points: 8 },
+                { text: "Calculator", points: 7 },
             ]
         },
         // ──── FAST MONEY QUESTIONS (5 per set, 4 sets) ────
@@ -524,6 +636,61 @@ export const familyFeudQuestions = {
                 { text: "هێلکە", points: 10, alts: ["هێلکە"] },
                 { text: "ڤانێلا", points: 6, alts: ["ڤانێلا", "ڤانێلیا"] },
                 { text: "شیر", points: 4, alts: ["شیر", "ئاو"] }
+            ]
+        },
+        {
+            question: "شتێک بڵێ کە لە هاتنەوەی لە سەفەرەوە دەیکڕیت بۆ خزم.",
+            answers: [
+                { text: "شیرینی / شوکولاتە", points: 35, alts: ["شیرینی", "شوکولاتە", "حەلوا"] },
+                { text: "جل و بەرگ", points: 22, alts: ["جل", "بەرگ", "پۆشاک"] },
+                { text: "بۆن / عەتر", points: 18, alts: ["بۆن", "عەتر", "پەرفیوم"] },
+                { text: "خشڵ و زێڕ", points: 12, alts: ["خشڵ", "زێڕ", "گەردانە"] },
+                { text: "چا و قاوە", points: 8, alts: ["چا", "قاوە", "چای تورکی"] },
+                { text: "ئامێری ئەلیکترۆنی", points: 5, alts: ["مۆبایل", "ئامێر"] }
+            ]
+        },
+        {
+            question: "ئامێرێک بڵێ کە خوێندکاران بەکاری دەهێنن لە قوتابخانە.",
+            answers: [
+                { text: "قەڵەم / پێنووس", points: 35, alts: ["قەڵەم", "پێنووس", "خۆدکار"] },
+                { text: "دەفتەر", points: 24, alts: ["دەفتەر", "نووسینگە", "کتێب"] },
+                { text: "ماسە / مەسکی", points: 16, alts: ["ماسە", "مەسکی", "لارق"] },
+                { text: "ژمارەک", points: 10, alts: ["ژمارەک", "حاسیبە", "کالکولەیتەر"] },
+                { text: "تابلێت / لاپتۆپ", points: 8, alts: ["تابلێت", "لاپتۆپ", "کۆمپیوتەر"] },
+                { text: "جانتا", points: 7, alts: ["جانتا", "شانتا", "کیسە"] }
+            ]
+        },
+        {
+            question: "شتێک بڵێ کە لە بازاڕدا زۆر دەفرۆشرێت.",
+            answers: [
+                { text: "جل و بەرگ", points: 30, alts: ["جل", "بەرگ", "پۆشاک", "قات"] },
+                { text: "میوە و سەوزە", points: 24, alts: ["میوە", "سەوزە", "تەرەوە"] },
+                { text: "گۆشت", points: 18, alts: ["گۆشت", "مریشک", "ماسی"] },
+                { text: "مۆبایل", points: 12, alts: ["مۆبایل", "گۆشی", "تەلەفۆن"] },
+                { text: "خواردنی ئامادە", points: 8, alts: ["فاست فوود", "ساندویچ"] },
+                { text: "زێڕ و خشڵ", points: 8, alts: ["زێڕ", "خشڵ", "ملوانکە"] }
+            ]
+        },
+        {
+            question: "شتێک بڵێ کە خەڵکی لە مانگی ڕەمەزاندا زیاتر دەیکەن.",
+            answers: [
+                { text: "نوێژکردن", points: 35, alts: ["نوێژکردن", "نوێژ", "عیبادەت"] },
+                { text: "قورئان خوێندنەوە", points: 24, alts: ["قورئان", "خوێندنەوەی قورئان"] },
+                { text: "خواردن ئامادەکردن", points: 16, alts: ["خواردن", "چێشت", "ئیفتار"] },
+                { text: "سەردانی خزم", points: 12, alts: ["سەردانی خزم", "سەردان"] },
+                { text: "صەدەقە و خێرخوازی", points: 8, alts: ["صەدەقە", "خێرخوازی", "زەکات"] },
+                { text: "سەیرکردنی تەلەفزیۆن", points: 5, alts: ["تەلەفزیۆن", "سیریال"] }
+            ]
+        },
+        {
+            question: "شتێک بڵێ کە بۆ عەروسی پێویستە.",
+            answers: [
+                { text: "هۆڵی ئاهەنگ", points: 32, alts: ["هۆڵ", "هۆڵی عەروسی", "دەفتەر"] },
+                { text: "جلی بووک و زاوا", points: 24, alts: ["جلی بووک", "قات", "کراس"] },
+                { text: "گوڵ و ڕازاندنەوە", points: 16, alts: ["گوڵ", "ڕازاندنەوە", "دیکۆر"] },
+                { text: "خواردن و کێک", points: 14, alts: ["خواردن", "کێک", "نان"] },
+                { text: "مۆسیقا و گۆرانی", points: 8, alts: ["مۆسیقا", "گۆرانی", "دی جەی"] },
+                { text: "ئاوێنە و مەیکئەپ", points: 6, alts: ["ئاوێنە", "مەیکئەپ"] }
             ]
         }
     ],

@@ -637,5 +637,5 @@ const styles = StyleSheet.create({
         padding: SPACING.sm,
     },
     endGameText: { ...FONTS.medium },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

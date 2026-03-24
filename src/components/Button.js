@@ -130,7 +130,5 @@ const styles = StyleSheet.create({
             },
         }),
     },
-    kurdishFont: {
-        fontFamily: 'Rabar-SemiBold',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

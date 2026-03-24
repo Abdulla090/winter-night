@@ -165,6 +165,6 @@ const styles = StyleSheet.create({
     statLabel: { fontSize: 12, marginTop: 4 },
     statDivider: { width: 1 },
     buttonRow: { width: '100%', marginTop: SPACING.md },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
     kurdishBorder: {},
 });

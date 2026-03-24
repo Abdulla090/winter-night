@@ -566,5 +566,5 @@ const styles = StyleSheet.create({
     actionButtons: { width: '100%' },
     endGameBtn: { alignSelf: 'center', padding: SPACING.sm },
     endGameText: { ...FONTS.medium },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

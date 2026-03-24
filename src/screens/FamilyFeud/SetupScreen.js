@@ -1,3 +1,4 @@
+import { BackButton } from '../../components/BackButton';
 import React, { useState } from 'react';
 import {
     View, Text, StyleSheet, TextInput, TouchableOpacity,
@@ -89,10 +90,7 @@ export default function SetupScreen({ navigation }) {
                 <SafeAreaView style={{ flex: 1 }}>
                     {/* Header */}
                     <View style={st.header}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}
-                            style={[st.backBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}>
-                            {isKurdish ? <ArrowRight size={22} color={tc} /> : <ArrowLeft size={22} color={tc} />}
-                        </TouchableOpacity>
+                        <BackButton onPress={() => navigation.goBack()} />
                         <View style={{ alignItems: 'center', flex: 1 }}>
                             <Text style={[st.headerTitle, { color: tc }, isKurdish && st.kf]}>{t('familyFeud.title', language)}</Text>
                             <Text style={[st.headerSub, { color: sc }, isKurdish && st.kf]}>{isKurdish ? 'تیمەکان دابنێ' : 'Set Up Your Teams'}</Text>

@@ -661,7 +661,5 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
 
-    kurdishFont: {
-        fontFamily: 'System',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

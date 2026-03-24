@@ -14,8 +14,10 @@ import { MotiView } from 'moti';
 import {
     PHASE, TOTAL_ROUNDS, createInitialState, getCurrentQuestion,
     getMultiplier, getMultiplierLabel, awardBankToTeam, advanceRound,
-    getFaceOffPlayers, getCurrentPlayer, nextMember, findAnswerOnBoard, checkAnswerWithGemini
+    getFaceOffPlayers, getCurrentPlayer, nextMember, findAnswerOnBoard, checkAnswerWithGemini,
+    pickUniqueQuestions
 } from './gameEngine';
+import VoiceInputButton from './VoiceInputButton';
 
 const haptic = (type = 'impact') => {
     if (Platform.OS === 'web') return;
@@ -131,8 +133,8 @@ export default function PlayScreen({ navigation, route }) {
     const cdRef = useRef(null);
 
     useEffect(() => {
-        const q = [...(familyFeudQuestions[language] || familyFeudQuestions.en)]
-            .sort(() => Math.random() - 0.5).slice(0, TOTAL_ROUNDS + 2);
+        const pool = familyFeudQuestions[language] || familyFeudQuestions.en;
+        const q = pickUniqueQuestions(pool);
         const init = createInitialState(team1Name, team2Name, team1Members, team2Members, q);
         init.revealedAnswers = new Array(q[0]?.answers.length || 0).fill(false);
         setGs(init);
@@ -167,7 +169,7 @@ export default function PlayScreen({ navigation, route }) {
     const submitAnswer = async () => {
         if (!input.trim() || isChecking) return;
         setIsChecking(true);
-        const idx = await checkAnswerWithGemini(q, input);
+        const idx = await checkAnswerWithGemini(q, input, gs.revealedAnswers);
         setIsChecking(false);
 
         if (idx >= 0 && !gs.revealedAnswers[idx]) {
@@ -250,7 +252,7 @@ export default function PlayScreen({ navigation, route }) {
     const doSteal = async () => {
         if (!stealInput.trim() || isChecking) return;
         setIsChecking(true);
-        const idx = await checkAnswerWithGemini(q, stealInput);
+        const idx = await checkAnswerWithGemini(q, stealInput, gs.revealedAnswers);
         setIsChecking(false);
         setStealInput('');
 
@@ -379,6 +381,7 @@ export default function PlayScreen({ navigation, route }) {
                                                     {q.answers.map((a, i) => <AnswerTile key={i} answer={a} index={i} isRevealed={gs.revealedAnswers[i]} isKurdish={isKurdish} />)}
                                                 </View>
                                                 <View style={st.inputRow}>
+                                                    <VoiceInputButton isKurdish={isKurdish} onTranscribed={setInput} />
                                                     <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
                                                         value={input} onChangeText={setInput} onSubmitEditing={submitAnswer}
                                                         placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#6B7280" returnKeyType="send" />
@@ -419,6 +422,7 @@ export default function PlayScreen({ navigation, route }) {
                                         </View>
                                         <Strikes count={gs.strikes} />
                                         <View style={st.inputRow}>
+                                            <VoiceInputButton isKurdish={isKurdish} onTranscribed={setInput} />
                                             <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
                                                 value={input} onChangeText={setInput} onSubmitEditing={submitAnswer}
                                                 placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#6B7280" returnKeyType="send" />
@@ -440,6 +444,7 @@ export default function PlayScreen({ navigation, route }) {
                                             {q.answers.map((a, i) => <AnswerTile key={i} answer={a} index={i} isRevealed={gs.revealedAnswers[i]} isKurdish={isKurdish} />)}
                                         </View>
                                         <View style={st.inputRow}>
+                                            <VoiceInputButton isKurdish={isKurdish} onTranscribed={setStealInput} />
                                             <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }, isChecking && { opacity: 0.5 }]}
                                                 editable={!isChecking}
                                                 placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your steal answer...'}

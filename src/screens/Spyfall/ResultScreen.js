@@ -267,5 +267,5 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop: SPACING.md,
     },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

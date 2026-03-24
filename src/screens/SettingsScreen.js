@@ -125,7 +125,7 @@ export default function SettingsScreen({ navigation }) {
     return (
         <AnimatedScreen>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 <BackButton onPress={() => navigation.goBack()} />
                 <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
                     {t('settings.title', language)}

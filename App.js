@@ -5,13 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as Font from 'expo-font';
-import {
-  useFonts,
-  NotoNaskhArabic_400Regular,
-  NotoNaskhArabic_500Medium,
-  NotoNaskhArabic_600SemiBold,
-  NotoNaskhArabic_700Bold,
-} from '@expo-google-fonts/noto-naskh-arabic';
+import { useFonts } from 'expo-font';
 import AppNavigator from './src/navigation/AppNavigator';
 import { COLORS } from './src/constants/theme';
 import { LanguageProvider } from './src/context/LanguageContext';
@@ -48,17 +42,17 @@ export default function App() {
     }
   }, []);
 
-  // Load Google Fonts for Kurdish (Noto Naskh Arabic has excellent Kurdish support)
+  // Load K24 Font globally
   const [fontsLoaded] = useFonts({
-    NotoNaskhArabic_400Regular,
-    NotoNaskhArabic_500Medium,
-    NotoNaskhArabic_600SemiBold,
-    NotoNaskhArabic_700Bold,
-    // Alias names for easier use
-    'Rabar': NotoNaskhArabic_400Regular,
-    'Rabar-Medium': NotoNaskhArabic_500Medium,
-    'Rabar-SemiBold': NotoNaskhArabic_600SemiBold,
-    'Rabar-Bold': NotoNaskhArabic_700Bold,
+    'K24': require('./assets/fonts/K24KurdishBold-Bold.ttf'),
+    'K24-Bold': require('./assets/fonts/K24KurdishBold-Bold.ttf'),
+    
+    // Alias names to override legacy Rabar usages
+    'Rabar': require('./assets/fonts/K24KurdishBold-Bold.ttf'),
+    'Rabar-Medium': require('./assets/fonts/K24KurdishBold-Bold.ttf'),
+    'Rabar-SemiBold': require('./assets/fonts/K24KurdishBold-Bold.ttf'),
+    'Rabar-Bold': require('./assets/fonts/K24KurdishBold-Bold.ttf'),
+    
     // NRT Kurdish font
     'NRT': require('./assets/fonts/NRT-Reg.ttf'),
   });

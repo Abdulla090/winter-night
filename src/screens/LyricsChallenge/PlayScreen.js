@@ -366,5 +366,5 @@ const styles = StyleSheet.create({
     menuBtn: { padding: SPACING.md, alignSelf: 'center' },
     menuBtnText: { color: COLORS.text.muted },
 
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

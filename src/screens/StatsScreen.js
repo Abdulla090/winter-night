@@ -828,7 +828,5 @@ const styles = StyleSheet.create({
     bulletText: { fontSize: 14, lineHeight: 22, flex: 1 },
     tipDot: { width: 6, height: 6, borderRadius: 3, marginTop: 8 },
 
-    kurdishFont: {
-        fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

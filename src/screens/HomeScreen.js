@@ -1,4 +1,6 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     StyleSheet,
     View,
@@ -42,7 +44,8 @@ import {
     Compass,
     Grid,
     Home,
-    LogIn
+    LogIn,
+    Dice5
 } from 'lucide-react-native';
 
 import { AnimatedScreen } from '../components/AnimatedScreen';
@@ -367,13 +370,55 @@ export default function HomeScreen({ navigation }) {
         { id: 'drawguess', title: t('games.drawGuess.title', language), icon: 'brush', color: '#06B6D4', screen: 'DrawGuessSetup', image: gameImages.drawguess },
         { id: 'wheel', title: t('wheel.title', language), icon: 'aperture', color: '#EC4899', screen: 'WheelSetup', image: gameImages.wheel },
         { id: 'partners', title: t('partnersInCrime.title', language), icon: 'heart-handshake', color: '#F43F5E', screen: 'PartnersInCrimeSetup', image: gameImages.partners },
+        { id: 'twotruths', title: t('twotruths.title', language), description: t('twotruths.description', language), icon: 'triangle', color: '#8B5CF6', screen: 'TwoTruthsSetup', image: gameImages.twotruths },
+        { id: 'zarumar', title: t('zarumar.title', language), description: t('zarumar.description', language), icon: 'triangle', color: '#10B981', screen: 'ZarWMarSetup', image: gameImages.zarumar },
     ];
 
+    const [recentGamesList, setRecentGamesList] = useState([]);
+
+    useFocusEffect(
+        useCallback(() => {
+            const loadRecent = async () => {
+                try {
+                    const saved = await AsyncStorage.getItem('recent_games');
+                    if (saved) {
+                        setRecentGamesList(JSON.parse(saved));
+                    }
+                } catch (e) {
+                    // Ignore errors
+                }
+            };
+            loadRecent();
+        }, [])
+    );
+
+    const handlePlayGame = useCallback(async (game) => {
+        try {
+            const saved = await AsyncStorage.getItem('recent_games');
+            let recent = saved ? JSON.parse(saved) : [];
+            // Add new to front, unique
+            recent = [game.id, ...recent.filter(id => id !== game.id)].slice(0, 3);
+            await AsyncStorage.setItem('recent_games', JSON.stringify(recent));
+        } catch(e) {}
+        navigation.navigate(game.screen);
+    }, [navigation]);
+
     const featuredGames = GAMES.filter(g => g.featured).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
-    const continueGames = GAMES.slice(3, 6).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
-    const categoryGames = GAMES.slice(6).map(g => ({
-        id: g.id, name: g.title, Icon: getIcon(g.icon), color: g.color || colors.primary, screen: g.screen, image: g.image
-    }));
+    
+    // Sort continue games by recent. If none recent, fallback to quiz/spyfall/whoami
+    const continueGames = recentGamesList.length > 0 
+        ? recentGamesList.map(id => GAMES.find(g => g.id === id)).filter(Boolean).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }))
+        : GAMES.slice(3, 6).map(g => ({ ...g, Icon: getIcon(g.icon), image: g.image }));
+
+    // Authentic Game Categories for the sidebar/filters
+    const categoryGames = [
+        { id: 'social', name: isKurdish ? 'کۆمەڵایەتی' : 'Social', Icon: Users, color: '#3B82F6' },
+        { id: 'brain', name: isKurdish ? 'مێشک' : 'Brain', Icon: Zap, color: '#EAB308' },
+        { id: 'drawing', name: isKurdish ? 'وێنەکێشان' : 'Drawing', Icon: Brush, color: '#EC4899' },
+        { id: 'classic', name: isKurdish ? 'کلاسیک' : 'Classics', Icon: Dice5, color: '#10B981' },
+        { id: 'word', name: isKurdish ? 'وشە' : 'Word Games', Icon: MessageSquare, color: '#8B5CF6' },
+        { id: 'new', name: isKurdish ? 'نوێ' : 'Newest', Icon: Sparkles, color: '#D900FF' },
+    ];
 
     return (
         <AnimatedScreen>
@@ -480,7 +525,7 @@ export default function HomeScreen({ navigation }) {
                                 isKurdish={isKurdish}
                                 colors={colors}
                                 isDark={isDark}
-                                onPress={() => navigation.navigate(item.screen)}
+                                onPress={() => handlePlayGame(item)}
                             />
                         )}
                     />
@@ -500,7 +545,7 @@ export default function HomeScreen({ navigation }) {
                                 isKurdish={isKurdish}
                                 colors={colors}
                                 isDark={isDark}
-                                onPress={() => navigation.navigate(item.screen)}
+                                onPress={() => handlePlayGame(item)}
                             />
                         ))}
                     </View>
@@ -520,7 +565,7 @@ export default function HomeScreen({ navigation }) {
                                 isKurdish={isKurdish}
                                 colors={colors}
                                 isDark={isDark}
-                                onPress={() => navigation.navigate(item.screen)}
+                                onPress={() => navigation.navigate('AllGames', { filterId: item.id })}
                             />
                         ))}
                     </View>
@@ -937,7 +982,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    kurdishFont: {
-        fontFamily: 'Rabar',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

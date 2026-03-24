@@ -376,6 +376,26 @@ export const translations = {
         title: { en: 'Partners in Crime', ku: 'هەوکاڕ لە تاوان' },
         description: { en: 'Match answers with your partner', ku: 'وەڵامەکانت لەگەڵ هاوڕێکەت بگونجێنە' },
     },
+    zarumar: {
+        title: { en: 'Zar u Mar (Snakes & Ladders)', ku: 'زار و مار' },
+        description: { en: 'Roll the dice, climb ladders, slide down snakes!', ku: 'زارەکە لێ بدە، سەرکەوە بە پەیژە، دابەزە بە مارەکان!' },
+    },
+    twotruths: {
+        title: { en: 'Two Truths & A Lie', ku: 'دوو ڕاستی و درۆیەک' },
+        description: { en: 'Can you spot the lie?', ku: 'دەتوانیت درۆکە بدۆزیتەوە؟' },
+        statement1: { en: 'Statement 1', ku: 'ڕستەی یەکەم' },
+        statement2: { en: 'Statement 2', ku: 'ڕستەی دووەم' },
+        statement3: { en: 'Statement 3', ku: 'ڕستەی سێیەم' },
+        writeLie: { en: 'Make sure one is a lie!', ku: 'دڵنیابە یەکێکیان درۆیە!' },
+        selectLie: { en: 'Select which statement is the LIE:', ku: 'دیاری بکە کامە ڕستەیە درۆیە:' },
+        theirStatements: { en: "'s Statements", ku: ' ڕستەکانی' },
+        voteLie: { en: 'Vote for the Lie!', ku: 'دەنگ بدە بە درۆکە!' },
+        revealing: { en: 'Revealing the Lie...', ku: 'ئاشکرا کردنی درۆکە...' },
+        itWas: { en: 'The lie was:', ku: 'درۆکە ئەوە بوو:' },
+        fooled: { en: 'People Fooled!', ku: 'خەڵکیان خەڵەتاند!' },
+        nobodyFooled: { en: 'Nobody was fooled!', ku: 'کەس نەخەڵەتا!' },
+        nextPlayer: { en: 'Next Player', ku: 'یاریزانی دواتر' },
+    },
     // ============================================
     // FAMILY FEUD
     // ============================================

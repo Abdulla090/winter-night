@@ -10,7 +10,7 @@ import { forbiddenWordCategories } from '../../constants/forbiddenWordData';
 import { MotiView } from 'moti';
 
 export default function ForbiddenWordSetupScreen({ navigation }) {
-    const { colors, isRTL, isDark } = useTheme();
+    const { colors, isDark, isRTL } = useTheme();
     const { language, isKurdish } = useLanguage();
 
     const [teams, setTeams] = useState(['', '']);
@@ -261,7 +261,5 @@ const styles = StyleSheet.create({
         fontSize: 14,
         textAlign: 'center',
     },
-    kurdishFont: {
-        fontFamily: 'Rabar_022',
-    }
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] }
 });

@@ -22,8 +22,8 @@ import { layout } from '../../theme/layout';
 export default function CreateRoomScreen({ navigation }) {
     const { createRoom, currentRoom, loading, error, clearError } = useGameRoom();
     const { user, initialized } = useAuth();
-    const { colors, isRTL, isDark } = useTheme();
-    const { isKurdish } = useLanguage();
+    const { colors, isDark, isRTL } = useTheme();
+    const { language, isKurdish } = useLanguage();
 
     const [roomName, setRoomName] = useState('');
     const [roomCode, setRoomCode] = useState('');

@@ -33,7 +33,13 @@
     },
     "owner": "abdullla0900",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Winter Nights to access your microphone for recording voice answers."
+        }
+      ]
     ]
   }
 }

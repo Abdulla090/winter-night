@@ -303,5 +303,5 @@ const styles = StyleSheet.create({
     spinButton: {
         width: '100%',
     },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

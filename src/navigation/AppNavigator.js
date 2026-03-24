@@ -108,6 +108,32 @@ import FamilyFeudPlay from '../screens/FamilyFeud/PlayScreen';
 import FamilyFeudResult from '../screens/FamilyFeud/ResultScreen';
 import FamilyFeudFastMoney from '../screens/FamilyFeud/FastMoneyScreen';
 
+// Dama - Kurdish Board Game (COMPLETE)
+import DamaSetup from '../screens/Dama/SetupScreen';
+import DamaPlay from '../screens/Dama/PlayScreen';
+import DamaResult from '../screens/Dama/ResultScreen';
+
+// Shesh Besh / Tawla - Kurdish Backgammon (COMPLETE)
+import SheshBeshSetup from '../screens/SheshBesh/SetupScreen';
+import SheshBeshPlay from '../screens/SheshBesh/PlayScreen';
+import SheshBeshResult from '../screens/SheshBesh/ResultScreen';
+
+// Sê Berd - Three Stones (COMPLETE)
+import SeBerdSetup from '../screens/SeBerd/SetupScreen';
+import SeBerdPlay from '../screens/SeBerd/PlayScreen';
+import SeBerdResult from '../screens/SeBerd/ResultScreen';
+
+// Zar W Mar - Snakes and Ladders (COMPLETE)
+import ZarWMarSetup from '../screens/ZarWMar/SetupScreen';
+import ZarWMarPlay from '../screens/ZarWMar/PlayScreen';
+import ZarWMarResult from '../screens/ZarWMar/ResultScreen';
+
+// Two Truths and a Lie (COMPLETE)
+import TwoTruthsSetup from '../screens/TwoTruths/SetupScreen';
+import TwoTruthsInput from '../screens/TwoTruths/InputScreen';
+import TwoTruthsVote from '../screens/TwoTruths/VoteScreen';
+import TwoTruthsResult from '../screens/TwoTruths/ResultScreen';
+
 // Auth Screens
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignUpScreen from '../screens/Auth/SignUpScreen';
@@ -279,6 +305,32 @@ function AppStack({ isFirstLaunch }) {
             <Stack.Screen name="FamilyFeudPlay" component={FamilyFeudPlay} />
             <Stack.Screen name="FamilyFeudResult" component={FamilyFeudResult} options={modalOptions} />
             <Stack.Screen name="FamilyFeudFastMoney" component={FamilyFeudFastMoney} />
+
+            {/* Dama - Kurdish Board Game - COMPLETE */}
+            <Stack.Screen name="DamaSetup" component={DamaSetup} />
+            <Stack.Screen name="DamaPlay" component={DamaPlay} />
+            <Stack.Screen name="DamaResult" component={DamaResult} options={modalOptions} />
+
+            {/* Shesh Besh / Tawla - Kurdish Backgammon - COMPLETE */}
+            <Stack.Screen name="SheshBeshSetup" component={SheshBeshSetup} />
+            <Stack.Screen name="SheshBeshPlay" component={SheshBeshPlay} />
+            <Stack.Screen name="SheshBeshResult" component={SheshBeshResult} options={modalOptions} />
+
+            {/* Sê Berd - Three Stones - COMPLETE */}
+            <Stack.Screen name="SeBerdSetup" component={SeBerdSetup} />
+            <Stack.Screen name="SeBerdPlay" component={SeBerdPlay} />
+            <Stack.Screen name="SeBerdResult" component={SeBerdResult} options={modalOptions} />
+
+            {/* Zar W Mar - Snakes and Ladders - COMPLETE */}
+            <Stack.Screen name="ZarWMarSetup" component={ZarWMarSetup} />
+            <Stack.Screen name="ZarWMarPlay" component={ZarWMarPlay} />
+            <Stack.Screen name="ZarWMarResult" component={ZarWMarResult} options={modalOptions} />
+
+            {/* Two Truths and a Lie */}
+            <Stack.Screen name="TwoTruthsSetup" component={TwoTruthsSetup} />
+            <Stack.Screen name="TwoTruthsInput" component={TwoTruthsInput} />
+            <Stack.Screen name="TwoTruthsVote" component={TwoTruthsVote} />
+            <Stack.Screen name="TwoTruthsResult" component={TwoTruthsResult} options={modalOptions} />
 
             {/* Auth Screens */}
             <Stack.Screen name="Login" component={LoginScreen} options={modalOptions} />

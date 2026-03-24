@@ -25,6 +25,11 @@ export const gameImages = {
     impostordraw: require('../../assets/games/impostordraw.png'),
     wronganswer: require('../../assets/games/wronganswer.png'),
     familyfeud: require('../../assets/games/familyfeud.png'),
+    dama: require('../../assets/games/dama.png'),
+    sheshbesh: require('../../assets/games/sheshbesh.png'),
+    seberd: require('../../assets/games/seberd.png'),
+    zarumar: require('../../assets/games/zarumar.png'),
+    twotruths: require('../../assets/games/twotruths.png'),
 };
 
 export default gameImages;

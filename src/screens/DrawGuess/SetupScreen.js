@@ -239,5 +239,5 @@ const styles = StyleSheet.create({
     rulesTitle: { ...FONTS.medium },
     rulesText: { lineHeight: 22 },
     buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

@@ -168,5 +168,5 @@ const styles = StyleSheet.create({
     statLabel: { color: COLORS.text.muted, fontSize: 12, marginTop: 4 },
     statDivider: { width: 1, backgroundColor: COLORS.background.border },
     buttonRow: { flexDirection: 'row', width: '100%', marginTop: SPACING.md },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

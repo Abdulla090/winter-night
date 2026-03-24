@@ -30,7 +30,11 @@ import {
     Puzzle,
     PenTool,
     Dice5,
-    AlertTriangle
+    AlertTriangle,
+    Brush,
+    MessageSquare,
+    LayoutGrid,
+    List
 } from 'lucide-react-native';
 
 import { AnimatedScreen } from '../components/AnimatedScreen';
@@ -40,11 +44,12 @@ import { useTheme } from '../context/ThemeContext';
 import { t } from '../localization/translations';
 import { layout } from '../theme/layout';
 import gameImages from '../assets/gameImages';
+import { BackButton } from '../components/BackButton';
 
 // --- COMPONENTS ---
 
 // 1. Header with Back Button
-const Header = ({ isKurdish, navigation, colors, isDark }) => {
+const Header = ({ isKurdish, navigation, colors, isDark, isTwoColumns, setIsTwoColumns }) => {
     const iconBtnBg = isDark ? '#1C0F2E' : '#FFFFFF';
     const iconBtnBorder = isDark ? 'rgba(255,255,255,0.08)' : '#E2E8F0';
     const arrowColor = isDark ? '#FFF' : colors.text.primary;
@@ -56,25 +61,28 @@ const Header = ({ isKurdish, navigation, colors, isDark }) => {
         navigation.goBack();
     }, [navigation]);
 
+    const toggleLayout = () => {
+        if (Platform.OS !== 'web') {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        setIsTwoColumns(!isTwoColumns);
+    };
+
     return (
-        <View style={styles.header}>
-            <TouchableOpacity
-                onPress={handleGoBack}
-                activeOpacity={0.7}
-                style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
-            >
-                {isKurdish ? (
-                    <ArrowRight size={24} color={arrowColor} />
-                ) : (
-                    <ArrowLeft size={24} color={arrowColor} />
-                )}
-            </TouchableOpacity>
+        <View style={[styles.header, { flexDirection: isKurdish ? 'row-reverse' : 'row' }]}>
+            <BackButton onPress={handleGoBack} />
 
             <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                 {isKurdish ? 'هەموو یارییەکان' : 'All Games'}
             </Text>
 
-            <View style={{ width: 44 }} />
+            <TouchableOpacity 
+                activeOpacity={0.7} 
+                onPress={toggleLayout}
+                style={[styles.iconButton, { backgroundColor: iconBtnBg, borderColor: iconBtnBorder }]}
+            >
+                {isTwoColumns ? <List size={22} color={colors.text.primary} /> : <LayoutGrid size={22} color={colors.text.primary} />}
+            </TouchableOpacity>
         </View>
     );
 };
@@ -109,10 +117,15 @@ const SearchInput = ({ isKurdish, value, onChangeText, colors, isDark }) => {
 // 3. Filters - Now with active state and onPress
 // 3. Filters with theme support
 const FilterTabs = ({ isKurdish, activeFilter, onFilterChange, colors, isDark }) => {
+    // Authentic Categories exactly matching HomeScreen
     const tabs = [
         { id: 'all', label: isKurdish ? 'هەمووی' : 'All' },
-        { id: 'new', label: isKurdish ? 'نوێترین' : 'Newest', icon: Sparkles },
         { id: 'social', label: isKurdish ? 'کۆمەڵایەتی' : 'Social', icon: Users },
+        { id: 'brain', label: isKurdish ? 'مێشک' : 'Brain', icon: Zap },
+        { id: 'drawing', label: isKurdish ? 'وێنەکێشان' : 'Drawing', icon: Brush },
+        { id: 'classic', label: isKurdish ? 'کلاسیک' : 'Classics', icon: Dice5 },
+        { id: 'word', label: isKurdish ? 'وشە' : 'Word Games', icon: MessageSquare },
+        { id: 'new', label: isKurdish ? 'نوێترین' : 'Newest', icon: Sparkles },
     ];
 
     // ☀️ Theme-aware filter colors
@@ -160,19 +173,31 @@ const FilterTabs = ({ isKurdish, activeFilter, onFilterChange, colors, isDark })
 };
 
 // 4. Responsive Card with theme support - Memoized for performance
-const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isDark }) => {
+const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isDark, isTwoColumns }) => {
     const Icon = item.Icon || Gamepad2;
     const cardBg = isDark ? '#160925' : '#FFFFFF';
     const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
     const badgeBg = isDark ? '#D900FF' : colors.primary;
     const metaColor = isDark ? '#8A8A8A' : colors.text.muted;
 
-    const handlePress = useCallback(() => {
+    const handlePress = useCallback(async () => {
         if (Platform.OS !== 'web') {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
+        
+        // Save to Recent Games Automatically
+        try {
+            const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+            if (AsyncStorage) {
+                const saved = await AsyncStorage.getItem('recent_games');
+                let recent = saved ? JSON.parse(saved) : [];
+                recent = [item.id, ...recent.filter(id => id !== item.id)].slice(0, 3);
+                await AsyncStorage.setItem('recent_games', JSON.stringify(recent));
+            }
+        } catch(e) {}
+
         navigation.navigate(item.screen);
-    }, [navigation, item.screen]);
+    }, [navigation, item]);
 
     return (
         <TouchableOpacity
@@ -181,7 +206,7 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
             style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }]}
         >
             {/* Top Visual Box */}
-            <View style={styles.cardVisual}>
+            <View style={[styles.cardVisual, isTwoColumns ? {} : { height: 260 }]}>
                 {item.image ? (
                     <Image
                         source={item.image}
@@ -194,20 +219,20 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
                         style={StyleSheet.absoluteFill}
                     >
                         <View style={styles.cardIconFallback}>
-                            <Icon size={52} color="rgba(255,255,255,0.8)" />
+                            <Icon size={isTwoColumns ? 52 : 72} color="rgba(255,255,255,0.8)" />
                         </View>
                     </LinearGradient>
                 )}
 
                 {/* Rating Badge */}
                 <View style={styles.ratingBadge}>
-                    <Star size={10} color="#FFD700" fill="#FFD700" />
-                    <Text style={styles.ratingText}>{item.rating || '4.5'}</Text>
+                    <Star size={isTwoColumns ? 10 : 12} color="#FFD700" fill="#FFD700" />
+                    <Text style={[styles.ratingText, isTwoColumns ? {} : { fontSize: 13 }]}>{item.rating || '4.5'}</Text>
                 </View>
 
                 {item.isNew && (
                     <View style={[styles.newBadge, { backgroundColor: badgeBg }]}>
-                        <Text style={[styles.newText, isKurdish && styles.kurdishFont]}>
+                        <Text style={[styles.newText, isKurdish && styles.kurdishFont, isTwoColumns ? {} : { fontSize: 13, paddingHorizontal: 4 }]}>
                             {isKurdish ? 'نوێ' : 'NEW'}
                         </Text>
                     </View>
@@ -215,21 +240,21 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
             </View>
 
             {/* Bottom Info */}
-            <View style={styles.cardInfo}>
-                <Text style={[styles.cardTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]} numberOfLines={1}>
+            <View style={[styles.cardInfo, isTwoColumns ? {} : { paddingVertical: 12, paddingHorizontal: 12 }]}>
+                <Text style={[styles.cardTitle, { color: colors.text.primary }, isTwoColumns ? {} : { fontSize: 24, marginBottom: 12 }, isKurdish && styles.kurdishFont]} numberOfLines={1}>
                     {item.title}
                 </Text>
 
                 <View style={[styles.metaRow, isKurdish && { flexDirection: 'row-reverse' }]}>
                     <View style={styles.metaItem}>
-                        <Clock size={12} color={metaColor} />
-                        <Text style={[styles.metaText, { color: metaColor }, isKurdish && styles.kurdishFont]}>
+                        <Clock size={isTwoColumns ? 12 : 16} color={metaColor} />
+                        <Text style={[styles.metaText, { color: metaColor }, isTwoColumns ? {} : { fontSize: 14 }, isKurdish && styles.kurdishFont]}>
                             {item.time || '10'}m
                         </Text>
                     </View>
                     <View style={styles.metaItem}>
-                        <Users size={12} color={metaColor} />
-                        <Text style={[styles.metaText, { color: metaColor }, isKurdish && styles.kurdishFont]}>
+                        <Users size={isTwoColumns ? 12 : 16} color={metaColor} />
+                        <Text style={[styles.metaText, { color: metaColor }, isTwoColumns ? {} : { fontSize: 14 }, isKurdish && styles.kurdishFont]}>
                             {item.players || '2-6'}
                         </Text>
                     </View>
@@ -240,18 +265,21 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
 });
 
 // --- MAIN SCREEN ---
-export default function AllGamesScreen({ navigation }) {
+export default function AllGamesScreen({ route, navigation }) {
     const { language, isKurdish } = useLanguage();
     const { colors, isDark } = useTheme();
     const { width } = useWindowDimensions();
 
+    const incomingFilterId = route?.params?.filterId;
+
     // State for search and filters
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeFilter, setActiveFilter] = useState('all');
+    const [activeFilter, setActiveFilter] = useState(incomingFilterId || 'all');
+    const [isTwoColumns, setIsTwoColumns] = useState(false);
 
     // Responsive Calculation
     // AnimatedScreen adds layout.screen.padding (24px) on each side = 48px total
-    const numColumns = 2;
+    const numColumns = isTwoColumns ? 2 : 1;
     const gap = 8;
     const gridPadding = 0; // no extra padding — let AnimatedScreen handle it
     const screenPadding = 24; // AnimatedScreen's paddingHorizontal (layout.screen.padding)
@@ -261,6 +289,32 @@ export default function AllGamesScreen({ navigation }) {
 
     // Real Games Data
     const GAMES = [
+        {
+            id: 'twotruths',
+            title: isKurdish ? 'دوو ڕاستی و درۆیەک' : 'Two Truths',
+            screen: 'TwoTruthsSetup',
+            colors: ['#7C3AED', '#4C1D95'],
+            Icon: Dice5,
+            rating: '4.9',
+            time: '15',
+            players: '3+',
+            isNew: true,
+            category: 'social',
+            image: gameImages.twotruths
+        },
+        {
+            id: 'zarumar',
+            title: isKurdish ? 'زار و مار' : 'Zar u Mar',
+            screen: 'ZarWMarSetup',
+            colors: ['#059669', '#064E3B'],
+            Icon: Dice5,
+            rating: '4.7',
+            time: '15',
+            players: '2-4',
+            isNew: true,
+            category: 'social',
+            image: gameImages.zarumar
+        },
         {
             id: 'familyfeud',
             title: isKurdish ? 'پرس ١٠٠' : 'Family Feud',
@@ -497,6 +551,45 @@ export default function AllGamesScreen({ navigation }) {
             category: 'brain',
             image: gameImages.wronganswer
         },
+        {
+            id: 'dama',
+            title: isKurdish ? 'دامە' : 'Dama',
+            screen: 'DamaSetup',
+            colors: ['#8B4513', '#654321'],
+            Icon: Gamepad2,
+            rating: '4.9',
+            time: '30',
+            players: '2',
+            isNew: true,
+            category: 'brain',
+            image: gameImages.dama
+        },
+        {
+            id: 'sheshbesh',
+            title: isKurdish ? 'تەولە' : 'Tawla',
+            screen: 'SheshBeshSetup',
+            colors: ['#0B6623', '#064216'],
+            Icon: Gamepad2,
+            rating: '4.9',
+            time: '20',
+            players: '2',
+            isNew: true,
+            category: 'brain',
+            image: gameImages.sheshbesh
+        },
+        {
+            id: 'seberd',
+            title: isKurdish ? 'سێ بەرد' : 'Sê Berd',
+            screen: 'SeBerdSetup',
+            colors: ['#1E40AF', '#1D4ED8'],
+            Icon: Gamepad2,
+            rating: '4.7',
+            time: '5',
+            players: '2',
+            isNew: true,
+            category: 'brain',
+            image: gameImages.seberd
+        },
     ];
 
     // Filter games based on search and active filter
@@ -508,8 +601,9 @@ export default function AllGamesScreen({ navigation }) {
         let matchesFilter = true;
         if (activeFilter === 'new') {
             matchesFilter = game.isNew === true;
-        } else if (activeFilter === 'social') {
-            matchesFilter = parseInt(game.players.split('-')[1] || game.players.replace('+', '')) >= 4;
+        } else if (activeFilter !== 'all') {
+            // Check if game category array matches, or string matches
+            matchesFilter = game.category === activeFilter;
         }
 
         return matchesSearch && matchesFilter;
@@ -520,14 +614,22 @@ export default function AllGamesScreen({ navigation }) {
             <View style={{ flex: 1 }}>
                 {/* Grid */}
                 <FlatList
+                    key={isTwoColumns ? 'two-col' : 'one-col'}
                     data={filteredGames}
                     keyExtractor={item => item.id}
-                    numColumns={2}
-                    columnWrapperStyle={{ gap: gap }}
+                    numColumns={numColumns}
+                    columnWrapperStyle={isTwoColumns ? { gap: gap } : undefined}
                     contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
                     ListHeaderComponent={
                         <View style={{ paddingHorizontal: 16, marginBottom: 10 }}>
-                            <Header isKurdish={isKurdish} navigation={navigation} colors={colors} isDark={isDark} />
+                            <Header 
+                                isKurdish={isKurdish} 
+                                navigation={navigation} 
+                                colors={colors} 
+                                isDark={isDark} 
+                                isTwoColumns={isTwoColumns}
+                                setIsTwoColumns={setIsTwoColumns}
+                            />
                             <SearchInput
                                 isKurdish={isKurdish}
                                 value={searchQuery}
@@ -552,6 +654,7 @@ export default function AllGamesScreen({ navigation }) {
                             cardWidth={cardWidth}
                             colors={colors}
                             isDark={isDark}
+                            isTwoColumns={isTwoColumns}
                         />
                     )}
                     showsVerticalScrollIndicator={false}
@@ -736,7 +839,5 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
 
-    kurdishFont: {
-        fontFamily: 'Rabar',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

@@ -1,3 +1,4 @@
+import { BackButton } from '../../components/BackButton';
 import React, { useState } from 'react';
 import {
     View,
@@ -236,12 +237,7 @@ export default function ImpostorDrawSetup({ navigation }) {
                     transition={{ type: 'timing', duration: 400 }}
                     style={styles.header}
                 >
-                    <TouchableOpacity
-                        style={[styles.backBtn, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <ChevronLeft size={24} color={colors.text.primary} />
-                    </TouchableOpacity>
+                    <BackButton onPress={() => navigation.goBack()} />
 
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
@@ -628,7 +624,5 @@ const styles = StyleSheet.create({
         fontWeight: '800',
     },
 
-    kurdishFont: {
-        fontFamily: 'System',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

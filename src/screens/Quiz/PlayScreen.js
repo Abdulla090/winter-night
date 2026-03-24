@@ -523,5 +523,5 @@ const styles = StyleSheet.create({
     },
     scoreName: { color: COLORS.text.secondary, ...FONTS.medium, fontSize: 13 },
     scoreValue: { color: COLORS.accent.success, ...FONTS.bold, fontSize: 13 },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

@@ -1051,5 +1051,5 @@ const styles = StyleSheet.create({
     voteCardSelected: { borderColor: COLORS.accent.success, backgroundColor: 'rgba(16, 185, 129, 0.1)' },
     voteCardText: { ...FONTS.medium, marginTop: 8 },
     voteCardTextSelected: { color: COLORS.accent.success },
-    kurdishFont: { fontFamily: 'Rabar' },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });

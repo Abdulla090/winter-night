@@ -1,3 +1,4 @@
+import { BackButton } from '../../components/BackButton';
 import React, { useState } from 'react';
 import {
     View,
@@ -207,7 +208,7 @@ const TimerOptionCard = ({ seconds, isSelected, onSelect, colors, isDark, isKurd
 
 export default function WrongAnswerSetup({ navigation }) {
     const { isKurdish } = useLanguage();
-    const { colors, isDark } = useTheme();
+    const { colors, isDark, isRTL } = useTheme();
 
     // Game settings
     const [players, setPlayers] = useState([
@@ -286,13 +287,8 @@ export default function WrongAnswerSetup({ navigation }) {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
 
                 {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        style={[styles.backBtn, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <ChevronLeft size={24} color={colors.text.primary} />
-                    </TouchableOpacity>
+                <View style={[styles.header, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <BackButton onPress={() => navigation.goBack()} />
 
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <Text style={[styles.headerTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
@@ -716,7 +712,5 @@ const styles = StyleSheet.create({
         fontWeight: '800',
     },
 
-    kurdishFont: {
-        fontFamily: 'System',
-    },
+    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
 });
