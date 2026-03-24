@@ -99,8 +99,10 @@ const styles = StyleSheet.create({
     },
     webContent: {
         flex: 1,
-        overflow: 'auto',
+        overflowY: 'scroll',
         height: '100%',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
     },
 });
 

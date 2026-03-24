@@ -11,20 +11,17 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: auto !important;
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden;
         }
-        
-        /* Force scroll on all scrollable containers */
-        [data-testid="scroll-view"],
-        [class*="ScrollView"] {
-            overflow: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-        }
-        
-        /* Ensure flex containers allow scrolling */
+
+        /* Hide all scrollbars globally — React Native ScrollView handles its own scrolling */
         * {
             box-sizing: border-box;
+            scrollbar-width: none;        /* Firefox */
+            -ms-overflow-style: none;     /* IE / Edge */
+        }
+        *::-webkit-scrollbar {
+            display: none;                /* Chrome / Safari / Webkit */
         }
     </style>
 </head>
