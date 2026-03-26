@@ -33,24 +33,31 @@ export default function PlayScreen({ navigation, route }) {
     const [history, setHistory] = useState([]);
 
     // Pulsing animation for selected stone
-    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const selectedPulseAnim = useRef(new Animated.Value(1)).current;
+    const staticAnim = useRef(new Animated.Value(1)).current;
     // Win line animation
     const winAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
+        let pulse;
         if (selectedStone !== null) {
-            const pulse = Animated.loop(Animated.sequence([
-                Animated.timing(pulseAnim, { toValue: 1.15, duration: 400, useNativeDriver: true }),
-                Animated.timing(pulseAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+            pulse = Animated.loop(Animated.sequence([
+                // useNativeDriver:true is required for transform-only animations on Android production
+                Animated.timing(selectedPulseAnim, { toValue: 1.15, duration: 400, useNativeDriver: true }),
+                Animated.timing(selectedPulseAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
             ]));
             pulse.start();
-            return () => pulse.stop();
+        } else {
+            Animated.timing(selectedPulseAnim, { toValue: 1, duration: 50, useNativeDriver: true }).start();
         }
-        pulseAnim.setValue(1);
+        return () => {
+            if (pulse) pulse.stop();
+        };
     }, [selectedStone]);
 
     useEffect(() => {
         if (gameState.gameOver) {
+            // useNativeDriver:false because we animate opacity via interpolation linked to color
             Animated.timing(winAnim, { toValue: 1, duration: 600, useNativeDriver: false }).start();
             if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
@@ -169,6 +176,13 @@ export default function PlayScreen({ navigation, route }) {
     };
 
     // Render board lines
+    // CRITICAL FIX: `transformOrigin` is a web-only CSS property — it crashes React Native on Android.
+    // Instead, use the native-compatible approach: translate by -length/2 so rotation pivots from left
+    // edge, then translate back. We achieve left-edge rotation via: translateX(length/2) rotate translateX(-length/2)
+    // Simpler approach: shift the View's left to start at p1, then use translateX(length/2) with a
+    // rotation + translateX(-length/2) combination, OR just offset the top/left by half-height and accept
+    // the View extends rightward from p1 naturally — which is how CSS rotation works with transformOrigin left.
+    // The correct native-compatible way: place the view with its CENTER at midpoint, width=length, no origin hack.
     const renderLines = () => {
         return boardLines.map(([from, to], i) => {
             const p1 = getPixelPos(from);
@@ -178,17 +192,20 @@ export default function PlayScreen({ navigation, route }) {
             const length = Math.sqrt(dx * dx + dy * dy);
             const angle = Math.atan2(dy, dx) * (180 / Math.PI);
             const isWinLine = winLine && winLine.includes(from) && winLine.includes(to);
+            // Center the line View between p1 and p2 so rotation is around the midpoint,
+            // which is equivalent to transformOrigin:center (the React Native default).
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
 
             return (
                 <View key={i} style={{
                     position: 'absolute',
-                    left: p1.x,
-                    top: p1.y - 1.5,
+                    left: midX - length / 2,
+                    top: midY - 1.5,
                     width: length,
                     height: 3,
                     backgroundColor: isWinLine ? '#FFD700' : (isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'),
                     transform: [{ rotate: `${angle}deg` }],
-                    transformOrigin: 'left center',
                     zIndex: 1,
                 }} />
             );
@@ -259,7 +276,8 @@ export default function PlayScreen({ navigation, route }) {
                         borderRadius: stoneSize / 2,
                         backgroundColor: cell === PLAYER1 ? BLUE : RED,
                         borderColor: cell === PLAYER1 ? BLUE_GLOW : RED_GLOW,
-                        transform: [{ scale: isSelected ? pulseAnim : 1 }],
+                        // Fix for Android crash: safely swapping Animated.Values instead of mixing value types
+                        transform: [{ scale: isSelected ? selectedPulseAnim : staticAnim }],
                     },
                         isMovable && !isSelected && pst.movableStone,
                         isWinPos && pst.winStone,

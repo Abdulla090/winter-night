@@ -57,8 +57,29 @@ export default function PlayScreen({ navigation, route }) {
     const [capturedByP1, setCapturedByP1] = useState(0);
     const [capturedByP2, setCapturedByP2] = useState(0);
 
+    // Use refs to avoid stale closure issues in callbacks
+    const boardRef = useRef(board);
+    const currentPlayerRef = useRef(currentPlayer);
+    const capturedByP1Ref = useRef(capturedByP1);
+    const capturedByP2Ref = useRef(capturedByP2);
+    const moveHistoryRef = useRef(moveHistory);
+    const gameOverRef = useRef(gameOver);
+    const selectedPieceRef = useRef(selectedPiece);
+    const validMovesRef = useRef(validMoves);
+
+    // Keep refs in sync
+    useEffect(() => { boardRef.current = board; }, [board]);
+    useEffect(() => { currentPlayerRef.current = currentPlayer; }, [currentPlayer]);
+    useEffect(() => { capturedByP1Ref.current = capturedByP1; }, [capturedByP1]);
+    useEffect(() => { capturedByP2Ref.current = capturedByP2; }, [capturedByP2]);
+    useEffect(() => { moveHistoryRef.current = moveHistory; }, [moveHistory]);
+    useEffect(() => { gameOverRef.current = gameOver; }, [gameOver]);
+    useEffect(() => { selectedPieceRef.current = selectedPiece; }, [selectedPiece]);
+    useEffect(() => { validMovesRef.current = validMoves; }, [validMoves]);
+
     // Animation refs
-    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const selectedPulseAnim = useRef(new Animated.Value(1)).current;
+    const staticAnim = useRef(new Animated.Value(1)).current;
     const turnIndicatorAnim = useRef(new Animated.Value(0)).current;
 
     // Board sizing
@@ -69,22 +90,27 @@ export default function PlayScreen({ navigation, route }) {
     const actualBoardSize = cellSize * 8;
 
     // Pulse animation for selected piece
+    // IMPORTANT: useNativeDriver:true required for transform on Android production APK
     useEffect(() => {
+        let pulse;
         if (selectedPiece) {
-            const pulse = Animated.loop(
+            pulse = Animated.loop(
                 Animated.sequence([
-                    Animated.timing(pulseAnim, { toValue: 1.1, duration: 500, useNativeDriver: true }),
-                    Animated.timing(pulseAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+                    Animated.timing(selectedPulseAnim, { toValue: 1.1, duration: 500, useNativeDriver: true }),
+                    Animated.timing(selectedPulseAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
                 ])
             );
             pulse.start();
-            return () => pulse.stop();
         } else {
-            pulseAnim.setValue(1);
+            // Safe reset without causing NativeAnimatedModule crash
+            Animated.timing(selectedPulseAnim, { toValue: 1, duration: 50, useNativeDriver: true }).start();
         }
+        return () => {
+            if (pulse) pulse.stop();
+        };
     }, [selectedPiece]);
 
-    // Turn indicator animation
+    // Turn indicator animation — must stay useNativeDriver:false since it animates backgroundColor (color interpolation)
     useEffect(() => {
         Animated.timing(turnIndicatorAnim, {
             toValue: currentPlayer === 1 ? 0 : 1,
@@ -99,124 +125,181 @@ export default function PlayScreen({ navigation, route }) {
     // Get all legal moves for current player
     const allLegalMoves = useMemo(() => {
         if (gameOver) return [];
-        return getAllLegalMoves(board, currentPlayer);
+        try {
+            return getAllLegalMoves(board, currentPlayer);
+        } catch (e) {
+            console.warn('Error computing legal moves:', e);
+            return [];
+        }
     }, [board, currentPlayer, gameOver]);
 
     // Pieces that can move (for highlighting)
     const movablePieces = useMemo(() => {
-        const pieces = new Set();
-        allLegalMoves.forEach(m => pieces.add(`${m.from.r},${m.from.c}`));
-        return pieces;
+        const piecesSet = new Set();
+        allLegalMoves.forEach(m => piecesSet.add(`${m.from.r},${m.from.c}`));
+        return piecesSet;
     }, [allLegalMoves]);
 
-    // Handle cell press
-    const handleCellPress = useCallback((r, c) => {
-        if (gameOver) return;
+    // Execute a move — stable ref-based callback (no stale closures)
+    const executeMove = useCallback((move) => {
+        try {
+            const curBoard = boardRef.current;
+            const curPlayer = currentPlayerRef.current;
+            const curCapturedByP1 = capturedByP1Ref.current;
+            const curCapturedByP2 = capturedByP2Ref.current;
+            const curMoveHistory = moveHistoryRef.current;
 
-        const cell = board[r][c];
-        const owner = getOwner(cell);
-
-        if (Platform.OS !== 'web') {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
-
-        // If clicking on own piece, select it
-        if (owner === currentPlayer) {
-            const pieceMoves = getLegalMovesForPiece(board, r, c);
-            if (pieceMoves.length > 0) {
-                setSelectedPiece({ r, c });
-                setValidMoves(pieceMoves);
-            } else {
-                // Can't move this piece
-                setSelectedPiece(null);
-                setValidMoves([]);
-                if (Platform.OS !== 'web') {
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            if (Platform.OS !== 'web') {
+                if (move.captures && move.captures.length > 0) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                } else {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 }
             }
-            return;
-        }
 
-        // If a piece is selected and clicking on a valid destination
-        if (selectedPiece) {
-            const move = validMoves.find(m => m.to.r === r && m.to.c === c);
-            if (move) {
-                executeMove(move);
+            const newBoard = applyMove(curBoard, move);
+            
+            // Track captures
+            const captureCount = (move.captures && move.captures.length) || 0;
+            let newCapturedByP1 = curCapturedByP1;
+            let newCapturedByP2 = curCapturedByP2;
+            
+            if (captureCount > 0) {
+                if (curPlayer === 1) {
+                    newCapturedByP1 = curCapturedByP1 + captureCount;
+                    setCapturedByP1(newCapturedByP1);
+                } else {
+                    newCapturedByP2 = curCapturedByP2 + captureCount;
+                    setCapturedByP2(newCapturedByP2);
+                }
+            }
+
+            // Save to history
+            setMoveHistory(prev => [...prev, { board: curBoard, player: curPlayer, move }]);
+
+            // Update board
+            setBoard(newBoard);
+            setLastMove(move);
+            setSelectedPiece(null);
+            setValidMoves([]);
+
+            // Check Swar (with safety check)
+            let swar = null;
+            try {
+                swar = checkSwar(newBoard, move, curPlayer);
+            } catch (e) {
+                console.warn('Error checking swar:', e);
+            }
+            setSwarPieces(swar);
+
+            // Switch player
+            const nextPlayer = curPlayer === 1 ? 2 : 1;
+
+            // Check game end  
+            let result = null;
+            try {
+                result = checkGameEnd(newBoard, nextPlayer);
+            } catch (e) {
+                console.warn('Error checking game end:', e);
+            }
+
+            if (result) {
+                setGameOver(result);
+                setCurrentPlayer(nextPlayer);
+                setTimeout(() => {
+                    try {
+                        navigation.navigate('DamaResult', {
+                            winner: result,
+                            player1Name,
+                            player2Name,
+                            capturedByP1: newCapturedByP1,
+                            capturedByP2: newCapturedByP2,
+                            totalMoves: curMoveHistory.length + 1,
+                        });
+                    } catch (e) {
+                        console.warn('Navigation error:', e);
+                    }
+                }, 800);
                 return;
             }
+
+            setCurrentPlayer(nextPlayer);
+        } catch (e) {
+            console.error('Error executing move:', e);
+            // Don't crash — just deselect
+            setSelectedPiece(null);
+            setValidMoves([]);
         }
+    }, [player1Name, player2Name, navigation]);
 
-        // Deselect
-        setSelectedPiece(null);
-        setValidMoves([]);
-    }, [board, currentPlayer, selectedPiece, validMoves, gameOver]);
+    // Handle cell press — stable ref-based callback
+    const handleCellPress = useCallback((r, c) => {
+        try {
+            if (gameOverRef.current) return;
 
-    // Execute a move
-    const executeMove = useCallback((move) => {
-        if (Platform.OS !== 'web') {
-            if (move.captures.length > 0) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            } else {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            const curBoard = boardRef.current;
+            const curPlayer = currentPlayerRef.current;
+            const curSelectedPiece = selectedPieceRef.current;
+            const curValidMoves = validMovesRef.current;
+
+            const cell = curBoard[r][c];
+            const owner = getOwner(cell);
+
+            if (Platform.OS !== 'web') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }
-        }
 
-        const newBoard = applyMove(board, move);
-        
-        // Track captures
-        if (move.captures.length > 0) {
-            if (currentPlayer === 1) {
-                setCapturedByP1(prev => prev + move.captures.length);
-            } else {
-                setCapturedByP2(prev => prev + move.captures.length);
+            // If clicking on own piece, select it
+            if (owner === curPlayer) {
+                let pieceMoves = [];
+                try {
+                    pieceMoves = getLegalMovesForPiece(curBoard, r, c);
+                } catch (e) {
+                    console.warn('Error getting legal moves for piece:', e);
+                }
+                if (pieceMoves.length > 0) {
+                    setSelectedPiece({ r, c });
+                    setValidMoves(pieceMoves);
+                } else {
+                    // Can't move this piece
+                    setSelectedPiece(null);
+                    setValidMoves([]);
+                    if (Platform.OS !== 'web') {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+                    }
+                }
+                return;
             }
+
+            // If a piece is selected and clicking on a valid destination
+            if (curSelectedPiece && curValidMoves && curValidMoves.length > 0) {
+                const move = curValidMoves.find(m => m.to.r === r && m.to.c === c);
+                if (move) {
+                    executeMove(move);
+                    return;
+                }
+            }
+
+            // Deselect
+            setSelectedPiece(null);
+            setValidMoves([]);
+        } catch (e) {
+            console.error('Error in handleCellPress:', e);
+            setSelectedPiece(null);
+            setValidMoves([]);
         }
-
-        // Save to history
-        setMoveHistory(prev => [...prev, { board: board, player: currentPlayer, move }]);
-
-        // Update board
-        setBoard(newBoard);
-        setLastMove(move);
-        setSelectedPiece(null);
-        setValidMoves([]);
-
-        // Check Swar
-        const swar = checkSwar(newBoard, move, currentPlayer);
-        setSwarPieces(swar);
-
-        // Switch player
-        const nextPlayer = currentPlayer === 1 ? 2 : 1;
-
-        // Check game end
-        const result = checkGameEnd(newBoard, nextPlayer);
-        if (result) {
-            setGameOver(result);
-            setTimeout(() => {
-                navigation.navigate('DamaResult', {
-                    winner: result,
-                    player1Name,
-                    player2Name,
-                    capturedByP1: currentPlayer === 1 ? capturedByP1 + move.captures.length : capturedByP1,
-                    capturedByP2: currentPlayer === 2 ? capturedByP2 + move.captures.length : capturedByP2,
-                    totalMoves: moveHistory.length + 1,
-                });
-            }, 800);
-            return;
-        }
-
-        setCurrentPlayer(nextPlayer);
-    }, [board, currentPlayer, capturedByP1, capturedByP2, moveHistory, player1Name, player2Name, navigation]);
+    }, [executeMove]);
 
     // Undo move
     const handleUndo = useCallback(() => {
-        if (moveHistory.length === 0) return;
+        if (moveHistoryRef.current.length === 0) return;
         
         if (Platform.OS !== 'web') {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         }
 
-        const lastState = moveHistory[moveHistory.length - 1];
+        const history = moveHistoryRef.current;
+        const lastState = history[history.length - 1];
         setBoard(lastState.board);
         setCurrentPlayer(lastState.player);
         setMoveHistory(prev => prev.slice(0, -1));
@@ -227,14 +310,15 @@ export default function PlayScreen({ navigation, route }) {
         setGameOver(null);
         
         // Reverse capture count
-        if (lastState.move.captures.length > 0) {
+        const captureCount = (lastState.move.captures && lastState.move.captures.length) || 0;
+        if (captureCount > 0) {
             if (lastState.player === 1) {
-                setCapturedByP1(prev => prev - lastState.move.captures.length);
+                setCapturedByP1(prev => prev - captureCount);
             } else {
-                setCapturedByP2(prev => prev - lastState.move.captures.length);
+                setCapturedByP2(prev => prev - captureCount);
             }
         }
-    }, [moveHistory]);
+    }, []);
 
     // Resign
     const handleResign = useCallback(() => {
@@ -249,20 +333,21 @@ export default function PlayScreen({ navigation, route }) {
                 text: isKurdish ? 'بەڵێ' : 'Yes', 
                 style: 'destructive',
                 onPress: () => {
-                    const winner = currentPlayer === 1 ? 2 : 1;
+                    const curPlayer = currentPlayerRef.current;
+                    const winner = curPlayer === 1 ? 2 : 1;
                     navigation.navigate('DamaResult', {
                         winner,
                         player1Name,
                         player2Name,
-                        capturedByP1,
-                        capturedByP2,
-                        totalMoves: moveHistory.length,
+                        capturedByP1: capturedByP1Ref.current,
+                        capturedByP2: capturedByP2Ref.current,
+                        totalMoves: moveHistoryRef.current.length,
                         resigned: true,
                     });
                 }
             },
         ]);
-    }, [currentPlayer, isKurdish, player1Name, player2Name, capturedByP1, capturedByP2, moveHistory, navigation]);
+    }, [isKurdish, player1Name, player2Name, navigation]);
 
     // Check if cell is a valid move destination
     const isValidDestination = useCallback((r, c) => {
@@ -271,7 +356,7 @@ export default function PlayScreen({ navigation, route }) {
 
     // Check if cell will be captured 
     const isCaptureTarget = useCallback((r, c) => {
-        return validMoves.some(m => m.captures.some(cap => cap.r === r && cap.c === c));
+        return validMoves.some(m => m.captures && m.captures.some(cap => cap.r === r && cap.c === c));
     }, [validMoves]);
 
     // Check if cell was part of last move
@@ -298,7 +383,7 @@ export default function PlayScreen({ navigation, route }) {
         const isSelected = selectedPiece && selectedPiece.r === r && selectedPiece.c === c;
         const isValid = isValidDestination(r, c);
         const isCapture = isCaptureTarget(r, c);
-        const isLastMove = isLastMoveCell(r, c);
+        const isLastMv = isLastMoveCell(r, c);
         const isSwar = isSwarPiece(r, c);
         const isMovable = owner === currentPlayer && movablePieces.has(`${r},${c}`);
         const squareColor = (r + c) % 2 === 0 ? LIGHT_SQUARE : DARK_SQUARE;
@@ -315,11 +400,11 @@ export default function PlayScreen({ navigation, route }) {
                         height: cellSize,
                         backgroundColor: squareColor,
                     },
-                    isLastMove && { backgroundColor: squareColor },
+                    isLastMv && { backgroundColor: squareColor },
                 ]}
             >
                 {/* Last move highlight */}
-                {isLastMove && (
+                {isLastMv && (
                     <View style={[st.cellOverlay, { backgroundColor: LAST_MOVE_COLOR }]} />
                 )}
 
@@ -355,7 +440,7 @@ export default function PlayScreen({ navigation, route }) {
                     <View style={[st.cellOverlay, { backgroundColor: SWAR_COLOR }]} />
                 )}
 
-                {/* Piece */}
+                {/* NOTE: Safely swap Animated.Values without mixing with plain numbers to prevent Android crash. */}
                 {owner > 0 && (
                     <Animated.View style={[
                         st.piece,
@@ -365,7 +450,7 @@ export default function PlayScreen({ navigation, route }) {
                             borderRadius: cellSize * 0.36,
                             backgroundColor: owner === 1 ? WHITE_PIECE : BLACK_PIECE,
                             borderColor: owner === 1 ? WHITE_PIECE_BORDER : BLACK_PIECE_BORDER,
-                            transform: [{ scale: isSelected ? pulseAnim : 1 }],
+                            transform: [{ scale: isSelected ? selectedPulseAnim : staticAnim }],
                         },
                         isMovable && !isSelected && st.movablePiece,
                         king && st.kingPiece,

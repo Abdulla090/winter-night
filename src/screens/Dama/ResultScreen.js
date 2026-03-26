@@ -10,13 +10,14 @@ import { useTheme } from '../../context/ThemeContext';
 import { layout } from '../../theme/layout';
 
 export default function DamaResultScreen({ navigation, route }) {
-    const { winner, player1Name, player2Name, totalMoves, capturedPieces } = route.params;
+    const { winner, player1Name, player2Name, totalMoves, capturedByP1, capturedByP2, resigned } = route.params || {};
     const { language, isKurdish } = useLanguage();
     const { colors, isRTL } = useTheme();
     const rowDirection = isRTL ? 'row-reverse' : 'row';
 
     const winnerName = winner === 1 ? player1Name : player2Name;
     const loserName = winner === 1 ? player2Name : player1Name;
+    const winnerCaptured = winner === 1 ? (capturedByP1 || 0) : (capturedByP2 || 0);
 
     const handlePlayAgain = () => {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -71,7 +72,7 @@ export default function DamaResultScreen({ navigation, route }) {
                         <View style={styles.statItem}>
                             <Trophy size={20} color="#FFD700" />
                             <Text style={[styles.statValue, { color: colors.text.primary }]}>
-                                {capturedPieces?.[winner] || 0}
+                                {winnerCaptured}
                             </Text>
                             <Text style={[styles.statLabel, { color: colors.text.muted }, isKurdish && styles.kf]}>
                                 {isKurdish ? 'گیران' : 'Captured'}

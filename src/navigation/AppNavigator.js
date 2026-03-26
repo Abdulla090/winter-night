@@ -134,6 +134,14 @@ import TwoTruthsInput from '../screens/TwoTruths/InputScreen';
 import TwoTruthsVote from '../screens/TwoTruths/VoteScreen';
 import TwoTruthsResult from '../screens/TwoTruths/ResultScreen';
 
+// Crossword Puzzle (COMPLETE)
+import CrosswordPlay from '../screens/Crossword/PlayScreen';
+import CrosswordResult from '../screens/Crossword/ResultScreen';
+
+// Okey Game
+import OkeySetup from '../screens/Okey/SetupScreen';
+import OkeyPlay from '../screens/Okey/PlayScreen';
+
 // Auth Screens
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignUpScreen from '../screens/Auth/SignUpScreen';
@@ -331,6 +339,14 @@ function AppStack({ isFirstLaunch }) {
             <Stack.Screen name="TwoTruthsInput" component={TwoTruthsInput} />
             <Stack.Screen name="TwoTruthsVote" component={TwoTruthsVote} />
             <Stack.Screen name="TwoTruthsResult" component={TwoTruthsResult} options={modalOptions} />
+
+            {/* Crossword Puzzle - COMPLETE */}
+            <Stack.Screen name="CrosswordPlay" component={CrosswordPlay} />
+            <Stack.Screen name="CrosswordResult" component={CrosswordResult} options={modalOptions} />
+
+            {/* Okey Stack */}
+            <Stack.Screen name="OkeySetup" component={OkeySetup} />
+            <Stack.Screen name="OkeyPlay" component={OkeyPlay} />
 
             {/* Auth Screens */}
             <Stack.Screen name="Login" component={LoginScreen} options={modalOptions} />

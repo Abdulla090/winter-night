@@ -40,8 +40,8 @@ const ALL_DIRECTIONS = [
 
 /**
  * Get movement directions for a regular piece (forward + sideways only)
- * Player 1 is at bottom (rows 6-7), moves UP (dr = -1) + sideways
- * Player 2 is at top (rows 0-1), moves DOWN (dr = 1) + sideways
+ * Player 1 is at bottom (rows 5, 7), moves UP (dr = -1) + sideways
+ * Player 2 is at top (rows 0, 2), moves DOWN (dr = 1) + sideways
  */
 function getRegularMoveDirections(owner) {
     if (owner === 1) {
@@ -63,26 +63,33 @@ function getRegularMoveDirections(owner) {
 
 /**
  * Creates the initial board state
- * Player 1 (bottom) fills rows 6-7, Player 2 (top) fills rows 0-1
+ * Player 2 (top) fills rows 1 and 2 (row 0 is empty — promotion row)
+ * Player 1 (bottom) fills rows 5 and 6 (row 7 is empty — promotion row)
+ * 16 pieces per player
  */
 export function createInitialBoard() {
     const board = Array(8).fill(null).map(() => Array(8).fill(EMPTY));
     
-    // Player 2 (top) — rows 0-1
-    for (let r = 0; r < 2; r++) {
-        for (let c = 0; c < 8; c++) {
-            board[r][c] = PLAYER2;
-        }
+    // Player 2 (top) — rows 1 and 2 (row 0 empty = promotion row)
+    for (let c = 0; c < 8; c++) {
+        board[1][c] = PLAYER2;
+        board[2][c] = PLAYER2;
     }
     
-    // Player 1 (bottom) — rows 6-7
-    for (let r = 6; r < 8; r++) {
-        for (let c = 0; c < 8; c++) {
-            board[r][c] = PLAYER1;
-        }
+    // Player 1 (bottom) — rows 5 and 6 (row 7 empty = promotion row)
+    for (let c = 0; c < 8; c++) {
+        board[5][c] = PLAYER1;
+        board[6][c] = PLAYER1;
     }
     
     return board;
+}
+
+/**
+ * Deep-clone the board so we never mutate the original
+ */
+function cloneBoard(board) {
+    return board.map(row => [...row]);
 }
 
 /**
@@ -157,13 +164,21 @@ function getRegularMoves(board, r, c) {
  * IMPORTANT: Regular pieces CAN capture in ALL 4 directions (including backward)
  * but can only MOVE forward + sideways.
  * 
+ * CRITICAL: This function now works on a CLONED board to avoid mutating React state.
+ * The caller must pass a cloned board.
+ * 
  * Returns arrays of capture chains (multi-captures).
  * Each individual capture in the chain is also returned as a valid move,
  * so the player can choose to stop after 1, 2, or 3 captures.
  */
-function getCaptureSequences(board, r, c, alreadyCaptured = [], isPromoted = false) {
+function getCaptureSequences(board, r, c, alreadyCaptured, isPromoted) {
+    if (!alreadyCaptured) alreadyCaptured = [];
+    if (!isPromoted) isPromoted = false;
+    
     const cell = board[r][c];
     const owner = getOwner(cell);
+    if (owner === 0) return [];
+    
     const opp = opponent(owner);
     const pieceIsKing = isKing(cell) || isPromoted;
     const sequences = [];
@@ -214,19 +229,14 @@ function getCaptureSequences(board, r, c, alreadyCaptured = [], isPromoted = fal
                     });
                     
                     // Also try to continue capturing from new position
-                    const savedFrom = board[r][c];
-                    const savedOpp = board[foundOpponent.r][foundOpponent.c];
-                    board[r][c] = EMPTY;
-                    board[foundOpponent.r][foundOpponent.c] = EMPTY;
-                    board[landR][landC] = pieceIsKing ? 
-                        (owner === 1 ? PLAYER1_KING : PLAYER2_KING) : savedFrom;
+                    // Clone the board to avoid mutation
+                    const tempBoard = cloneBoard(board);
+                    tempBoard[r][c] = EMPTY;
+                    tempBoard[foundOpponent.r][foundOpponent.c] = EMPTY;
+                    tempBoard[landR][landC] = pieceIsKing ? 
+                        (owner === 1 ? PLAYER1_KING : PLAYER2_KING) : cell;
                     
-                    const continuations = getCaptureSequences(board, landR, landC, newCaptured, pieceIsKing);
-                    
-                    // Restore board
-                    board[r][c] = savedFrom;
-                    board[foundOpponent.r][foundOpponent.c] = savedOpp;
-                    board[landR][landC] = EMPTY;
+                    const continuations = getCaptureSequences(tempBoard, landR, landC, newCaptured, pieceIsKing);
                     
                     // Add multi-capture continuations
                     for (const cont of continuations) {
@@ -275,25 +285,20 @@ function getCaptureSequences(board, r, c, alreadyCaptured = [], isPromoted = fal
             });
             
             // Also try to continue capturing from landing position
-            const savedFrom = board[r][c];
-            const savedMid = board[midR][midC];
-            board[r][c] = EMPTY;
-            board[midR][midC] = EMPTY;
+            // Clone the board to avoid mutation
+            const tempBoard = cloneBoard(board);
+            tempBoard[r][c] = EMPTY;
+            tempBoard[midR][midC] = EMPTY;
             
             if (willPromote) {
-                board[landR][landC] = owner === 1 ? PLAYER1_KING : PLAYER2_KING;
+                tempBoard[landR][landC] = owner === 1 ? PLAYER1_KING : PLAYER2_KING;
             } else {
-                board[landR][landC] = savedFrom;
+                tempBoard[landR][landC] = cell;
             }
             
             const continuations = getCaptureSequences(
-                board, landR, landC, newCaptured, willPromote
+                tempBoard, landR, landC, newCaptured, willPromote
             );
-            
-            // Restore board
-            board[r][c] = savedFrom;
-            board[midR][midC] = savedMid;
-            board[landR][landC] = EMPTY;
             
             // Add multi-capture continuations
             for (const cont of continuations) {
@@ -360,7 +365,7 @@ export function getLegalMovesForPiece(board, r, c) {
  * Also handles king promotion
  */
 export function applyMove(board, move) {
-    const newBoard = board.map(row => [...row]);
+    const newBoard = cloneBoard(board);
     const piece = newBoard[move.from.r][move.from.c];
     const owner = getOwner(piece);
     
@@ -368,8 +373,10 @@ export function applyMove(board, move) {
     newBoard[move.from.r][move.from.c] = EMPTY;
     
     // Remove all captured pieces
-    for (const cap of move.captures) {
-        newBoard[cap.r][cap.c] = EMPTY;
+    if (move.captures && move.captures.length > 0) {
+        for (const cap of move.captures) {
+            newBoard[cap.r][cap.c] = EMPTY;
+        }
     }
     
     // Place piece at destination
@@ -438,7 +445,7 @@ export function countPieces(board) {
  * that piece is declared Swar — the opponent MUST capture it on their next turn
  */
 export function checkSwar(board, lastMove, currentPlayer) {
-    if (!lastMove) return null;
+    if (!lastMove || !lastMove.to) return null;
     
     const { to } = lastMove;
     const opp = opponent(currentPlayer);

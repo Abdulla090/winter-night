@@ -257,7 +257,7 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
 
             {/* Bottom Info */}
             <View style={[styles.cardInfo, isTwoColumns ? {} : { paddingVertical: 12, paddingHorizontal: 12 }]}>
-                <Text style={[styles.cardTitle, { color: colors.text.primary }, isTwoColumns ? {} : { fontSize: 24, marginBottom: 12 }, isKurdish && styles.kurdishFont]} numberOfLines={1}>
+                <Text style={[styles.cardTitle, { color: colors.text.primary }, isTwoColumns ? {} : { fontSize: 24, marginBottom: 12 }, isKurdish && styles.kurdishFont]}>
                     {item.title}
                 </Text>
 
@@ -300,11 +300,24 @@ export default function AllGamesScreen({ route, navigation }) {
     const gridPadding = 0; // no extra padding — let AnimatedScreen handle it
     const screenPadding = 24; // AnimatedScreen's paddingHorizontal (layout.screen.padding)
     const containerWidth = Platform.OS === 'web' ? Math.min(width, 500) : width;
-    const availableWidth = containerWidth - (screenPadding * 2) - gap;
+    const availableWidth = containerWidth - (screenPadding * 2) - gap - 8;
     const cardWidth = Math.floor(availableWidth / numColumns);
 
     // Real Games Data
     const GAMES = [
+        {
+            id: 'okey',
+            title: isKurdish ? 'ئۆکەیی' : 'Okey',
+            screen: 'OkeySetup',
+            colors: ['#047857', '#064E3B'],
+            Icon: Dice5,
+            rating: '5.0',
+            time: '20',
+            players: '2-4',
+            isNew: true,
+            category: 'social',
+            // image intentionally left blank as fallback handles it cleanly avoiding apk crash
+        },
         {
             id: 'twotruths',
             title: isKurdish ? 'دوو ڕاستی و درۆیەک' : 'Two Truths',
@@ -606,6 +619,18 @@ export default function AllGamesScreen({ route, navigation }) {
             category: 'brain',
             image: gameImages.seberd
         },
+        {
+            id: 'crossword',
+            title: isKurdish ? 'خاچەوشە' : 'Crossword',
+            screen: 'CrosswordPlay',
+            colors: ['#1E40AF', '#3B82F6'],
+            Icon: Puzzle,
+            rating: '4.8',
+            time: '15',
+            players: '1',
+            isNew: true,
+            category: 'brain',
+        },
     ];
 
     // Filter games based on search and active filter
@@ -662,18 +687,16 @@ export default function AllGamesScreen({ route, navigation }) {
                             />
                         </View>
                     }
-                    renderItem={({ item, index }) => (
-                        <AnimatedListItem index={index} maxDelay={350}>
-                            <GameGridCard
-                                item={item}
-                                isKurdish={isKurdish}
-                                navigation={navigation}
-                                cardWidth={cardWidth}
-                                colors={colors}
-                                isDark={isDark}
-                                isTwoColumns={isTwoColumns}
-                            />
-                        </AnimatedListItem>
+                    renderItem={({ item }) => (
+                        <GameGridCard
+                            item={item}
+                            isKurdish={isKurdish}
+                            navigation={navigation}
+                            cardWidth={cardWidth}
+                            colors={colors}
+                            isDark={isDark}
+                            isTwoColumns={isTwoColumns}
+                        />
                     )}
                     showsVerticalScrollIndicator={false}
                     // ✨ Native Performance Optimizations
@@ -800,7 +823,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     cardInfo: {
-        paddingHorizontal: 6,
+        paddingHorizontal: 14,
         paddingBottom: 6,
     },
     cardTitle: {
@@ -808,7 +831,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         marginBottom: 8,
-        textAlign: 'right', // Default to RTL for this specific look
+        textAlign: 'center',
     },
     ratingBadge: {
         position: 'absolute',
