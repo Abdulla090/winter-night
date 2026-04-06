@@ -39,7 +39,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
         ? (contextPlayers?.map(p => p.player?.username || 'Player') || ['Player 1', 'Player 2'])
         : (routeParams.players || ['Player 1', 'Player 2']);
 
-    const category = routeParams.category || gameState?.state?.category || 'general';
+    const category = routeParams.category || gameState?.state?.category || ['general'];
     const imposterCount = routeParams.imposterCount || gameState?.state?.imposterCount || 1;
 
     // Game State
@@ -1048,6 +1048,5 @@ const styles = StyleSheet.create({
     },
     voteItemSelected: { backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: COLORS.accent.success, borderWidth: 1 },
     voteItemText: { ...FONTS.medium },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });
-

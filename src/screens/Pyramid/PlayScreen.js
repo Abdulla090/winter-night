@@ -13,9 +13,11 @@ import { t } from '../../localization/translations';
 import { useTheme } from '../../context/ThemeContext';
 import { layout } from '../../theme/layout';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
+const ROW_HEIGHT = 85;
+const CARD_WIDTH = Math.max(Math.min(width - 48, 400), 50);
 const SWIPE_THRESHOLD = 120;
-const CARD_WIDTH = Math.min(width - 48, 400);
 
 export default function PyramidPlayScreen({ navigation, route }) {
     const { players: contextPlayers, currentRoom, gameState, updateGameState, leaveRoom, isHost } = useGameRoom();

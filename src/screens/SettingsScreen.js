@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,7 +8,8 @@ import {
     ScrollView,
     Image,
     Platform,
-    Alert
+    Alert,
+    TextInput
 } from 'react-native';
 
 import * as Haptics from 'expo-haptics';
@@ -36,6 +37,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { t } from '../localization/translations';
 import { layout } from '../theme/layout';
+import { getGeminiApiKey, maskGeminiApiKey, setGeminiApiKey } from '../utils/geminiConfig';
 
 export default function SettingsScreen({ navigation }) {
     const { language, setLanguage, isKurdish } = useLanguage();
@@ -48,12 +50,32 @@ export default function SettingsScreen({ navigation }) {
 
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [soundEnabled, setSoundEnabled] = useState(true);
+    const [geminiApiKey, setGeminiApiKeyInput] = useState('');
+    const [savedGeminiApiKey, setSavedGeminiApiKey] = useState('');
 
     const isDarkMode = isDark;
 
     const handleLanguageToggle = () => {
         setLanguage(language === 'en' ? 'ku' : 'en');
     };
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadGeminiKey = async () => {
+            const key = await getGeminiApiKey();
+            if (isMounted) {
+                setGeminiApiKeyInput(key);
+                setSavedGeminiApiKey(key);
+            }
+        };
+
+        loadGeminiKey();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const handleLogout = async () => {
         Alert.alert(
@@ -71,6 +93,25 @@ export default function SettingsScreen({ navigation }) {
                 }
             ]
         );
+    };
+
+    const handleSaveGeminiKey = async () => {
+        try {
+            await setGeminiApiKey(geminiApiKey);
+            const trimmedKey = geminiApiKey.trim();
+            setSavedGeminiApiKey(trimmedKey);
+            Alert.alert(
+                isKurdish ? 'تەواو بوو' : 'Saved',
+                trimmedKey
+                    ? (isKurdish ? 'کلیلی Gemini پاشەکەوت کرا.' : 'Gemini API key saved.')
+                    : (isKurdish ? 'کلیلی Gemini سڕایەوە.' : 'Gemini API key cleared.')
+            );
+        } catch (error) {
+            Alert.alert(
+                isKurdish ? 'هەڵە' : 'Error',
+                isKurdish ? 'نەتوانرا کلیلی Gemini پاشەکەوت بکرێت.' : 'Failed to save Gemini API key.'
+            );
+        }
     };
 
     // ☀️ Theme-aware accent colors
@@ -189,6 +230,73 @@ export default function SettingsScreen({ navigation }) {
                     />
                     <View style={[styles.divider, { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#E2E8F0' }]} />
                     <SettingRow icon={Globe} title={t('settings.language', language)} subtitle={isKurdish ? 'کوردی' : 'English'} showChevron onPress={handleLanguageToggle} />
+                </View>
+
+                <Text style={[styles.sectionLabel, { color: colors.text.muted }]}>
+                    {isKurdish ? 'Gemini API' : 'Gemini API'}
+                </Text>
+                <View style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder, padding: 16 }]}>
+                    <View style={styles.apiHeader}>
+                        <View style={[styles.iconBox, { backgroundColor: accentBg, marginRight: 12 }]}>
+                            <Palette size={20} color={accentColor} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={[styles.rowTitle, { color: colors.text.primary }]}>
+                                {isKurdish ? 'کلیلی Gemini لەسەر دیڤایس' : 'Device Gemini API key'}
+                            </Text>
+                            <Text style={[styles.rowSubtitle, { color: colors.text.muted }]}>
+                                {savedGeminiApiKey
+                                    ? `${isKurdish ? 'کلیلی پاشەکەوتکراو:' : 'Saved key:'} ${maskGeminiApiKey(savedGeminiApiKey)}`
+                                    : (isKurdish ? 'هێشتا هیچ کلیلی Gemini دانەنراوە.' : 'No Gemini API key saved yet.')}
+                            </Text>
+                        </View>
+                    </View>
+
+                    <TextInput
+                        style={[
+                            styles.apiInput,
+                            {
+                                backgroundColor: isDarkMode ? 'rgba(255,255,255,0.06)' : '#F8FAFC',
+                                borderColor: isDarkMode ? 'rgba(255,255,255,0.08)' : '#E2E8F0',
+                                color: colors.text.primary,
+                                textAlign: isRTL ? 'right' : 'left',
+                            }
+                        ]}
+                        value={geminiApiKey}
+                        onChangeText={setGeminiApiKeyInput}
+                        placeholder={isKurdish ? 'Gemini API key بنووسە' : 'Enter Gemini API key'}
+                        placeholderTextColor={colors.text.muted}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        spellCheck={false}
+                    />
+
+                    <Text style={[styles.apiHint, { color: colors.text.muted, textAlign: isRTL ? 'right' : 'left' }]}>
+                        {isKurdish
+                            ? 'ئەم کلیلیە بۆ Family Feud AI و voice transcription بەکاردێت. دەتوانیت هەر کاتێک بگۆڕیت.'
+                            : 'This key is used for Family Feud AI judging and voice transcription. You can change it anytime.'}
+                    </Text>
+
+                    <View style={[styles.apiActions, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                        <TouchableOpacity
+                            onPress={() => setGeminiApiKeyInput('')}
+                            activeOpacity={0.7}
+                            style={[styles.secondaryAction, { borderColor: colors.border }]}
+                        >
+                            <Text style={[styles.secondaryActionText, { color: colors.text.secondary }]}>
+                                {isKurdish ? 'پاککردنەوە' : 'Clear'}
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={handleSaveGeminiKey}
+                            activeOpacity={0.8}
+                            style={[styles.primaryAction, { backgroundColor: accentColor }]}
+                        >
+                            <Text style={styles.primaryActionText}>
+                                {isKurdish ? 'پاشەکەوتکردن' : 'Save key'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* More Section */}
@@ -331,6 +439,53 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: 'rgba(255,255,255,0.05)',
         marginLeft: 70,
+    },
+    apiHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    apiInput: {
+        borderWidth: 1,
+        borderRadius: 14,
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        fontSize: 14,
+        fontWeight: '500',
+        marginBottom: 10,
+    },
+    apiHint: {
+        fontSize: 12,
+        lineHeight: 18,
+        marginBottom: 14,
+    },
+    apiActions: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    primaryAction: {
+        flex: 1,
+        paddingVertical: 12,
+        borderRadius: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    primaryActionText: {
+        color: '#FFF',
+        fontSize: 14,
+        fontWeight: '700',
+    },
+    secondaryAction: {
+        paddingHorizontal: 18,
+        paddingVertical: 12,
+        borderRadius: 14,
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    secondaryActionText: {
+        fontSize: 14,
+        fontWeight: '600',
     },
     logoutBtn: {
         flexDirection: 'row',

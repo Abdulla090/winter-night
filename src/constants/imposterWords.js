@@ -10,8 +10,8 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Sushi', ku: 'سوشی' }, hint: { en: 'Japanese food', ku: 'خواردنی ژاپۆنی' } },
             { word: { en: 'Burger', ku: 'بەرگەر' }, hint: { en: 'Fast food', ku: 'خواردنی خێرا' } },
             { word: { en: 'Pasta', ku: 'پاستا' }, hint: { en: 'Italian dish', ku: 'خواردنی ئیتاڵی' } },
-            { word: { en: 'Ice Cream', ku: 'بەستەنی' }, hint: { en: 'Dessert', ku: 'شیرینی' } },
-            { word: { en: 'Chocolate', ku: 'چکلێت' }, hint: { en: 'Sweet treat', ku: 'شیرینی' } },
+            { word: { en: 'Ice Cream', ku: 'ئایسکرێم' }, hint: { en: 'Dessert', ku: 'شیرینی' } },
+            { word: { en: 'Chocolate', ku: 'شوکولاته' }, hint: { en: 'Sweet treat', ku: 'شیرینی' } },
             { word: { en: 'Sandwich', ku: 'ساندویچ' }, hint: { en: 'Lunch item', ku: 'خواردنی نیوەڕۆ' } },
             { word: { en: 'Pancakes', ku: 'پانکەیک' }, hint: { en: 'Breakfast food', ku: 'خواردنی بەیانی' } },
             { word: { en: 'Tacos', ku: 'تاکۆ' }, hint: { en: 'Mexican food', ku: 'خواردنی مەکسیکی' } },
@@ -36,10 +36,10 @@ export const WORD_CATEGORIES = {
         name: { en: 'Animals', ku: 'ئاژەڵەکان' },
         icon: 'PawPrint',
         words: [
-            { word: { en: 'Elephant', ku: 'فیل' }, hint: { en: 'Large mammal', ku: 'شیرەمەندی گەورە' } },
+            { word: { en: 'Elephant', ku: 'فیل' }, hint: { en: 'Large mammal', ku: 'شیردەری گەورە' } },
             { word: { en: 'Penguin', ku: 'پێنگوین' }, hint: { en: 'Antarctic bird', ku: 'باڵندەی قوتبی' } },
-            { word: { en: 'Dolphin', ku: 'دۆلفین' }, hint: { en: 'Ocean mammal', ku: 'شیرەمەندی دەریایی' } },
-            { word: { en: 'Butterfly', ku: 'پەپوولە' }, hint: { en: 'Flying insect', ku: 'مێروی فڕۆک' } },
+            { word: { en: 'Dolphin', ku: 'دۆلفین' }, hint: { en: 'Ocean mammal', ku: 'شیردەری دەریایی' } },
+            { word: { en: 'Butterfly', ku: 'پەپوولە' }, hint: { en: 'Flying insect', ku: 'مێرووی فڕیو' } },
             { word: { en: 'Kangaroo', ku: 'کانگرۆ' }, hint: { en: 'Australian animal', ku: 'ئاژەڵی ئوستورالی' } },
             { word: { en: 'Giraffe', ku: 'زەڕافە' }, hint: { en: 'Tall animal', ku: 'ئاژەڵی درێژ' } },
             { word: { en: 'Octopus', ku: 'ئۆکتەپۆس' }, hint: { en: 'Sea creature', ku: 'ئاژەڵی دەریا' } },
@@ -49,16 +49,16 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Monkey', ku: 'مەیموون' }, hint: { en: 'Primate', ku: 'پریمات' } },
             { word: { en: 'Shark', ku: 'قرش' }, hint: { en: 'Ocean predator', ku: 'ڕاوکەری دەریا' } },
             { word: { en: 'Eagle', ku: 'هەڵۆ' }, hint: { en: 'Bird of prey', ku: 'باڵندەی ڕاوکەر' } },
-            { word: { en: 'Snake', ku: 'مار' }, hint: { en: 'Slithering reptile', ku: 'خشۆکی خزۆک' } },
+            { word: { en: 'Snake', ku: 'مار' }, hint: { en: 'Slithering reptile', ku: 'ئاژەڵی خشۆک' } },
             { word: { en: 'Rabbit', ku: 'کەروێشک' }, hint: { en: 'Fluffy pet', ku: 'ئاژەڵی نەرم' } },
-            { word: { en: 'Bear', ku: 'ورچ' }, hint: { en: 'Forest mammal', ku: 'شیرەمەندی دارستان' } },
+            { word: { en: 'Bear', ku: 'ورچ' }, hint: { en: 'Forest mammal', ku: 'شیردەری دارستان' } },
             { word: { en: 'Wolf', ku: 'گورگ' }, hint: { en: 'Wild dog', ku: 'سەگی کێوی' } },
             { word: { en: 'Fox', ku: 'ڕێوی' }, hint: { en: 'Cunning animal', ku: 'ئاژەڵی فێڵباز' } },
             { word: { en: 'Panda', ku: 'پاندا' }, hint: { en: 'Black and white bear', ku: 'ورچی ڕەش و سپی' } },
             { word: { en: 'Zebra', ku: 'زێبرا' }, hint: { en: 'Striped horse', ku: 'ئەسپی هێڵدار' } },
             { word: { en: 'Koala', ku: 'کۆالا' }, hint: { en: 'Australian bear', ku: 'ورچی ئوستورالی' } },
-            { word: { en: 'Frog', ku: 'قورواق' }, hint: { en: 'Amphibian', ku: 'ئاوی و وشکانی' } },
-            { word: { en: 'Turtle', ku: 'کیسەڵ' }, hint: { en: 'Shell reptile', ku: 'خشۆکی کڵۆدار' } },
+            { word: { en: 'Frog', ku: 'قورواق' }, hint: { en: 'Amphibian', ku: 'ئاژەڵی وشکاوەکی' } },
+            { word: { en: 'Turtle', ku: 'کیسەڵ' }, hint: { en: 'Shell reptile', ku: 'خشۆکی توێکڵدار' } },
             { word: { en: 'Horse', ku: 'ئەسپ' }, hint: { en: 'Riding animal', ku: 'ئاژەڵی سواربوون' } },
         ],
     },
@@ -67,7 +67,7 @@ export const WORD_CATEGORIES = {
         icon: 'MapPin',
         words: [
             { word: { en: 'Beach', ku: 'قەراغ دەریا' }, hint: { en: 'Sandy destination', ku: 'شوێنی لمین' } },
-            { word: { en: 'Library', ku: 'کتێبخانە' }, hint: { en: 'Book building', ku: 'شوێنی کتێب' } },
+            { word: { en: 'Library', ku: 'کتێبخانە' }, hint: { en: 'Book building', ku: 'ناوچەی کتێب' } },
             { word: { en: 'Hospital', ku: 'نەخۆشخانە' }, hint: { en: 'Medical facility', ku: 'دامەزراوەی پزیشکی' } },
             { word: { en: 'Airport', ku: 'فڕۆکەخانە' }, hint: { en: 'Travel hub', ku: 'شوێنی گەشت' } },
             { word: { en: 'Museum', ku: 'مۆزەخانە' }, hint: { en: 'Art building', ku: 'بینای هونەری' } },
@@ -76,9 +76,9 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Cinema', ku: 'سینەما' }, hint: { en: 'Movie theater', ku: 'هۆڵی فیلم' } },
             { word: { en: 'Gym', ku: 'یانەی وەرزش' }, hint: { en: 'Exercise place', ku: 'هۆڵی وەرزش' } },
             { word: { en: 'Park', ku: 'پارک' }, hint: { en: 'Outdoor area', ku: 'ناوچەی دەرەوە' } },
-            { word: { en: 'Mall', ku: 'مۆڵ' }, hint: { en: 'Shopping center', ku: 'ناوەندی بازار' } },
+            { word: { en: 'Mall', ku: 'مۆڵ' }, hint: { en: 'Shopping center', ku: 'بازاڕی گەورە' } },
             { word: { en: 'Church', ku: 'کەنیسە' }, hint: { en: 'Religious building', ku: 'بینای ئایینی' } },
-            { word: { en: 'Zoo', ku: 'باخچەی ئاژەڵان' }, hint: { en: 'Animal exhibit', ku: 'نیشاندەری ئاژەڵ' } },
+            { word: { en: 'Zoo', ku: 'باخچەی ئاژەڵان' }, hint: { en: 'Animal exhibit', ku: 'شوێنی پیشاندانی ئاژەڵ' } },
             { word: { en: 'Stadium', ku: 'ستادیۆم' }, hint: { en: 'Sports venue', ku: 'شوێنی وەرزش' } },
             { word: { en: 'Bakery', ku: 'فڕن' }, hint: { en: 'Bread shop', ku: 'دوکانی نان' } },
             { word: { en: 'Hotel', ku: 'هۆتێل' }, hint: { en: 'Place to stay', ku: 'شوێنی مانەوە' } },
@@ -89,7 +89,7 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Pharmacy', ku: 'دەرمانخانە' }, hint: { en: 'Medicine shop', ku: 'دوکانی دەرمان' } },
             { word: { en: 'Supermarket', ku: 'سووپەرمارکێت' }, hint: { en: 'Grocery store', ku: 'دوکانی خواردن' } },
             { word: { en: 'Cafe', ku: 'کافێ' }, hint: { en: 'Coffee shop', ku: 'دوکانی قاوە' } },
-            { word: { en: 'Barbershop', ku: 'سەرتاشخانە' }, hint: { en: 'Haircut place', ku: 'شوێنی سەرتاشین' } },
+            { word: { en: 'Barbershop', ku: 'سەرتاشخانە' }, hint: { en: 'Haircut place', ku: 'شوێنی بڕینی قژ' } },
         ],
     },
     objects: {
@@ -100,8 +100,8 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Guitar', ku: 'گیتار' }, hint: { en: 'Musical instrument', ku: 'ئامێری میوزیک' } },
             { word: { en: 'Telescope', ku: 'دووربین' }, hint: { en: 'Stargazing tool', ku: 'بۆ بینینی ئەستێرەکان' } },
             { word: { en: 'Camera', ku: 'کامێرا' }, hint: { en: 'Photo device', ku: 'ئامێری وێنەگرتن' } },
-            { word: { en: 'Piano', ku: 'پیانۆ' }, hint: { en: 'Keyboard instrument', ku: 'ئامێری کلیل' } },
-            { word: { en: 'Bicycle', ku: 'پاسکیل' }, hint: { en: 'Two-wheeled transport', ku: 'گواستنەوەی دوو چەرخ' } },
+            { word: { en: 'Piano', ku: 'پیانۆ' }, hint: { en: 'Keyboard instrument', ku: 'ئامێری کلیلدار' } },
+            { word: { en: 'Bicycle', ku: 'پاسکیل' }, hint: { en: 'Two-wheeled transport', ku: 'هۆی گواستنەوەی دوو تایە' } },
             { word: { en: 'Microwave', ku: 'مایکرۆوەیڤ' }, hint: { en: 'Kitchen appliance', ku: 'مەکینەی چێشتخانە' } },
             { word: { en: 'Laptop', ku: 'لاپتۆپ' }, hint: { en: 'Portable computer', ku: 'کۆمپیوتەری لاپتۆپ' } },
             { word: { en: 'Backpack', ku: 'جانتای شان' }, hint: { en: 'Carry bag', ku: 'جانتای شان' } },
@@ -115,7 +115,7 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Watch', ku: 'کاتژمێری دەست' }, hint: { en: 'Wrist time', ku: 'کاتژمێری مەچەک' } },
             { word: { en: 'Glasses', ku: 'چاویلکە' }, hint: { en: 'Vision aid', ku: 'یارمەتیدەری بینین' } },
             { word: { en: 'Wallet', ku: 'جزدان' }, hint: { en: 'Money holder', ku: 'هەڵگری پارە' } },
-            { word: { en: 'Keys', ku: 'کلیلەکان' }, hint: { en: 'Unlocker', ku: 'کردنەوە' } },
+            { word: { en: 'Keys', ku: 'کلیلەکان' }, hint: { en: 'Unlocker', ku: 'بۆ کردنەوەی دەرگا' } },
             { word: { en: 'Book', ku: 'کتێب' }, hint: { en: 'Reading material', ku: 'ماددەی خوێندنەوە' } },
             { word: { en: 'Chair', ku: 'کورسی' }, hint: { en: 'Sitting furniture', ku: 'مۆبیلیاتی دانیشتن' } },
             { word: { en: 'Table', ku: 'مێز' }, hint: { en: 'Flat surface', ku: 'ڕووی تەخت' } },
@@ -132,23 +132,23 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Painting', ku: 'وێنەکێشان' }, hint: { en: 'Creating art', ku: 'دروستکردنی هونەر' } },
             { word: { en: 'Camping', ku: 'کامپکردن' }, hint: { en: 'Outdoor adventure', ku: 'ماجەرای دەرەوە' } },
             { word: { en: 'Reading', ku: 'خوێندنەوە' }, hint: { en: 'Book activity', ku: 'چالاکی کتێب' } },
-            { word: { en: 'Singing', ku: 'گۆرانی گوتن' }, hint: { en: 'Vocal performance', ku: 'ئیشی دەنگ' } },
+            { word: { en: 'Singing', ku: 'گۆرانی گوتن' }, hint: { en: 'Vocal performance', ku: 'بەهرەی دەنگی' } },
             { word: { en: 'Fishing', ku: 'ماسیگرتن' }, hint: { en: 'Catching fish', ku: 'گرتنی ماسی' } },
             { word: { en: 'Shopping', ku: 'کڕین' }, hint: { en: 'Buying things', ku: 'کڕینی شتەکان' } },
             { word: { en: 'Sleeping', ku: 'خەوتن' }, hint: { en: 'Resting', ku: 'پشوودان' } },
             { word: { en: 'Running', ku: 'ڕاکردن' }, hint: { en: 'Fast movement', ku: 'جووڵانی خێرا' } },
-            { word: { en: 'Photography', ku: 'وێنەگری' }, hint: { en: 'Taking pictures', ku: 'گرتنی وێنە' } },
+            { word: { en: 'Photography', ku: 'وێنەگرتن' }, hint: { en: 'Taking pictures', ku: 'گرتنی وێنە' } },
             { word: { en: 'Gardening', ku: 'باخچەوانی' }, hint: { en: 'Growing plants', ku: 'گەشەپێدانی ڕووەک' } },
             { word: { en: 'Yoga', ku: 'یۆگا' }, hint: { en: 'Exercise practice', ku: 'ڕاهێنانی وەرزش' } },
             { word: { en: 'Meditation', ku: 'تێڕامان' }, hint: { en: 'Mind relaxation', ku: 'پشوودانی مێشک' } },
             { word: { en: 'Hiking', ku: 'شاڕێی' }, hint: { en: 'Walking in nature', ku: 'ڕۆیشتن لە سروشت' } },
             { word: { en: 'Biking', ku: 'پاسکیلسواری' }, hint: { en: 'Riding a bike', ku: 'لێخوڕینی پاسکیل' } },
-            { word: { en: 'Surfing', ku: 'سەرکێشی شەپۆل' }, hint: { en: 'Riding waves', ku: 'سواری شەپۆل' } },
+            { word: { en: 'Surfing', ku: 'شەپۆلسواری' }, hint: { en: 'Riding waves', ku: 'سواری شەپۆل' } },
             { word: { en: 'Skiing', ku: 'سکی' }, hint: { en: 'Sliding on snow', ku: 'خلیسکانی سەر بەفر' } },
-            { word: { en: 'Skating', ku: 'خلیسکێنە' }, hint: { en: 'Gliding on ice/wheels', ku: 'خلیسکانی سەر سەهۆڵ/تەگە' } },
+            { word: { en: 'Skating', ku: 'خلیسکێنە' }, hint: { en: 'Gliding on ice/wheels', ku: 'خلیسکانی سەر سەهۆڵ' } },
             { word: { en: 'Climbing', ku: 'هەڵکشان' }, hint: { en: 'Going up', ku: 'چوونە سەرەوە' } },
             { word: { en: 'Driving', ku: 'لێخوڕین' }, hint: { en: 'Operating a car', ku: 'کارپێکردنی ئۆتۆمبێل' } },
-            { word: { en: 'Flying', ku: 'فڕین' }, hint: { en: 'Moving through air', ku: 'جووڵان بەناو هەوا' } },
+            { word: { en: 'Flying', ku: 'فڕین' }, hint: { en: 'Moving through air', ku: 'گەشت بەناو ئاسماندا' } },
             { word: { en: 'Writing', ku: 'نووسین' }, hint: { en: 'Creating text', ku: 'دروستکردنی دەق' } },
         ],
     },
@@ -162,7 +162,7 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Boxing', ku: 'بۆکسێن' }, hint: { en: 'Combat sport', ku: 'وەرزشی جەنگی' } },
             { word: { en: 'Swimming', ku: 'مەلەکردن' }, hint: { en: 'Water sport', ku: 'وەرزشی ئاو' } },
             { word: { en: 'Golf', ku: 'گۆڵف' }, hint: { en: 'Club and ball', ku: 'تۆپ و دار' } },
-            { word: { en: 'Volleyball', ku: 'بالەتۆپ' }, hint: { en: 'Net sport', ku: 'وەرزشی تۆڕ' } },
+            { word: { en: 'Volleyball', ku: 'تۆپی بالە' }, hint: { en: 'Net sport', ku: 'وەرزشی تۆڕ' } },
             { word: { en: 'Baseball', ku: 'بەیسبۆڵ' }, hint: { en: 'American pastime', ku: 'وەرزشی ئەمریکی' } },
             { word: { en: 'Skiing', ku: 'سکی' }, hint: { en: 'Winter sport', ku: 'وەرزشی زستانە' } },
             { word: { en: 'Wrestling', ku: 'زۆرانبازی' }, hint: { en: 'Grappling sport', ku: 'وەرزشی دەسبەدەست' } },
@@ -175,7 +175,7 @@ export const WORD_CATEGORIES = {
             { word: { en: 'Archery', ku: 'تیروکەوان' }, hint: { en: 'Arrow shooting', ku: 'فڕێدانی تیر' } },
             { word: { en: 'Fencing', ku: 'شمشێربازی' }, hint: { en: 'Sword sport', ku: 'وەرزشی شمشێر' } },
             { word: { en: 'Gymnastics', ku: 'جیمناستیک' }, hint: { en: 'Flexibility sport', ku: 'وەرزشی نەرمی' } },
-            { word: { en: 'Skateboarding', ku: 'سکەیتبۆردینگ' }, hint: { en: 'Board tricks', ku: 'فێلی تەختەیی' } },
+            { word: { en: 'Skateboarding', ku: 'سکەیتبۆردینگ' }, hint: { en: 'Board tricks', ku: 'یاری بە تەختەی خلیسکێنە' } },
         ],
     },
 };
@@ -192,23 +192,36 @@ export const getCategoryName = (category, language = 'en') => {
     return category.name[language] || category.name.en;
 };
 
+const seenImposters = {};
+
 export const getRandomWord = (categoryKey, language = 'en') => {
-    const category = WORD_CATEGORIES[categoryKey];
-    if (!category) {
-        const allCategories = Object.keys(WORD_CATEGORIES);
-        const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
-        const words = WORD_CATEGORIES[randomCat].words;
-        const wordObj = words[Math.floor(Math.random() * words.length)];
-        return {
-            word: getText(wordObj.word, language),
-            hint: getText(wordObj.hint, language)
-        };
+    const requestedCategories = Array.isArray(categoryKey)
+        ? categoryKey.filter((key) => WORD_CATEGORIES[key])
+        : [categoryKey].filter((key) => WORD_CATEGORIES[key]);
+    const categoryKeys = requestedCategories.length > 0
+        ? requestedCategories
+        : Object.keys(WORD_CATEGORIES);
+    const randomCategoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
+    const words = WORD_CATEGORIES[randomCategoryKey].words;
+    
+    if (!seenImposters[randomCategoryKey]) seenImposters[randomCategoryKey] = new Set();
+    
+    let available = words.map((_, i) => i).filter(i => !seenImposters[randomCategoryKey].has(i));
+    if (available.length === 0) {
+        seenImposters[randomCategoryKey].clear();
+        available = words.map((_, i) => i);
     }
-    const words = category.words;
-    const wordObj = words[Math.floor(Math.random() * words.length)];
+    
+    const randomIdx = available[Math.floor(Math.random() * available.length)];
+    seenImposters[randomCategoryKey].add(randomIdx);
+    
+    const wordObj = words[randomIdx];
+    const categoryNameString = getCategoryName(WORD_CATEGORIES[randomCategoryKey], language);
+
     return {
         word: getText(wordObj.word, language),
-        hint: getText(wordObj.hint, language)
+        hint: getText(wordObj.hint, language),
+        category: categoryNameString,
     };
 };
 

@@ -26,7 +26,9 @@ import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
-const { width, height } = Dimensions.get('window');
+const _dims = Dimensions.get('window');
+const width = Math.max(_dims.width, 300);
+const height = Math.max(_dims.height, 200);
 
 // Number of questions each player answers per turn
 const QUESTIONS_PER_PLAYER = 3;

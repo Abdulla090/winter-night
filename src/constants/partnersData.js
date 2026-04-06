@@ -15,7 +15,7 @@ export const partnersData = [
     },
     {
         id: 'habits',
-        title: { en: 'Habits', ku: 'وڕووژان' },
+        title: { en: 'Habits', ku: 'خووەکان' },
         questions: [
             { q: { en: "Are they a morning person or night owl?", ku: "بەیانیانن یان شەوان؟" } },
             { q: { en: "What is their worst habit?", ku: "خراپترین خووی چییە؟" } },
@@ -78,12 +78,31 @@ export const partnersData = [
     }
 ];
 
+const seenPartnersQuestions = {};
+
 export const getPartnersQuestions = (categoryId) => {
+    let sourceQuestions = [];
     if (categoryId === 'mix') {
-        const all = [];
-        partnersData.forEach(cat => all.push(...cat.questions));
-        return all.sort(() => Math.random() - 0.5).slice(0, 10);
+        partnersData.forEach(cat => sourceQuestions.push(...cat.questions));
+    } else {
+        const category = partnersData.find(c => c.id === categoryId);
+        if (category) sourceQuestions = [...category.questions];
     }
-    const category = partnersData.find(c => c.id === categoryId);
-    return category ? category.questions : [];
+    
+    if (sourceQuestions.length === 0) return [];
+    
+    const shuffled = sourceQuestions.map((q, i) => ({...q, originalIndex: i})).sort(() => Math.random() - 0.5);
+    
+    if (!seenPartnersQuestions[categoryId]) seenPartnersQuestions[categoryId] = new Set();
+    
+    let unseen = shuffled.filter(q => !seenPartnersQuestions[categoryId].has(q.originalIndex));
+    
+    if (unseen.length < 10) {
+        seenPartnersQuestions[categoryId].clear();
+        unseen = shuffled;
+    }
+    
+    const result = unseen.slice(0, 10);
+    result.forEach(q => seenPartnersQuestions[categoryId].add(q.originalIndex));
+    return result;
 };

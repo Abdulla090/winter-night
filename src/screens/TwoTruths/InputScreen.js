@@ -70,7 +70,7 @@ export default function TwoTruthsInputScreen({ route, navigation }) {
                     return (
                         <GlassCard key={idx} style={[styles.inputCard, isSelectedLie && { borderColor: '#EF4444', borderWidth: 2 }]}>
                             <TextInput
-                                style={[styles.input, { color: colors.text.primary }, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
+                                style={[styles.input, { color: colors.text.primary }, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                                 value={statements[idx]}
                                 onChangeText={(t) => updateStatement(t, idx)}
                                 placeholder={isKurdish ? `ڕستەی ${idx + 1}...` : `Statement ${idx + 1}...`}
@@ -128,5 +128,5 @@ const styles = StyleSheet.create({
     radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#EF4444' },
     lieToggleText: { fontSize: 14, fontWeight: '600' },
     fabContainer: { position: 'absolute', bottom: 30, left: 20, right: 20 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

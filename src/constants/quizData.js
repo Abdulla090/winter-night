@@ -15,7 +15,7 @@ export const QUIZ_CATEGORIES = {
             { question: { en: "How many days are in a leap year?", ku: "چەند ڕۆژ لە ساڵی پڕدا هەیە؟" }, options: [{ en: "365", ku: "٣٦٥" }, { en: "366", ku: "٣٦٦" }, { en: "364", ku: "٣٦٤" }, { en: "367", ku: "٣٦٧" }], answer: 1 },
             { question: { en: "What is the smallest country in the world?", ku: "بچووکترین وڵات لە جیهاندا کامەیە؟" }, options: [{ en: "Monaco", ku: "مۆناکۆ" }, { en: "Vatican City", ku: "شاری ڤاتیکان" }, { en: "San Marino", ku: "سان مارینۆ" }, { en: "Liechtenstein", ku: "لیختنشتاین" }], answer: 1 },
             { question: { en: "Which animal is known as the King of the Jungle?", ku: "کام ئاژەڵ بە پاشای دارستان ناسراوە؟" }, options: [{ en: "Tiger", ku: "بەور" }, { en: "Elephant", ku: "فیل" }, { en: "Lion", ku: "شێر" }, { en: "Gorilla", ku: "گۆریلا" }], answer: 2 },
-            { question: { en: "What is the largest mammal on Earth?", ku: "گەورەترین شیرەمەند لەسەر زەوی کامەیە؟" }, options: [{ en: "Elephant", ku: "فیل" }, { en: "Blue Whale", ku: "نەهەنگی شین" }, { en: "Giraffe", ku: "زەڕافە" }, { en: "Hippopotamus", ku: "ئەسپی دەریایی" }], answer: 1 },
+            { question: { en: "What is the largest mammal on Earth?", ku: "گەورەترین شیردەر لەسەر زەوی کامەیە؟" }, options: [{ en: "Elephant", ku: "فیل" }, { en: "Blue Whale", ku: "نەهەنگی شین" }, { en: "Giraffe", ku: "زەڕافە" }, { en: "Hippopotamus", ku: "ئەسپی ئاوی" }], answer: 1 },
             { question: { en: "How many colors are in a rainbow?", ku: "چەند ڕەنگ لە کەوانە هەیە؟" }, options: [{ en: "5", ku: "٥" }, { en: "6", ku: "٦" }, { en: "7", ku: "٧" }, { en: "8", ku: "٨" }], answer: 2 }
         ]
     },
@@ -23,8 +23,8 @@ export const QUIZ_CATEGORIES = {
         name: { en: 'Science', ku: 'زانست' },
         icon: 'flask',
         questions: [
-            { question: { en: "What is the chemical formula for water?", ku: "فۆرمولای کیمیاوی ئاو چییە؟" }, options: [{ en: "CO2", ku: "CO2" }, { en: "H2O", ku: "H2O" }, { en: "O2", ku: "O2" }, { en: "NaCl", ku: "NaCl" }], answer: 1 },
-            { question: { en: "What is the speed of light?", ku: "خێرایی ڕووناکی چەندە؟" }, options: [{ en: "300,000 km/s", ku: "٣٠٠,٠٠٠ کم/چ" }, { en: "150,000 km/s", ku: "١٥٠,٠٠٠ کم/چ" }, { en: "450,000 km/s", ku: "٤٥٠,٠٠٠ کم/چ" }, { en: "600,000 km/s", ku: "٦٠٠,٠٠٠ کم/چ" }], answer: 0 },
+            { question: { en: "What is the chemical formula for water?", ku: "هێمای کیمیایی ئاو چییە؟" }, options: [{ en: "CO2", ku: "CO2" }, { en: "H2O", ku: "H2O" }, { en: "O2", ku: "O2" }, { en: "NaCl", ku: "NaCl" }], answer: 1 },
+            { question: { en: "What is the speed of light?", ku: "خێرایی ڕووناکی چەندە؟" }, options: [{ en: "300,000 km/s", ku: "٣٠٠,٠٠٠ کم/چرکە" }, { en: "150,000 km/s", ku: "١٥٠,٠٠٠ کم/چرکە" }, { en: "450,000 km/s", ku: "٤٥٠,٠٠٠ کم/چرکە" }, { en: "600,000 km/s", ku: "٦٠٠,٠٠٠ کم/چرکە" }], answer: 0 },
             { question: { en: "What gas do plants absorb from the air?", ku: "ڕووەکەکان کام گاز لە هەوا دەمژن؟" }, options: [{ en: "Oxygen", ku: "ئۆکسجین" }, { en: "Nitrogen", ku: "نایترۆجین" }, { en: "Carbon Dioxide", ku: "کاربۆن دای ئۆکساید" }, { en: "Hydrogen", ku: "هایدرۆجین" }], answer: 2 },
             { question: { en: "How many bones are in the adult human body?", ku: "چەند ئێسک لە جەستەی مرۆڤی گەورەدا هەیە؟" }, options: [{ en: "187", ku: "١٨٧" }, { en: "206", ku: "٢٠٦" }, { en: "226", ku: "٢٢٦" }, { en: "256", ku: "٢٥٦" }], answer: 1 },
             { question: { en: "What is the largest organ in the human body?", ku: "گەورەترین ئەندام لە جەستەی مرۆڤدا کامەیە؟" }, options: [{ en: "Heart", ku: "دڵ" }, { en: "Liver", ku: "جگەر" }, { en: "Brain", ku: "مێشک" }, { en: "Skin", ku: "پێست" }], answer: 3 },
@@ -48,7 +48,7 @@ export const QUIZ_CATEGORIES = {
             { question: { en: "What ancient wonder was located in Egypt?", ku: "کام سەرسوڕهێنەری کۆن لە میسردا بوو؟" }, options: [{ en: "Colosseum", ku: "کۆلیسیۆم" }, { en: "Great Pyramid of Giza", ku: "ئەهرامە گەورەکەی گیزا" }, { en: "Hanging Gardens", ku: "باخچەکانی هەڵواسراو" }, { en: "Lighthouse", ku: "فانووسی دەریایی" }], answer: 1 },
             { question: { en: "Who discovered America in 1492?", ku: "کێ ئەمریکای دۆزییەوە لە ١٤٩٢؟" }, options: [{ en: "Vasco da Gama", ku: "ڤاسکۆ دا گاما" }, { en: "Ferdinand Magellan", ku: "فێردیناند ماگێلان" }, { en: "Christopher Columbus", ku: "کریستۆفەر کۆلۆمبۆس" }, { en: "Amerigo Vespucci", ku: "ئەمیریگۆ ڤێسپوتشی" }], answer: 2 },
             { question: { en: "What year did the French Revolution begin?", ku: "شۆڕشی فەرەنسا لە کام ساڵ دەستی پێکرد؟" }, options: [{ en: "1776", ku: "١٧٧٦" }, { en: "1789", ku: "١٧٨٩" }, { en: "1799", ku: "١٧٩٩" }, { en: "1804", ku: "١٨٠٤" }], answer: 1 },
-            { question: { en: "Who was the first person to walk on the moon?", ku: "یەکەم کەس کێ بوو کە ڕێی کرد لەسەر مانگ؟" }, options: [{ en: "Buzz Aldrin", ku: "باز ئاڵدرین" }, { en: "Yuri Gagarin", ku: "یوری گاگارین" }, { en: "Neil Armstrong", ku: "نیل ئارمسترۆنگ" }, { en: "John Glenn", ku: "جۆن گلین" }], answer: 2 }
+            { question: { en: "Who was the first person to walk on the moon?", ku: "یەکەم کەس کێ بوو کە پێی نایە سەر مانگ؟" }, options: [{ en: "Buzz Aldrin", ku: "باز ئاڵدرین" }, { en: "Yuri Gagarin", ku: "یوری گاگارین" }, { en: "Neil Armstrong", ku: "نیل ئارمسترۆنگ" }, { en: "John Glenn", ku: "جۆن گلین" }], answer: 2 }
         ]
     },
     movies: {
@@ -76,11 +76,11 @@ export const QUIZ_CATEGORIES = {
             { question: { en: "Which country won the 2018 FIFA World Cup?", ku: "کام وڵات جامی جیهانی فیفا ٢٠١٨ ی بردەوە؟" }, options: [{ en: "Brazil", ku: "برازیل" }, { en: "Germany", ku: "ئەڵمانیا" }, { en: "France", ku: "فەرەنسا" }, { en: "Argentina", ku: "ئەرژەنتین" }], answer: 2 },
             { question: { en: "How many Grand Slam tennis tournaments are there each year?", ku: "چەند تورنەمێنتی گراند سلام هەیە لە ساڵێکدا؟" }, options: [{ en: "2", ku: "٢" }, { en: "3", ku: "٣" }, { en: "4", ku: "٤" }, { en: "5", ku: "٥" }], answer: 2 },
             { question: { en: "What is the maximum score in a single frame of bowling?", ku: "زۆرترین خاڵ لە یەک فرەیمی بۆلینگ چەندە؟" }, options: [{ en: "200", ku: "٢٠٠" }, { en: "250", ku: "٢٥٠" }, { en: "300", ku: "٣٠٠" }, { en: "350", ku: "٣٥٠" }], answer: 2 },
-            { question: { en: "Which sport uses a shuttlecock?", ku: "کام وەرزش شەتڵکۆک بەکار دەهێنێت؟" }, options: [{ en: "Tennis", ku: "تێنس" }, { en: "Badminton", ku: "بادمینتۆن" }, { en: "Squash", ku: "سکواش" }, { en: "Table Tennis", ku: "تێنسی مێز" }], answer: 1 },
+            { question: { en: "Which sport uses a shuttlecock?", ku: "کام وەرزش تۆپی پەڕ (Shuttlecock) بەکار دەهێنێت؟" }, options: [{ en: "Tennis", ku: "تێنس" }, { en: "Badminton", ku: "بادمینتۆن" }, { en: "Squash", ku: "سکواش" }, { en: "Table Tennis", ku: "تێنسی مێز" }], answer: 1 },
             { question: { en: "How long is a marathon in miles?", ku: "ماراتۆن چەند میل درێژە؟" }, options: [{ en: "20.2", ku: "٢٠.٢" }, { en: "24.2", ku: "٢٤.٢" }, { en: "26.2", ku: "٢٦.٢" }, { en: "28.2", ku: "٢٨.٢" }], answer: 2 },
             { question: { en: "What country is the sport of cricket most associated with?", ku: "کام وڵات زۆرترین پەیوەندی هەیە بە وەرزشی کریکێت؟" }, options: [{ en: "USA", ku: "ئەمریکا" }, { en: "England", ku: "ئینگلتەرا" }, { en: "France", ku: "فەرەنسا" }, { en: "Germany", ku: "ئەڵمانیا" }], answer: 1 },
             { question: { en: "How many holes are played in a standard round of golf?", ku: "چەند کون لە قۆناغێکی ئاسایی گۆڵفدا یاری دەکرێت؟" }, options: [{ en: "9", ku: "٩" }, { en: "12", ku: "١٢" }, { en: "18", ku: "١٨" }, { en: "21", ku: "٢١" }], answer: 2 },
-            { question: { en: "Which sport is Michael Phelps famous for?", ku: "مایکڵ فێلپس بۆ کام وەرزش ناوبانگە؟" }, options: [{ en: "Diving", ku: "ڕێژە" }, { en: "Swimming", ku: "مەلەکردن" }, { en: "Water Polo", ku: "پۆلۆی ئاو" }, { en: "Rowing", ku: "بەلەم ڕاننان" }], answer: 1 }
+            { question: { en: "Which sport is Michael Phelps famous for?", ku: "مایکڵ فێلپس بۆ کام وەرزش ناوبانگە؟" }, options: [{ en: "Diving", ku: "مەلەوانی ژێرئاو" }, { en: "Swimming", ku: "مەلەکردن" }, { en: "Water Polo", ku: "تۆپی ئاوی" }, { en: "Rowing", ku: "بەلەم ڕاننان" }], answer: 1 }
         ]
     },
     music: {
@@ -111,7 +111,7 @@ export const QUIZ_CATEGORIES = {
             { question: { en: "Who founded Apple?", ku: "کێ ئەپڵی دامەزراند؟" }, options: [{ en: "Bill Gates", ku: "بیل گەیتس" }, { en: "Steve Jobs", ku: "ستیڤ جۆبز" }, { en: "Elon Musk", ku: "ئیلۆن ماسک" }, { en: "Mark Zuckerberg", ku: "مارک زوکەربێرگ" }], answer: 1 },
             { question: { en: "What does 'www' stand for?", ku: "'www' بۆ چی دەوەستێت؟" }, options: [{ en: "World Wide Web", ku: "تۆڕی جیهانی" }, { en: "World Web Wifi", ku: "وێبی جیهانی وایفای" }, { en: "Wide World Web", ku: "تۆڕی فراوانی جیهان" }, { en: "Web World Wide", ku: "تۆڕی فراوان" }], answer: 0 },
             { question: { en: "What year was the first iPhone released?", ku: "ئایفۆنی یەکەم لە کام ساڵ دەرچوو؟" }, options: [{ en: "2005", ku: "٢٠٠٥" }, { en: "2006", ku: "٢٠٠٦" }, { en: "2007", ku: "٢٠٠٧" }, { en: "2008", ku: "٢٠٠٨" }], answer: 2 },
-            { question: { en: "What does CPU stand for?", ku: "CPU بۆ چی دەوەستێت؟" }, options: [{ en: "Central Program Unit", ku: "یەکەی بەرنامەی ناوەندی" }, { en: "Central Processing Unit", ku: "یەکەی ئامرازکردنی ناوەندی" }, { en: "Computer Personal Unit", ku: "یەکەی کەسیی کۆمپیوتەر" }, { en: "Control Process Unit", ku: "یەکەی کۆنترۆلی پرۆسە" }], answer: 1 },
+            { question: { en: "What does CPU stand for?", ku: "CPU بۆ چی دەوەستێت؟" }, options: [{ en: "Central Program Unit", ku: "یەکەی بەرنامەی ناوەندی" }, { en: "Central Processing Unit", ku: "یەکەی چارەسەرکردنی ناوەندی" }, { en: "Computer Personal Unit", ku: "یەکەی کەسیی کۆمپیوتەر" }, { en: "Control Process Unit", ku: "یەکەی کۆنترۆلی پرۆسە" }], answer: 1 },
             { question: { en: "Who created Facebook?", ku: "کێ فەیسبووکی دروست کرد؟" }, options: [{ en: "Jack Dorsey", ku: "جاک دۆرسی" }, { en: "Mark Zuckerberg", ku: "مارک زوکەربێرگ" }, { en: "Jeff Bezos", ku: "جێف بەزۆس" }, { en: "Larry Page", ku: "لاری پەیج" }], answer: 1 },
             { question: { en: "What programming language is most used for websites?", ku: "کام زمانی بەرنامەسازی زۆرترین بەکاردەهێنرێت بۆ وێبسایتەکان؟" }, options: [{ en: "Python", ku: "پایسۆن" }, { en: "Java", ku: "جاڤا" }, { en: "JavaScript", ku: "جاڤاسکریپت" }, { en: "C++", ku: "سی++" }], answer: 2 },
             { question: { en: "What does 'AI' stand for?", ku: "'AI' بۆ چی دەوەستێت؟" }, options: [{ en: "Artificial Intelligence", ku: "ژیرایی دەستکرد" }, { en: "Automated Interface", ku: "ڕووکاری ئۆتۆماتیکی" }, { en: "Advanced Internet", ku: "ئینتەرنێتی پێشکەوتوو" }, { en: "Active Input", ku: "داخلکردنی چالاک" }], answer: 0 },
@@ -128,14 +128,29 @@ export const getText = (item, language = 'en') => {
     return item[language] || item.en;
 };
 
+const seenQuizQuestions = {};
+
 // Get random questions from a category
 export const getRandomQuestions = (categoryKey, count = 10, language = 'en') => {
     const category = QUIZ_CATEGORIES[categoryKey];
     if (!category) return [];
 
-    const questions = [...category.questions];
-    const shuffled = questions.sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(count, questions.length)).map(q => ({
+    let questions = category.questions;
+    const shuffled = questions.map((q, i) => ({ ...q, originalIndex: i })).sort(() => Math.random() - 0.5);
+    
+    if (!seenQuizQuestions[categoryKey]) seenQuizQuestions[categoryKey] = new Set();
+    
+    let unseen = shuffled.filter(q => !seenQuizQuestions[categoryKey].has(q.originalIndex));
+    
+    if (unseen.length < count) {
+        seenQuizQuestions[categoryKey].clear();
+        unseen = shuffled;
+    }
+    
+    const result = unseen.slice(0, count);
+    result.forEach(q => seenQuizQuestions[categoryKey].add(q.originalIndex));
+
+    return result.map(q => ({
         question: getText(q.question, language),
         options: q.options.map(opt => getText(opt, language)),
         answer: q.answer,

@@ -69,32 +69,19 @@ function SnakeSVG({ from, to, cellSize }) {
         <G>
             <Defs>
                 <SvgGrad id={`snakeGrad-${from}`} x1="0" y1="0" x2="0" y2="1">
-                    <Stop offset="0" stopColor="#16A34A" />   {/* Green Head */}
-                    <Stop offset="1" stopColor="#84CC16" />   {/* Lime Tail */}
+                    <Stop offset="0" stopColor="#16A34A" />
+                    <Stop offset="1" stopColor="#84CC16" />
                 </SvgGrad>
             </Defs>
-            {/* Shadow */}
             <Path d={curve} stroke="rgba(0,0,0,0.3)" strokeWidth={cellSize * 0.35} fill="none" strokeLinecap="round" />
-            
-            {/* Outline */}
             <Path d={curve} stroke="#064E3B" strokeWidth={cellSize * 0.3} fill="none" strokeLinecap="round" />
-            
-            {/* Inner Body */}
             <Path d={curve} stroke={`url(#snakeGrad-${from})`} strokeWidth={cellSize * 0.22} fill="none" strokeLinecap="round" />
-            
-            {/* Belly Scales (Dashed) */}
             <Path d={curve} stroke="#4ADE80" strokeWidth={cellSize * 0.12} fill="none" strokeLinecap="round" strokeDasharray="4,6" />
-
-            {/* Head */}
             <SvgCircle cx={start.x} cy={start.y} r={cellSize * 0.25} fill="#16A34A" stroke="#064E3B" strokeWidth={2} />
-            
-            {/* Eyes */}
             <SvgCircle cx={start.x - cellSize*0.1} cy={start.y - cellSize*0.05} r={cellSize*0.06} fill="#FFF" />
             <SvgCircle cx={start.x + cellSize*0.1} cy={start.y - cellSize*0.05} r={cellSize*0.06} fill="#FFF" />
             <SvgCircle cx={start.x - cellSize*0.1} cy={start.y - cellSize*0.05} r={cellSize*0.02} fill="#000" />
             <SvgCircle cx={start.x + cellSize*0.1} cy={start.y - cellSize*0.05} r={cellSize*0.02} fill="#000" />
-            
-            {/* Forked Tongue */}
             <Path d={`M ${start.x} ${start.y - cellSize*0.25} L ${start.x} ${start.y - cellSize*0.4} M ${start.x} ${start.y - cellSize*0.4} L ${start.x - 3} ${start.y - cellSize*0.5} M ${start.x} ${start.y - cellSize*0.4} L ${start.x + 3} ${start.y - cellSize*0.5}`} 
                   stroke="#DC2626" strokeWidth={1.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </G>
@@ -250,42 +237,53 @@ function DiceFace({ value, color, rolling }) {
 
 // ═══════════ MAIN SCREEN ═══════════
 export default function PlayScreen({ route, navigation }) {
-    const { players: initialPlayers } = route.params;
+    const initialPlayersParam = route?.params?.players;
     const { isKurdish } = useLanguage();
     const { colors, isDark, isRTL } = useTheme();
     
     // Compute strictly bounded board sizes
     const { width } = useWindowDimensions();
+    const safeWidth = Math.max(width, 300); // Protect against width=0 on mount CRITICAL
     const boardPadding = 16;
-    const maxBoardSize = Math.min(width - (boardPadding * 2), 480); // Cap at 480px for tablets
+    const maxBoardSize = Math.max(200, Math.min(safeWidth - (boardPadding * 2), 480)); // Cap at 480px for tablets
     const cellSize = Math.floor(maxBoardSize / COLS);
     const actualBoardSize = cellSize * COLS;
 
-    const [players, setPlayers] = useState(() => 
-        initialPlayers.map((p, i) => {
+    const [players, setPlayers] = useState(() => {
+        const sourcePlayers = Array.isArray(initialPlayersParam) ? initialPlayersParam : [];
+        return sourcePlayers
+            .filter(Boolean)
+            .map((p, i) => {
             const isObj = typeof p === 'object' && p !== null;
+            const rawName = isObj ? p.name : p;
+            const safeName = typeof rawName === 'string' && rawName.trim()
+                ? rawName.trim()
+                : (isKurdish ? `یاریزان ${i + 1}` : `Player ${i + 1}`);
             return {
                 id: isObj ? (p.id || String(i)) : String(i),
-                name: isObj ? p.name : p,
+                name: safeName,
                 color: isObj && p.color ? p.color : ['#EF4444', '#3B82F6', '#10B981', '#F59E0B'][i % 4],
                 position: 1,
                 offset: (i * 4) - 4
             };
-        })
-    );
+        });
+    });
     const [turn, setTurn] = useState(0);
     const [diceVal, setDiceVal] = useState(1);
     const [isRolling, setIsRolling] = useState(false);
     const [status, setStatus] = useState('');
 
     const rowDir = isRTL ? 'row-reverse' : 'row';
+    const hasEnoughPlayers = players.length >= 2;
+    const cp = hasEnoughPlayers ? players[turn] : null;
 
     useEffect(() => {
+        if (!hasEnoughPlayers) return;
         setStatus(isKurdish ? `نۆرەی دیاریکراوە: ${players[0].name}` : `${players[0].name}'s Turn`);
-    }, []);
+    }, [hasEnoughPlayers, isKurdish, players]);
 
     const rollDice = useCallback(() => {
-        if (isRolling) return;
+        if (isRolling || !hasEnoughPlayers) return;
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         
         setIsRolling(true);
@@ -302,9 +300,10 @@ export default function PlayScreen({ route, navigation }) {
                 movePlayer(roll);
             }, 600);
         }, 600);
-    }, [isRolling, turn, players]);
+    }, [hasEnoughPlayers, isRolling, turn, players, isKurdish]);
 
     const movePlayer = (roll) => {
+        if (!hasEnoughPlayers) return;
         const cp = players[turn];
         
         setStatus(isKurdish ? `${cp.name} دەڕوات...` : `${cp.name} is walking...`);
@@ -339,6 +338,7 @@ export default function PlayScreen({ route, navigation }) {
     };
 
     const updatePos = (pos, cb, animationDelay = 600) => {
+        if (!hasEnoughPlayers) return;
         setPlayers(prev => {
             const copy = [...prev];
             copy[turn] = { ...copy[turn], position: pos };
@@ -348,6 +348,7 @@ export default function PlayScreen({ route, navigation }) {
     };
 
     const checkSpecials = (pos, roll) => {
+        if (!hasEnoughPlayers) return;
         if (LADDERS[pos]) {
             if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setStatus(isKurdish ? `پەیژە! بەرزدەبێتەوە!` : `Ladder! Going up!`);
@@ -364,6 +365,7 @@ export default function PlayScreen({ route, navigation }) {
     };
 
     const checkWin = (pos, roll) => {
+        if (!hasEnoughPlayers) return;
         if (pos === 100) {
             if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setStatus(isKurdish ? `براوە کارت پێ دەدات!` : `Winner!`);
@@ -374,6 +376,7 @@ export default function PlayScreen({ route, navigation }) {
     };
 
     const endTurn = (roll) => {
+        if (!hasEnoughPlayers) return;
         if (roll === 6) {
             setStatus(isKurdish ? '٦ت هێنا! جارێکی تر لێبدە!' : 'Rolled 6! Roll again!');
             setIsRolling(false);
@@ -414,7 +417,17 @@ export default function PlayScreen({ route, navigation }) {
         return cells;
     };
 
-    const cp = players[turn];
+    useEffect(() => {
+        if (hasEnoughPlayers) return;
+        const timeout = setTimeout(() => {
+            navigation.replace('ZarWMarSetup');
+        }, 0);
+        return () => clearTimeout(timeout);
+    }, [hasEnoughPlayers, navigation]);
+
+    if (!hasEnoughPlayers || !cp) {
+        return null;
+    }
 
     return (
         <AnimatedScreen noPadding noTopPadding>
@@ -499,8 +512,7 @@ export default function PlayScreen({ route, navigation }) {
                             { backgroundColor: isRolling ? (isDark ? '#475569' : '#CBD5E1') : cp.color }
                         ]}
                     >
-                        <Dices size={24} color="#FFF" />
-                        <Text style={[st.rollBtnText, isKurdish && st.kf]}>
+                        <Dices size={24} color="#FFF" /><Text style={[st.rollBtnText, isKurdish && st.kf]}>
                             {isRolling ? (isKurdish ? 'بەڕێوەیە...' : 'Rolling...') : (isKurdish ? 'لێدان' : 'ROLL')}
                         </Text>
                     </TouchableOpacity>
@@ -512,7 +524,7 @@ export default function PlayScreen({ route, navigation }) {
 
 const st = StyleSheet.create({
     safeArea: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     header: { paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' },
     headerTitle: { fontSize: 20, fontWeight: '800' },

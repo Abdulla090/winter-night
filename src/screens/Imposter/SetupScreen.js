@@ -15,7 +15,7 @@ import { getAllWordCategories } from '../../constants/imposterWords';
 
 export default function ImposterSetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('food');
+    const [selectedCategories, setSelectedCategories] = useState(['food']);
     const [imposterCount, setImposterCount] = useState(1);
 
     const { language, isKurdish } = useLanguage();
@@ -29,9 +29,18 @@ export default function ImposterSetupScreen({ navigation }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('ImposterPlay', {
             players,
-            category: selectedCategory,
+            category: selectedCategories,
             imposterCount,
         });
+    };
+
+    const toggleCategory = (categoryKey) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setSelectedCategories((current) => (
+            current.includes(categoryKey)
+                ? (current.length > 1 ? current.filter((key) => key !== categoryKey) : current)
+                : [...current, categoryKey]
+        ));
     };
 
     const getCategoryName = (catKey) => {
@@ -53,6 +62,7 @@ export default function ImposterSetupScreen({ navigation }) {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 120 }}
+                keyboardShouldPersistTaps="handled"
             >
                 {/* Hero Icon */}
                 <MotiView
@@ -127,31 +137,28 @@ export default function ImposterSetupScreen({ navigation }) {
                             style={[
                                 styles.categoryCard,
                                 {
-                                    backgroundColor: selectedCategory === cat.key ? colors.brand.crimson + '15' : colors.surface,
-                                    borderColor: selectedCategory === cat.key ? colors.brand.crimson : 'transparent',
+                                    backgroundColor: selectedCategories.includes(cat.key) ? colors.brand.crimson + '15' : colors.surface,
+                                    borderColor: selectedCategories.includes(cat.key) ? colors.brand.crimson : 'transparent',
                                     ...layout.shadows.sm,
                                 }
                             ]}
-                            onPress={() => {
-                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                setSelectedCategory(cat.key);
-                            }}
+                            onPress={() => toggleCategory(cat.key)}
                             activeOpacity={0.8}
                         >
                             <View style={[
                                 styles.catIcon,
                                 {
-                                    backgroundColor: selectedCategory === cat.key ? colors.brand.crimson : colors.surfaceHighlight,
+                                    backgroundColor: selectedCategories.includes(cat.key) ? colors.brand.crimson : colors.surfaceHighlight,
                                 }
                             ]}>
                                 {(() => {
                                     const IconComponent = Icons[cat.icon] || Icons.HelpCircle;
-                                    return <IconComponent size={24} color={selectedCategory === cat.key ? '#FFF' : colors.text.secondary} />;
+                                    return <IconComponent size={24} color={selectedCategories.includes(cat.key) ? '#FFF' : colors.text.secondary} />;
                                 })()}
                             </View>
                             <Text style={[
                                 styles.categoryText,
-                                { color: selectedCategory === cat.key ? colors.brand.crimson : colors.text.primary },
+                                { color: selectedCategories.includes(cat.key) ? colors.brand.crimson : colors.text.primary },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat.key)}
@@ -259,5 +266,5 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

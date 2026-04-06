@@ -154,7 +154,7 @@ const SearchBar = ({ isKurdish, colors, isDark, onSearchPress, onFilterPress }) 
                 <Text style={[
                     styles.searchPlaceholder,
                     { color: colors.text.muted },
-                    isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }
+                    isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }
                 ]}>
                     {isKurdish ? 'گەڕان بۆ یاری...' : 'Search for games...'}
                 </Text>
@@ -1014,5 +1014,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

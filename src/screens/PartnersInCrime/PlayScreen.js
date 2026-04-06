@@ -466,5 +466,5 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         letterSpacing: 2,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] }
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }
 });

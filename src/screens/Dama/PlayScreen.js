@@ -40,7 +40,8 @@ const BLACK_PIECE_BORDER = '#444';
 const KING_CROWN = '#FFD700';
 
 export default function PlayScreen({ navigation, route }) {
-    const { player1Name, player2Name } = route.params;
+    const player1Name = route?.params?.player1Name || 'Player 1';
+    const player2Name = route?.params?.player2Name || 'Player 2';
     const { language, isKurdish } = useLanguage();
     const { colors, isDark } = useTheme();
     const { width: screenWidth } = useWindowDimensions();
@@ -79,13 +80,15 @@ export default function PlayScreen({ navigation, route }) {
 
     // Animation refs
     const selectedPulseAnim = useRef(new Animated.Value(1)).current;
-    const staticAnim = useRef(new Animated.Value(1)).current;
     const turnIndicatorAnim = useRef(new Animated.Value(0)).current;
+    const shouldAnimateSelection = Platform.OS !== 'android';
 
     // Board sizing
-    const containerWidth = Platform.OS === 'web' ? Math.min(screenWidth, 500) : screenWidth;
+    // Protect against width=0 on Android render start
+    const safeScreenWidth = Math.max(screenWidth, 300);
+    const containerWidth = Platform.OS === 'web' ? Math.min(safeScreenWidth, 500) : safeScreenWidth;
     const boardPadding = 16;
-    const boardSize = containerWidth - (boardPadding * 2);
+    const boardSize = Math.max(containerWidth - (boardPadding * 2), 200);
     const cellSize = Math.floor(boardSize / 8);
     const actualBoardSize = cellSize * 8;
 
@@ -93,22 +96,22 @@ export default function PlayScreen({ navigation, route }) {
     // IMPORTANT: useNativeDriver:true required for transform on Android production APK
     useEffect(() => {
         let pulse;
-        if (selectedPiece) {
+        if (selectedPiece && shouldAnimateSelection) {
             pulse = Animated.loop(
                 Animated.sequence([
-                    Animated.timing(selectedPulseAnim, { toValue: 1.1, duration: 500, useNativeDriver: true }),
-                    Animated.timing(selectedPulseAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+                    Animated.timing(selectedPulseAnim, { toValue: 1.1, duration: 500, useNativeDriver: false }),
+                    Animated.timing(selectedPulseAnim, { toValue: 1, duration: 500, useNativeDriver: false }),
                 ])
             );
             pulse.start();
         } else {
             // Safe reset without causing NativeAnimatedModule crash
-            Animated.timing(selectedPulseAnim, { toValue: 1, duration: 50, useNativeDriver: true }).start();
+            Animated.timing(selectedPulseAnim, { toValue: 1, duration: 50, useNativeDriver: false }).start();
         }
         return () => {
             if (pulse) pulse.stop();
         };
-    }, [selectedPiece]);
+    }, [selectedPiece, selectedPulseAnim, shouldAnimateSelection]);
 
     // Turn indicator animation — must stay useNativeDriver:false since it animates backgroundColor (color interpolation)
     useEffect(() => {
@@ -440,51 +443,64 @@ export default function PlayScreen({ navigation, route }) {
                     <View style={[st.cellOverlay, { backgroundColor: SWAR_COLOR }]} />
                 )}
 
-                {/* NOTE: Safely swap Animated.Values without mixing with plain numbers to prevent Android crash. */}
-                {owner > 0 && (
+                {/* Safe size scaling check */}
+                {owner > 0 && isSelected && (
                     <Animated.View style={[
                         st.piece,
                         {
-                            width: cellSize * 0.72,
-                            height: cellSize * 0.72,
-                            borderRadius: cellSize * 0.36,
+                            width: Math.max(0, cellSize * 0.72),
+                            height: Math.max(0, cellSize * 0.72),
+                            borderRadius: Math.max(0, cellSize * 0.36),
                             backgroundColor: owner === 1 ? WHITE_PIECE : BLACK_PIECE,
                             borderColor: owner === 1 ? WHITE_PIECE_BORDER : BLACK_PIECE_BORDER,
-                            transform: [{ scale: isSelected ? selectedPulseAnim : staticAnim }],
+                            transform: [{ scale: selectedPulseAnim }],
                         },
                         isMovable && !isSelected && st.movablePiece,
                         king && st.kingPiece,
-                    ]}>
-                        {/* Piece inner shadow/gradient */}
-                        <View style={[
+                    ]}><View style={[
                             st.pieceInner,
                             {
-                                width: cellSize * 0.56,
-                                height: cellSize * 0.56,
-                                borderRadius: cellSize * 0.28,
+                                width: Math.max(0, cellSize * 0.56),
+                                height: Math.max(0, cellSize * 0.56),
+                                borderRadius: Math.max(0, cellSize * 0.28),
                                 backgroundColor: owner === 1 ? '#FAFAF0' : '#2a2a2a',
                                 borderColor: owner === 1 ? 'rgba(139,115,85,0.3)' : 'rgba(100,100,100,0.3)',
                             },
-                        ]} />
-                        
-                        {/* King crown */}
-                        {king && (
-                            <View style={st.crownContainer}>
-                                <Crown 
-                                    size={cellSize * 0.3} 
-                                    color={KING_CROWN} 
-                                    fill={KING_CROWN}
-                                />
-                            </View>
-                        )}
-
-                        {/* Swar indicator */}
-                        {isSwar && (
-                            <View style={st.swarBadge}>
-                                <Text style={st.swarText}>!</Text>
-                            </View>
+                        ]} />{king && (
+                            <View style={st.crownContainer}><Crown size={Math.max(0, cellSize * 0.3)} color={KING_CROWN} fill={KING_CROWN} /></View>
+                        )}{isSwar && (
+                            <View style={st.swarBadge}><Text style={st.swarText}>!</Text></View>
                         )}
                     </Animated.View>
+                )}
+
+                {owner > 0 && !isSelected && (
+                    <View style={[
+                        st.piece,
+                        {
+                            width: Math.max(0, cellSize * 0.72),
+                            height: Math.max(0, cellSize * 0.72),
+                            borderRadius: Math.max(0, cellSize * 0.36),
+                            backgroundColor: owner === 1 ? WHITE_PIECE : BLACK_PIECE,
+                            borderColor: owner === 1 ? WHITE_PIECE_BORDER : BLACK_PIECE_BORDER,
+                        },
+                        isMovable && !isSelected && st.movablePiece,
+                        king && st.kingPiece,
+                    ]}><View style={[
+                            st.pieceInner,
+                            {
+                                width: Math.max(0, cellSize * 0.56),
+                                height: Math.max(0, cellSize * 0.56),
+                                borderRadius: Math.max(0, cellSize * 0.28),
+                                backgroundColor: owner === 1 ? '#FAFAF0' : '#2a2a2a',
+                                borderColor: owner === 1 ? 'rgba(139,115,85,0.3)' : 'rgba(100,100,100,0.3)',
+                            },
+                        ]} />{king && (
+                            <View style={st.crownContainer}><Crown size={Math.max(0, cellSize * 0.3)} color={KING_CROWN} fill={KING_CROWN} /></View>
+                        )}{isSwar && (
+                            <View style={st.swarBadge}><Text style={st.swarText}>!</Text></View>
+                        )}
+                    </View>
                 )}
             </TouchableOpacity>
         );
@@ -651,7 +667,7 @@ export default function PlayScreen({ navigation, route }) {
 
 const st = StyleSheet.create({
     root: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     // Header
     header: { 

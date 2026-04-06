@@ -158,5 +158,5 @@ const styles = StyleSheet.create({
     playerDot: { width: 20, height: 20, borderRadius: 10, borderWidth: 2 },
     ruleText: { fontSize: 13, fontWeight: '500', lineHeight: 22, marginBottom: 2 },
     fabContainer: { position: 'absolute', bottom: 30, left: 20, right: 20 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

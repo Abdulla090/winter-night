@@ -22,7 +22,8 @@ import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 const CANVAS_SIZE = (width - 60) / 2;
 
 // Player Drawing Card for Voting
@@ -503,5 +504,5 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
 
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

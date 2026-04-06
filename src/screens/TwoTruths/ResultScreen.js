@@ -140,5 +140,5 @@ const styles = StyleSheet.create({
     scorePts: { fontSize: 16, fontWeight: '900' },
     
     fabContainer: { position: 'absolute', bottom: 30, left: 20, right: 20 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

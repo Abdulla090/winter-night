@@ -13,7 +13,7 @@ import { t } from '../../localization/translations';
 
 export default function WouldYouRatherSetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('fun');
+    const [selectedCategories, setSelectedCategories] = useState(['fun']);
 
     const { language, isKurdish } = useLanguage();
     const { colors, isRTL } = useTheme();
@@ -39,13 +39,17 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('WouldYouRatherPlay', {
             players,
-            category: selectedCategory,
+            category: selectedCategories,
         });
     };
 
     const handleCategorySelect = (key) => {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        setSelectedCategory(key);
+        setSelectedCategories((current) => (
+            current.includes(key)
+                ? (current.length > 1 ? current.filter((item) => item !== key) : current)
+                : [...current, key]
+        ));
     };
 
     const getIcon = (iconName, color) => {
@@ -92,7 +96,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                             style={[
                                 styles.categoryCard,
                                 { backgroundColor: colors.surface },
-                                selectedCategory === cat.key && {
+                                selectedCategories.includes(cat.key) && {
                                     borderColor: cat.color,
                                     backgroundColor: `${cat.color}15`
                                 }
@@ -103,7 +107,7 @@ export default function WouldYouRatherSetupScreen({ navigation }) {
                             <Text style={[
                                 styles.categoryName,
                                 { color: colors.text.primary },
-                                selectedCategory === cat.key && { color: cat.color },
+                                selectedCategories.includes(cat.key) && { color: cat.color },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat.key, cat.name)}
@@ -194,5 +198,5 @@ const styles = StyleSheet.create({
     rulesTitle: { ...FONTS.medium },
     rulesText: { lineHeight: 22 },
     buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

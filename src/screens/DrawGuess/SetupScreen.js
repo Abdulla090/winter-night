@@ -14,7 +14,7 @@ import { t } from '../../localization/translations';
 
 export default function DrawGuessSetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('easy');
+    const [selectedCategories, setSelectedCategories] = useState(['easy']);
     const [roundTime, setRoundTime] = useState(60);
 
     const { language, isKurdish } = useLanguage();
@@ -34,9 +34,18 @@ export default function DrawGuessSetupScreen({ navigation }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('DrawGuessPlay', {
             players,
-            category: selectedCategory,
+            category: selectedCategories,
             roundTime,
         });
+    };
+
+    const toggleCategory = (categoryKey) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setSelectedCategories((current) => (
+            current.includes(categoryKey)
+                ? (current.length > 1 ? current.filter((key) => key !== categoryKey) : current)
+                : [...current, categoryKey]
+        ));
     };
 
     return (
@@ -73,29 +82,26 @@ export default function DrawGuessSetupScreen({ navigation }) {
                             style={[
                                 styles.categoryCard,
                                 { backgroundColor: colors.surface },
-                                selectedCategory === cat.key && [
+                                selectedCategories.includes(cat.key) && [
                                     styles.categorySelected,
                                     { borderColor: colors.brand.info, backgroundColor: colors.brand.info + '15' }
                                 ]
                             ]}
-                            onPress={() => {
-                                if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                setSelectedCategory(cat.key);
-                            }}
+                            onPress={() => toggleCategory(cat.key)}
                         >
                             {(() => {
                                 const IconComp = Icons[cat.icon] || Icons.HelpCircle;
                                 return (
                                     <IconComp
                                         size={24}
-                                        color={selectedCategory === cat.key ? colors.brand.info : colors.text.secondary}
+                                        color={selectedCategories.includes(cat.key) ? colors.brand.info : colors.text.secondary}
                                     />
                                 );
                             })()}
                             <Text style={[
                                 styles.categoryName,
                                 { color: colors.text.primary },
-                                selectedCategory === cat.key && [styles.categoryNameSelected, { color: colors.brand.info }],
+                                selectedCategories.includes(cat.key) && [styles.categoryNameSelected, { color: colors.brand.info }],
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat)}
@@ -239,5 +245,5 @@ const styles = StyleSheet.create({
     rulesTitle: { ...FONTS.medium },
     rulesText: { lineHeight: 22 },
     buttonContainer: { marginTop: SPACING.xl, marginBottom: 50 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

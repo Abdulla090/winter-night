@@ -14,7 +14,7 @@ import { getAllQuizCategories } from '../../constants/quizData';
 
 export default function QuizSetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('general');
+    const [selectedCategories, setSelectedCategories] = useState(['general']);
     const [questionCount, setQuestionCount] = useState(10);
 
     const { language, isKurdish } = useLanguage();
@@ -41,14 +41,18 @@ export default function QuizSetupScreen({ navigation }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('QuizPlay', {
             players,
-            category: selectedCategory,
+            category: selectedCategories,
             questionCount,
         });
     };
 
     const handleCategorySelect = (key) => {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        setSelectedCategory(key);
+        setSelectedCategories((current) => (
+            current.includes(key)
+                ? (current.length > 1 ? current.filter((item) => item !== key) : current)
+                : [...current, key]
+        ));
     };
 
     const handleCountSelect = (count) => {
@@ -82,6 +86,7 @@ export default function QuizSetupScreen({ navigation }) {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 120 }}
+                keyboardShouldPersistTaps="handled"
             >
                 {/* Hero Icon */}
                 <MotiView
@@ -123,8 +128,8 @@ export default function QuizSetupScreen({ navigation }) {
                             style={[
                                 styles.categoryCard,
                                 {
-                                    backgroundColor: selectedCategory === cat.key ? colors.accent + '15' : colors.surface,
-                                    borderColor: selectedCategory === cat.key ? colors.accent : 'transparent',
+                                    backgroundColor: selectedCategories.includes(cat.key) ? colors.accent + '15' : colors.surface,
+                                    borderColor: selectedCategories.includes(cat.key) ? colors.accent : 'transparent',
                                     ...layout.shadows.sm,
                                 }
                             ]}
@@ -134,14 +139,14 @@ export default function QuizSetupScreen({ navigation }) {
                             <View style={[
                                 styles.catIcon,
                                 {
-                                    backgroundColor: selectedCategory === cat.key ? colors.accent : colors.surfaceHighlight,
+                                    backgroundColor: selectedCategories.includes(cat.key) ? colors.accent : colors.surfaceHighlight,
                                 }
                             ]}>
-                                {getCategoryIcon(cat.key, 24, selectedCategory === cat.key ? '#FFF' : colors.text.secondary)}
+                                {getCategoryIcon(cat.key, 24, selectedCategories.includes(cat.key) ? '#FFF' : colors.text.secondary)}
                             </View>
                             <Text style={[
                                 styles.categoryText,
-                                { color: selectedCategory === cat.key ? colors.accent : colors.text.primary },
+                                { color: selectedCategories.includes(cat.key) ? colors.accent : colors.text.primary },
                                 isKurdish && styles.kurdishFont
                             ]}>
                                 {getCategoryName(cat.key, cat.name)}
@@ -149,7 +154,7 @@ export default function QuizSetupScreen({ navigation }) {
                             <Text style={[styles.categoryCount, { color: colors.text.muted }]}>
                                 {cat.count} {isKurdish ? 'پرسیار' : 'questions'}
                             </Text>
-                            {selectedCategory === cat.key && (
+                            {selectedCategories.includes(cat.key) && (
                                 <View style={[styles.checkBadge, { backgroundColor: colors.accent }]}>
                                     <Check size={10} color="#FFF" strokeWidth={3} />
                                 </View>
@@ -302,5 +307,5 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

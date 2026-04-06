@@ -354,7 +354,7 @@ export default function PlayScreen({ navigation, route }) {
                                                 </Text>
                                             </View>
                                         )}
-                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>{q.question}</Text>
+                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' }]}>{q.question}</Text>
                                         {!gs.faceOffBuzzTeam ? (
                                             <>
                                                 <Text style={[st.hint, isKurdish && st.kf]}>{isKurdish ? 'کێ یەکەم لێ دەدات؟' : 'Who buzzes in first?'}</Text>
@@ -382,7 +382,7 @@ export default function PlayScreen({ navigation, route }) {
                                                 </View>
                                                 <View style={st.inputRow}>
                                                     <VoiceInputButton isKurdish={isKurdish} onTranscribed={setInput} />
-                                                    <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
+                                                    <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                                                         value={input} onChangeText={setInput} onSubmitEditing={submitAnswer}
                                                         placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#6B7280" returnKeyType="send" />
                                                     <TouchableOpacity style={st.sendBtn} onPress={submitAnswer}><Send size={20} color="#FFF" /></TouchableOpacity>
@@ -416,14 +416,14 @@ export default function PlayScreen({ navigation, route }) {
                                 {gs.phase === PHASE.MAIN_ROUND && (
                                     <ScrollView contentContainerStyle={st.pad} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                                         <TurnBanner name={getCurrentPlayer(gs)} team={ctrlName} colors={ctrlClr} isKurdish={isKurdish} />
-                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>{q.question}</Text>
+                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' }]}>{q.question}</Text>
                                         <View style={st.board}>
                                             {q.answers.map((a, i) => <AnswerTile key={i} answer={a} index={i} isRevealed={gs.revealedAnswers[i]} isKurdish={isKurdish} />)}
                                         </View>
                                         <Strikes count={gs.strikes} />
                                         <View style={st.inputRow}>
                                             <VoiceInputButton isKurdish={isKurdish} onTranscribed={setInput} />
-                                            <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
+                                            <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                                                 value={input} onChangeText={setInput} onSubmitEditing={submitAnswer}
                                                 placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#6B7280" returnKeyType="send" />
                                             <TouchableOpacity style={st.sendBtn} onPress={submitAnswer}><Send size={20} color="#FFF" /></TouchableOpacity>
@@ -439,13 +439,13 @@ export default function PlayScreen({ navigation, route }) {
                                             {stealName} — {isKurdish ? 'یەک هەل بۆ دزینی' : 'one chance to steal'} {gs.bank} {isKurdish ? 'خاڵ' : 'pts'}
                                         </Text>
                                         <Strikes count={3} />
-                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>{q.question}</Text>
+                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' }]}>{q.question}</Text>
                                         <View style={st.board}>
                                             {q.answers.map((a, i) => <AnswerTile key={i} answer={a} index={i} isRevealed={gs.revealedAnswers[i]} isKurdish={isKurdish} />)}
                                         </View>
                                         <View style={st.inputRow}>
                                             <VoiceInputButton isKurdish={isKurdish} onTranscribed={setStealInput} />
-                                            <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }, isChecking && { opacity: 0.5 }]}
+                                            <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }, isChecking && { opacity: 0.5 }]}
                                                 editable={!isChecking}
                                                 placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your steal answer...'}
                                                 placeholderTextColor="#6B7280" value={stealInput}
@@ -471,7 +471,7 @@ export default function PlayScreen({ navigation, route }) {
                                         </MotiView>
 
                                         {/* Show the question */}
-                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>{q.question}</Text>
+                                        <Text style={[st.qText, isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' }]}>{q.question}</Text>
 
                                         {/* Reveal ALL answers on the board as proof */}
                                         <Text style={[st.revealLabel, isKurdish && st.kf]}>
@@ -538,7 +538,7 @@ export default function PlayScreen({ navigation, route }) {
 // ════════════════════════════
 const st = StyleSheet.create({
     root: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     // Countdown
     cdWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' },

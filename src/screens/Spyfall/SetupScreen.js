@@ -46,6 +46,7 @@ export default function SpyfallSetupScreen({ navigation }) {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 120 }}
+                keyboardShouldPersistTaps="handled"
             >
                 {/* Hero Icon */}
                 <MotiView
@@ -238,5 +239,5 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

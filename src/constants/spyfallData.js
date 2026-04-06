@@ -18,15 +18,15 @@ export const LOCATIONS = {
         ],
     },
     spaceStation: {
-        name: { en: 'Space Station', ku: 'وێستگەی ئەفەزا' },
+        name: { en: 'Space Station', ku: 'وێستگەی ئاسمان' },
         icon: 'Globe',
         roles: [
             { en: 'Commander', ku: 'فەرماندە' },
-            { en: 'Astronaut', ku: 'ئاسمانەوان' },
+            { en: 'Astronaut', ku: 'کەشتیوانی ئاسمان' },
             { en: 'Engineer', ku: 'ئەندازیار' },
             { en: 'Scientist', ku: 'زانا' },
             { en: 'Pilot', ku: 'فڕۆکەوان' },
-            { en: 'Medical Officer', ku: 'ئەفسەری پزیشکی' },
+            { en: 'Medical Officer', ku: 'پزیشکی وێستگە' },
             { en: 'Communications Officer', ku: 'ئەفسەری پەیوەندییەکان' },
             { en: 'Visitor', ku: 'سەردانکەر' },
         ],
@@ -37,12 +37,12 @@ export const LOCATIONS = {
         roles: [
             { en: 'Captain', ku: 'کاپتن' },
             { en: 'Navigator', ku: 'ڕێنیشاندەر' },
-            { en: 'Sonar Operator', ku: 'کارمەندی سۆنار' },
+            { en: 'Sonar Operator', ku: 'چاودێری سۆنار' },
             { en: 'Cook', ku: 'چێشتلێنەر' },
             { en: 'Engineer', ku: 'ئەندازیار' },
             { en: 'Radio Operator', ku: 'کارمەندی ڕادیۆ' },
             { en: 'Weapons Specialist', ku: 'پسپۆڕی چەک' },
-            { en: 'Diver', ku: 'مەلەوانی ژێرئاو' },
+            { en: 'Diver', ku: 'غەواس' },
         ],
     },
     hospital: {
@@ -52,11 +52,11 @@ export const LOCATIONS = {
             { en: 'Doctor', ku: 'پزیشک' },
             { en: 'Nurse', ku: 'پەرستار' },
             { en: 'Patient', ku: 'نەخۆش' },
-            { en: 'Surgeon', ku: 'نەشتەرگەر' },
-            { en: 'Receptionist', ku: 'پێشوازیکەر' },
+            { en: 'Surgeon', ku: 'پزیشکی نەشتەرگەری' },
+            { en: 'Receptionist', ku: 'پرسگە' },
             { en: 'Janitor', ku: 'پاککەرەوە' },
             { en: 'Visitor', ku: 'سەردانکەر' },
-            { en: 'Paramedic', ku: 'فریاگوزار' },
+            { en: 'Paramedic', ku: 'کارمەندی فریاگوزاری' },
         ],
     },
     pirateShip: {
@@ -64,13 +64,13 @@ export const LOCATIONS = {
         icon: 'Skull',
         roles: [
             { en: 'Captain', ku: 'کاپتن' },
-            { en: 'First Mate', ku: 'یاریدەی یەکەم' },
+            { en: 'First Mate', ku: 'یاریدەدەری یەکەم' },
             { en: 'Navigator', ku: 'ڕێنیشاندەر' },
             { en: 'Cook', ku: 'چێشتلێنەر' },
             { en: 'Cannon Operator', ku: 'تۆپچی' },
             { en: 'Lookout', ku: 'چاودێر' },
             { en: 'Prisoner', ku: 'زیندانی' },
-            { en: 'Treasure Hunter', ku: 'گەنج دۆزەرەوە' },
+            { en: 'Treasure Hunter', ku: 'گەنجینە دۆزەرەوە' },
         ],
     },
     casino: {
@@ -80,10 +80,10 @@ export const LOCATIONS = {
             { en: 'Dealer', ku: 'دابەشکەر' },
             { en: 'Gambler', ku: 'قومارباز' },
             { en: 'Security Guard', ku: 'پاسەوان' },
-            { en: 'Bartender', ku: 'کارمەندی بار' },
+            { en: 'Bartender', ku: 'کارمەندی باڕ' },
             { en: 'VIP Guest', ku: 'میوانی تایبەت' },
             { en: 'Manager', ku: 'بەڕێوەبەر' },
-            { en: 'Waitress', ku: 'خزمەتکار' },
+            { en: 'Waitress', ku: 'گارسۆن' },
             { en: 'Entertainer', ku: 'نمایشکار' },
         ],
     },
@@ -95,10 +95,10 @@ export const LOCATIONS = {
             { en: 'Student', ku: 'قوتابی' },
             { en: 'Principal', ku: 'بەڕێوەبەر' },
             { en: 'Janitor', ku: 'پاککەرەوە' },
-            { en: 'Cafeteria Worker', ku: 'کارمەندی کافتریا' },
+            { en: 'Cafeteria Worker', Worker: 'کارمەندی کافتریا', ku: 'کارمەندی کافتریا' },
             { en: 'Coach', ku: 'ڕاهێنەر' },
             { en: 'Librarian', ku: 'کتێبخانەوان' },
-            { en: 'Parent', ku: 'دایک/باوک' },
+            { en: 'Parent', ku: 'دایک / باوک' },
         ],
     },
     beach: {
@@ -108,7 +108,7 @@ export const LOCATIONS = {
             { en: 'Lifeguard', ku: 'ڕزگارکەر' },
             { en: 'Swimmer', ku: 'مەلەوان' },
             { en: 'Surfer', ku: 'سێرفەر' },
-            { en: 'Ice Cream Vendor', ku: 'فرۆشیاری بەستەنی' },
+            { en: 'Ice Cream Vendor', ku: 'فرۆشیاری دۆندرمە' },
             { en: 'Sunbather', ku: 'خۆرەتاوگر' },
             { en: 'Beach Volleyball Player', ku: 'یاریزانی تۆپی بالە' },
             { en: 'Photographer', ku: 'وێنەگر' },
@@ -120,11 +120,11 @@ export const LOCATIONS = {
         icon: 'Plane',
         roles: [
             { en: 'Pilot', ku: 'فڕۆکەوان' },
-            { en: 'Flight Attendant', ku: 'میوانداری فڕۆکە' },
+            { en: 'Flight Attendant', ku: 'کارمەندی فڕۆکە' },
             { en: 'Passenger', ku: 'سەرنشین' },
-            { en: 'Security Officer', ku: 'ئەفسەری پاسەوانی' },
-            { en: 'Customs Agent', ku: 'مەئموری گومرگ' },
-            { en: 'Ticket Agent', ku: 'بلیت بڕ' },
+            { en: 'Security Officer', ku: 'ئەفسەری ئاسایش' },
+            { en: 'Customs Agent', ku: 'پۆلیسی گومرگ' },
+            { en: 'Ticket Agent', ku: 'فرۆشیاری بلیت' },
             { en: 'Janitor', ku: 'پاککەرەوە' },
             { en: 'Air Traffic Controller', ku: 'چاودێری ئاسمانی' },
         ],
@@ -147,14 +147,14 @@ export const LOCATIONS = {
         name: { en: 'Circus', ku: 'سیرک' },
         icon: 'Tent',
         roles: [
-            { en: 'Clown', ku: 'پەڵەوان' },
+            { en: 'Clown', ku: 'قۆشمەچی' },
             { en: 'Acrobat', ku: 'بەندباز' },
             { en: 'Lion Tamer', ku: 'ڕاهێنەری شێر' },
             { en: 'Magician', ku: 'جادووگەر' },
             { en: 'Audience Member', ku: 'بینەر' },
             { en: 'Ticket Seller', ku: 'فرۆشیاری بلیت' },
-            { en: 'Ringmaster', ku: 'بەڕێوەبەری گۆڕەپان' },
-            { en: 'Juggler', ku: 'یاریزانی دەستبەر' },
+            { en: 'Ringmaster', ku: 'بەڕێوەبەری سیرک' },
+            { en: 'Juggler', ku: 'تۆپ هەڵدەرەوە' },
         ],
     },
     restaurant: {
@@ -162,12 +162,12 @@ export const LOCATIONS = {
         icon: 'UtensilsCrossed',
         roles: [
             { en: 'Chef', ku: 'سەرچێشتلێنەر' },
-            { en: 'Waiter', ku: 'خزمەتکار' },
+            { en: 'Waiter', ku: 'گارسۆن' },
             { en: 'Customer', ku: 'کڕیار' },
             { en: 'Hostess', ku: 'پێشوازیکەر' },
             { en: 'Dishwasher', ku: 'قاپشۆر' },
             { en: 'Manager', ku: 'بەڕێوەبەر' },
-            { en: 'Bartender', ku: 'کارمەندی بار' },
+            { en: 'Bartender', ku: 'کارمەندی باڕ' },
             { en: 'Food Critic', ku: 'ڕەخنەگری خواردن' },
         ],
     },
@@ -178,8 +178,8 @@ export const LOCATIONS = {
             { en: 'Director', ku: 'دەرهێنەر' },
             { en: 'Actor', ku: 'ئەکتەر' },
             { en: 'Cameraman', ku: 'کامێرامان' },
-            { en: 'Makeup Artist', ku: 'ئارایشتکەر' },
-            { en: 'Stunt Double', ku: 'بەدیلی مەترسی' },
+            { en: 'Makeup Artist', ku: 'موکیاژکار' },
+            { en: 'Stunt Double', ku: 'بەدیلی مەترسیدار' },
             { en: 'Producer', ku: 'بەرهەمهێنەر' },
             { en: 'Script Writer', ku: 'سیناریۆنووس' },
             { en: 'Extra', ku: 'ئەکتەری لاوەکی' },
@@ -193,10 +193,10 @@ export const LOCATIONS = {
             { en: 'Detective', ku: 'لێکۆڵەر' },
             { en: 'Criminal', ku: 'تاوانبار' },
             { en: 'Lawyer', ku: 'پارێزەر' },
-            { en: 'Witness', ku: 'شایەد' },
-            { en: 'Chief', ku: 'سەرۆک' },
-            { en: 'Receptionist', ku: 'پێشوازیکەر' },
-            { en: 'Forensic Expert', ku: 'پسپۆڕی بەڵگە' },
+            { en: 'Witness', ku: 'شایەتحاڵ' },
+            { en: 'Chief', ku: 'بەڕێوەبەر' },
+            { en: 'Receptionist', ku: 'پرسگە' },
+            { en: 'Forensic Expert', ku: 'پسپۆڕی بەڵگەی تاوان' },
         ],
     },
     university: {
@@ -204,7 +204,7 @@ export const LOCATIONS = {
         icon: 'Library',
         roles: [
             { en: 'Professor', ku: 'پڕۆفیسۆر' },
-            { en: 'Student', ku: 'خوێندکار' },
+            { en: 'Student', ku: 'قوتابی زانکۆ' },
             { en: 'Dean', ku: 'ڕاگر' },
             { en: 'Librarian', ku: 'کتێبخانەوان' },
             { en: 'Janitor', ku: 'پاککەرەوە' },
@@ -228,17 +228,17 @@ export const LOCATIONS = {
         ],
     },
     bakery: {
-        name: { en: 'Bakery', ku: 'نانەوایی' },
+        name: { en: 'Bakery', ku: 'فڕن' },
         icon: 'Cake',
         roles: [
             { en: 'Baker', ku: 'نانەوا' },
-            { en: 'Pastry Chef', ku: 'سەرچێشتلێنەری شیرینی' },
+            { en: 'Pastry Chef', ku: 'وەستای شیرینی' },
             { en: 'Cashier', ku: 'کاشێر' },
             { en: 'Customer', ku: 'کڕیار' },
             { en: 'Delivery Driver', ku: 'شۆفێری دیلیڤەری' },
             { en: 'Decorator', ku: 'ڕازاندنەوەکار' },
             { en: 'Manager', ku: 'بەڕێوەبەر' },
-            { en: 'Supplier', ku: 'دابینکەر' },
+            { en: 'Supplier', ku: 'دابینکەری کەلوپەل' },
         ],
     },
     gym: {
@@ -246,10 +246,10 @@ export const LOCATIONS = {
         icon: 'Dumbbell',
         roles: [
             { en: 'Personal Trainer', ku: 'ڕاهێنەری تایبەت' },
-            { en: 'Bodybuilder', ku: 'جەستەساز' },
+            { en: 'Bodybuilder', ku: 'لەشجوانی' },
             { en: 'Yoga Instructor', ku: 'مامۆستای یۆگا' },
-            { en: 'Receptionist', ku: 'پێشوازیکەر' },
-            { en: 'Boxer', ku: 'بۆکسەر' },
+            { en: 'Receptionist', ku: 'پرسگە' },
+            { en: 'Boxer', ku: 'بۆکسێنەر' },
             { en: 'Swimmer', ku: 'مەلەوان' },
             { en: 'Janitor', ku: 'پاککەرەوە' },
             { en: 'Member', ku: 'ئەندام' },
@@ -260,11 +260,11 @@ export const LOCATIONS = {
         icon: 'Tractor',
         roles: [
             { en: 'Farmer', ku: 'جوتیار' },
-            { en: 'Rancher', ku: 'شوانە' },
-            { en: 'Veterinarian', ku: 'پزیشکی ئاژەڵ' },
+            { en: 'Rancher', ku: 'خاوەن کێڵگە' },
+            { en: 'Veterinarian', ku: 'پزیشکی ئاژەڵان' },
             { en: 'Tractor Driver', ku: 'شۆفێری تراکتۆر' },
-            { en: 'Harvester', ku: 'دروونەکار' },
-            { en: 'Beekeeper', ku: 'هەنگبنەوان' },
+            { en: 'Harvester', ku: 'دروێنەکار' },
+            { en: 'Beekeeper', ku: 'هەنگەوان' },
             { en: 'Shepherd', ku: 'شوان' },
             { en: 'Buyer', ku: 'کڕیار' },
         ],
@@ -274,13 +274,13 @@ export const LOCATIONS = {
         icon: 'Building',
         roles: [
             { en: 'Curator', ku: 'سەرپەرشتیار' },
-            { en: 'Tour Guide', ku: 'ڕێبەر' },
+            { en: 'Tour Guide', ku: 'ڕێبەری گەشتیاری' },
             { en: 'Security Guard', ku: 'پاسەوان' },
             { en: 'Artist', ku: 'هونەرمەند' },
             { en: 'Visitor', ku: 'سەردانکەر' },
             { en: 'Photographer', ku: 'وێنەگر' },
             { en: 'Restorer', ku: 'نۆژەنکەرەوە' },
-            { en: 'Gift Shop Clerk', ku: 'کارمەندی دوکانی دیاری' },
+            { en: 'Gift Shop Clerk', ku: 'فرۆشیاری دیاری' },
         ],
     },
 };
@@ -291,10 +291,21 @@ export const getText = (item, language = 'en') => {
     return item[language] || item.en;
 };
 
+const seenLocations = new Set();
+
 // Get random location with roles for gameplay
 export const getRandomLocation = (language = 'en') => {
     const keys = Object.keys(LOCATIONS);
-    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    
+    let available = keys.filter(k => !seenLocations.has(k));
+    if (available.length === 0) {
+        seenLocations.clear();
+        available = keys;
+    }
+    
+    const randomKey = available[Math.floor(Math.random() * available.length)];
+    seenLocations.add(randomKey);
+    
     const location = LOCATIONS[randomKey];
     return {
         key: randomKey,

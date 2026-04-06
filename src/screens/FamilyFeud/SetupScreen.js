@@ -64,7 +64,7 @@ export default function SetupScreen({ navigation }) {
                     </View>
                 </LinearGradient>
                 <View style={st.teamBody}>
-                    <TextInput style={[st.teamInput, { backgroundColor: ib, color: tc }, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
+                    <TextInput style={[st.teamInput, { backgroundColor: ib, color: tc }, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                         placeholder={isKurdish ? 'ناوی تیم...' : 'Team name...'} placeholderTextColor={ph}
                         value={name} onChangeText={setName} maxLength={20} />
                     <Text style={[st.memLabel, { color: sc }, isKurdish && st.kf]}>{isKurdish ? 'ئەندامەکان' : 'Members'}</Text>
@@ -73,7 +73,7 @@ export default function SetupScreen({ navigation }) {
                             <View style={[st.memNum, { backgroundColor: color + '25' }]}>
                                 <Text style={[st.memNumTxt, { color }]}>{i + 1}</Text>
                             </View>
-                            <TextInput style={[st.memInput, { backgroundColor: ib, color: tc }, isKurdish && { textAlign: 'right', fontFamily: 'Rabar' }]}
+                            <TextInput style={[st.memInput, { backgroundColor: ib, color: tc }, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                                 placeholder={`${isKurdish ? 'یاریزان' : 'Player'} ${i + 1}`} placeholderTextColor={ph}
                                 value={m} onChangeText={(v) => updateMember(num, i, v)} maxLength={15} />
                         </View>
@@ -145,7 +145,7 @@ export default function SetupScreen({ navigation }) {
 
 const st = StyleSheet.create({
     root: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     // Header
     header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10 },

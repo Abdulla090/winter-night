@@ -34,28 +34,28 @@ export const forbiddenWords = {
             target: { en: 'Beach', ku: 'کەناری دەریا' },
             forbidden: {
                 en: ['Sand', 'Water', 'Ocean', 'Sun', 'Swim'],
-                ku: ['خۆڵەمێش', 'ئاو', 'دەریا', 'خۆر', 'مەلەکردن']
+                ku: ['لم', 'ئاو', 'دەریا', 'خۆر', 'مەلەکردن']
             }
         },
         {
             target: { en: 'Pizza', ku: 'پیتزا' },
             forbidden: {
                 en: ['Cheese', 'Italy', 'Pepperoni', 'Dough', 'Slice'],
-                ku: ['پەنیر', 'ئیتاڵیا', 'پیپەڕۆنی', 'هەویر', 'پارچە']
+                ku: ['پەنیر', 'ئیتاڵیا', 'پیپەرۆنی', 'هەویر', 'پارچە']
             }
         },
         {
             target: { en: 'Dog', ku: 'سەگ' },
             forbidden: {
                 en: ['Bark', 'Pet', 'Puppy', 'Walk', 'Tail'],
-                ku: ['هاوکردن', 'ئاژەڵی ماڵەوە', 'بەچکە سەگ', 'پیاسە', 'کلک']
+                ku: ['وەڕین', 'ئاژەڵی ماڵی', 'بەچکە سەگ', 'پیاسە', 'کلک']
             }
         },
         {
             target: { en: 'Coffee', ku: 'قاوە' },
             forbidden: {
                 en: ['Drink', 'Caffeine', 'Morning', 'Bean', 'Cup'],
-                ku: ['خواردنەوە', 'کافیین', 'بەیانی', 'دەنک', 'فنجان']
+                ku: ['خواردنەوە', 'کافایین', 'بەیانی', 'دەنک', 'کوپ']
             }
         },
         {
@@ -117,7 +117,7 @@ export const forbiddenWords = {
             }
         },
         {
-            target: { en: 'Wedding', ku: 'هەڵبژاردن' },
+            target: { en: 'Wedding', ku: 'ئاهەنگی هاوسەرگیری' },
             forbidden: {
                 en: ['Marriage', 'Bride', 'Ring', 'Love', 'Ceremony'],
                 ku: ['هاوسەرگیری', 'بووک', 'ئەڵقە', 'خۆشەویستی', 'ئاهەنگ']
@@ -152,17 +152,17 @@ export const forbiddenWords = {
             }
         },
         {
-            target: { en: 'Rainbow', ku: 'کەوانەباران' },
+            target: { en: 'Rainbow', ku: 'پەلکەزێڕینە' },
             forbidden: {
                 en: ['Colors', 'Rain', 'Sun', 'Sky', 'Arc'],
                 ku: ['ڕەنگەکان', 'باران', 'خۆر', 'ئاسمان', 'کەوانە']
             }
         },
         {
-            target: { en: 'Password', ku: 'وشەی نهێنی' },
+            target: { en: 'Password', ku: 'وشەی تێپەڕبوون' },
             forbidden: {
                 en: ['Secret', 'Login', 'Security', 'Username', 'Computer'],
-                ku: ['نهێنی', 'چوونەژوورەوە', 'ئەمنیەت', 'ناوی بەکارهێنەر', 'کۆمپیوتەر']
+                ku: ['نهێنی', 'چوونەژوورەوە', 'ئاسایش', 'ناوی بەکارهێنەر', 'کۆمپیوتەر']
             }
         },
         {
@@ -196,17 +196,17 @@ export const forbiddenWords = {
             }
         },
         {
-            target: { en: 'Chameleon', ku: 'کامیلیۆن' },
+            target: { en: 'Chameleon', ku: 'قومقومۆکە' },
             forbidden: {
                 en: ['Color', 'Change', 'Lizard', 'Reptile', 'Hide'],
-                ku: ['ڕەنگ', 'گۆڕانکاری', 'مارمێڵە', 'خشێندار', 'شاردنەوە']
+                ku: ['ڕەنگ', 'گۆڕانکاری', 'مارمێڵکە', 'خشۆک', 'شاردنەوە']
             }
         },
         {
-            target: { en: 'Cryptocurrency', ku: 'دراوی دیجیتاڵ' },
+            target: { en: 'Cryptocurrency', ku: 'دراوی دیجیتاڵی' },
             forbidden: {
                 en: ['Bitcoin', 'Money', 'Digital', 'Blockchain', 'Mining'],
-                ku: ['بیتکۆین', 'پارە', 'دیجیتاڵ', 'بلۆکچەین', 'هەڵکۆڵین']
+                ku: ['بیتکۆین', 'پارە', 'دیجیتاڵ', 'بلۆکچەین', 'دۆزینەوە (ماینینگ)']
             }
         },
         {
@@ -217,10 +217,10 @@ export const forbiddenWords = {
             }
         },
         {
-            target: { en: 'Paradox', ku: 'پارادۆکس' },
+            target: { en: 'Paradox', ku: 'پارادۆکس (دژبەیەکی)' },
             forbidden: {
                 en: ['Contradiction', 'Logic', 'Puzzle', 'Impossible', 'True'],
-                ku: ['دژایەتی', 'لۆژیک', 'مەتەڵ', 'ناممکن', 'ڕاست']
+                ku: ['دژبەیەکی', 'لۆژیک', 'مەتەڵ', 'ئەستەم', 'ڕاست']
             }
         },
         {
@@ -255,7 +255,7 @@ export const forbiddenWords = {
             target: { en: 'Cryptocurrency', ku: 'کریپتۆکارەنسی' },
             forbidden: {
                 en: ['Bitcoin', 'Digital', 'Money', 'Blockchain', 'Mining'],
-                ku: ['بیتکۆین', 'دیجیتاڵ', 'پارە', 'بلۆکچەین', 'کوەڵان']
+                ku: ['بیتکۆین', 'دیجیتاڵ', 'پارە', 'بلۆکچەین', 'دۆزینەوە (ماینینگ)']
             }
         },
         {
@@ -296,22 +296,34 @@ export const forbiddenWords = {
     ],
 };
 
-// Get words by category
-export const getForbiddenWords = (categoryId, language = 'en') => {
+const seenForbidden = {};
+
+// Get random forbidden word by category
+export const getRandomForbiddenWord = (categoryId = 'mixed', language = 'en') => {
+    let words = [];
     if (categoryId === 'mixed') {
-        // Get random words from all categories
-        const allWords = [];
         Object.keys(forbiddenWords).forEach(cat => {
             forbiddenWords[cat].forEach(word => {
-                allWords.push({ ...word, difficulty: cat });
+                words.push({ ...word, difficulty: cat });
             });
         });
-        // Shuffle
-        return allWords.sort(() => Math.random() - 0.5);
+    } else {
+        words = forbiddenWords[categoryId] || [];
     }
 
-    const words = forbiddenWords[categoryId] || [];
-    return words.sort(() => Math.random() - 0.5);
+    if (!seenForbidden[categoryId]) seenForbidden[categoryId] = new Set();
+    
+    let available = words.map((_, i) => i).filter(i => !seenForbidden[categoryId].has(i));
+    
+    if (available.length === 0) {
+        seenForbidden[categoryId].clear();
+        available = words.map((_, i) => i);
+    }
+    
+    const randomIdx = available[Math.floor(Math.random() * available.length)];
+    seenForbidden[categoryId].add(randomIdx);
+    
+    return words[randomIdx];
 };
 
 export const getCategoryById = (id) => {

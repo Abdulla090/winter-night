@@ -13,7 +13,7 @@ import { layout } from '../../theme/layout';
 
 export default function SetupScreen({ navigation }) {
     const [players, setPlayers] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('celebrities');
+    const [selectedCategories, setSelectedCategories] = useState(['celebrities']);
     const [roundTime, setRoundTime] = useState(60);
 
     const { language, isKurdish } = useLanguage();
@@ -27,11 +27,20 @@ export default function SetupScreen({ navigation }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         navigation.navigate('WhoAmIPlay', {
             players,
-            category: selectedCategory,
+            category: selectedCategories,
             roundTime,
             currentPlayerIndex: 0,
             scores: players.reduce((acc, player) => ({ ...acc, [player]: 0 }), {}),
         });
+    };
+
+    const toggleCategory = (categoryKey) => {
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setSelectedCategories((current) => (
+            current.includes(categoryKey)
+                ? (current.length > 1 ? current.filter((key) => key !== categoryKey) : current)
+                : [...current, categoryKey]
+        ));
     };
 
     const getCategoryName = (catKey) => {
@@ -53,6 +62,7 @@ export default function SetupScreen({ navigation }) {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 100 }}
+                keyboardShouldPersistTaps="handled"
             >
                 {/* Players Section */}
                 <GlassCard style={{ marginTop: layout.spacing.md }}>
@@ -84,14 +94,14 @@ export default function SetupScreen({ navigation }) {
                             key={cat.key}
                             onPress={() => {
                                 if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                setSelectedCategory(cat.key);
+                                toggleCategory(cat.key);
                             }}
                             activeOpacity={0.8}
                             style={[
                                 styles.catCard,
                                 {
-                                    backgroundColor: selectedCategory === cat.key ? colors.brand.gold + '15' : colors.surface,
-                                    borderColor: selectedCategory === cat.key ? colors.brand.gold : 'transparent',
+                                    backgroundColor: selectedCategories.includes(cat.key) ? colors.brand.gold + '15' : colors.surface,
+                                    borderColor: selectedCategories.includes(cat.key) ? colors.brand.gold : 'transparent',
                                     borderWidth: 1,
                                     ...layout.shadows.sm,
                                 }
@@ -99,11 +109,11 @@ export default function SetupScreen({ navigation }) {
                         >
                             <Text style={[
                                 styles.catTitle,
-                                { color: selectedCategory === cat.key ? colors.brand.gold : colors.text.primary }
+                                { color: selectedCategories.includes(cat.key) ? colors.brand.gold : colors.text.primary }
                             ]}>
                                 {getCategoryName(cat.key)}
                             </Text>
-                            {selectedCategory === cat.key && (
+                            {selectedCategories.includes(cat.key) && (
                                 <View style={[styles.checkBadge, { backgroundColor: colors.brand.gold }]}>
                                     <Check size={10} color="#FFF" strokeWidth={3} />
                                 </View>

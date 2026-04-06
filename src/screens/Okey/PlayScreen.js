@@ -152,12 +152,14 @@ export default function OkeyPlayScreen({ route, navigation }) {
     const { colors, isDark } = useTheme();
     const { width, height } = useWindowDimensions();
 
-    const isLandscape = width > height;
-    const availableW = isLandscape ? width - 120 : width - 24;
-    const maxTileByHeight = isLandscape ? Math.floor((height * 0.38 - 24) / 3.0) : 72;
-    const tileByWidth = Math.floor((availableW - 30) / SLOTS_PER_ROW);
-    const tileW = Math.min(tileByWidth, maxTileByHeight, 64);
-    const tileH = Math.floor(tileW * 1.4);
+    const safeW = Math.max(width, 300);
+    const safeH = Math.max(height, 200);
+    const isLandscape = safeW > safeH;
+    const availableW = Math.max(isLandscape ? safeW - 120 : safeW - 24, 150);
+    const maxTileByHeight = isLandscape ? Math.max(Math.floor((safeH * 0.38 - 24) / 3.0), 10) : 72;
+    const tileByWidth = Math.max(Math.floor((availableW - 30) / SLOTS_PER_ROW), 10);
+    const tileW = Math.max(Math.min(tileByWidth, maxTileByHeight, 64), 10);
+    const tileH = Math.max(Math.floor(tileW * 1.4), 14);
     const miniSize = Math.max(tileW * 0.55, 24);
 
     // ── Game State ──
@@ -716,7 +718,7 @@ export default function OkeyPlayScreen({ route, navigation }) {
 
 /* ═══════ STYLES ═══════ */
 const st = StyleSheet.create({
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
     container: { flex: 1, ...Platform.select({ web: { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999 }, }) },
     feltTexture: { ...StyleSheet.absoluteFillObject, opacity: 0.05, ...Platform.select({ web: { backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '10px 10px' }, default: {} }) },
     edgeRack: { position: 'absolute', backgroundColor: '#5C3F20', borderColor: '#3E2914', shadowColor: '#000', shadowOpacity: 0.9, shadowRadius: 15, elevation: 20, overflow: 'hidden' },

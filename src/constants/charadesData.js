@@ -37,10 +37,10 @@ export const charadesCategories = [
 export const charadesData = {
     actions: [
         { word: { en: 'Dancing', ku: 'سەما کردن' } },
-        { word: { en: 'Cooking', ku: 'چێشت لێنان' } },
+        { word: { en: 'Cooking', ku: 'چێشتلێنان' } },
         { word: { en: 'Swimming', ku: 'مەلەکردن' } },
         { word: { en: 'Driving', ku: 'لێخوڕین' } },
-        { word: { en: 'Fishing', ku: 'ماسیکردن' } },
+        { word: { en: 'Fishing', ku: 'ماسیگرتن' } },
         { word: { en: 'Shower', ku: 'خۆشۆردن' } },
         { word: { en: 'Sleeping', ku: 'نوستن' } },
         { word: { en: 'Eating', ku: 'خواردن' } },
@@ -50,17 +50,17 @@ export const charadesData = {
         { word: { en: 'Painting', ku: 'وێنەکێشان' } },
         { word: { en: 'Shopping', ku: 'بازاڕکردن' } },
         { word: { en: 'Fighting', ku: 'شەڕکردن' } },
-        { word: { en: 'Singing', ku: 'گۆرانی وتنی' } },
+        { word: { en: 'Singing', ku: 'گۆرانی وتن' } },
         { word: { en: 'Jumping', ku: 'بازدان' } },
         { word: { en: 'Reading', ku: 'خوێندنەوە' } },
-        { word: { en: 'Writing', ku: 'نوسین' } },
+        { word: { en: 'Writing', ku: 'نووسین' } },
         { word: { en: 'Clapping', ku: 'چەپڵە لێدان' } },
         { word: { en: 'Flying', ku: 'فڕین' } },
         { word: { en: 'Digging', ku: 'هەڵکەندن' } },
         { word: { en: 'Climbing', ku: 'سەرکەوتن' } },
         { word: { en: 'Cleaning', ku: 'خاوێنکردنەوە' } },
         { word: { en: 'Hugging', ku: 'باوەشکردن' } },
-        { word: { en: 'Skipping', ku: 'پەڕینەوە' } },
+        { word: { en: 'Skipping', ku: 'پەتپەتێن' } },
         { word: { en: 'Sneezing', ku: 'پژمین' } },
         { word: { en: 'Coughing', ku: 'کۆکین' } }
     ],
@@ -91,17 +91,17 @@ export const charadesData = {
         { word: { en: 'Deer', ku: 'ئاسک' } },
         { word: { en: 'Camel', ku: 'وشتر' } },
         { word: { en: 'Panda', ku: 'پاندا' } },
-        { word: { en: 'Gorilla', ku: 'گۆڕێلا' } }
+        { word: { en: 'Gorilla', ku: 'گۆریلا' } }
     ],
     movies: [
-        { word: { en: 'Spider-Man', ku: 'سپسایدەرمان' } },
+        { word: { en: 'Spider-Man', ku: 'سپایدەرمان' } },
         { word: { en: 'Titanic', ku: 'تایتانیک' } },
         { word: { en: 'Harry Potter', ku: 'هاری پۆتەر' } },
         { word: { en: 'Superman', ku: 'سوپەرمان' } },
         { word: { en: 'Batman', ku: 'باتمان' } },
         { word: { en: 'Frozen', ku: 'فرۆزن' } },
-        { word: { en: 'The Lion King', ku: 'شێرە شا' } },
-        { word: { en: 'Toy Story', ku: 'تۆ‌ی ستۆری' } },
+        { word: { en: 'The Lion King', ku: 'شێرە پاشا' } },
+        { word: { en: 'Toy Story', ku: 'تۆی ستۆری' } },
         { word: { en: 'Star Wars', ku: 'جەنگی ئەستێرەکان' } },
         { word: { en: 'Joker', ku: 'جۆکەر' } },
         { word: { en: 'Avatar', ku: 'ئاڤاتار' } },
@@ -112,10 +112,10 @@ export const charadesData = {
         { word: { en: 'The Godfather', ku: 'باوکی ڕۆحی' } },
         { word: { en: 'The Avengers', ku: 'تۆڵەسێنەرەکان' } },
         { word: { en: 'Black Panther', ku: 'پڵنگی ڕەش' } },
-        { word: { en: 'Up', ku: 'سەرەوە' } },
+        { word: { en: 'Up', ku: 'ماڵە فڕیوەکە' } },
         { word: { en: 'Finding Nemo', ku: 'دۆزینەوەی نیمۆ' } },
         { word: { en: 'Coco', ku: 'کۆکۆ' } },
-        { word: { en: 'Inside Out', ku: 'ناوەوە دەرەوە' } },
+        { word: { en: 'Inside Out', ku: 'هەستەکان' } },
         { word: { en: 'Moana', ku: 'موانا' } },
         { word: { en: 'Frozen 2', ku: 'فرۆزن ٢' } },
         { word: { en: 'Aladdin', ku: 'عەلائەدین' } },
@@ -125,17 +125,17 @@ export const charadesData = {
         { word: { en: 'Doctor', ku: 'دکتۆر' } },
         { word: { en: 'Police', ku: 'پۆلیس' } },
         { word: { en: 'Teacher', ku: 'مامۆستا' } },
-        { word: { en: 'Chef', ku: 'سەرچێشت' } },
+        { word: { en: 'Chef', ku: 'سەرچێشتلێنەر' } },
         { word: { en: 'Firefighter', ku: 'ئاگرکوژێنەرەوە' } },
         { word: { en: 'Pilot', ku: 'فڕۆکەوان' } },
         { word: { en: 'Farmer', ku: 'جوتیار' } },
         { word: { en: 'Soldier', ku: 'سەرباز' } },
         { word: { en: 'Artist', ku: 'هونەرمەند' } },
         { word: { en: 'Singer', ku: 'گۆرانیبێژ' } },
-        { word: { en: 'Clown', ku: 'پەڵەوان' } },
-        { word: { en: 'Astronaut', ku: 'ئاسمانەوان' } },
+        { word: { en: 'Clown', ku: 'جۆکەر' } },
+        { word: { en: 'Astronaut', ku: 'کەشتیوانی ئاسمان' } },
         { word: { en: 'Judge', ku: 'دادوەر' } },
-        { word: { en: 'Mechanic', ku: 'فییتەر' } },
+        { word: { en: 'Mechanic', ku: 'فیتەر' } },
         { word: { en: 'Barber', ku: 'سەرتاش' } },
         { word: { en: 'Engineer', ku: 'ئەندازیار' } },
         { word: { en: 'Nurse', ku: 'پەرستار' } },
@@ -159,17 +159,17 @@ export const charadesData = {
         { word: { en: 'Basketball', ku: 'باسکە' } },
         { word: { en: 'Tennis', ku: 'تێنس' } },
         { word: { en: 'Boxing', ku: 'بۆکسێن' } },
-        { word: { en: 'Swimming', ku: 'مەلەوان' } },
+        { word: { en: 'Swimming', ku: 'مەلەکردن' } },
         { word: { en: 'Golf', ku: 'گۆڵف' } },
-        { word: { en: 'Volleyball', ku: 'بالە' } },
+        { word: { en: 'Volleyball', ku: 'تۆپی بالە' } },
         { word: { en: 'Baseball', ku: 'بەیسبۆڵ' } },
         { word: { en: 'Skiing', ku: 'سکی' } },
         { word: { en: 'Surfing', ku: 'سێرفینگ' } },
         { word: { en: 'Weightlifting', ku: 'بەرزکردنەوەی قورسایی' } },
-        { word: { en: 'Cycling', ku: 'بیسکیل سواری' } },
+        { word: { en: 'Cycling', ku: 'پاسکیلسواری' } },
         { word: { en: 'Bowling', ku: 'بۆڵینگ' } },
         { word: { en: 'Yoga', ku: 'یۆگا' } },
-        { word: { en: 'Karate', ku: 'کاریتێ' } },
+        { word: { en: 'Karate', ku: 'کاراتێ' } },
         { word: { en: 'Football', ku: 'تۆپی پێ' } },
         { word: { en: 'Rugby', ku: 'ڕەگبی' } },
         { word: { en: 'Hockey', ku: 'هۆکی' } },
@@ -182,25 +182,37 @@ export const charadesData = {
         { word: { en: 'Running', ku: 'ڕاکردن' } },
         { word: { en: 'Fencing', ku: 'شمشێربازی' } },
         { word: { en: 'Archery', ku: 'تیروکەوان' } },
-        { word: { en: 'Diving', ku: 'چوونە ژێر ئاو' } },
+        { word: { en: 'Diving', ku: 'مەلەی ژێرئاو' } },
         { word: { en: 'Table Tennis', ku: 'تێنسی مێز' } },
-        { word: { en: 'Rock Climbing', ku: 'هەڵکشانی بەرد' } }
+        { word: { en: 'Rock Climbing', ku: 'شاخەوانی' } }
     ],
 };
 
-// Get words by category
-export const getCharadesWords = (categoryId, language = 'en') => {
-    // If mixed, mix all
+const seenCharades = {};
+
+// Helper to get random charade word
+export const getRandomCharade = (categoryId = 'mixed', language = 'en') => {
+    let words = [];
     if (categoryId === 'mixed') {
-        const allWords = [];
         Object.keys(charadesData).forEach((key) => {
-            allWords.push(...charadesData[key]);
+            words.push(...charadesData[key]);
         });
-        return allWords.sort(() => Math.random() - 0.5);
+    } else {
+        words = charadesData[categoryId] || [];
     }
 
-    const words = charadesData[categoryId] || [];
-    return words.sort(() => Math.random() - 0.5);
+    if (!seenCharades[categoryId]) seenCharades[categoryId] = new Set();
+    
+    let available = words.map((_, i) => i).filter(i => !seenCharades[categoryId].has(i));
+    if (available.length === 0) {
+        seenCharades[categoryId].clear();
+        available = words.map((_, i) => i);
+    }
+    
+    const randomIdx = available[Math.floor(Math.random() * available.length)];
+    seenCharades[categoryId].add(randomIdx);
+    
+    return words[randomIdx];
 };
 
 export const getCategoryById = (id) => {

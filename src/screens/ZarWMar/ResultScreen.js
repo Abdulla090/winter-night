@@ -110,5 +110,5 @@ const styles = StyleSheet.create({
     badgeText: { fontSize: 14, fontWeight: '700' },
     
     footer: { width: '100%', marginTop: layout.spacing.xl },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

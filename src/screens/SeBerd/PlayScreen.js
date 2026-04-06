@@ -42,13 +42,13 @@ export default function PlayScreen({ navigation, route }) {
         let pulse;
         if (selectedStone !== null) {
             pulse = Animated.loop(Animated.sequence([
-                // useNativeDriver:true is required for transform-only animations on Android production
-                Animated.timing(selectedPulseAnim, { toValue: 1.15, duration: 400, useNativeDriver: true }),
-                Animated.timing(selectedPulseAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+                // useNativeDriver:false prevents crashes on Android when component structure changes
+                Animated.timing(selectedPulseAnim, { toValue: 1.15, duration: 400, useNativeDriver: false }),
+                Animated.timing(selectedPulseAnim, { toValue: 1, duration: 400, useNativeDriver: false }),
             ]));
             pulse.start();
         } else {
-            Animated.timing(selectedPulseAnim, { toValue: 1, duration: 50, useNativeDriver: true }).start();
+            Animated.timing(selectedPulseAnim, { toValue: 1, duration: 50, useNativeDriver: false }).start();
         }
         return () => {
             if (pulse) pulse.stop();
@@ -64,10 +64,12 @@ export default function PlayScreen({ navigation, route }) {
     }, [gameState.gameOver]);
 
     // Board sizing
+    // Protect against width=0 on Android render start
+    const safeScreenWidth = Math.max(screenWidth, 300);
     const boardMargin = 40;
-    const containerWidth = Platform.OS === 'web' ? Math.min(screenWidth, 500) : screenWidth;
-    const boardSize = containerWidth - boardMargin * 2;
-    const stoneSize = boardSize * STONE_SIZE_RATIO;
+    const containerWidth = Platform.OS === 'web' ? Math.min(safeScreenWidth, 500) : safeScreenWidth;
+    const boardSize = Math.max(containerWidth - boardMargin * 2, 200);
+    const stoneSize = Math.max(boardSize * STONE_SIZE_RATIO, 20);
     const coords = getPositionCoords();
     const boardLines = useMemo(() => getBoardLines(), []);
     const winLine = getWinningLine(gameState);
@@ -269,34 +271,57 @@ export default function PlayScreen({ navigation, route }) {
                 )}
 
                 {/* Stone */}
-                {!isEmpty && (
+                {!isEmpty && isSelected && (
                     <Animated.View style={[pst.stone, {
-                        width: stoneSize,
-                        height: stoneSize,
-                        borderRadius: stoneSize / 2,
+                        width: Math.max(0, stoneSize),
+                        height: Math.max(0, stoneSize),
+                        borderRadius: Math.max(0, stoneSize / 2),
                         backgroundColor: cell === PLAYER1 ? BLUE : RED,
                         borderColor: cell === PLAYER1 ? BLUE_GLOW : RED_GLOW,
-                        // Fix for Android crash: safely swapping Animated.Values instead of mixing value types
-                        transform: [{ scale: isSelected ? selectedPulseAnim : staticAnim }],
+                        transform: [{ scale: selectedPulseAnim }],
                     },
                         isMovable && !isSelected && pst.movableStone,
                         isWinPos && pst.winStone,
                     ]}>
-                        {/* Inner highlight */}
                         <View style={[pst.stoneInner, {
-                            width: stoneSize * 0.6,
-                            height: stoneSize * 0.6,
-                            borderRadius: stoneSize * 0.3,
+                            width: Math.max(0, stoneSize * 0.6),
+                            height: Math.max(0, stoneSize * 0.6),
+                            borderRadius: Math.max(0, stoneSize * 0.3),
                             backgroundColor: cell === PLAYER1 ? '#60A5FA' : '#F87171',
                         }]} />
-                        {/* Shine */}
                         <View style={[pst.stoneShine, {
-                            width: stoneSize * 0.3,
-                            height: stoneSize * 0.15,
-                            borderRadius: stoneSize * 0.1,
-                            top: stoneSize * 0.15,
+                            width: Math.max(0, stoneSize * 0.3),
+                            height: Math.max(0, stoneSize * 0.15),
+                            borderRadius: Math.max(0, stoneSize * 0.1),
+                            top: Math.max(0, stoneSize * 0.15),
                         }]} />
                     </Animated.View>
+                )}
+
+                {!isEmpty && !isSelected && (
+                    <View style={[pst.stone, {
+                        width: Math.max(0, stoneSize),
+                        height: Math.max(0, stoneSize),
+                        borderRadius: Math.max(0, stoneSize / 2),
+                        backgroundColor: cell === PLAYER1 ? BLUE : RED,
+                        borderColor: cell === PLAYER1 ? BLUE_GLOW : RED_GLOW,
+                    },
+                        isMovable && !isSelected && pst.movableStone,
+                        isWinPos && pst.winStone,
+                    ]}>
+                        <View style={[pst.stoneInner, {
+                            width: Math.max(0, stoneSize * 0.6),
+                            height: Math.max(0, stoneSize * 0.6),
+                            borderRadius: Math.max(0, stoneSize * 0.3),
+                            backgroundColor: cell === PLAYER1 ? '#60A5FA' : '#F87171',
+                        }]} />
+                        <View style={[pst.stoneShine, {
+                            width: Math.max(0, stoneSize * 0.3),
+                            height: Math.max(0, stoneSize * 0.15),
+                            borderRadius: Math.max(0, stoneSize * 0.1),
+                            top: Math.max(0, stoneSize * 0.15),
+                        }]} />
+                    </View>
                 )}
             </TouchableOpacity>
         );
@@ -479,7 +504,7 @@ const pst = StyleSheet.create({
 
 const st = StyleSheet.create({
     root: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     header: {
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

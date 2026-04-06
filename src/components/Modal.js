@@ -210,16 +210,19 @@ const styles = StyleSheet.create({
         width: '100%',
         maxWidth: 400,
         borderRadius: layout.radius.xl,
-        overflow: 'hidden',
         borderWidth: 1,
         ...layout.shadows.lg,
     },
     headerStrip: {
         height: 6,
         width: '100%',
+        borderTopLeftRadius: layout.radius.xl,
+        borderTopRightRadius: layout.radius.xl,
+        overflow: 'hidden',
     },
     contentContainer: {
         padding: layout.spacing.xl,
+        overflow: 'hidden',
     },
     closeButton: {
         position: 'absolute',

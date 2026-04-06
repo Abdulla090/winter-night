@@ -193,7 +193,7 @@ export default function ResultScreen({ navigation, route }) {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     scrollContent: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingBottom: 170, paddingTop: 20 },
-    kFont: { fontFamily: 'Rabar' },
+    kFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     trophyWrap: { marginBottom: 24 },
     trophyCircle: { width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(245,158,11,0.1)', alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: 'rgba(245,158,11,0.3)' },

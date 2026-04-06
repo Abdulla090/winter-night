@@ -34,7 +34,7 @@ export default function ZarWMarSetupScreen({ navigation }) {
                 <View style={{ width: 44 }} />
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }} keyboardShouldPersistTaps="handled">
                 {/* Hero Icon */}
                 <MotiView
                     from={{ opacity: 0, scale: 0.8 }}
@@ -90,5 +90,5 @@ const styles = StyleSheet.create({
     sectionHeader: { alignItems: 'center', marginBottom: 12 },
     sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
     fabContainer: { position: 'absolute', bottom: 30, left: 20, right: 20 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

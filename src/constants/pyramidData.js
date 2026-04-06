@@ -8,8 +8,8 @@ export const PYRAMID_DATA = [
             { en: 'Cheese', ku: 'پەنیر' },
             { en: 'Butter', ku: 'کەرە' },
             { en: 'Juice', ku: 'شەربەت' },
-            { en: 'Vegetables', ku: 'سەوزە' },
-            { en: 'Leftovers', ku: 'ماوەی خواردن' },
+            { en: 'Vegetables', ku: 'سەوزەوات' },
+            { en: 'Leftovers', ku: 'خواردنی ماوە' },
             { en: 'Water', ku: 'ئاو' },
             { en: 'Yogurt', ku: 'ماست' },
             { en: 'Meat', ku: 'گۆشت' },
@@ -26,22 +26,22 @@ export const PYRAMID_DATA = [
             { en: 'Football', ku: 'تۆپی پێ' },
             { en: 'Basketball', ku: 'تۆپی باسکە' },
             { en: 'Tennis', ku: 'تێنس' },
-            { en: 'Swimming', ku: 'مەلەوان' },
+            { en: 'Swimming', ku: 'مەلەکردن' },
             { en: 'Running', ku: 'ڕاکردن' },
             { en: 'Boxing', ku: 'بۆکسێن' },
             { en: 'Volleyball', ku: 'تۆپی بالە' },
             { en: 'Golf', ku: 'گۆڵف' },
             { en: 'Baseball', ku: 'بەیسبۆڵ' },
-            { en: 'Skiing', ku: 'سکی' },
-            { en: 'Karate', ku: 'کاراتی' },
+            { en: 'Skiing', ku: 'خلیسکێنەی سەر بەفر' },
+            { en: 'Karate', ku: 'کاراتێ' },
             { en: 'Rugby', ku: 'ڕەگبی' },
             { en: 'Hockey', ku: 'هۆکی' },
-            { en: 'Cycling', ku: 'بیسکیل سواری' }
+            { en: 'Cycling', ku: 'پاسکیلسواری' }
         ]
     },
     {
         id: 'category_3',
-        title: { en: 'Things That Are Hot', ku: 'ئەو شتانەی گەامن' },
+        title: { en: 'Things That Are Hot', ku: 'شتە گەرمەکان' },
         items: [
             { en: 'Sun', ku: 'خۆر' },
             { en: 'Fire', ku: 'ئاگر' },
@@ -49,13 +49,13 @@ export const PYRAMID_DATA = [
             { en: 'Oven', ku: 'فڕن' },
             { en: 'Desert', ku: 'بیابان' },
             { en: 'Lava', ku: 'لاڤا' },
-            { en: 'Tea', ku: 'چای' },
+            { en: 'Tea', ku: 'چا' },
             { en: 'Soup', ku: 'شۆربا' },
             { en: 'Summer', ku: 'هاوین' },
-            { en: 'Iron', ku: 'ئوتو' },
+            { en: 'Iron', ku: 'ئوتوو' },
             { en: 'Candle', ku: 'مۆم' },
             { en: 'Stove', ku: 'تەباخ' },
-            { en: 'Volcano', ku: 'ڕکان' },
+            { en: 'Volcano', ku: 'گڕکان' },
             { en: 'Toaster', ku: 'تۆستەر' }
         ]
     },
@@ -67,16 +67,16 @@ export const PYRAMID_DATA = [
             { en: 'Desk', ku: 'مێز' },
             { en: 'Whiteboard', ku: 'تەختە سپی' },
             { en: 'Books', ku: 'کتێب' },
-            { en: 'Pencils', ku: 'قەڵەم' },
-            { en: 'Students', ku: 'قوتابی' },
+            { en: 'Pencils', ku: 'قەڵەم دار' },
+            { en: 'Students', ku: 'قوتابییەکان' },
             { en: 'Clock', ku: 'کاتژمێر' },
             { en: 'Computer', ku: 'کۆمپیوتەر' },
             { en: 'Map', ku: 'نەخشە' },
             { en: 'Ruler', ku: 'ڕاستە' },
-            { en: 'Eraser', ku: 'سڕەر' },
-            { en: 'Pen', ku: 'پێنوس' },
+            { en: 'Eraser', ku: 'سڕەرەوە' },
+            { en: 'Pen', ku: 'پێنووس' },
             { en: 'Bag', ku: 'جانتا' },
-            { en: 'Projector', ku: 'پرۆجێکتەر' }
+            { en: 'Projector', ku: 'پڕۆجێکتەر' }
         ]
     },
     {
@@ -89,7 +89,7 @@ export const PYRAMID_DATA = [
             { en: 'Elephant', ku: 'فیل' },
             { en: 'Bird', ku: 'باڵندە' },
             { en: 'Fish', ku: 'ماسی' },
-            { en: 'Monkey', ku: 'مەیمون' },
+            { en: 'Monkey', ku: 'مەیموون' },
             { en: 'Tiger', ku: 'پڵنگ' },
             { en: 'Bear', ku: 'ورچ' },
             { en: 'Wolf', ku: 'گورگ' },
@@ -103,7 +103,7 @@ export const PYRAMID_DATA = [
         id: 'category_6',
         title: { en: 'Colors', ku: 'ڕەنگەکان' },
         items: [
-            { en: 'Red', ku: 'سور' },
+            { en: 'Red', ku: 'سوور' },
             { en: 'Blue', ku: 'شین' },
             { en: 'Green', ku: 'سەوز' },
             { en: 'Yellow', ku: 'زەرد' },
@@ -113,8 +113,8 @@ export const PYRAMID_DATA = [
             { en: 'Orange', ku: 'پرتەقاڵی' },
             { en: 'Pink', ku: 'پەمەیی' },
             { en: 'Brown', ku: 'قاوەیی' },
-            { en: 'Grey', ku: 'ڕەساسی' },
-            { en: 'Gold', ku: 'ئاڵتونی' },
+            { en: 'Grey', ku: 'خۆڵەمێشی' },
+            { en: 'Gold', ku: 'ئاڵتوونی' },
             { en: 'Silver', ku: 'زیوی' },
             { en: 'Maroon', ku: 'مێوژی' }
         ]
@@ -125,8 +125,8 @@ export const PYRAMID_DATA = [
         items: [
             { en: 'Tent', ku: 'خێمە' },
             { en: 'Fire', ku: 'ئاگر' },
-            { en: 'Sleeping Bag', ku: 'تورەگەی خەوتن' },
-            { en: 'Flashlight', ku: 'لایت' },
+            { en: 'Sleeping Bag', ku: 'کیسەی خەوتن' },
+            { en: 'Flashlight', ku: 'گڵۆپی دەستی' },
             { en: 'Marshmallow', ku: 'مارشمێلۆ' },
             { en: 'Backpack', ku: 'جانتا' },
             { en: 'Map', ku: 'نەخشە' },
@@ -148,15 +148,15 @@ export const PYRAMID_DATA = [
             { en: 'Shoes', ku: 'پێڵاو' },
             { en: 'Hat', ku: 'کڵاو' },
             { en: 'Socks', ku: 'گۆرەوی' },
-            { en: 'Jacket', ku: 'اکەت' },
-            { en: 'Glasses', ku: 'عەینەک' },
+            { en: 'Jacket', ku: 'چاکەت' },
+            { en: 'Glasses', ku: 'چاویلکە' },
             { en: 'Scarf', ku: 'ملپێچ' },
             { en: 'Gloves', ku: 'دەستکێش' },
             { en: 'Belt', ku: 'قایش' },
             { en: 'Coat', ku: 'پاڵتۆ' },
             { en: 'Dress', ku: 'کراس' },
             { en: 'Boots', ku: 'پوت' },
-            { en: 'Sweater', ku: 'بلوز' }
+            { en: 'Sweater', ku: 'بلووز' }
         ]
     },
     {
@@ -166,7 +166,7 @@ export const PYRAMID_DATA = [
             { en: 'Apple', ku: 'سێو' },
             { en: 'Banana', ku: 'مۆز' },
             { en: 'Orange', ku: 'پرتەقاڵ' },
-            { en: 'Strawberry', ku: 'تووفرینگی' },
+            { en: 'Strawberry', ku: 'شلیک' },
             { en: 'Grapes', ku: 'ترێ' },
             { en: 'Watermelon', ku: 'شووتی' },
             { en: 'Mango', ku: 'مانگۆ' },
@@ -174,9 +174,9 @@ export const PYRAMID_DATA = [
             { en: 'Cherry', ku: 'گێلاس' },
             { en: 'Peach', ku: 'قۆخ' },
             { en: 'Lemon', ku: 'لیمۆ' },
-            { en: 'Pear', ku: 'هرمی' },
-            { en: 'Coconut', ku: 'گوێزی هیند' },
-            { en: 'Kiwi', ku: 'کیوی' }
+            { en: 'Pear', ku: 'هەرمێ' },
+            { en: 'Coconut', ku: 'گوێزی هیندی' },
+            { en: 'Kiwi', ku: 'کێوی' }
         ]
     },
     {
@@ -195,7 +195,7 @@ export const PYRAMID_DATA = [
             { en: 'Nurse', ku: 'پەرستار' },
             { en: 'Lawyer', ku: 'پارێزەر' },
             { en: 'Artist', ku: 'هونەرمەند' },
-            { en: 'Dentist', ku: 'دکتۆری ددان' },
+            { en: 'Dentist', ku: 'پزیشکی ددان' },
             { en: 'Baker', ku: 'نانەوا' }
         ]
     },
@@ -209,7 +209,7 @@ export const PYRAMID_DATA = [
             { en: 'Plate', ku: 'قاپ' },
             { en: 'Cup', ku: 'پیاڵە' },
             { en: 'Pan', ku: 'تاوە' },
-            { en: 'Pot', ku: 'مەنجەل' },
+            { en: 'Pot', ku: 'مەنجەڵ' },
             { en: 'Oven', ku: 'فڕن' },
             { en: 'Fridge', ku: 'سەلاجە' },
             { en: 'Blender', ku: 'بلێندەر' },
@@ -241,7 +241,20 @@ export const PYRAMID_DATA = [
     }
 ];
 
+const seenPyramidCategories = new Set();
+
 export const getRandomCategories = (count = 6) => {
     const shuffled = [...PYRAMID_DATA].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    
+    let unseen = shuffled.filter(cat => !seenPyramidCategories.has(cat.id));
+    
+    if (unseen.length < count) {
+        seenPyramidCategories.clear();
+        unseen = shuffled;
+    }
+    
+    const result = unseen.slice(0, count);
+    result.forEach(cat => seenPyramidCategories.add(cat.id));
+    
+    return result;
 };

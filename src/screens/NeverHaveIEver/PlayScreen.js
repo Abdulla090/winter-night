@@ -13,7 +13,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 
 export default function NeverHaveIEverPlayScreen({ navigation, route }) {
     // Support both single-player and multiplayer
@@ -402,5 +403,5 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: SPACING.md,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

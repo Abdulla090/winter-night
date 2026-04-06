@@ -56,15 +56,15 @@ export const BORDER_RADIUS = {
 export const SHADOWS = layout.shadows;
 
 export const FONTS = {
-  regular: { fontSize: 16, fontWeight: '400' },
-  medium: { fontSize: 16, fontWeight: '500' },
-  semibold: { fontSize: 16, fontWeight: '600' },
-  bold: { fontSize: 16, fontWeight: '700' },
-  title: { fontSize: 28, fontWeight: '700' },
+  regular: { fontSize: 16, fontFamily: 'NRT', fontWeight: 'normal' },
+  medium: { fontSize: 16, fontFamily: 'NRT', fontWeight: 'normal' },
+  semibold: { fontSize: 16, fontFamily: 'NRT', fontWeight: 'normal' },
+  bold: { fontSize: 16, fontFamily: 'NRT', fontWeight: 'normal' },
+  title: { fontSize: 28, fontFamily: 'NRT', fontWeight: 'normal' },
 };
 
 export const KURDISH_FONTS = {
-  regular: { fontFamily: 'Rabar', fontSize: 16 },
+  regular: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', fontSize: 16 },
   medium: { fontFamily: 'Rabar-Medium', fontSize: 16 },
   semibold: { fontFamily: 'Rabar-SemiBold', fontSize: 16 },
   bold: { fontFamily: 'Rabar-Bold', fontSize: 16 },

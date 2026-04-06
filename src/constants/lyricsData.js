@@ -143,23 +143,38 @@ export const lyricsData = {
 };
 
 // Get lyrics by category
+const seenLyrics = {};
+
 export const getLyrics = (categoryId, language = 'en') => {
-    // If request is for Kurdish but category is not Kurdish, return English but UI handles it
-    // The lyrics content itself is language-agnostic mostly (names/lyrics)
-    // Only the 'kurdish' category has specific Kurdish content
-
-    const categoryData = lyricsData[categoryId];
-
-    if (!categoryData) {
-        // Return random mix
-        const all = [];
+    let rawLyrics = [];
+    if (!lyricsData[categoryId]) {
         Object.keys(lyricsData).forEach(key => {
-            all.push(...lyricsData[key]);
+            lyricsData[key].forEach((lyric, i) => {
+                rawLyrics.push({ ...lyric, category: key, originalCat: key, originalIndex: i });
+            });
         });
-        return all.sort(() => Math.random() - 0.5);
+    } else {
+        const catLyrics = lyricsData[categoryId];
+        rawLyrics = catLyrics.map((lyric, i) => ({ ...lyric, category: categoryId, originalCat: categoryId, originalIndex: i }));
     }
 
-    return categoryData.sort(() => Math.random() - 0.5);
+    const shuffled = rawLyrics.sort(() => Math.random() - 0.5);
+    
+    const trackKey = categoryId || 'any';
+    if (!seenLyrics[trackKey]) seenLyrics[trackKey] = new Set();
+    
+    let unseen = shuffled.filter(l => !seenLyrics[trackKey].has(`${l.originalCat}-${l.originalIndex}`));
+    
+    if (unseen.length < 10) {
+        seenLyrics[trackKey].clear();
+        unseen = shuffled;
+    }
+    
+    const result = unseen.slice(0, 10);
+    
+    result.forEach(l => seenLyrics[trackKey].add(`${l.originalCat}-${l.originalIndex}`));
+    
+    return result;
 };
 
 export const getCategoryById = (id) => {

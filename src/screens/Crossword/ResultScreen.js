@@ -155,5 +155,5 @@ const styles = StyleSheet.create({
     statLabel: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase' },
     statDivider: { width: 1, height: 40 },
     actions: { width: '100%' },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

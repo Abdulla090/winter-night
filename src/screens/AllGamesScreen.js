@@ -113,7 +113,7 @@ const SearchInput = ({ isKurdish, value, onChangeText, colors, isDark }) => {
                 style={[
                     styles.searchInput,
                     { backgroundColor: searchBg, borderColor: searchBorder, color: textColor },
-                    isKurdish && { textAlign: 'right', fontFamily: 'Rabar', paddingRight: 12 }
+                    isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', paddingRight: 12 }
                 ]}
             />
             <View style={styles.searchIconPos}>
@@ -880,5 +880,5 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
 
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

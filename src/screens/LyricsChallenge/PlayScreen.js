@@ -60,7 +60,8 @@ export default function LyricsChallengePlayScreen({ navigation, route }) {
 
     const handleRestart = () => {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        setQuestions(questions.sort(() => Math.random() - 0.5));
+        const loadedQuestions = getLyrics(category.id, language);
+        setQuestions(loadedQuestions.slice(0, 10));
         setCurrentIndex(0);
         setScore(0);
         setGameOver(false);
@@ -366,5 +367,5 @@ const styles = StyleSheet.create({
     menuBtn: { padding: SPACING.md, alignSelf: 'center' },
     menuBtnText: { color: COLORS.text.muted },
 
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

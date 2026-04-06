@@ -26,7 +26,9 @@ import {
     ChevronRight,
 } from 'lucide-react-native';
 
-const { width, height } = Dimensions.get('window');
+const _dims = Dimensions.get('window');
+const width = Math.max(_dims.width, 300);
+const height = Math.max(_dims.height, 200);
 
 // ⚡ ELITE ONBOARDING — Dark, Bold, Powerful
 const SLIDES = [

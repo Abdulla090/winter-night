@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useRef } from 'react';
 import { StyleSheet, View, TextInput, Text, Platform, TouchableOpacity } from 'react-native';
 import { Plus, X, UserPlus } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
@@ -49,6 +49,7 @@ export default function PlayerInput({
     onAdd,
 }) {
     const [newName, setNewName] = useState('');
+    const inputRef = useRef(null);
     const { colors, isRTL } = useTheme();
     const { profile, user } = useAuth();
 
@@ -58,14 +59,26 @@ export default function PlayerInput({
     const alignStyle = isKurdish ? 'right' : 'left';
 
     const addPlayer = useCallback((name) => {
+        let added = false;
+
         if (onAdd) {
             onAdd(name);
+            added = true;
         } else if (setPlayers) {
             if (players.length < maxPlayers && !players.includes(name)) {
                 setPlayers([...players, name]);
+                added = true;
             }
         }
-        setNewName('');
+
+        if (added) {
+            setNewName('');
+            requestAnimationFrame(() => {
+                inputRef.current?.focus();
+            });
+        }
+
+        return added;
     }, [onAdd, setPlayers, players, maxPlayers]);
 
     const handleAdd = useCallback(() => {
@@ -73,8 +86,9 @@ export default function PlayerInput({
             if (Platform.OS !== 'web') {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             }
-            addPlayer(newName.trim());
+            return addPlayer(newName.trim());
         }
+        return false;
     }, [newName, addPlayer]);
 
     const handleAddMe = useCallback(() => {
@@ -121,6 +135,7 @@ export default function PlayerInput({
 
             <View style={[styles.inputRow, { flexDirection: rowDirection }]}>
                 <TextInput
+                    ref={inputRef}
                     style={[
                         styles.input,
                         {
@@ -136,6 +151,7 @@ export default function PlayerInput({
                     value={newName}
                     onChangeText={setNewName}
                     onSubmitEditing={handleAdd}
+                    blurOnSubmit={false}
                     returnKeyType="done"
                 />
                 <TouchableOpacity

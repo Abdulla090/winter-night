@@ -185,5 +185,5 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

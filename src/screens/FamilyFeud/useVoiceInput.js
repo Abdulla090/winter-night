@@ -2,8 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Platform } from 'react-native';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
-
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+import { getGeminiApiKey } from '../../utils/geminiConfig';
 
 export function useVoiceInput(isKurdish) {
     const [isRecording, setIsRecording] = useState(false);
@@ -67,7 +66,13 @@ export function useVoiceInput(isKurdish) {
                 ? "This is spoken audio. Treat this as Kurdish. Transcribe exactly what is spoken. Return ONLY the transcription text, nothing else." 
                 : "This is spoken audio. Treat this as English. Transcribe exactly what is spoken. Return ONLY the transcription text, nothing else.";
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const geminiApiKey = await getGeminiApiKey();
+            if (!geminiApiKey) {
+                console.warn('Gemini API key is not configured');
+                return;
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
             
             const response = await window.fetch(url, {
                 method: 'POST',

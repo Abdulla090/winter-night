@@ -28,7 +28,8 @@ import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 
 // Answer Result Card
 const AnswerResultCard = ({
@@ -716,5 +717,5 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
 
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

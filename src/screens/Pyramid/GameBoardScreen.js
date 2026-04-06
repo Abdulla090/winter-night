@@ -11,7 +11,8 @@ import { t } from '../../localization/translations';
 import { layout } from '../../theme/layout';
 import { getRandomCategories } from '../../constants/pyramidData';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 
 const PyramidCard = ({ category, index, onPress, isCompleted, colors }) => {
     const scale = useSharedValue(0);
@@ -292,5 +293,5 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '800',
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

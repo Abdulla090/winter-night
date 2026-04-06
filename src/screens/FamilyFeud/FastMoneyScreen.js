@@ -10,10 +10,11 @@ import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { familyFeudQuestions } from '../../data/familyFeudQuestions';
-import { checkAnswerWithGemini } from './gameEngine';
+import { checkAnswerWithGemini, normalizeAnswerText } from './gameEngine';
 import { MotiView } from 'moti';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 const FAST_MONEY_GOAL = 200;
 const PLAYER1_TIME = 20;
 const PLAYER2_TIME = 25;
@@ -152,8 +153,9 @@ export default function FastMoneyScreen({ navigation, route }) {
         if (!p1Input.trim() || isChecking) return;
         
         // Check for duplicate with player 2
-        const p2Ans = p2Answers[p1CurrentQ]?.text?.toLowerCase();
-        if (p2Ans && p1Input.trim().toLowerCase() === p2Ans) {
+        const p2Ans = normalizeAnswerText(p2Answers[p1CurrentQ]?.text || '');
+        const p1Ans = normalizeAnswerText(p1Input.trim());
+        if (p2Ans && p1Ans && p1Ans === p2Ans) {
             haptic('error');
             setP1Duplicate(true);
             setP1Input('');
@@ -423,7 +425,7 @@ export default function FastMoneyScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
     container: { flex: 1, paddingTop: Platform.OS === 'android' ? 10 : 0, overflow: 'hidden' },
-    kFont: { fontFamily: 'Rabar' },
+    kFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
     centerContent: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 },
 
     bigTitle: { color: '#F59E0B', fontSize: 38, fontWeight: '900', textAlign: 'center', marginBottom: 10, textShadowColor: 'rgba(245,158,11,0.4)', textShadowOffset: { width: 0, height: 4 }, textShadowRadius: 20 },

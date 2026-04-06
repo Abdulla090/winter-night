@@ -154,15 +154,17 @@ export default function PlayScreen({ navigation, route }) {
     const [diceRolling, setDiceRolling] = useState(false);
 
     // Board sizing
-    const containerWidth = Platform.OS === 'web' ? Math.min(screenWidth, 500) : screenWidth;
+    // Protect against width=0 on Android render start
+    const safeScreenWidth = Math.max(screenWidth, 300);
+    const containerWidth = Platform.OS === 'web' ? Math.min(safeScreenWidth, 500) : safeScreenWidth;
     const boardMargin = 8;
-    const boardWidth = containerWidth - boardMargin * 2;
-    const barWidth = boardWidth * 0.08;
-    const playAreaWidth = (boardWidth - barWidth) / 2;
-    const pointWidth = playAreaWidth / 6;
-    const boardHeight = boardWidth * 1.15;
+    const boardWidth = Math.max(containerWidth - boardMargin * 2, 250);
+    const barWidth = Math.max(boardWidth * 0.08, 10);
+    const playAreaWidth = Math.max((boardWidth - barWidth) / 2, 100);
+    const pointWidth = Math.max(playAreaWidth / 6, 15);
+    const boardHeight = Math.max(boardWidth * 1.15, 300);
     const halfBoardHeight = boardHeight / 2;
-    const checkerSize = pointWidth * 0.85;
+    const checkerSize = Math.max(pointWidth * 0.85, 10);
 
     const tc = colors.text.primary;
     const sc = colors.text.muted;
@@ -201,10 +203,10 @@ export default function PlayScreen({ navigation, route }) {
         
         // Animate dice
         Animated.sequence([
-            Animated.timing(diceAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
-            Animated.timing(diceAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
-            Animated.timing(diceAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
-            Animated.timing(diceAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+            Animated.timing(diceAnim, { toValue: 1, duration: 150, useNativeDriver: false }),
+            Animated.timing(diceAnim, { toValue: 0, duration: 150, useNativeDriver: false }),
+            Animated.timing(diceAnim, { toValue: 1, duration: 150, useNativeDriver: false }),
+            Animated.timing(diceAnim, { toValue: 0, duration: 150, useNativeDriver: false }),
         ]).start(() => {
             setDiceRolling(false);
             const newState = startTurn(gameState);
@@ -642,7 +644,7 @@ const boardSt = StyleSheet.create({
 
 const st = StyleSheet.create({
     root: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     header: {
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

@@ -1,3 +1,5 @@
+import { getGeminiApiKey } from '../../utils/geminiConfig';
+
 /**
  * Family Feud Game Engine
  * TV-show accurate logic: Face-Off, Pass/Play, Main Round, Steal, Multipliers, Sudden Death
@@ -88,27 +90,85 @@ export function getCurrentQuestion(state) {
 
 // ─── ANSWER MATCHING ───
 
-function normalize(text) {
+const KURDISH_STOP_WORDS = new Set([
+    'و',
+    'يا',
+    'یان',
+    'لە',
+    'له',
+    'بە',
+    'به',
+    'بو',
+    'بۆ',
+    'bo',
+    'ل',
+    'ی',
+    'a',
+    'the',
+]);
+
+export function normalizeAnswerText(text) {
     if (!text) return '';
-    let s = text.trim().toLowerCase();
+    let s = text.normalize('NFKC').trim().toLowerCase();
     s = s.replace(/[\u200B-\u200F\u202A-\u202E\uFEFF]/g, '');
     s = s.replace(/[\u064B-\u065F\u0670]/g, '');
     s = s.replace(/\u0640/g, '');
     s = s.replace(/[ئإأآٱ]/g, 'ا');
+    s = s.replace(/[ؤ]/g, 'و');
     s = s.replace(/[ة]/g, 'ه');
-    s = s.replace(/[ۆ]/g, 'و');
-    s = s.replace(/[ێ]/g, 'ي');
-    s = s.replace(/[ک]/g, 'ك');
-    s = s.replace(/[ی]/g, 'ي');
-    s = s.replace(/[ڕ]/g, 'ر');
-    s = s.replace(/[ڤ]/g, 'ف');
-    s = s.replace(/[گ]/g, 'گ');
-    s = s.replace(/[ژ]/g, 'ز');
-    s = s.replace(/[ڵ]/g, 'ل');
+    s = s.replace(/[ۀ]/g, 'ە');
+    s = s.replace(/[ھ]/g, 'ه');
+    s = s.replace(/[ك]/g, 'ک');
+    s = s.replace(/[ى]/g, 'ی');
+    s = s.replace(/[ي]/g, 'ی');
+    s = s.replace(/[ەه]$/g, '');
     s = s.replace(/[ۊ]/g, 'و');
+    s = s.replace(/[٠-٩]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'.indexOf(digit).toString());
+    s = s.replace(/[۰-۹]/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit).toString());
     s = s.replace(/[\/\-\(\)،,\.؟?!:;]/g, ' ');
     s = s.replace(/\s+/g, ' ').trim();
     return s;
+}
+
+function normalize(text) {
+    return normalizeAnswerText(text);
+}
+
+function getMeaningfulTokens(text) {
+    return normalize(text)
+        .split(' ')
+        .map((token) => token.trim())
+        .filter((token) => token.length >= 2 && !KURDISH_STOP_WORDS.has(token));
+}
+
+function expandCandidatePhrases(answer) {
+    const variants = new Set();
+    const sources = [answer?.text, ...(answer?.alts || [])].filter(Boolean);
+
+    for (const source of sources) {
+        variants.add(source);
+        source.split(/[\/,،]/).forEach((part) => {
+            const trimmed = part.trim();
+            if (trimmed) variants.add(trimmed);
+        });
+    }
+
+    return [...variants];
+}
+
+function tokensAreCompatible(candidateTokens, inputTokens) {
+    if (candidateTokens.length === 0 || inputTokens.length === 0) return false;
+
+    const shared = inputTokens.filter((token) => (
+        candidateTokens.some((candidateToken) => isCloseMatch(candidateToken, token))
+    ));
+
+    if (shared.length === 0) return false;
+
+    const coverage = shared.length / Math.max(inputTokens.length, candidateTokens.length);
+    const inputCovered = shared.length / inputTokens.length;
+
+    return inputCovered >= 0.75 || coverage >= 0.6;
 }
 
 function isCloseMatch(a, b) {
@@ -116,12 +176,12 @@ function isCloseMatch(a, b) {
     if (a === b) return true;
     const shorter = a.length <= b.length ? a : b;
     const longer = a.length > b.length ? a : b;
-    if (shorter.length >= 3 && shorter.length / longer.length >= 0.75 && longer.includes(shorter)) return true;
+    if (shorter.length >= 4 && shorter.length / longer.length >= 0.8 && longer.includes(shorter)) return true;
     // Levenshtein for short words (typo tolerance)
     if (a.length >= 3 && b.length >= 3 && a.length <= 12 && b.length <= 12) {
         const dist = levenshtein(a, b);
         const maxLen = Math.max(a.length, b.length);
-        if (dist <= 1 || (maxLen >= 5 && dist <= 2)) return true;
+        if (dist <= 1 || (maxLen >= 6 && dist <= 2)) return true;
     }
     return false;
 }
@@ -145,19 +205,16 @@ export function findAnswerOnBoard(question, answerText) {
     if (!answerText || !question) return -1;
     const input = normalize(answerText);
     if (input.length < 2) return -1;
+    const inputTokens = getMeaningfulTokens(answerText);
 
     return question.answers.findIndex(a => {
-        const mainNorm = normalize(a.text);
-        if (isCloseMatch(mainNorm, input)) return true;
-        if (a.alts && a.alts.length > 0) {
-            for (const alt of a.alts) {
-                if (isCloseMatch(normalize(alt), input)) return true;
-            }
-        }
-        const parts = a.text.split(/[\/,،]/);
-        for (const part of parts) {
-            const pn = normalize(part);
-            if (pn.length > 1 && isCloseMatch(pn, input)) return true;
+        const candidatePhrases = expandCandidatePhrases(a);
+        for (const phrase of candidatePhrases) {
+            const normalizedPhrase = normalize(phrase);
+            if (isCloseMatch(normalizedPhrase, input)) return true;
+
+            const candidateTokens = getMeaningfulTokens(phrase);
+            if (tokensAreCompatible(candidateTokens, inputTokens)) return true;
         }
         return false;
     });
@@ -251,7 +308,6 @@ export function nextMember(state) {
 
 // ─── GEMINI AI CHECK (optimized) ───
 
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-3.1-flash-lite-preview";
 
 export async function checkAnswerWithGemini(question, answerText, revealedAnswers) {
@@ -263,6 +319,8 @@ export async function checkAnswerWithGemini(question, answerText, revealedAnswer
     const localIdx = findAnswerOnBoard(question, input);
     if (localIdx !== -1) return localIdx;
     if (input.length < 3) return -1;
+    const geminiApiKey = await getGeminiApiKey();
+    if (!geminiApiKey) return -1;
 
     // 2. Build only unrevealed answers list for Gemini (skip already revealed)
     const unrevealed = question.answers
@@ -273,18 +331,26 @@ export async function checkAnswerWithGemini(question, answerText, revealedAnswer
 
     try {
         const answersList = unrevealed
-            .map(a => `${a.idx}: ${a.text}${a.alts ? ' (' + a.alts.slice(0, 3).join(', ') + ')' : ''}`)
+            .map(a => `${a.idx}: ${a.text}${a.alts ? ' | alternates: ' + a.alts.slice(0, 6).join(', ') : ''}`)
             .join('\n');
 
-        const prompt = `Kurdish language expert. Family Feud game.
-Q: "${question.question}"
-Answers:
+        const prompt = `You are a strict Kurdish Sorani Family Feud judge.
+Question: "${question.question}"
+Official board answers:
 ${answersList}
-User said: "${input}"
-Is user's answer a synonym/equivalent of any answer? Kurdish synonyms count.
-Reply ONLY the ID number if match, or -1 if no match. No explanation.`;
+Player answer: "${input}"
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+Rules:
+- Accept only if the player answer is the same answer concept as one board answer.
+- Accept Kurdish Sorani spelling variants, common Kurdish cultural names, Arabic-script variants, and direct synonyms.
+- Accept singular/plural and very small spelling mistakes only when the meaning is still clearly identical.
+- Reject broader or narrower categories, related items, neighboring concepts, examples from a different answer bucket, or guesses that only fit the topic.
+- Reject if the answer changes to a different Kurdish word with a different meaning.
+- If there is any doubt, return -1.
+
+Return ONLY the matching ID number or -1.`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiApiKey}`;
 
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 6000);
@@ -295,7 +361,7 @@ Reply ONLY the ID number if match, or -1 if no match. No explanation.`;
             signal: controller.signal,
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { temperature: 0.0, maxOutputTokens: 4 }
+                generationConfig: { temperature: 0.0, topP: 0.1, maxOutputTokens: 4 }
             })
         });
 

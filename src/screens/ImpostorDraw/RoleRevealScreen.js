@@ -19,7 +19,8 @@ import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 
 // Simple instant reveal with MotiView animation
 const RoleCard = ({ player, isImpostor, word, onConfirm, isKurdish, colors, isDark }) => {

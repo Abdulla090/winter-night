@@ -24,29 +24,29 @@ export const DRAWING_CATEGORIES = {
             { en: 'Bird', ku: 'باڵندە' },
             { en: 'Apple', ku: 'سێو' },
             { en: 'Pizza', ku: 'پیتزا' },
-            { en: 'Ice Cream', ku: 'بەستەنی' },
+            { en: 'Ice Cream', ku: 'ئایسکرێم' },
             { en: 'Book', ku: 'کتێب' },
             { en: 'Chair', ku: 'کورسی' },
             { en: 'Table', ku: 'مێز' },
-            { en: 'Bed', ku: 'نوستنگا' },
+            { en: 'Bed', ku: 'قەرەوێڵە' },
             { en: 'Door', ku: 'دەرگا' },
             { en: 'Window', ku: 'پەنجەرە' },
             { en: 'Phone', ku: 'مۆبایل' },
             { en: 'Clock', ku: 'کاتژمێر' },
             { en: 'Shoe', ku: 'پێڵاو' },
-            { en: 'Hat', ku: 'کوڵاو' },
+            { en: 'Hat', ku: 'کڵاو' },
             { en: 'Cup', ku: 'پیاڵە' },
             { en: 'Spoon', ku: 'کەوچک' },
             { en: 'Fork', ku: 'چەتاڵ' },
             { en: 'Knife', ku: 'چەقۆ' },
             { en: 'Banana', ku: 'مۆز' },
             { en: 'Orange', ku: 'پرتەقاڵ' },
-            { en: 'Strawberry', ku: 'تووفرینگی' },
+            { en: 'Strawberry', ku: 'شلیک' },
             { en: 'Grapes', ku: 'ترێ' },
             { en: 'Watermelon', ku: 'شووتی' },
             { en: 'Cupcake', ku: 'کاپکەیک' },
             { en: 'Donut', ku: 'دۆنەت' },
-            { en: 'Ring', ku: 'ئەنگوستیلە' },
+            { en: 'Ring', ku: 'مستیلە' },
             { en: 'Hand', ku: 'دەست' },
             { en: 'Foot', ku: 'پێ' },
             { en: 'Nose', ku: 'لووت' },
@@ -60,7 +60,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Rain', ku: 'باران' },
             { en: 'Snow', ku: 'بەفر' },
             { en: 'Candle', ku: 'مۆم' },
-            { en: 'Lamp', ku: 'لامپا' },
+            { en: 'Lamp', ku: 'گڵۆپ' },
             { en: 'Pencil', ku: 'پێنووس' },
             { en: 'Scissors', ku: 'مەقەس' },
             { en: 'Bottle', ku: 'شووشە' },
@@ -68,15 +68,15 @@ export const DRAWING_CATEGORIES = {
             { en: 'Cheese', ku: 'پەنیر' },
             { en: 'Carrot', ku: 'گێزەر' },
             { en: 'Corn', ku: 'گەنمەشامی' },
-            { en: 'Mushroom', ku: 'کارا' },
+            { en: 'Mushroom', ku: 'قارچک' },
             { en: 'Cherry', ku: 'گێلاس' },
             { en: 'Lemon', ku: 'لیمۆ' },
-            { en: 'Pear', ku: 'هرمی' },
+            { en: 'Pear', ku: 'هەرمێ' },
             { en: 'Bread', ku: 'نان' },
             { en: 'Milk', ku: 'شیر' },
             { en: 'Glasses', ku: 'چاویلکە' },
             { en: 'Comb', ku: 'شانە' },
-            { en: 'Brush', ku: 'فرچە' },
+            { en: 'Brush', ku: 'فڵچە' },
             { en: 'Bell', ku: 'زەنگ' }
         ]
     },
@@ -97,7 +97,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Giraffe', ku: 'زەڕافە' },
             { en: 'Lion', ku: 'شێر' },
             { en: 'Tiger', ku: 'بەور' },
-            { en: 'Penguin', ku: 'پێنگوین' },
+            { en: 'Penguin', ku: 'پەنگوین' },
             { en: 'Butterfly', ku: 'پەپوولە' },
             { en: 'Umbrella', ku: 'چەتر' },
             { en: 'Rainbow', ku: 'پەلکەزێڕینە' },
@@ -117,18 +117,18 @@ export const DRAWING_CATEGORIES = {
             { en: 'Cookie', ku: 'بسکیت' },
             { en: 'Candy', ku: 'نوقوڵ' },
             { en: 'Compass', ku: 'قیبلەنما' },
-            { en: 'Treasure', ku: 'گەنج' },
+            { en: 'Treasure', ku: 'گەنجینە' },
             { en: 'Train', ku: 'شەمەندەفەر' },
             { en: 'Truck', ku: 'بارهەڵگر' },
             { en: 'Bus', ku: 'پاس' },
             { en: 'Boat', ku: 'بەلەم' },
             { en: 'Ship', ku: 'کەشتی' },
             { en: 'Motorcycle', ku: 'ماتۆڕسکیل' },
-            { en: 'Scooter', ku: 'سکوتەر' },
-            { en: 'Skateboard', ku: 'سکەیت بۆرد' },
-            { en: 'Rollercoaster', ku: 'رۆلەر کۆستەر' },
+            { en: 'Scooter', ku: 'سکۆتەر' },
+            { en: 'Skateboard', ku: 'سکەیتبۆرد' },
+            { en: 'Rollercoaster', ku: 'شەمەندەفەری خێرا' },
             { en: 'Ambulance', ku: 'ئەمبوڵانس' },
-            { en: 'Fire Truck', ku: 'ئۆتۆمبێلی ئاگرکوژێنەوە' },
+            { en: 'Fire Truck', ku: 'ئۆتۆمبێلی ئاگرکوژێنەرەوە' },
             { en: 'Anchor', ku: 'لەنگەر' },
             { en: 'Cactus', ku: 'کاکتەس' },
             { en: 'Crown', ku: 'تاج' },
@@ -136,7 +136,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Globe', ku: 'گۆی زەوی' },
             { en: 'Igloo', ku: 'ئیگلوو' },
             { en: 'Lighthouse', ku: 'فانووسی دەریایی' },
-            { en: 'Snowman', ku: 'پیاوی بەفر' },
+            { en: 'Snowman', ku: 'پیاوەبەفرینە' },
             { en: 'Windmill', ku: 'ئاشی با' },
             { en: 'Whale', ku: 'نەهەنگ' },
             { en: 'Octopus', ku: 'ئۆکتەپۆس' },
@@ -157,36 +157,36 @@ export const DRAWING_CATEGORIES = {
         name: { en: 'Hard', ku: 'قورس' },
         icon: 'Skull',
         words: [
-            { en: 'Astronaut', ku: 'ئاسمانەوان' },
+            { en: 'Astronaut', ku: 'کەشتیوانی ئاسمان' },
             { en: 'Submarine', ku: 'ژێردەریایی' },
             { en: 'Parachute', ku: 'پاڕاشوت' },
             { en: 'Volcano', ku: 'گڕکان' },
             { en: 'Tornado', ku: 'تۆرنادۆ' },
             { en: 'Lightning', ku: 'بروسکە' },
-            { en: 'Dinosaur', ku: 'داینەسۆر' },
+            { en: 'Dinosaur', ku: 'دایناسۆر' },
             { en: 'Dragon', ku: 'ئەژدیها' },
-            { en: 'Mermaid', ku: 'بووکی دەریا' },
+            { en: 'Mermaid', ku: 'پەری دەریا' },
             { en: 'Unicorn', ku: 'ئەسپی تاکشاخ' },
             { en: 'Magician', ku: 'جادووگەر' },
             { en: 'Wizard', ku: 'جادووگەر' },
-            { en: 'Skeleton', ku: 'ئێسکەلێت' },
+            { en: 'Skeleton', ku: 'ئێسکپەیکەر' },
             { en: 'Ghost', ku: 'ڕۆح' },
             { en: 'Vampire', ku: 'خوێنمژ' },
-            { en: 'Werewolf', ku: 'مرۆڤەگورگ' },
+            { en: 'Werewolf', ku: 'گورگەپیاو' },
             { en: 'Frankenstein', ku: 'فرانکنشتاین' },
             { en: 'Pyramid', ku: 'ئەهرام' },
-            { en: 'Sphinx', ku: 'شێرەچن' },
+            { en: 'Sphinx', ku: 'سفنکس' },
             { en: 'Colosseum', ku: 'کۆلیسیۆم' },
             { en: 'Eiffel Tower', ku: 'بورجی ئایفل' },
             { en: 'Statue of Liberty', ku: 'پەیکەری ئازادی' },
-            { en: 'Great Wall', ku: 'شووری گەورە' },
+            { en: 'Great Wall', ku: 'دیواری چین' },
             { en: 'Aurora Borealis', ku: 'شەفەقی جەمسەری' },
             { en: 'Black Hole', ku: 'کونی ڕەش' },
             { en: 'Constellation', ku: 'کۆمەڵەئەستێرە' },
             { en: 'Galaxy', ku: 'گەلاکسی' },
             { en: 'Nebula', ku: 'نێبیولا' },
             { en: 'Supernova', ku: 'سوپەرنۆڤا' },
-            { en: 'Wormhole', ku: 'کونی کرم' },
+            { en: 'Wormhole', ku: 'کونە کرم' },
             { en: 'Eclipse', ku: 'خۆرگیران' },
             { en: 'Earthquake', ku: 'بوومەلەرزە' },
             { en: 'Tsunami', ku: 'تسونامی' },
@@ -194,7 +194,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Meteor', ku: 'نەیزەک' },
             { en: 'Satellite', ku: 'مانگی دەستکرد' },
             { en: 'Spaceship', ku: 'کەشتی ئاسمانی' },
-            { en: 'Alien', ku: 'بونەوەری ئاسمانی' },
+            { en: 'Alien', ku: 'بوونەوەری ئاسمانی' },
             { en: 'Meteorite', ku: 'بەردی ئاسمانی' }
         ]
     },
@@ -206,7 +206,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Singing', ku: 'گۆرانی گوتن' },
             { en: 'Swimming', ku: 'مەلەکردن' },
             { en: 'Running', ku: 'ڕاکردن' },
-            { en: 'Jumping', ku: 'باز دان' },
+            { en: 'Jumping', ku: 'بازدان' },
             { en: 'Sleeping', ku: 'خەوتن' },
             { en: 'Eating', ku: 'خواردن' },
             { en: 'Cooking', ku: 'چێشتلێنان' },
@@ -218,7 +218,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Fishing', ku: 'ماسیگرتن' },
             { en: 'Climbing', ku: 'هەڵکشان' },
             { en: 'Skiing', ku: 'سکی' },
-            { en: 'Surfing', ku: 'سەرکێشی شەپۆل' },
+            { en: 'Surfing', ku: 'سێرفینگ' },
             { en: 'Driving', ku: 'شۆفێری' },
             { en: 'Flying', ku: 'فڕین' },
             { en: 'Crying', ku: 'گریان' },
@@ -226,10 +226,10 @@ export const DRAWING_CATEGORIES = {
             { en: 'Sneezing', ku: 'پژمین' },
             { en: 'Yawning', ku: 'باوێشکدان' },
             { en: 'Waving', ku: 'دەست هەژاندن' },
-            { en: 'Hugging', ku: 'باوەش گرتن' },
+            { en: 'Hugging', ku: 'باوەشکردن' },
             { en: 'Kissing', ku: 'ماچکردن' },
             { en: 'Thinking', ku: 'بیرکردنەوە' },
-            { en: 'Dreaming', ku: 'خەو بینین' },
+            { en: 'Dreaming', ku: 'خەوبینین' },
             { en: 'Fighting', ku: 'شەڕکردن' },
             { en: 'Hiding', ku: 'شاردنەوە' },
             { en: 'Building', ku: 'بیناکردن' },
@@ -275,7 +275,7 @@ export const DRAWING_CATEGORIES = {
             { en: 'Glacier', ku: 'سەهۆڵ' },
             { en: 'Reef', ku: 'ڕیف' },
             { en: 'Swamp', ku: 'زەلکاو' },
-            { en: 'Space Station', ku: 'وێستگەی بۆشایی' },
+            { en: 'Space Station', ku: 'وێستگەی ئاسمان' },
             { en: 'Planet', ku: 'هەسارە' },
             { en: 'Park', ku: 'پارک' },
             { en: 'Garden', ku: 'باخچە' },
@@ -341,27 +341,55 @@ export const getText = (item, language = 'en') => {
     return item[language] || item.en;
 };
 
+const seenDrawings = {};
+
+const getUnseenRandomIndex = (wordsArray, categoryKey) => {
+    if (!seenDrawings[categoryKey]) seenDrawings[categoryKey] = new Set();
+    
+    let available = wordsArray.map((_, i) => i).filter(i => !seenDrawings[categoryKey].has(i));
+    if (available.length === 0) {
+        seenDrawings[categoryKey].clear();
+        available = wordsArray.map((_, i) => i);
+    }
+    
+    const randomIdx = available[Math.floor(Math.random() * available.length)];
+    seenDrawings[categoryKey].add(randomIdx);
+    return randomIdx;
+};
+
 // Get random word from a category
 export const getRandomWord = (categoryKey = 'easy', language = 'en') => {
-    const category = DRAWING_CATEGORIES[categoryKey];
+    let category = DRAWING_CATEGORIES[categoryKey];
+    let catKey = categoryKey;
     if (!category) {
-        // If category not found, use a random category
         const keys = Object.keys(DRAWING_CATEGORIES);
-        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-        const words = DRAWING_CATEGORIES[randomKey].words;
-        const word = words[Math.floor(Math.random() * words.length)];
-        return getText(word, language);
+        catKey = keys[Math.floor(Math.random() * keys.length)];
+        category = DRAWING_CATEGORIES[catKey];
     }
     const words = category.words;
-    const word = words[Math.floor(Math.random() * words.length)];
-    return getText(word, language);
+    const randomIdx = getUnseenRandomIndex(words, catKey);
+    return getText(words[randomIdx], language);
 };
 
 // Get random words from a category (multiple)
 export const getRandomWords = (categoryKey = 'easy', count = 3, language = 'en') => {
     const category = DRAWING_CATEGORIES[categoryKey] || DRAWING_CATEGORIES.easy;
-    const shuffled = [...category.words].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(count, shuffled.length)).map(w => getText(w, language));
+    const words = category.words;
+    
+    if (!seenDrawings[categoryKey]) seenDrawings[categoryKey] = new Set();
+    
+    let resultIdxs = [];
+    for (let k = 0; k < Math.min(count, words.length); k++) {
+        let available = words.map((_, i) => i).filter(i => !seenDrawings[categoryKey].has(i) && !resultIdxs.includes(i));
+        if (available.length === 0) {
+            seenDrawings[categoryKey].clear();
+            available = words.map((_, i) => i).filter(i => !resultIdxs.includes(i));
+        }
+        const randomIdx = available[Math.floor(Math.random() * available.length)];
+        seenDrawings[categoryKey].add(randomIdx);
+        resultIdxs.push(randomIdx);
+    }
+    return resultIdxs.map(i => getText(words[i], language));
 };
 
 // Get all categories

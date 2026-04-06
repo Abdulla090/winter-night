@@ -24,24 +24,24 @@ export const translations = {
             description: { en: 'Guess the character on your forehead', ku: 'کارەکتەرەکەی سەر ناوچەوانت بزانە' },
         },
         imposter: {
-            title: { en: 'Imposter', ku: 'جاسوس' },
+            title: { en: 'Imposter', ku: 'ساختەکار' },
             description: { en: "Find who doesn't know the secret word", ku: 'ئەوەی وشەی نهێنی نازانێت بدۆزەرەوە' },
         },
         spyfall: {
-            title: { en: 'Spyfall', ku: 'سایەی جاسوس' },
-            description: { en: 'Deceive others and find the spy', ku: 'کەسەکانی‌تر بخەڵەتێنە و جاسوسەکە بدۆزەرەوە' },
+            title: { en: 'Spyfall', ku: 'سیخوڕ' },
+            description: { en: 'Deceive others and find the spy', ku: 'کەسەکانی تر بخەڵەتێنە و سیخوڕەکە بدۆزەرەوە' },
         },
         truthOrDare: {
-            title: { en: 'Truth or Dare', ku: 'ڕاستی یان هەوەس' },
-            description: { en: 'Classic party game challenges', ku: 'چالینجی کلاسیکی یاریی کۆبوونەوە' },
+            title: { en: 'Truth or Dare', ku: 'ڕاستی یان بوێری' },
+            description: { en: 'Classic party game challenges', ku: 'چالێنجە کلاسیکییەکانی کۆبوونەوە' },
         },
         neverHaveIEver: {
-            title: { en: 'Never Have I Ever', ku: 'هەرگیز ئەوەم نەکردووە' },
+            title: { en: 'Never Have I Ever', ku: 'هەرگیز نەمکردووە' },
             description: { en: 'Share experiences and stories', ku: 'ئەزموون و چیرۆکەکانت هاوبەش بکە' },
         },
         wouldYouRather: {
-            title: { en: 'Would You Rather', ku: 'کامەت باشتر دەوێت' },
-            description: { en: 'Choose between two options', ku: 'لە نێوان دوو هەڵبژاردە یەکێک بژاردە' },
+            title: { en: 'Would You Rather', ku: 'کامیانت پێ باشترە؟' },
+            description: { en: 'Choose between two options', ku: 'لە نێوان دوو هەڵبژاردە یەکێکیان هەڵبژێرە' },
         },
         quiz: {
             title: { en: 'Quiz Trivia', ku: 'پرسیار و وەڵام' },
@@ -122,10 +122,10 @@ export const translations = {
         passPhoneTo: { en: 'Pass phone to', ku: 'مۆبایلەکە بدە بە' },
         yourWord: { en: 'Your word is:', ku: 'وشەی تۆ:' },
         youAre: { en: 'You are', ku: 'تۆ' },
-        youAreImposter: { en: 'You are the IMPOSTER!', ku: 'تۆ جاسوسەکەیت!' },
-        youAreSpy: { en: 'You are the SPY!', ku: 'تۆ جاسوسیت!' },
+        youAreImposter: { en: 'You are the IMPOSTER!', ku: 'تۆ ساختەکارەکەیت!' },
+        youAreSpy: { en: 'You are the SPY!', ku: 'تۆ سیخوڕەکەیت!' },
         truth: { en: 'Truth', ku: 'ڕاستی' },
-        dare: { en: 'Dare', ku: 'هەوەس' },
+        dare: { en: 'Dare', ku: 'بوێری' },
         correct: { en: 'Correct!', ku: 'دروستە!' },
         incorrect: { en: 'Incorrect!', ku: 'هەڵەیە!' },
         gotIt: { en: 'I got it!', ku: 'زانیم!' },
@@ -141,7 +141,7 @@ export const translations = {
         chooseOption: { en: 'Choose one option', ku: 'یەک هەڵبژاردن بژاردە' },
         or: { en: 'OR', ku: 'یان' },
         location: { en: 'Location', ku: 'شوێن' },
-        findSpy: { en: 'Find the Spy!', ku: 'جاسوسەکە بدۆزەرەوە!' },
+        findSpy: { en: 'Find the Spy!', ku: 'سیخوڕەکە بدۆزەرەوە!' },
         vote: { en: 'Vote', ku: 'دەنگدان' },
         numberOfPlayers: { en: 'Number of Players', ku: 'ژمارەی یاریزانەکان' },
         numberOfRounds: { en: 'Number of Rounds', ku: 'ژمارەی قۆناغەکان' },
@@ -171,30 +171,30 @@ export const translations = {
     // IMPOSTER GAME
     // ============================================
     imposter: {
-        title: { en: 'Imposter', ku: 'جاسوس' },
-        imposters: { en: 'Imposters', ku: 'جاسوسەکان' },
+        title: { en: 'Imposter', ku: 'ساختەکار' },
+        imposters: { en: 'Imposters', ku: 'ساختەکارەکان' },
         numberOfImposters: { en: 'Number of hidden players', ku: 'ژمارەی یاریزانە نهێنییەکان' },
-        instruction: { en: 'Each player receives a word. The imposter gets nothing. Find the imposter!', ku: 'هەر یاریزانێک وشەیەک وەردەگرێت. جاسوسەکە هیچی نییە. جاسوسەکە بدۆزەرەوە!' },
+        instruction: { en: 'Each player receives a word. The imposter gets nothing. Find the imposter!', ku: 'هەر یاریزانێک وشەیەک وەردەگرێت. ساختەکارەکە هیچ وەرناگرێت. ساختەکارەکە بدۆزەرەوە!' },
     },
 
     // ============================================
     // SPYFALL GAME
     // ============================================
     spyfall: {
-        title: { en: 'Spyfall', ku: 'سایەی جاسوس' },
-        instruction: { en: 'Everyone knows the location except the spy. Ask questions to find the spy!', ku: 'هەموان شوێنەکەیان دەزانن تەنها جاسوسەکە نەبێت. پرسیار بکە بۆ دۆزینەوەی جاسوس!' },
+        title: { en: 'Spyfall', ku: 'سیخوڕ' },
+        instruction: { en: 'Everyone knows the location except the spy. Ask questions to find the spy!', ku: 'هەموان شوێنەکەیان دەزانن تەنها سیخوڕەکە نەبێت. پرسیار بکە بۆ دۆزینەوەی سیخوڕەکە!' },
         yourLocation: { en: 'Your Location:', ku: 'شوێنی تۆ:' },
         figureOut: { en: 'Figure out the location without getting caught!', ku: 'شوێنەکە بدۆزەرەوە بەبێ ئەوەی ئاشکرا بیت!' },
         askQuestions: { en: 'Ask Questions!', ku: 'پرسیار بکە!' },
-        askInstruction: { en: 'Take turns asking each other questions about the location to find the spy!', ku: 'بە نۆرە پرسیار لە یەکتری بکەن دەربارەی شوێنەکە بۆ دۆزینەوەی جاسوسەکە!' },
+        askInstruction: { en: 'Take turns asking each other questions about the location to find the spy!', ku: 'بە نۆرە پرسیار لە یەکتری بکەن دەربارەی شوێنەکە بۆ دۆزینەوەی سیخوڕەکە!' },
         tipsPlayers: { en: 'Tips for Players', ku: 'ئامۆژگاری بۆ یاریزانەکان' },
-        tipsSpy: { en: 'Tips for Spy', ku: 'ئامۆژگاری بۆ جاسوس' },
+        tipsSpy: { en: 'Tips for Spy', ku: 'ئامۆژگاری بۆ سیخوڕ' },
         possibleLocations: { en: 'Possible Locations', ku: 'شوێنە ئەگەرەکان' },
         discussAndVote: { en: 'Discuss and vote together', ku: 'پێکەوە گفتوگۆ بکەن و دەنگ بدەن' },
-        spyCaught: { en: 'Spy Caught!', ku: 'جاسوسەکە گیرا!' },
-        spyWins: { en: 'Spy Wins!', ku: 'جاسوسەکە بردیەوە!' },
-        spyCaughtDesc: { en: 'The players successfully identified the spy!', ku: 'یاریزانەکان بە سەرکەوتوویی جاسوسەکەیان ناسییەوە!' },
-        spyWinsDesc: { en: 'The spy escaped detection!', ku: 'جاسوسەکە توانی ڕابکات و ئاشکرا نەبێت!' },
+        spyCaught: { en: 'Spy Caught!', ku: 'سیخوڕەکە گیرا!' },
+        spyWins: { en: 'Spy Wins!', ku: 'سیخوڕەکە بردیەوە!' },
+        spyCaughtDesc: { en: 'The players successfully identified the spy!', ku: 'یاریزانەکان بە سەرکەوتوویی سیخوڕەکەیان ناسییەوە!' },
+        spyWinsDesc: { en: 'The spy escaped detection!', ku: 'سیخوڕەکە توانی ڕابکات و ئاشکرا نەبێت!' },
         theLocationWas: { en: 'The Location Was', ku: 'شوێنەکە ئەمە بوو' },
         youVotedFor: { en: 'You Voted For', ku: 'تۆ دەنگت دا بە' },
         roleReveal: { en: 'Role Reveal', ku: 'ناساندنی ڕۆڵەکان' },
@@ -204,27 +204,27 @@ export const translations = {
     // TRUTH OR DARE GAME
     // ============================================
     truthOrDare: {
-        title: { en: 'Truth or Dare', ku: 'ڕاستی یان هەوەس' },
+        title: { en: 'Truth or Dare', ku: 'ڕاستی یان بوێری' },
         chooseIntensity: { en: 'Choose Intensity', ku: 'ئاست هەڵبژێرە' },
         howToPlayRules: {
             en: '• Each player takes turns\n• Choose Truth or Dare\n• Answer honestly or complete the dare\n• Have fun and be respectful!',
-            ku: '• هەر یاریزانێک نۆرەبەت دەکات\n• ڕاستی یان هەوەس هەڵبژێرە\n• بە دڵسۆزی وەڵام بدەرەوە یان هەوەسەکە تەواو بکە\n• خۆشی بکە و ڕێز بگرە!'
+            ku: '• هەر یاریزانێک نۆرەبەت دەکات\n• ڕاستی یان بوێری هەڵبژێرە\n• بە دڵسۆزی وەڵام بدەرەوە یان بوێرییەکە ئەنجام بدە\n• خۆشی بکە و ڕێز بگرە!'
         },
         minPlayersHint: { en: 'Add at least 2 players to start', ku: 'لانیکەم ٢ یاریزان زیاد بکە بۆ دەستپێکردن' },
         mild: { en: 'Mild', ku: 'سووک' },
         mildDesc: { en: 'Family friendly fun', ku: 'خۆشی خێزانی' },
         medium: { en: 'Medium', ku: 'ناوەند' },
-        mediumDesc: { en: 'A bit more spicy', ku: 'کەمێک توونتر' },
-        spicy: { en: 'Spicy', ku: 'توون' },
+        mediumDesc: { en: 'A bit more spicy', ku: 'کەمێک قورستر' },
+        spicy: { en: 'Spicy', ku: 'قورس' },
         spicyDesc: { en: 'Adults only!', ku: 'تەنها بۆ گەورەکان!' },
-        yourTurn: { en: "'s Turn", ku: ' نۆرەبەتی' },
+        yourTurn: { en: "'s Turn", ku: ' نۆرەی' },
     },
 
     // ============================================
     // NEVER HAVE I EVER GAME
     // ============================================
     neverHaveIEver: {
-        title: { en: 'Never Have I Ever', ku: 'هەرگیز ئەوەم نەکردووە' },
+        title: { en: 'Never Have I Ever', ku: 'هەرگیز نەمکردووە' },
         instruction: { en: 'If you have done it, put a finger down!', ku: 'ئەگەر کردووتە، پەنجەیەک دابەزێنە!' },
         iHaveDoneIt: { en: 'I Have Done It', ku: 'من کردوومە' },
         neverDoneIt: { en: 'Never Done It', ku: 'هەرگیز نەمکردووە' },
@@ -243,8 +243,8 @@ export const translations = {
     // WOULD YOU RATHER GAME
     // ============================================
     wouldYouRather: {
-        title: { en: 'Would You Rather', ku: 'کامەت باشتر دەوێت' },
-        instruction: { en: 'Choose between two options!', ku: 'لە نێوان دوو هەڵبژاردە یەکێک بژاردە!' },
+        title: { en: 'Would You Rather', ku: 'کامیانت پێ باشترە؟' },
+        instruction: { en: 'Choose between two options!', ku: 'لە نێوان دوو هەڵبژاردە یەکێکیان هەڵبژێرە!' },
         optionA: { en: 'Option A', ku: 'هەڵبژاردەی A' },
         optionB: { en: 'Option B', ku: 'هەڵبژاردەی B' },
         tapToVote: { en: 'Tap to vote!', ku: 'لێ بدە بۆ دەنگدان!' },
@@ -370,14 +370,14 @@ export const translations = {
     },
     reverseCharades: {
         title: { en: 'Reverse Charades', ku: 'نواندنی پێچەوانە' },
-        description: { en: 'Team acts, one guesses', ku: 'تیمەکە دەینێنێت، یەک کەس دەیزانێت' },
+        description: { en: 'Team acts, one guesses', ku: 'تیمەکە دەینوێنێت، یەک کەس دەیزانێت' },
     },
     partnersInCrime: {
-        title: { en: 'Partners in Crime', ku: 'هەوکاڕ لە تاوان' },
+        title: { en: 'Partners in Crime', ku: 'هاوکار لە تاوان' },
         description: { en: 'Match answers with your partner', ku: 'وەڵامەکانت لەگەڵ هاوڕێکەت بگونجێنە' },
     },
     zarumar: {
-        title: { en: 'Zar u Mar (Snakes & Ladders)', ku: 'زار و مار' },
+        title: { en: 'Zar u Mar (Snakes & Ladders)', ku: 'مار و پەیژە' },
         description: { en: 'Roll the dice, climb ladders, slide down snakes!', ku: 'زارەکە لێ بدە، سەرکەوە بە پەیژە، دابەزە بە مارەکان!' },
     },
     twotruths: {

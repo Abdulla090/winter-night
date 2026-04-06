@@ -1,5 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Platform } from 'react-native';
+import { StyleSheet, View, Text, Platform, ScrollView, FlatList } from 'react-native';
+
+// 🔧 GLOBAL: Hide all scroll indicators across the entire app
+// This prevents the thin vertical bar from appearing on the right edge
+ScrollView.defaultProps = {
+    ...(ScrollView.defaultProps || {}),
+    showsVerticalScrollIndicator: false,
+    showsHorizontalScrollIndicator: false,
+    overScrollMode: 'never',
+};
+FlatList.defaultProps = {
+    ...(FlatList.defaultProps || {}),
+    showsVerticalScrollIndicator: false,
+    showsHorizontalScrollIndicator: false,
+    overScrollMode: 'never',
+};
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -101,10 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background.dark,
     ...Platform.select({
       web: {
-        maxWidth: 500,
         width: '100%',
-        alignSelf: 'center',
-        boxShadow: '0 0 20px rgba(0,0,0,0.5)',
         minHeight: '100vh',
       }
     })

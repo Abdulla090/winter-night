@@ -25,7 +25,8 @@ import { AnimatedScreen } from '../../components/AnimatedScreen';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 const CANVAS_WIDTH = width - 32;
 const CANVAS_HEIGHT = CANVAS_WIDTH * 0.65;
 const DRAW_TIME = 10;

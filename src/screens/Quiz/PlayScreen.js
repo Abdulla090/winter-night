@@ -11,7 +11,8 @@ import { useGameRoom } from '../../context/GameRoomContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 const ANSWER_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
 
 export default function QuizPlayScreen({ navigation, route }) {
@@ -28,7 +29,7 @@ export default function QuizPlayScreen({ navigation, route }) {
         ? (contextPlayers?.map(p => p.player?.username || 'Player') || ['Player 1', 'Player 2'])
         : (routeParams.players || ['Player 1', 'Player 2']);
 
-    const category = routeParams.category || 'general';
+    const category = routeParams.category || ['general'];
     const questionCount = routeParams.questionCount || 10;
 
     // Local state
@@ -523,5 +524,5 @@ const styles = StyleSheet.create({
     },
     scoreName: { color: COLORS.text.secondary, ...FONTS.medium, fontSize: 13 },
     scoreValue: { color: COLORS.accent.success, ...FONTS.bold, fontSize: 13 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

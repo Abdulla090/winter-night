@@ -16,7 +16,8 @@ import { useGameRoom } from '../../context/GameRoomContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 const CANVAS_SIZE = width - 48;
 
 const DRAW_COLORS = ['#FFFFFF', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#000000'];
@@ -37,7 +38,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
         ? (contextPlayers?.map(p => p.player?.username || 'Player') || ['Player 1', 'Player 2'])
         : (routeParams.players || ['Player 1', 'Player 2']);
 
-    const category = routeParams.category || gameState?.state?.category || 'general';
+    const category = routeParams.category || gameState?.state?.category || ['easy'];
     const roundTime = routeParams.roundTime || gameState?.state?.roundTime || 60;
 
     const rowDirection = isKurdish ? 'row-reverse' : 'row';
@@ -566,5 +567,5 @@ const styles = StyleSheet.create({
     actionButtons: { width: '100%' },
     endGameBtn: { alignSelf: 'center', padding: SPACING.sm },
     endGameText: { ...FONTS.medium },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

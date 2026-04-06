@@ -10,7 +10,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { t } from '../../localization/translations';
 import { layout } from '../../theme/layout';
-import { getCharadesWords } from '../../constants/charadesData';
+import { getRandomCharade } from '../../constants/charadesData';
 
 export default function ReverseCharadesPlayScreen({ navigation, route }) {
     const { category, roundTime } = route.params;
@@ -18,8 +18,7 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
     const { language, isKurdish } = useLanguage();
 
     // Game State
-    const [words, setWords] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentWord, setCurrentWord] = useState(null);
     const [score, setScore] = useState(0);
     const [timeLeft, setTimeLeft] = useState(roundTime);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -31,9 +30,8 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
 
     // Initialize
     useEffect(() => {
-        const loadedWords = getCharadesWords(category.id, language) || [];
-        // Ensure we have words, if strictly array is returned
-        setWords(loadedWords);
+        const initialWord = getRandomCharade(category.id, language) || null;
+        setCurrentWord(initialWord);
     }, [category, language]);
 
     // Timer
@@ -78,27 +76,19 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
             Animated.timing(cardAnim, { toValue: -500, duration: 200, useNativeDriver: true }),
             Animated.timing(cardAnim, { toValue: 0, duration: 1, useNativeDriver: true }), // Reset instantly
         ]).start(() => {
-            if (currentIndex + 1 >= words.length) {
-                // Shuffle and restart if run out of words
-                setWords(prev => [...prev].sort(() => Math.random() - 0.5));
-                setCurrentIndex(0);
-            } else {
-                setCurrentIndex(prev => prev + 1);
-            }
+            setCurrentWord(getRandomCharade(category.id, language));
         });
     };
 
-    if (words.length === 0) {
+    if (!currentWord) {
         return (
             <AnimatedScreen>
                 <View style={[styles.centerContent, { justifyContent: 'center' }]}>
-                    <Text style={{ color: colors.text.muted }}>Loading Words...</Text>
+                    <Text style={{ color: colors.text.muted }}>Loading Word...</Text>
                 </View>
             </AnimatedScreen>
         );
     }
-
-    const currentWord = words[currentIndex];
 
     // ========================
     // GAME OVER
@@ -133,7 +123,7 @@ export default function ReverseCharadesPlayScreen({ navigation, route }) {
                                 setScore(0);
                                 setTimeLeft(roundTime);
                                 setGameOver(false);
-                                setWords(prev => [...prev].sort(() => Math.random() - 0.5));
+                                setCurrentWord(getRandomCharade(category.id, language));
                                 setIsPlaying(true);
                             }}
                             variant="primary"
@@ -463,5 +453,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         letterSpacing: 1,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] }
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }
 });

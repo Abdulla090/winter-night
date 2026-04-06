@@ -37,6 +37,17 @@ export const ThemeProvider = ({ children }) => {
 
         // Helper for conditional styles: theme.rtl(styleLeft, styleRight)
         rtl: (ltr, rtl) => (isRTL ? rtl : ltr),
+
+        // Global RTL text style — use this instead of bare textAlign:'right'
+        // Adds left-side breathing room so Kurdish text isn't flush to the right edge
+        rtlText: isRTL
+            ? { textAlign: 'right', paddingRight: 4, writingDirection: 'rtl' }
+            : { textAlign: 'left' },
+
+        // Global RTL container — for wrapping Views that hold RTL text blocks
+        rtlContainer: isRTL
+            ? { alignItems: 'flex-end', paddingRight: 4 }
+            : { alignItems: 'flex-start' },
     };
 
     return (

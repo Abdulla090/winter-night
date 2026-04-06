@@ -74,7 +74,7 @@ export default function TwoTruthsVoteScreen({ route, navigation }) {
                             <View style={styles.stmtIndex}>
                                 <Text style={styles.stmtIdxText}>{idx + 1}</Text>
                             </View>
-                            <Text style={[styles.stmtText, { color: colors.text.primary }, isKurdish && { fontFamily: 'Rabar', textAlign: 'right' }]}>
+                            <Text style={[styles.stmtText, { color: colors.text.primary }, isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' }]}>
                                 {stmt.text}
                             </Text>
 
@@ -130,5 +130,5 @@ const styles = StyleSheet.create({
     voterName: { fontSize: 12, fontWeight: '700' },
     
     fabContainer: { position: 'absolute', bottom: 30, left: 20, right: 20 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

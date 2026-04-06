@@ -146,5 +146,5 @@ const styles = StyleSheet.create({
     statDivider: { width: 1, height: 40 },
     actions: { width: '100%' },
     secondaryRow: { flexDirection: 'row' },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

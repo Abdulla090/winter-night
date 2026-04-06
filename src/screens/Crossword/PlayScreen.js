@@ -73,8 +73,9 @@ export default function CrosswordPlayScreen({ navigation, route }) {
     // Board sizing
     const gridSize = puzzle.size;
     const boardPadding = 8;
-    const maxBoardWidth = Math.min(screenWidth - boardPadding * 2 - 16, 420);
-    const cellSize = Math.floor(maxBoardWidth / gridSize);
+    const safeScreenWidth = Math.max(screenWidth, 300);
+    const maxBoardWidth = Math.min(safeScreenWidth - boardPadding * 2 - 16, 420);
+    const cellSize = Math.max(Math.floor(maxBoardWidth / gridSize), 10);
     const actualBoardSize = cellSize * gridSize;
 
     // Is this puzzle RTL?
@@ -354,7 +355,7 @@ export default function CrosswordPlayScreen({ navigation, route }) {
                             color: textColor,
                             fontSize: isKurdish ? cellSize * 0.42 : cellSize * 0.48,
                         },
-                        isKurdish && { fontFamily: 'Rabar' },
+                        isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
                     ]}>
                         {cell.isHint ? cell.letter : cell.userInput}
                     </Text>
@@ -393,7 +394,7 @@ export default function CrosswordPlayScreen({ navigation, route }) {
                 <Text style={[
                     st.clueText,
                     { color: isDark ? '#CBD5E1' : '#334155' },
-                    isKurdish && { fontFamily: 'Rabar', textAlign: 'right' },
+                    isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' },
                 ]} numberOfLines={2}>
                     {clueObj.clue}
                 </Text>
@@ -493,7 +494,7 @@ export default function CrosswordPlayScreen({ navigation, route }) {
                                 <Text style={[
                                     st.activeClueText,
                                     { color: isDark ? '#93C5FD' : '#1E40AF' },
-                                    isKurdish && { fontFamily: 'Rabar', textAlign: 'right' },
+                                    isKurdish && { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal', textAlign: 'right' },
                                 ]} numberOfLines={2}>
                                     {activeClueText}
                                 </Text>
@@ -664,7 +665,7 @@ export default function CrosswordPlayScreen({ navigation, route }) {
 
 const st = StyleSheet.create({
     root: { flex: 1 },
-    kf: { fontFamily: 'Rabar' },
+    kf: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     hiddenInput: {
         position: 'absolute',

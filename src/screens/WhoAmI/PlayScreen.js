@@ -15,7 +15,8 @@ import { useGameRoom } from '../../context/GameRoomContext';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../localization/translations';
 
-const { width } = Dimensions.get('window');
+const _w = Dimensions.get('window').width;
+const width = Math.max(_w, 300);
 
 export default function PlayScreen({ navigation, route }) {
     // Multiplayer context
@@ -39,7 +40,7 @@ export default function PlayScreen({ navigation, route }) {
         ? (contextPlayers?.map(p => p.player?.username || 'Player') || ['Player 1', 'Player 2'])
         : (routeParams.players || ['Player 1', 'Player 2']);
 
-    const category = routeParams.category || gameState?.state?.category || 'famous';
+    const category = routeParams.category || gameState?.state?.category || ['celebrities'];
     const roundTime = routeParams.roundTime || gameState?.state?.roundTime || 60;
 
     // Multiplayer state from DB
@@ -412,5 +413,5 @@ const styles = StyleSheet.create({
 
     row: { flexDirection: 'row', width: '100%' },
     resultText: { ...FONTS.title, marginTop: 16 },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] },
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 });

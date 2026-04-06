@@ -8,7 +8,7 @@ import { BeastButton } from '../../components/BeastButton';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { layout } from '../../theme/layout';
-import { getForbiddenWords } from '../../constants/forbiddenWordData';
+import { getRandomForbiddenWord } from '../../constants/forbiddenWordData';
 
 export default function ForbiddenWordPlayScreen({ navigation, route }) {
     const { teams, difficulty, roundTime } = route.params;
@@ -16,8 +16,7 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     const { language, isKurdish } = useLanguage();
 
     // Game State
-    const [words, setWords] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentWord, setCurrentWord] = useState(null);
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [scores, setScores] = useState(teams.reduce((acc, t) => ({ ...acc, [t]: 0 }), {}));
     const [timeLeft, setTimeLeft] = useState(roundTime);
@@ -29,8 +28,8 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     const shakeAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        const loadedWords = getForbiddenWords(difficulty.id, language);
-        setWords(loadedWords);
+        const initialWord = getRandomForbiddenWord(difficulty.id, language) || null;
+        setCurrentWord(initialWord);
     }, [difficulty, language]);
 
     useEffect(() => {
@@ -86,12 +85,7 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
     };
 
     const nextWord = () => {
-        if (currentIndex + 1 >= words.length) {
-            setWords(words.sort(() => Math.random() - 0.5));
-            setCurrentIndex(0);
-        } else {
-            setCurrentIndex(prev => prev + 1);
-        }
+        setCurrentWord(getRandomForbiddenWord(difficulty.id, language));
     };
 
     const nextTeam = () => {
@@ -110,7 +104,7 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
         setPhase('gameOver');
     };
 
-    if (words.length === 0) {
+    if (!currentWord) {
         return (
             <AnimatedScreen>
                 <View style={styles.loadingContainer}>
@@ -120,7 +114,6 @@ export default function ForbiddenWordPlayScreen({ navigation, route }) {
         );
     }
 
-    const currentWord = words[currentIndex];
     const currentTeam = teams[currentTeamIndex];
 
     // Team Colors based on index (Blue, Red, Green, Yellow essentially)
@@ -503,5 +496,5 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderBottomWidth: 1,
     },
-    kurdishFont: { fontFamily: 'Rabar', transform: [{ scale: 1.15 }] }
+    kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }
 });
