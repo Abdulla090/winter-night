@@ -40,15 +40,15 @@ function OkeyTile({ tile, index, isSelected, onPress, onDragSwap, onDragDiscard,
             isDragging.value = false;
             const throwThreshold = index < SLOTS_PER_ROW ? -50 : -100;
             if (e.translationY < throwThreshold) {
-                tx.value = withSpring(0); ty.value = withSpring(0);
+                tx.value = withTiming(0, { duration: 150 }); ty.value = withTiming(0, { duration: 150 });
                 if (onDragDiscard) runOnJS(onDragDiscard)(index);
                 return;
             }
             const colOff = Math.round(e.translationX / (tileW + 3));
             const rowOff = Math.round(e.translationY / (tileH + 6));
             const target = index + (rowOff * SLOTS_PER_ROW) + colOff;
-            tx.value = withSpring(0, { damping: 14, stiffness: 220 });
-            ty.value = withSpring(0, { damping: 14, stiffness: 220 });
+            tx.value = withTiming(0, { duration: 180 });
+            ty.value = withTiming(0, { duration: 180 });
             if (colOff !== 0 || rowOff !== 0) {
                 if (onDragSwap && target >= 0 && target < TOTAL_SLOTS && target !== index) runOnJS(onDragSwap)(index, target);
             } else if (Math.abs(e.translationX) < 10 && Math.abs(e.translationY) < 10) {
@@ -112,8 +112,8 @@ function DraggableDraw({ children, enabled, onDraw }) {
         .onEnd((e) => {
             dragging.value = false;
             const didDrag = e.translationY > 60; // threshold: dragged down enough
-            tx.value = withSpring(0, { damping: 16, stiffness: 200 });
-            ty.value = withSpring(0, { damping: 16, stiffness: 200 });
+            tx.value = withTiming(0, { duration: 180 });
+            ty.value = withTiming(0, { duration: 180 });
             if (didDrag && onDraw) {
                 runOnJS(onDraw)(e.absoluteX, e.absoluteY);
             }
@@ -364,9 +364,9 @@ export default function OkeyPlayScreen({ route, navigation }) {
         const targetX = width / 2 - tileW / 2;
         const targetY = height - tileH * 2.5;
 
-        flyX.value = withSpring(targetX, { damping: 14, stiffness: 120 });
-        flyY.value = withSpring(targetY, { damping: 14, stiffness: 120 });
-        flyScale.value = withSpring(1, { damping: 12, stiffness: 140 });
+        flyX.value = withTiming(targetX, { duration: 280 });
+        flyY.value = withTiming(targetY, { duration: 280 });
+        flyScale.value = withTiming(1, { duration: 220 });
 
         // Fade out after landing
         flyOpacity.value = withDelay(350, withTiming(0, { duration: 200 }));

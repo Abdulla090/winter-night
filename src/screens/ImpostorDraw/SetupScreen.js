@@ -28,6 +28,7 @@ import {
 } from 'lucide-react-native';
 
 import { AnimatedScreen } from '../../components/AnimatedScreen';
+import HowToPlayCard from '../../components/HowToPlayCard';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -96,7 +97,7 @@ const CategoryCard = ({ category, isSelected, onSelect, colors, isDark }) => (
                 borderColor: isSelected ? colors.primary : (isDark ? 'rgba(255,255,255,0.08)' : '#E2E8F0'),
                 borderWidth: isSelected ? 2 : 1,
             }}
-            transition={{ type: 'spring' }}
+            transition={{ type: 'timing', duration: 300 }}
             style={[
                 styles.categoryCard,
                 { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }
@@ -373,24 +374,21 @@ export default function ImpostorDrawSetup({ navigation }) {
                 </View>
 
                 {/* How to Play */}
-                <View style={[styles.howToPlay, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}>
-                    <EyeOff size={20} color="#EF4444" />
-                    <Text style={[styles.howToPlayTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'چۆن یاری بکەیت' : 'How to Play'}
-                    </Text>
-                    <Text style={[styles.howToPlayText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
-                        {isKurdish
-                            ? '• هەموو یاریزانەکان وشەیەک وەردەگرن بۆ کێشان\n• یەک یاریزان (دزەکار) وشەکە نازانێت\n• هەموو کەس بکێشن - دزەکار هەوڵ دەدات تەقڵید بکات\n• دەنگ بدەن لەسەر دزەکار!'
-                            : '• All players receive a word to draw\n• One player (Impostor) doesn\'t know the word\n• Everyone draws - Impostor tries to blend in\n• Vote to find the Impostor!'
-                        }
-                    </Text>
-                </View>
+                <HowToPlayCard
+                    icon={<EyeOff size={20} color="#EF4444" />}
+                    title={isKurdish ? 'چۆن یاری بکەیت' : 'How to Play'}
+                    contentKU={'• هەموو یاریزانەکان وشەیەک وەردەگرن بۆ کێشان\n• یەک یاریزان (دزەکار) وشەکە نازانێت\n• هەموو کەس بکێشن - دزەکار هەوڵ دەدات تەقڵید بکات\n• دەنگ بدەن لەسەر دزەکار!'}
+                    contentEN={'• All players receive a word to draw\n• One player (Impostor) does not know the word\n• Everyone draws - Impostor tries to blend in\n• Vote to find the Impostor!'}
+                    isKurdish={isKurdish}
+                    colors={colors}
+                    isDark={isDark}
+                />
 
                 {/* Start Button */}
                 <MotiView
                     from={{ opacity: 0, translateY: 30 }}
                     animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ type: 'spring', delay: 400 }}
+                    transition={{ type: 'timing', duration: 300, delay: 400 }}
                 >
                     <TouchableOpacity activeOpacity={0.9} onPress={handleStartGame} style={styles.startBtnWrap}>
                         <LinearGradient colors={['#D900FF', '#7000FF']} style={styles.startBtn}>

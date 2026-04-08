@@ -32,7 +32,7 @@ export default function SpyfallResultScreen({ navigation, route }) {
                 <MotiView
                     from={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', delay: 100 }}
+                    transition={{ type: 'timing', duration: 300, delay: 100 }}
                     style={[styles.resultBanner, spyCaught ? styles.winBanner : styles.loseBanner]}
                 >
                     {spyCaught ? (
@@ -109,7 +109,7 @@ export default function SpyfallResultScreen({ navigation, route }) {
                             key={index}
                             from={{ opacity: 0, translateX: isKurdish ? 20 : -20 }}
                             animate={{ opacity: 1, translateX: 0 }}
-                            transition={{ type: 'spring', delay: 700 + (index * 150) }}
+                            transition={{ type: 'timing', duration: 300, delay: 700 + (index * 150) }}
                             style={[
                                 styles.roleItem,
                                 { flexDirection: rowDirection },

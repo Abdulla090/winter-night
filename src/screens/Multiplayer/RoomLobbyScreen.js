@@ -230,7 +230,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         <Text style={[styles.avatarText, { color: colors.accent }]}>
                             {item.player?.username?.[0]?.toUpperCase() || '?'}
                         </Text>
-                        <View style={[styles.onlineIndicator, { backgroundColor: isOnline ? '#22c55e' : '#6b7280' }]} />
+                        <View style={[styles.onlineIndicator, { backgroundColor: isOnline ? '#22c55e' : '#C0B8D0' }]} />
                     </View>
 
                     <View style={styles.playerDetails}>
@@ -255,13 +255,13 @@ export default function RoomLobbyScreen({ navigation }) {
                     </View>
                 </View>
 
-                <View style={[styles.readyBadge, { backgroundColor: item.is_ready ? '#22c55e20' : '#6b728020' }]}>
+                <View style={[styles.readyBadge, { backgroundColor: item.is_ready ? '#22c55e20' : '#C0B8D020' }]}>
                     {item.is_ready ? (
                         <CheckCircle2 size={18} color="#22c55e" />
                     ) : (
-                        <Clock size={18} color="#6b7280" />
+                        <Clock size={18} color="#C0B8D0" />
                     )}
-                    <Text style={[styles.readyText, { color: item.is_ready ? '#22c55e' : '#6b7280' }]}>
+                    <Text style={[styles.readyText, { color: item.is_ready ? '#22c55e' : '#C0B8D0' }]}>
                         {item.is_ready ? (isKurdish ? 'ئامادە' : 'Ready') : (isKurdish ? 'چاوەڕوان' : 'Waiting')}
                     </Text>
                 </View>
@@ -401,7 +401,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         <TouchableOpacity
                             style={[
                                 styles.readyBtn,
-                                { backgroundColor: currentPlayer?.is_ready ? '#6b7280' : colors.accent },
+                                { backgroundColor: currentPlayer?.is_ready ? '#C0B8D0' : colors.accent },
                             ]}
                             onPress={toggleReady}
                             disabled={loading}
@@ -427,7 +427,7 @@ export default function RoomLobbyScreen({ navigation }) {
                         <TouchableOpacity
                             style={[
                                 styles.startBtn,
-                                { backgroundColor: allReady && players.length >= 2 && selectedGame ? '#22c55e' : '#6b7280' },
+                                { backgroundColor: allReady && players.length >= 2 && selectedGame ? '#22c55e' : '#C0B8D0' },
                             ]}
                             onPress={handleStartGame}
                             disabled={loading || !allReady || players.length < 2 || !selectedGame}
@@ -479,7 +479,7 @@ export default function RoomLobbyScreen({ navigation }) {
                                         <View style={[styles.gameIconLarge, { backgroundColor: game.color + '20' }]}>
                                             {(() => {
                                                 const IconComp = Icons[game.icon] || Icons.HelpCircle;
-                                                return <IconComp size={32} color={game.available ? game.color : '#666'} />;
+                                                return <IconComp size={32} color={game.available ? game.color : '#8888AA'} />;
                                             })()}
                                         </View>
                                         <View style={styles.gameDetails}>

@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     input: { fontSize: 16, minHeight: 60, textAlignVertical: 'top', marginBottom: 12 },
     lieToggle: { alignItems: 'center', alignSelf: 'flex-start', paddingVertical: 6, paddingHorizontal: 12, borderRadius: layout.radius.sm, backgroundColor: 'rgba(0,0,0,0.2)' },
     lieToggleActive: { backgroundColor: '#EF444420' },
-    radioOuter: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#64748B', justifyContent: 'center', alignItems: 'center', marginHorizontal: 8 },
+    radioOuter: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#555', justifyContent: 'center', alignItems: 'center', marginHorizontal: 8 },
     radioOuterActive: { borderColor: '#EF4444' },
     radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#EF4444' },
     lieToggleText: { fontSize: 14, fontWeight: '600' },

@@ -29,7 +29,7 @@ export default function ImposterResultScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ type: 'spring', delay: 100 }}
+                        transition={{ type: 'timing', duration: 300, delay: 100 }}
                         style={[styles.resultBanner, isCaught ? styles.winBanner : styles.loseBanner]}
                     >
                         {isCaught ? (
@@ -93,7 +93,7 @@ export default function ImposterResultScreen({ navigation, route }) {
                                     key={index}
                                     from={{ opacity: 0, scale: 0.5 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ type: 'spring', delay: 700 + (index * 150) }}
+                                    transition={{ type: 'timing', duration: 300, delay: 700 + (index * 150) }}
                                     style={styles.imposterTag}
                                 >
                                     <Text style={[styles.imposterName, isKurdish && styles.kurdishFont]}>

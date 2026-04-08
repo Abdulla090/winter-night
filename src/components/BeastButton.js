@@ -7,10 +7,8 @@ import { layout } from '../theme/layout';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
+    withTiming,
 } from 'react-native-reanimated';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
  * ✨ BeastButton — Premium gradient button with Reanimated spring press.
@@ -69,59 +67,62 @@ export const BeastButton = ({
     };
 
     return (
-        <AnimatedPressable
+        <Pressable
             onPressIn={() => {
                 if (!disabled && !loading) {
-                    scale.value = withSpring(0.95, { damping: 14, stiffness: 420 });
+                    scale.value = withTiming(0.96, { duration: 100 });
                 }
             }}
             onPressOut={() => {
-                scale.value = withSpring(1, { damping: 12, stiffness: 320 });
+                scale.value = withTiming(1, { duration: 150 });
             }}
             onPress={handlePress}
             disabled={disabled || loading}
-            style={[
-                {
-                    borderRadius: layout.radius.xl,
-                    overflow: 'hidden',
-                    opacity: disabled ? 0.6 : 1,
-                    ...layout.shadows.gold,
-                    shadowColor: variant === 'primary' && !disabled ? colors.brand.gold : 'transparent',
-                },
-                animStyle,
-                style,
-            ]}
         >
-            <LinearGradient
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                    height,
-                    paddingHorizontal,
-                    flexDirection: isRTL ? 'row-reverse' : 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 10,
-                }}
+            <Animated.View
+                style={[
+                    {
+                        borderRadius: layout.radius.xl,
+                        overflow: 'hidden',
+                        opacity: disabled ? 0.6 : 1,
+                        ...layout.shadows.gold,
+                        shadowColor: variant === 'primary' && !disabled ? colors.brand.gold : 'transparent',
+                    },
+                    animStyle,
+                    style,
+                ]}
             >
-                {loading ? (
-                    <ActivityIndicator size="small" color={textColor} />
-                ) : (
-                    <>
-                        {Icon && <Icon size={18} color={textColor} />}
-                        <Text style={{
-                            color: textColor,
-                            fontSize,
-                            fontWeight: '700',
-                            letterSpacing: 0.3,
-                        }}>
-                            {title}
-                        </Text>
-                    </>
-                )}
-            </LinearGradient>
-        </AnimatedPressable>
+                <LinearGradient
+                    colors={gradientColors}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        height,
+                        paddingHorizontal,
+                        flexDirection: isRTL ? 'row-reverse' : 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 10,
+                    }}
+                >
+                    {loading ? (
+                        <ActivityIndicator size="small" color={textColor} />
+                    ) : (
+                        <>
+                            {Icon && <Icon size={18} color={textColor} />}
+                            <Text style={{
+                                color: textColor,
+                                fontSize,
+                                fontWeight: '700',
+                                letterSpacing: 0.3,
+                            }}>
+                                {title}
+                            </Text>
+                        </>
+                    )}
+                </LinearGradient>
+            </Animated.View>
+        </Pressable>
     );
 };
 

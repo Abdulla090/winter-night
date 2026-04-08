@@ -3,24 +3,10 @@ import { Pressable, Platform } from 'react-native';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
+    withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-/**
- * ✨ SpringPressable — Drop-in replacement for TouchableOpacity.
- * Gives any element a premium spring-scale press effect on the UI thread.
- *
- * Usage: Replace <TouchableOpacity> with <SpringPressable>
- *
- * Props:
- *  - scaleDown: scale target on press-in (default 0.95)
- *  - damping / stiffness: spring physics tuning
- *  - haptic: whether to trigger light haptic on press (default true)
- *  - All standard Pressable props (onPress, style, disabled, etc.)
- */
 const SpringPressable = React.memo(({
     children,
     onPress,
@@ -39,11 +25,11 @@ const SpringPressable = React.memo(({
     }));
 
     const handlePressIn = () => {
-        scale.value = withSpring(scaleDown, { damping, stiffness });
+        scale.value = withTiming(scaleDown, { duration: 100 });
     };
 
     const handlePressOut = () => {
-        scale.value = withSpring(1, { damping: 12, stiffness: 300 });
+        scale.value = withTiming(1, { duration: 150 });
     };
 
     const handlePress = () => {
@@ -55,16 +41,17 @@ const SpringPressable = React.memo(({
     };
 
     return (
-        <AnimatedPressable
+        <Pressable
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             onPress={handlePress}
             disabled={disabled}
-            style={[animStyle, style]}
             {...rest}
         >
-            {children}
-        </AnimatedPressable>
+            <Animated.View style={[animStyle, style]}>
+                {children}
+            </Animated.View>
+        </Pressable>
     );
 });
 

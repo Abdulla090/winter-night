@@ -43,7 +43,7 @@ export default function TawlaResultScreen({ navigation, route }) {
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 {/* Trophy */}
                 <MotiView from={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', damping: 10, stiffness: 100 }}
+                    transition={{ type: 'timing', duration: 300 }}
                     style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}>
                     <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
                         <Crown size={48} color={colors.accent} strokeWidth={1.5} />

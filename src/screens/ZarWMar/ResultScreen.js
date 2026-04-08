@@ -30,16 +30,16 @@ export default function ResultScreen({ route, navigation }) {
         <AnimatedScreen>
             <View style={styles.container}>
                 <MotiView 
-                    from={{ scale: 0.5, opacity: 0 }} 
+                    from={{ scale: 0.9, opacity: 0 }} 
                     animate={{ scale: 1, opacity: 1 }} 
-                    transition={{ type: 'spring', damping: 12 }}
+                    transition={{ type: 'timing', duration: 300 }}
                     style={styles.cardWrapper}
                 >
                     <GlassCard style={styles.card}>
                         <MotiView
-                            from={{ translateY: -20 }}
+                            from={{ translateY: -8 }}
                             animate={{ translateY: 0 }}
-                            transition={{ type: 'spring', loop: true, duration: 1500 }}
+                            transition={{ type: 'timing', duration: 400, delay: 150 }}
                             style={{ marginBottom: layout.spacing.xl, marginTop: layout.spacing.md }}
                         >
                             <Trophy size={80} color="#FBBF24" fill="#FBBF24" />

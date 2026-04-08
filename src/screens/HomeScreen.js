@@ -19,10 +19,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
+    withTiming,
 } from 'react-native-reanimated';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 import * as Haptics from 'expo-haptics';
 import {
@@ -191,9 +190,9 @@ const ImmersiveFeaturedCard = ({ item, onPress, isKurdish, colors, isDark }) => 
         <Animated.View
             style={[styles.featuredCardContainer, !isDark && { borderColor: '#E2E8F0' }, animStyle]}
         >
-            <AnimatedPressable
-                onPressIn={() => { scale.value = withSpring(0.97, { damping: 15, stiffness: 400 }); }}
-                onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
+            <Pressable
+                onPressIn={() => { scale.value = withTiming(0.97, { duration: 100 }); }}
+                onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
                 onPress={onPress}
                 style={{ flex: 1 }}
             >
@@ -266,7 +265,7 @@ const ImmersiveFeaturedCard = ({ item, onPress, isKurdish, colors, isDark }) => 
                 <View style={styles.bgIconContainer}>
                     {item.Icon && <item.Icon size={200} color="rgba(255,255,255,0.06)" />}
                 </View>
-            </AnimatedPressable>
+            </Pressable>
         </Animated.View>
     );
 };
@@ -287,9 +286,9 @@ const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
         <Animated.View
             style={[styles.continueCardContainer, { backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}
         >
-            <AnimatedPressable
-                onPressIn={() => { scale.value = withSpring(0.97, { damping: 16, stiffness: 400 }); }}
-                onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
+            <Pressable
+                onPressIn={() => { scale.value = withTiming(0.97, { duration: 100 }); }}
+                onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
                 onPress={onPress}
                 style={styles.continueRow}
             >
@@ -328,7 +327,7 @@ const ContinuePlayingCard = ({ item, onPress, isKurdish, colors, isDark }) => {
                     </LinearGradient>
                 )}
 
-            </AnimatedPressable>
+            </Pressable>
         </Animated.View>
     );
 };
@@ -343,19 +342,20 @@ const CategoryCard = ({ item, onPress, isKurdish, colors, isDark }) => {
     const cardBorder = isDark ? 'rgba(255,255,255,0.05)' : '#E2E8F0';
 
     return (
-        <AnimatedPressable
-            onPressIn={() => { scale.value = withSpring(0.94, { damping: 15, stiffness: 430 }); }}
-            onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
+        <Pressable
+            onPressIn={() => { scale.value = withTiming(0.94, { duration: 100 }); }}
+            onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
             onPress={onPress}
-            style={[styles.categoryCard, { backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}
         >
-            <View style={[styles.categoryIconCircle, { backgroundColor: item.color + '20' }]}>
-                {item.Icon && <item.Icon size={26} color={item.color} />}
-            </View>
-            <Text style={[styles.categoryText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                {item.name}
-            </Text>
-        </AnimatedPressable>
+            <Animated.View style={[styles.categoryCard, { backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}>
+                <View style={[styles.categoryIconCircle, { backgroundColor: item.color + '20' }]}>
+                    {item.Icon && <item.Icon size={26} color={item.color} />}
+                </View>
+                <Text style={[styles.categoryText, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
+                    {item.name}
+                </Text>
+            </Animated.View>
+        </Pressable>
     );
 };
 
@@ -488,7 +488,7 @@ export default function HomeScreen({ navigation }) {
                     />
 
                     {/* PLAY ONLINE - Prominent Card */}
-                    <AnimatedPressable
+                    <Pressable
                         style={[styles.playOnlineCard, !isDark && { borderColor: colors.border, borderWidth: 1 }]}
                         onPressIn={() => {
                             // Slight scale for the whole banner
@@ -522,7 +522,7 @@ export default function HomeScreen({ navigation }) {
                                 <Sparkles size={24} color="#FFF" />
                             </View>
                         </View>
-                    </AnimatedPressable>
+                    </Pressable>
 
                     {/* 3. Featured Section */}
                     <View style={styles.sectionHeader}>

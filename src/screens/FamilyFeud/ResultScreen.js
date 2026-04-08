@@ -64,7 +64,7 @@ export default function ResultScreen({ navigation, route }) {
     };
 
     const textColor = isDark ? '#F9FAFB' : '#111827';
-    const subColor = isDark ? '#9CA3AF' : '#6B7280';
+    const subColor = isDark ? '#9CA3AF' : '#C0B8D0';
 
     return (
         <AnimatedScreen noPadding>
@@ -77,7 +77,7 @@ export default function ResultScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, scale: 0.5, translateY: 40 }}
                         animate={{ opacity: 1, scale: 1, translateY: 0 }}
-                        transition={{ type: 'spring', damping: 12 }}
+                        transition={{ type: 'timing', duration: 300 }}
                         style={styles.trophyWrap}
                     >
                         <View style={styles.trophyCircle}>

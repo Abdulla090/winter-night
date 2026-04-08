@@ -36,7 +36,7 @@ const RoleCard = ({ player, isImpostor, word, onConfirm, isKurdish, colors, isDa
                         from={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ type: 'spring', damping: 15 }}
+                        transition={{ type: 'timing', duration: 300 }}
                         style={[styles.hiddenCard, { backgroundColor: isDark ? '#1A1A2E' : '#F0F0F0' }]}
                     >
                         <View style={[styles.playerBadge, { backgroundColor: player.color }]}>
@@ -62,7 +62,7 @@ const RoleCard = ({ player, isImpostor, word, onConfirm, isKurdish, colors, isDa
                         from={{ opacity: 0, scale: 0.9, rotateY: '90deg' }}
                         animate={{ opacity: 1, scale: 1, rotateY: '0deg' }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ type: 'spring', damping: 15 }}
+                        transition={{ type: 'timing', duration: 300 }}
                         style={[styles.revealedCard, { backgroundColor: isImpostor ? '#DC2626' : '#059669' }]}
                     >
                         <View style={[styles.playerBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
@@ -178,7 +178,7 @@ export default function ImpostorDrawRoleReveal({ navigation, route }) {
                         <MotiView
                             from={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ type: 'spring', delay: 200 }}
+                            transition={{ type: 'timing', duration: 300, delay: 200 }}
                             style={[styles.allDoneBox, { backgroundColor: isDark ? '#1A1A2E' : '#F0F0F0' }]}
                         >
                             <Check size={48} color="#10B981" />
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     playerBadgeText: { color: '#FFF', fontSize: 15, fontWeight: '700' },
 
     tapBtn: { backgroundColor: 'rgba(0,0,0,0.1)', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 20 },
-    tapBtnText: { color: '#666', fontSize: 14, fontWeight: '600' },
+    tapBtnText: { color: '#C0B8D0', fontSize: 14, fontWeight: '600' },
 
     roleTitle: { color: '#FFF', fontSize: 28, fontWeight: '900', marginBottom: 8 },
     roleDesc: { color: 'rgba(255,255,255,0.8)', fontSize: 14, marginBottom: 24 },

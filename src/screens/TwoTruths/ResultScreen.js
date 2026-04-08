@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     scoreBoard: { marginBottom: layout.spacing.xl, padding: layout.spacing.lg },
     scoreTitle: { fontSize: 13, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: layout.spacing.md },
     scoreRow: { alignItems: 'center', padding: layout.spacing.md, borderRadius: layout.radius.sm, marginBottom: 8 },
-    scoreRank: { color: '#64748B', fontWeight: 'bold', width: 30 },
+    scoreRank: { color: '#C0B8D0', fontWeight: 'bold', width: 30 },
     scoreName: { flex: 1, fontSize: 16, fontWeight: 'bold', marginHorizontal: 8 },
     scorePts: { fontSize: 16, fontWeight: '900' },
     

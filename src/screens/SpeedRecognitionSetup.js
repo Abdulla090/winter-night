@@ -1,4 +1,4 @@
-import { BackButton } from '../components/BackButton';
+﻿import { BackButton } from '../components/BackButton';
 import React, { useState } from 'react';
 import {
     View,
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react-native';
 
 import { AnimatedScreen } from '../components/AnimatedScreen';
+import HowToPlayCard from '../components/HowToPlayCard';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { layout } from '../theme/layout';
@@ -459,26 +460,15 @@ export default function SpeedRecognitionSetup({ navigation }) {
                 </TouchableOpacity>
 
                 {/* How to Play */}
-                <View style={[styles.howToPlay, { backgroundColor: isDark ? '#1A0B2E' : '#FFFFFF' }]}>
-                    <Trophy size={20} color="#F59E0B" />
-                    <Text style={[
-                        styles.howToPlayTitle,
-                        { color: colors.text.primary },
-                        isKurdish && styles.kurdishFont
-                    ]}>
-                        {isKurdish ? 'چۆن یاری بکەیت؟' : 'How to Play'}
-                    </Text>
-                    <Text style={[
-                        styles.howToPlayText,
-                        { color: colors.text.secondary },
-                        isKurdish && styles.kurdishFont
-                    ]}>
-                        {isKurdish
-                            ? '• وێنە یان ژمارە بۆ کاتێکی کورت دەردەکەوێت\n• دوای ئەوەی نهێنی بوو، ئەوەی بینیت بنووسە\n• خاڵ وەربگرە بۆ وەڵامی دروست!'
-                            : '• An image or number will flash briefly\n• After it disappears, type what you saw\n• Earn points for correct answers!'
-                        }
-                    </Text>
-                </View>
+                <HowToPlayCard
+                    icon={<Trophy size={20} color="#F59E0B" />}
+                    title={isKurdish ? 'چۆن یاری بکەیت؟' : 'How to Play'}
+                    contentKU={'• وێنە یان ژمارە بۆ کاتێکی کورت دەردەکەوێت\n• دوای ئەوەی نهێنی بوو، ئەوەی بینیت بنووسە\n• خاڵ وەربگرە بۆ وەڵامی دروست!'}
+                    contentEN={'• An image or number will flash briefly\n• After it disappears, type what you saw\n• Earn points for correct answers!'}
+                    isKurdish={isKurdish}
+                    colors={colors}
+                    isDark={isDark}
+                />
 
             </ScrollView>
         </AnimatedScreen>

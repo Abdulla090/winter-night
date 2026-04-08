@@ -153,7 +153,7 @@ const st = StyleSheet.create({
     header: { padding: 16 },
     content: { flex: 1, padding: 24, justifyContent: 'center' },
     titleText: { fontSize: 36, fontWeight: '900', color: '#10B981', textAlign: 'center', marginBottom: 8 },
-    subtitleText: { fontSize: 14, color: '#64748B', textAlign: 'center', marginBottom: 16 },
+    subtitleText: { fontSize: 14, color: '#C0B8D0', textAlign: 'center', marginBottom: 16 },
     kurdishFont: { fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' },
 
     teamPreview: {

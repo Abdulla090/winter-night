@@ -40,22 +40,22 @@ const PodiumPlace = ({ player, score, place, delay }) => {
         <MotiView
             from={{ translateY: 100, opacity: 0 }}
             animate={{ translateY: 0, opacity: 1 }}
-            transition={{ type: 'spring', delay }}
+            transition={{ type: 'timing', duration: 300, delay }}
             style={styles.podiumPlace}
         >
             {/* Player Avatar */}
             <MotiView
                 from={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: 'spring', delay: delay + 200 }}
+                transition={{ type: 'timing', duration: 300, delay: delay + 200 }}
             >
                 <View style={[styles.podiumAvatar, { backgroundColor: player.color }]}>
                     <Text style={styles.podiumAvatarText}>{player.name.charAt(0)}</Text>
                     {place === 1 && (
                         <MotiView
-                            from={{ rotate: '-20deg', scale: 0 }}
-                            animate={{ rotate: '0deg', scale: 1 }}
-                            transition={{ type: 'spring', delay: delay + 400 }}
+                            from={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: 'timing', duration: 300, delay: delay + 450 }}
                             style={styles.crownWrapper}
                         >
                             <Crown size={20} color="#FFD700" fill="#FFD700" />
@@ -131,9 +131,9 @@ export default function WrongAnswerFinal({ navigation, route }) {
             <View style={styles.container}>
                 {/* Trophy Animation */}
                 <MotiView
-                    from={{ scale: 0, rotate: '-30deg' }}
-                    animate={{ scale: 1, rotate: '0deg' }}
-                    transition={{ type: 'spring', delay: 200 }}
+                    from={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'timing', duration: 300, delay: 200 }}
                     style={styles.trophyContainer}
                 >
                     <LinearGradient

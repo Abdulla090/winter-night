@@ -47,9 +47,9 @@ export default function SetupScreen({ navigation }) {
     };
 
     const tc = isDark ? '#F9FAFB' : '#111827';
-    const sc = isDark ? '#9CA3AF' : '#6B7280';
+    const sc = isDark ? '#9CA3AF' : '#C0B8D0';
     const ib = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
-    const ph = isDark ? '#6B7280' : '#9CA3AF';
+    const ph = isDark ? '#C0B8D0' : '#9CA3AF';
 
     const renderTeamCard = (num, name, setName, members, color, grad) => (
         <MotiView from={{ opacity: 0, translateY: 16 }} animate={{ opacity: 1, translateY: 0 }}

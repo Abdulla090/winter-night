@@ -6,10 +6,8 @@ import { layout } from '../theme/layout';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
+    withTiming,
 } from 'react-native-reanimated';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
  * ✨ PressableCard — Spring press feedback running on the UI thread.
@@ -37,11 +35,11 @@ export const PressableCard = ({
     }));
 
     const handlePressIn = () => {
-        scale.value = withSpring(scaleDown, { damping: 15, stiffness: 450 });
+        scale.value = withTiming(scaleDown, { duration: 100 });
     };
 
     const handlePressOut = () => {
-        scale.value = withSpring(1, { damping: 12, stiffness: 300 });
+        scale.value = withTiming(1, { duration: 150 });
     };
 
     const handlePress = () => {
@@ -78,25 +76,28 @@ export const PressableCard = ({
     };
 
     return (
-        <AnimatedPressable
+        <Pressable
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             onPress={handlePress}
             disabled={disabled}
-            style={[
-                styles.container,
-                {
-                    backgroundColor: getBackgroundColor(),
-                    borderColor: getBorderColor(),
-                    opacity: disabled ? 0.6 : 1,
-                },
-                variant === 'elevated' && styles.elevated,
-                animStyle,
-                style,
-            ]}
         >
-            {children}
-        </AnimatedPressable>
+            <Animated.View
+                style={[
+                    styles.container,
+                    {
+                        backgroundColor: getBackgroundColor(),
+                        borderColor: getBorderColor(),
+                        opacity: disabled ? 0.6 : 1,
+                    },
+                    variant === 'elevated' && styles.elevated,
+                    animStyle,
+                    style,
+                ]}
+            >
+                {children}
+            </Animated.View>
+        </Pressable>
     );
 };
 

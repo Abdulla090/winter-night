@@ -47,10 +47,8 @@ const NavItem = memo(({ tab, isActive, onPress, isDark }) => {
                     opacity: isActive ? 1 : 0,
                 }}
                 transition={{
-                    type: 'spring',
-                    damping: 18,
-                    stiffness: 300,
-                    mass: 0.6,
+                    type: 'timing',
+                    duration: 200,
                 }}
                 style={[styles.activeCircleWrapper]}
             >
@@ -69,10 +67,8 @@ const NavItem = memo(({ tab, isActive, onPress, isDark }) => {
                     translateY: isActive ? -2 : 0,
                 }}
                 transition={{
-                    type: 'spring',
-                    damping: 15,
-                    stiffness: 250,
-                    mass: 0.5,
+                    type: 'timing',
+                    duration: 180,
                 }}
                 style={styles.iconWrapper}
             >
@@ -128,10 +124,8 @@ export function BottomNavBar({ currentRoute = 'Home', onNavigate }) {
             from={{ translateY: 100, opacity: 0 }}
             animate={{ translateY: 0, opacity: 1 }}
             transition={{
-                type: 'spring',
-                damping: 20,
-                stiffness: 200,
-                mass: 0.8,
+                type: 'timing',
+                duration: 300,
                 delay: 100,
             }}
             style={[styles.wrapper, { bottom: bottomPosition, pointerEvents: 'box-none' }]}

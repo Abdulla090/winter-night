@@ -9,7 +9,7 @@ import Animated, {
     useAnimatedStyle,
     withTiming,
     Easing,
-} from 'react-native-reanimated';
+, withTiming } from 'react-native-reanimated';
 
 /**
  * ✨ AnimatedScreen - Lightweight Reanimated 3 screen wrapper

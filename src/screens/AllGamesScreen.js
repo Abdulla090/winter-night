@@ -16,11 +16,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
+    withTiming,
 } from 'react-native-reanimated';
 import { AnimatedListItem } from '../components/AnimatedListItem';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 import * as Haptics from 'expo-haptics';
 import {
     User,
@@ -215,13 +214,13 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
     }, [navigation, item]);
 
     return (
-        <AnimatedPressable
-            onPressIn={() => { scale.value = withSpring(0.96, { damping: 15, stiffness: 450 }); }}
-            onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 300 }); }}
+        <Pressable
+            onPressIn={() => { scale.value = withTiming(0.96, { duration: 100 }); }}
+            onPressOut={() => { scale.value = withTiming(1, { duration: 150 }); }}
             onPress={handlePress}
-            style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}
         >
-            {/* Top Visual Box */}
+            <Animated.View style={[styles.cardContainer, { width: cardWidth, backgroundColor: cardBg, borderColor: cardBorder }, animStyle]}>
+                {/* Top Visual Box */}
             <View style={[styles.cardVisual, isTwoColumns ? {} : { height: 260 }]}>
                 {item.image ? (
                     <Image
@@ -276,7 +275,8 @@ const GameGridCard = memo(({ item, isKurdish, navigation, cardWidth, colors, isD
                     </View>
                 </View>
             </View>
-        </AnimatedPressable>
+            </Animated.View>
+        </Pressable>
     );
 });
 

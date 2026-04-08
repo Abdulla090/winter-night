@@ -46,11 +46,13 @@ function LoadingScreen() {
 export default function App() {
   useEffect(() => {
     console.log('--- APP COMPONENT MOUNTED ---');
-    // Enable edge-to-edge on Android (transparent system bars)
+    // Enable edge-to-edge on Android and hide the system bars
     if (Platform.OS === 'android') {
       try {
         NavigationBar.setPositionAsync('absolute').catch(err => console.log('NB Position Error:', err));
         NavigationBar.setBackgroundColorAsync('transparent').catch(err => console.log('NB Color Error:', err));
+        NavigationBar.setVisibilityAsync('hidden').catch(err => console.log('NB Visibility Error:', err));
+        NavigationBar.setBehaviorAsync('overlay-swipe').catch(err => console.log('NB Behavior Error:', err));
       } catch (e) {
         console.log('NavigationBar configuration error:', e);
       }
@@ -96,7 +98,7 @@ export default function App() {
             <ToastProvider>
               <SafeAreaProvider>
                 <GestureHandlerRootView style={styles.container}>
-                  <StatusBar style="auto" />
+                  <StatusBar hidden={Platform.OS !== 'web'} style="auto" />
                   <AppNavigator />
                 </GestureHandlerRootView>
               </SafeAreaProvider>
@@ -114,6 +116,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background.dark,
+    paddingTop: Platform.OS !== 'web' ? 40 : 0, // Adds space at the top on all mobile screens
     ...Platform.select({
       web: {
         width: '100%',

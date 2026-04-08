@@ -57,7 +57,7 @@ const Strikes = ({ count }) => (
 const BigX = ({ show }) => show ? (
     <View style={[StyleSheet.absoluteFill, st.overlay]} pointerEvents="none">
         <MotiView from={{ scale: 0.3, opacity: 0 }} animate={{ scale: 1.2, opacity: 1 }}
-            transition={{ type: 'spring', damping: 8 }}>
+            transition={{ type: 'timing', duration: 300 }}>
             <X size={140} color="#EF4444" strokeWidth={6} />
         </MotiView>
     </View>
@@ -67,7 +67,7 @@ const BigX = ({ show }) => show ? (
 const Correct = ({ show, text }) => show ? (
     <View style={[StyleSheet.absoluteFill, st.correctOv]} pointerEvents="none">
         <MotiView from={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', damping: 10 }}>
+            transition={{ type: 'timing', duration: 300 }}>
             <Text style={{ fontSize: 60, textAlign: 'center' }}>✅</Text>
             <Text style={st.correctTxt}>{text}</Text>
         </MotiView>
@@ -325,7 +325,7 @@ export default function PlayScreen({ navigation, route }) {
                         {gs.phase === PHASE.FACE_OFF && cdActive ? (
                             <View style={st.cdWrap}>
                                 <MotiView key={cdCount} from={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                                    transition={{ type: 'spring', damping: 12 }}>
+                                    transition={{ type: 'timing', duration: 300 }}>
                                     <Text style={st.cdNum}>{cdCount}</Text>
                                 </MotiView>
                                 <Text style={[st.cdLabel, isKurdish && st.kf]}>
@@ -384,7 +384,7 @@ export default function PlayScreen({ navigation, route }) {
                                                     <VoiceInputButton isKurdish={isKurdish} onTranscribed={setInput} />
                                                     <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                                                         value={input} onChangeText={setInput} onSubmitEditing={submitAnswer}
-                                                        placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#6B7280" returnKeyType="send" />
+                                                        placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#C0B8D0" returnKeyType="send" />
                                                     <TouchableOpacity style={st.sendBtn} onPress={submitAnswer}><Send size={20} color="#FFF" /></TouchableOpacity>
                                                 </View>
                                             </>
@@ -425,7 +425,7 @@ export default function PlayScreen({ navigation, route }) {
                                             <VoiceInputButton isKurdish={isKurdish} onTranscribed={setInput} />
                                             <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }]}
                                                 value={input} onChangeText={setInput} onSubmitEditing={submitAnswer}
-                                                placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#6B7280" returnKeyType="send" />
+                                                placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your answer...'} placeholderTextColor="#C0B8D0" returnKeyType="send" />
                                             <TouchableOpacity style={st.sendBtn} onPress={submitAnswer}><Send size={20} color="#FFF" /></TouchableOpacity>
                                         </View>
                                     </ScrollView>
@@ -448,7 +448,7 @@ export default function PlayScreen({ navigation, route }) {
                                             <TextInput style={[st.inputBox, isKurdish && { textAlign: 'right', fontFamily: 'Rabar', fontWeight: 'normal', fontStyle: 'normal' }, isChecking && { opacity: 0.5 }]}
                                                 editable={!isChecking}
                                                 placeholder={isKurdish ? 'وەڵامەکەت بنووسە...' : 'Type your steal answer...'}
-                                                placeholderTextColor="#6B7280" value={stealInput}
+                                                placeholderTextColor="#C0B8D0" value={stealInput}
                                                 onChangeText={setStealInput}
                                                 onSubmitEditing={doSteal} autoFocus />
                                             <TouchableOpacity style={[st.sendBtn, { backgroundColor: '#F59E0B' }]} onPress={doSteal} disabled={isChecking}>
@@ -464,7 +464,7 @@ export default function PlayScreen({ navigation, route }) {
                                 {/* ROUND END — show ALL answers as proof */}
                                 {gs.phase === PHASE.ROUND_END && (
                                     <ScrollView contentContainerStyle={st.pad} showsVerticalScrollIndicator={false}>
-                                        <MotiView from={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 12 }}>
+                                        <MotiView from={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
                                             <Text style={[st.endTitle, isKurdish && st.kf]}>
                                                 {isKurdish ? `قۆناغی ${gs.round} تەواو بوو!` : `Round ${gs.round} Complete!`}
                                             </Text>
@@ -544,7 +544,7 @@ const st = StyleSheet.create({
     cdWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' },
     cdNum: { color: '#F59E0B', fontSize: 80, fontWeight: '900', textShadowColor: 'rgba(245,158,11,0.4)', textShadowOffset: { width: 0, height: 4 }, textShadowRadius: 20 },
     cdLabel: { color: '#FFF', fontSize: 20, fontWeight: '800', marginTop: 8, letterSpacing: 1 },
-    cdSub: { color: '#94A3B8', fontSize: 13, fontWeight: '600', marginTop: 4 },
+    cdSub: { color: '#E8E0F0', fontSize: 13, fontWeight: '600', marginTop: 4 },
 
     // Scoreboard
     scoreRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, marginBottom: 6, marginTop: 4 },
@@ -553,7 +553,7 @@ const st = StyleSheet.create({
     scoreTeamName: { color: 'rgba(255,255,255,0.85)', fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5, paddingHorizontal: 4 },
     scoreVal: { color: '#FFF', fontSize: 26, fontWeight: '900', textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 },
     scoreCenter: { alignItems: 'center', marginHorizontal: 6, minWidth: 44 },
-    scoreRound: { color: '#64748B', fontSize: 9, fontWeight: '700', letterSpacing: 1 },
+    scoreRound: { color: '#C0B8D0', fontSize: 9, fontWeight: '700', letterSpacing: 1 },
     scoreBank: { color: '#FBBF24', fontSize: 24, fontWeight: '900', textShadowColor: 'rgba(251,191,36,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 8 },
     multBadge: { backgroundColor: '#B45309', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, marginTop: 3, borderWidth: 1, borderColor: '#F59E0B' },
     multTxt: { color: '#FFF', fontSize: 10, fontWeight: '900' },
@@ -562,7 +562,7 @@ const st = StyleSheet.create({
     pad: { paddingHorizontal: 12, paddingBottom: 20, flexGrow: 1 },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 },
     phTitle: { color: '#FFF', fontSize: 18, fontWeight: '900', textAlign: 'center', marginBottom: 6, letterSpacing: 0.5, textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
-    hint: { color: '#94A3B8', fontSize: 13, textAlign: 'center', marginBottom: 10, fontWeight: '600' },
+    hint: { color: '#E8E0F0', fontSize: 13, textAlign: 'center', marginBottom: 10, fontWeight: '600' },
     qText: { color: '#FFF', fontSize: 15, fontWeight: '700', textAlign: 'center', lineHeight: 23, marginBottom: 12, backgroundColor: 'rgba(255,255,255,0.05)', paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' },
 
     // Turn Banner
@@ -603,17 +603,17 @@ const st = StyleSheet.create({
     popLabel: { color: '#FFF', fontSize: 17, fontWeight: '900', marginTop: 4 },
 
     // Steal
-    stealNote: { color: '#6B7280', fontSize: 11, fontWeight: '600', textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
+    stealNote: { color: '#C0B8D0', fontSize: 11, fontWeight: '600', textAlign: 'center', marginTop: 10, fontStyle: 'italic' },
 
     // Round End
-    revealLabel: { color: '#94A3B8', fontSize: 14, fontWeight: '800', textAlign: 'center', marginBottom: 8, letterSpacing: 0.5 },
+    revealLabel: { color: '#E8E0F0', fontSize: 14, fontWeight: '800', textAlign: 'center', marginBottom: 8, letterSpacing: 0.5 },
     endTitle: { color: '#F59E0B', fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 12, letterSpacing: 0.5, textShadowColor: 'rgba(245,158,11,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 10 },
     endScores: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 28, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, paddingVertical: 20, paddingHorizontal: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
     endTeam: { alignItems: 'center', flex: 1 },
     endDot: { width: 10, height: 10, borderRadius: 5, marginBottom: 4 },
-    endName: { color: '#94A3B8', fontSize: 13, fontWeight: '700' },
+    endName: { color: '#E8E0F0', fontSize: 13, fontWeight: '700' },
     endVal: { color: '#FFF', fontSize: 36, fontWeight: '900', textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 },
-    endVs: { color: '#475569', fontSize: 14, fontWeight: '900', marginHorizontal: 8 },
+    endVs: { color: '#C0B8D0', fontSize: 14, fontWeight: '900', marginHorizontal: 8 },
     nextBtn: { paddingVertical: 14, paddingHorizontal: 36, borderRadius: 14, alignItems: 'center' },
     nextTxt: { color: '#FFF', fontSize: 16, fontWeight: '800' },
 

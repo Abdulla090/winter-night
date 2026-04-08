@@ -38,7 +38,7 @@ export default function ResultsScreen({ navigation, route }) {
                 <MotiView
                     from={{ opacity: 0, scale: 0.5, translateY: -20 }}
                     animate={{ opacity: 1, scale: 1, translateY: 0 }}
-                    transition={{ type: 'spring', delay: 100 }}
+                    transition={{ type: 'timing', duration: 300, delay: 100 }}
                     style={styles.trophyContainer}
                 >
                     <View style={[styles.trophyCircle, { backgroundColor: colors.surface, borderColor: colors.brand.gold }]}>
@@ -78,7 +78,7 @@ export default function ResultsScreen({ navigation, route }) {
                                 key={player}
                                 from={{ opacity: 0, translateX: isRTL ? 20 : -20 }}
                                 animate={{ opacity: 1, translateX: 0 }}
-                                transition={{ type: 'spring', delay: 700 + (index * 150) }}
+                                transition={{ type: 'timing', duration: 300, delay: 700 + (index * 150) }}
                                 style={[styles.scoreRow, { flexDirection: rowDirection, borderColor: colors.border }]}
                             >
                                 <View style={styles.rankBox}>

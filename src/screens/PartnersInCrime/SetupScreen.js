@@ -128,7 +128,7 @@ export default function PartnersSetupScreen({ navigation }) {
                                 key={cat.id}
                                 from={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ type: 'spring', delay: index * 100 }}
+                                transition={{ type: 'timing', duration: 300, delay: index * 100 }}
                                 style={{ width: '48%' }}
                             >
                                 <TouchableOpacity
@@ -160,7 +160,7 @@ export default function PartnersSetupScreen({ navigation }) {
                 <MotiView
                     from={{ opacity: 0, translateY: 30 }}
                     animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ type: 'spring', delay: 400 }}
+                    transition={{ type: 'timing', duration: 300, delay: 400 }}
                 >
                     <BeastButton
                         variant={player1 && player2 ? 'primary' : 'ghost'}

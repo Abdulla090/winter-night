@@ -5,7 +5,7 @@ import Animated, {
     withTiming,
     withDelay,
     Easing,
-} from 'react-native-reanimated';
+, withTiming } from 'react-native-reanimated';
 
 /**
  * ✨ AnimatedListItem — Staggered fade + slide-up entrance for list items.

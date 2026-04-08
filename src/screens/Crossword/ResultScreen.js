@@ -47,7 +47,7 @@ export default function CrosswordResultScreen({ navigation, route }) {
                 <MotiView
                     from={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', damping: 10, stiffness: 100 }}
+                    transition={{ type: 'timing', duration: 300 }}
                     style={{ alignItems: 'center', marginBottom: layout.spacing.lg }}
                 >
                     <View style={[styles.heroIcon, { backgroundColor: colors.accent + '20' }]}>
@@ -75,7 +75,7 @@ export default function CrosswordResultScreen({ navigation, route }) {
                                 key={i}
                                 from={{ opacity: 0, scale: 0 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ type: 'spring', delay: 500 + i * 200, damping: 8 }}
+                                transition={{ type: 'timing', duration: 300, delay: 500 + i * 200 }}
                             >
                                 <Star
                                     size={32}

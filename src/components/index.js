@@ -4,6 +4,7 @@ import GradientBackground from './GradientBackground';
 import PlayerInput from './PlayerInput';
 import Modal from './Modal';
 import Timer from './Timer';
+import HowToPlayCard from './HowToPlayCard';
 import { GlassCard } from './GlassCard';
 import { BeastButton } from './BeastButton';
 import { AnimatedScreen } from './AnimatedScreen';
@@ -21,6 +22,7 @@ export {
     PlayerInput,
     Modal,
     Timer,
+    HowToPlayCard,
     GlassCard,
     BeastButton,
     AnimatedScreen,

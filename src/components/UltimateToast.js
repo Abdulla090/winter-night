@@ -39,7 +39,7 @@ export const ToastProvider = ({ children }) => {
                         from={{ opacity: 0, translateY: -100, scale: 0.8 }}
                         animate={{ opacity: 1, translateY: 0, scale: 1 }}
                         exit={{ opacity: 0, translateY: -100, scale: 0.8 }}
-                        transition={{ type: 'spring', damping: 15 }}
+                        transition={{ type: 'timing', duration: 280 }}
                         style={styles.container}
                     >
                         <GlassCard

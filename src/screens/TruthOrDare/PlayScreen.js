@@ -8,7 +8,7 @@ import Animated, {
     useAnimatedStyle,
     withTiming,
     withDelay
-} from 'react-native-reanimated';
+, withTiming } from 'react-native-reanimated';
 import { Button, GradientBackground, GlassCard } from '../../components';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getRandomTruth, getRandomDare } from '../../constants/truthOrDareData';

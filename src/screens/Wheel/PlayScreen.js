@@ -17,7 +17,7 @@ import Animated, {
     Easing,
     runOnJS,
     withDecay
-} from 'react-native-reanimated';
+, withTiming } from 'react-native-reanimated';
 import Svg, { Path, G, Text as SvgText } from 'react-native-svg';
 import { GradientBackground, Button, BackButton, GlassCard } from '../../components';
 import { SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';

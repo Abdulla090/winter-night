@@ -34,6 +34,9 @@ export default function PlayScreen({ navigation, route }) {
     const [localIsPlaying, setLocalIsPlaying] = useState(false);
     const [showResultModal, setShowResultModal] = useState(false);
     const [guessedCorrect, setGuessedCorrect] = useState(null);
+    // ── FIX: track player index & scores in state so navigating to same route advances correctly
+    const [localPlayerIndex, setLocalPlayerIndex] = useState(routeParams.currentPlayerIndex || 0);
+    const [localScores, setLocalScores] = useState(routeParams.scores || {});
 
     // Get players list
     const players = isMultiplayer
@@ -43,13 +46,13 @@ export default function PlayScreen({ navigation, route }) {
     const category = routeParams.category || gameState?.state?.category || ['celebrities'];
     const roundTime = routeParams.roundTime || gameState?.state?.roundTime || 60;
 
-    // Multiplayer state from DB
+    // Multiplayer state from DB / local state
     const currentPlayerIndex = isMultiplayer
         ? (gameState?.current_question?.player_index || 0)
-        : (routeParams.currentPlayerIndex || 0);
+        : localPlayerIndex;
     const scores = isMultiplayer
         ? (gameState?.scores || {})
-        : (routeParams.scores || {});
+        : localScores;
     const character = isMultiplayer
         ? (gameState?.current_question?.character || '')
         : localCharacter;
@@ -68,12 +71,15 @@ export default function PlayScreen({ navigation, route }) {
     const gameColors = Array.isArray(colors.brand.primary) ? colors.brand.primary : [colors.brand.primary, colors.brand.primary];
     const accentColor = Array.isArray(colors.brand.primary) ? colors.brand.primary[0] : colors.brand.primary;
 
-    // Generate character for single-player
+    // ── FIX: re-generate character & reset turn when localPlayerIndex changes
     useEffect(() => {
         if (!isMultiplayer) {
             setLocalCharacter(getRandomCharacter(category, language));
+            setLocalIsPlaying(false);
+            setShowResultModal(false);
+            setGuessedCorrect(null);
         }
-    }, [isMultiplayer]);
+    }, [isMultiplayer, localPlayerIndex]);
 
     // Sync game state for multiplayer
     const syncGameState = useCallback(async (updates) => {
@@ -91,7 +97,6 @@ export default function PlayScreen({ navigation, route }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
         if (isMultiplayer) {
-            // Generate character and sync to all players
             const newCharacter = getRandomCharacter(category, language);
             await syncGameState({
                 phase: 'playing',
@@ -118,31 +123,25 @@ export default function PlayScreen({ navigation, route }) {
         if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         setGuessedCorrect(correct);
 
-        const newScores = { ...scores };
-        if (correct) {
-            newScores[currentPlayer] = (newScores[currentPlayer] || 0) + 1;
-        }
-
         if (isMultiplayer) {
+            const newScores = { ...scores };
+            if (correct) {
+                newScores[currentPlayer] = (newScores[currentPlayer] || 0) + 1;
+            }
             const nextIndex = currentPlayerIndex + 1;
             const isFinished = nextIndex >= players.length;
 
             if (isFinished) {
-                // End game
                 await updateGameState({
                     game_phase: 'finished',
                     scores: newScores,
-                    current_question: {
-                        phase: 'finished',
-                        player_index: currentPlayerIndex,
-                    },
+                    current_question: { phase: 'finished', player_index: currentPlayerIndex },
                 });
                 setTimeout(() => {
                     leaveRoom();
                     navigation.replace('Home');
                 }, 1500);
             } else {
-                // Next player
                 await syncGameState({
                     phase: 'ready',
                     character: '',
@@ -151,16 +150,22 @@ export default function PlayScreen({ navigation, route }) {
                 });
             }
         } else {
+            // ── FIX: update scores in local state, then advance player index via state (not navigation)
+            const updatedScores = { ...localScores };
+            if (correct) {
+                updatedScores[currentPlayer] = (updatedScores[currentPlayer] || 0) + 1;
+            }
+            setLocalScores(updatedScores);
+
             setTimeout(() => {
                 setShowResultModal(false);
                 if (isLastPlayer) {
-                    navigation.replace('WhoAmIResults', { players, scores: newScores, category });
+                    navigation.replace('WhoAmIResults', { players, scores: updatedScores, category });
                 } else {
-                    navigation.replace('WhoAmIPlay', {
-                        players, category, roundTime, currentPlayerIndex: currentPlayerIndex + 1, scores: newScores,
-                    });
+                    // Simply advance index — useEffect will reset character & phase automatically
+                    setLocalPlayerIndex(prev => prev + 1);
                 }
-            }, 1000);
+            }, 800);
         }
     };
 
@@ -180,8 +185,9 @@ export default function PlayScreen({ navigation, route }) {
                 <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
                     <View style={styles.centerContent}>
                         <MotiView
-                            from={{ opacity: 0, scale: 0.8 }}
+                            from={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
+                            transition={{ type: 'timing', duration: 250 }}
                             style={{ alignItems: 'center' }}
                         >
                             <Text style={[styles.label, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
@@ -236,11 +242,12 @@ export default function PlayScreen({ navigation, route }) {
                     <ScrollView
                         style={styles.scrollContainer}
                         contentContainerStyle={styles.centerContent}
-                        showsVerticalScrollIndicator={true}
+                        showsVerticalScrollIndicator={false}
                     >
                         <MotiView
-                            from={{ opacity: 0, translateY: -20 }}
+                            from={{ opacity: 0, translateY: -16 }}
                             animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ type: 'timing', duration: 300 }}
                             style={[styles.badge, { backgroundColor: colors.surface }]}
                         >
                             <Text style={[styles.badgeText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
@@ -265,9 +272,9 @@ export default function PlayScreen({ navigation, route }) {
                         )}
 
                         <MotiView
-                            from={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ type: 'spring', delay: 200 }}
+                            from={{ opacity: 0, translateY: 12 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ type: 'timing', duration: 350, delay: 150 }}
                             style={{ alignItems: 'center', marginBottom: 48 }}
                         >
                             <Smartphone size={64} color={colors.text.secondary} style={{ marginBottom: 24 }} />
@@ -313,19 +320,15 @@ export default function PlayScreen({ navigation, route }) {
         );
     }
 
-    // Gameplay Screen (Forehead Mode)
+    // Gameplay Screen (Forehead Mode) — no spinning, clean fade-in
     return (
-        <LinearGradient
-            colors={gameColors}
-            style={styles.gameContainer}
-        >
+        <LinearGradient colors={gameColors} style={styles.gameContainer}>
             <MotiView
-                from={{ opacity: 0, scale: 0.5, rotateX: '90deg' }}
-                animate={{ opacity: 1, scale: 1, rotateX: '0deg' }}
-                transition={{ type: 'spring', damping: 14 }}
-                style={[styles.rotateContainer]}
+                from={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: 'timing', duration: 280 }}
+                style={styles.rotateContainer}
             >
-                {/* In multiplayer, only show character to non-guessing players */}
                 {isMultiplayer && !isMyTurn ? (
                     <Text style={[styles.gameCharacter, isKurdish && styles.kurdishFont]}>{character}</Text>
                 ) : isMultiplayer && isMyTurn ? (

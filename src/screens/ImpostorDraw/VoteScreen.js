@@ -31,7 +31,7 @@ const VotingCard = ({ player, playerIndex, drawings, isSelected, onVote, colors,
     <MotiView
         from={{ opacity: 0, scale: 0.8, translateY: 20 }}
         animate={{ opacity: 1, scale: 1, translateY: 0 }}
-        transition={{ type: 'spring', delay, damping: 15 }}
+        transition={{ type: 'timing', duration: 300, delay, damping: 15 }}
     >
         <TouchableOpacity
             activeOpacity={0.8}

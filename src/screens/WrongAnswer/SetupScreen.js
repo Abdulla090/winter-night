@@ -1,4 +1,4 @@
-import { BackButton } from '../../components/BackButton';
+﻿import { BackButton } from '../../components/BackButton';
 import React, { useState } from 'react';
 import {
     View,
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react-native';
 
 import { AnimatedScreen } from '../../components/AnimatedScreen';
+import HowToPlayCard from '../../components/HowToPlayCard';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -442,18 +443,15 @@ export default function WrongAnswerSetup({ navigation }) {
                 </View>
 
                 {/* How to Play */}
-                <View style={[styles.howToPlay, { backgroundColor: isDark ? '#1A0B2E' : '#FFF' }]}>
-                    <ThumbsDown size={20} color="#EF4444" />
-                    <Text style={[styles.howToPlayTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
-                        {isKurdish ? 'چۆن یاری بکەیت' : 'How to Play'}
-                    </Text>
-                    <Text style={[styles.howToPlayText, { color: colors.text.secondary }, isKurdish && styles.kurdishFont]}>
-                        {isKurdish
-                            ? '• پرسیار دەردەکەوێت - کاتت کەمە!\n• وەڵامی هەڵە بدە - داهێنەرانە و پێکەنیناوی!\n• دەنگ بدە بۆ باشترین وەڵامی هەڵە\n• وەڵامی دروست = سزادان!'
-                            : '• Question appears - you have limited time!\n• Give a WRONG answer - be creative & funny!\n• Vote for the best wrong answer\n• Correct answers = penalty!'
-                        }
-                    </Text>
-                </View>
+                <HowToPlayCard
+                    icon={<ThumbsDown size={20} color="#EF4444" />}
+                    title={isKurdish ? 'چۆن یاری بکەیت' : 'How to Play'}
+                    contentKU={'• پرسیار دەردەکەوێت - کاتت کەمە!\n• وەڵامی هەڵە بدە - داهێنەرانە و پێکەنیناوی!\n• دەنگ بدە بۆ باشترین وەڵامی هەڵە\n• وەڵامی دروست = سزادان!'}
+                    contentEN={'• Question appears - you have limited time!\n• Give a WRONG answer - be creative and funny!\n• Vote for the best wrong answer\n• Correct answers = penalty!'}
+                    isKurdish={isKurdish}
+                    colors={colors}
+                    isDark={isDark}
+                />
 
                 {/* Start Button */}
                 <TouchableOpacity activeOpacity={0.9} onPress={handleStartGame} style={styles.startBtnWrap}>

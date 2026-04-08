@@ -191,7 +191,7 @@ export default function FastMoneyScreen({ navigation, route }) {
                     <LinearGradient colors={['#0F172A', '#1E1B4B']} style={StyleSheet.absoluteFill} />
                     <View style={styles.centerContent}>
                         <MotiView from={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                            transition={{ type: 'spring', damping: 12 }}>
+                            transition={{ type: 'timing', duration: 300 }}>
                             <Text style={[styles.bigTitle, kf]}>
                                 {isKurdish ? '💰 پارەی خێرا!' : '💰 FAST MONEY!'}
                             </Text>
@@ -263,7 +263,7 @@ export default function FastMoneyScreen({ navigation, route }) {
                             <TextInput style={[styles.fmInput, kf, isKurdish && { textAlign: 'right' }, isChecking && { opacity: 0.5 }]}
                                 editable={!isChecking}
                                 placeholder={isKurdish ? 'وەڵامەکەت...' : 'Your answer...'}
-                                placeholderTextColor="#6B7280" value={p2Input}
+                                placeholderTextColor="#C0B8D0" value={p2Input}
                                 onChangeText={setP2Input} autoFocus
                                 onSubmitEditing={submitP2Answer} />
                             <TouchableOpacity style={styles.fmSubmitBtn} onPress={submitP2Answer}>
@@ -339,7 +339,7 @@ export default function FastMoneyScreen({ navigation, route }) {
                             <TextInput style={[styles.fmInput, kf, isKurdish && { textAlign: 'right' }, isChecking && { opacity: 0.5 }]}
                                 editable={!isChecking}
                                 placeholder={isKurdish ? 'وەڵامەکەت...' : 'Your answer...'}
-                                placeholderTextColor="#6B7280" value={p1Input}
+                                placeholderTextColor="#C0B8D0" value={p1Input}
                                 onChangeText={setP1Input} autoFocus
                                 onSubmitEditing={submitP1Answer} />
                             <TouchableOpacity style={[styles.fmSubmitBtn, { backgroundColor: '#8B5CF6' }]}
@@ -361,7 +361,7 @@ export default function FastMoneyScreen({ navigation, route }) {
                     style={StyleSheet.absoluteFill} />
                 <ScrollView contentContainerStyle={styles.revealContent}>
                     <MotiView from={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: 'spring', damping: 10 }}>
+                        transition={{ type: 'timing', duration: 300 }}>
                         {isWin ? (
                             <View style={styles.winContainer}>
                                 <Trophy size={64} color="#F59E0B" />
@@ -429,22 +429,22 @@ const styles = StyleSheet.create({
     centerContent: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 },
 
     bigTitle: { color: '#F59E0B', fontSize: 38, fontWeight: '900', textAlign: 'center', marginBottom: 10, textShadowColor: 'rgba(245,158,11,0.4)', textShadowOffset: { width: 0, height: 4 }, textShadowRadius: 20 },
-    subText: { color: '#94A3B8', fontSize: 17, textAlign: 'center', fontWeight: '700', marginBottom: 28 },
+    subText: { color: '#E8E0F0', fontSize: 17, textAlign: 'center', fontWeight: '700', marginBottom: 28 },
 
     playerGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 28 },
     playerChip: { paddingHorizontal: 22, paddingVertical: 16, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.06)', borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)', flexDirection: 'row', alignItems: 'center', margin: 5 },
     playerChipActive: { backgroundColor: 'rgba(245,158,11,0.12)' },
-    playerChipText: { color: '#94A3B8', fontSize: 16, fontWeight: '700' },
+    playerChipText: { color: '#E8E0F0', fontSize: 16, fontWeight: '700' },
     pLabel: { backgroundColor: '#F59E0B', color: '#FFF', fontSize: 11, fontWeight: '900', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 6, marginLeft: 8 },
 
     startFMBtn: { backgroundColor: '#D97706', paddingVertical: 18, paddingHorizontal: 44, borderRadius: 18, marginBottom: 18, borderWidth: 1.5, borderColor: '#F59E0B', elevation: 6, shadowColor: '#F59E0B', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12 },
     startFMText: { color: '#FFF', fontSize: 19, fontWeight: '900', letterSpacing: 0.5 },
-    ruleNote: { color: '#6B7280', fontSize: 13, textAlign: 'center', fontStyle: 'italic' },
+    ruleNote: { color: '#C0B8D0', fontSize: 13, textAlign: 'center', fontStyle: 'italic' },
 
     // Timer
     timerBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1.5, borderBottomColor: 'rgba(255,255,255,0.08)' },
     timerText: { color: '#F59E0B', fontSize: 26, fontWeight: '900', marginLeft: 8, textShadowColor: 'rgba(245,158,11,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 6 },
-    timerLabel: { color: '#94A3B8', fontSize: 14, fontWeight: '700', flex: 1, marginLeft: 12 },
+    timerLabel: { color: '#E8E0F0', fontSize: 14, fontWeight: '700', flex: 1, marginLeft: 12 },
 
     // FM Content
     fmContent: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
@@ -461,10 +461,10 @@ const styles = StyleSheet.create({
     reviewContent: { padding: 24, paddingTop: 40 },
     reviewTitle: { color: '#F59E0B', fontSize: 26, fontWeight: '900', textAlign: 'center', marginBottom: 24, textShadowColor: 'rgba(245,158,11,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 8 },
     reviewRow: { marginBottom: 16, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.06)', paddingBottom: 12, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 10, padding: 12, overflow: 'hidden' },
-    reviewQ: { color: '#64748B', fontSize: 13, marginBottom: 6 },
+    reviewQ: { color: '#C0B8D0', fontSize: 13, marginBottom: 6 },
     reviewAns: { flexDirection: 'row', justifyContent: 'space-between', overflow: 'hidden' },
     reviewAnsText: { color: '#FFF', fontSize: 17, fontWeight: '700', flex: 1, flexShrink: 1 },
-    reviewPts: { color: '#6B7280', fontSize: 19, fontWeight: '900' },
+    reviewPts: { color: '#C0B8D0', fontSize: 19, fontWeight: '900' },
     reviewSubtotal: { color: '#F59E0B', fontSize: 22, fontWeight: '900', textAlign: 'center', marginVertical: 24 },
 
     // Final Reveal
@@ -473,14 +473,14 @@ const styles = StyleSheet.create({
     winTitle: { color: '#34D399', fontSize: 34, fontWeight: '900', textAlign: 'center', marginTop: 14, textShadowColor: 'rgba(52,211,153,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 8 },
     loseTitle: { color: '#EF4444', fontSize: 26, fontWeight: '900', textAlign: 'center', marginBottom: 18 },
     revealTotal: { alignItems: 'center', marginBottom: 28, padding: 24, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 18, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-    totalLabel: { color: '#94A3B8', fontSize: 12, fontWeight: '800', letterSpacing: 2.5 },
+    totalLabel: { color: '#E8E0F0', fontSize: 12, fontWeight: '800', letterSpacing: 2.5 },
     totalNum: { color: '#FFF', fontSize: 60, fontWeight: '900', textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 3 }, textShadowRadius: 10 },
-    goalText: { color: '#6B7280', fontSize: 20, fontWeight: '600' },
+    goalText: { color: '#C0B8D0', fontSize: 20, fontWeight: '600' },
     revealPlayerLabel: { color: '#F59E0B', fontSize: 17, fontWeight: '800', marginBottom: 12 },
     revealRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 8, paddingVertical: 6, paddingHorizontal: 10, overflow: 'hidden' },
-    revealQ: { flex: 1, color: '#64748B', fontSize: 12, flexShrink: 1 },
+    revealQ: { flex: 1, color: '#C0B8D0', fontSize: 12, flexShrink: 1 },
     revealAns: { color: '#FFF', fontSize: 14, fontWeight: '700', maxWidth: 100, marginLeft: 8, flexShrink: 1 },
-    revealPts: { color: '#6B7280', fontSize: 17, fontWeight: '900', width: 34, textAlign: 'right', marginLeft: 8, flexShrink: 0 },
+    revealPts: { color: '#C0B8D0', fontSize: 17, fontWeight: '900', width: 34, textAlign: 'right', marginLeft: 8, flexShrink: 0 },
 
     finishBtn: { backgroundColor: '#D97706', paddingVertical: 18, borderRadius: 18, alignItems: 'center', marginTop: 28, borderWidth: 1.5, borderColor: '#F59E0B', elevation: 6, shadowColor: '#F59E0B', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12 },
     finishText: { color: '#FFF', fontSize: 19, fontWeight: '900', letterSpacing: 0.5 },

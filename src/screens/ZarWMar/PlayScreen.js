@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Platform, SafeAreaView, TouchableOpacity, useWi
 import Svg, { Line, Path, Circle as SvgCircle, Defs, LinearGradient as SvgGrad, Stop, G } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
-    useSharedValue, useAnimatedStyle, withSpring, withTiming,
+    useSharedValue, useAnimatedStyle, withTiming,
     withSequence, withDelay, runOnJS, Easing
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -150,7 +150,7 @@ function Pawn({ position, color, name, offset = 0, cellSize }) {
             bounceScale.value = withSequence(
                 withTiming(1.2, { duration: 200 }),
                 withDelay(1000, withTiming(1.4, { duration: 150 })),
-                withDelay(1150, withSpring(1))
+                withDelay(1150, withTiming(1, { duration: 200 }))
             );
         } else if (position > prev.current && position - prev.current > 5) {
             // LADDER CLIMB! (Straight smooth line up)
@@ -158,16 +158,16 @@ function Pawn({ position, color, name, offset = 0, cellSize }) {
             animX.value = withTiming(targetX, { duration: 1000, easing: Easing.out(Easing.ease) });
             bounceScale.value = withSequence(
                 withTiming(1.2, { duration: 100 }),
-                withDelay(900, withSpring(1))
+                withDelay(900, withTiming(1, { duration: 200 }))
             );
         } else {
             // NORMAL STEP (Hops precisely step-by-step)
-            animX.value = withSpring(targetX, { damping: 14, stiffness: 120 });
-            animY.value = withSpring(targetY, { damping: 14, stiffness: 120 });
+            animX.value = withTiming(targetX, { duration: 250 });
+            animY.value = withTiming(targetY, { duration: 250 });
             
             bounceScale.value = withSequence(
                 withTiming(1.4, { duration: 150 }),
-                withSpring(1, { damping: 6, stiffness: 200 })
+                withTiming(1, { duration: 200 })
             );
         }
 
@@ -209,7 +209,7 @@ function DiceFace({ value, color, rolling }) {
             );
             scale.value = withSequence(
                 withTiming(1.2, { duration: 200 }),
-                withSpring(1, { damping: 10, stiffness: 200 })
+                withTiming(1, { duration: 200 })
             );
         } else {
             rotation.value = 0; // reset
@@ -551,8 +551,8 @@ const st = StyleSheet.create({
     pawnText: { color: '#FFF', fontWeight: '900' },
 
     footer: { paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10, alignItems: 'center', gap: 16 },
-    dice: { width: 64, height: 64, borderRadius: 16, backgroundColor: '#FFF', borderWidth: 3, padding: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 5 },
-    diceInner: { flex: 1, backgroundColor: '#F8FAFC', borderRadius: 10 },
+    dice: { width: 64, height: 64, borderRadius: 16, backgroundColor: '#1A0B2E', borderWidth: 3, padding: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 5 },
+    diceInner: { flex: 1, backgroundColor: '#0F0518', borderRadius: 10 },
     
     rollBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 6 },
     rollBtnText: { color: '#FFF', fontSize: 18, fontWeight: '900', letterSpacing: 1 },

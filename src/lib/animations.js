@@ -15,53 +15,45 @@ import { Easing, Platform } from 'react-native';
  * Feels instant but with satisfying bounce
  */
 export const SPRING_SNAPPY = {
-    type: 'spring',
-    damping: 20,
-    stiffness: 400,
-    mass: 0.8,
-    overshootClamping: false,
-    restSpeedThreshold: 0.001,
-    restDisplacementThreshold: 0.001,
+    type: 'timing',
+    duration: 150,
+    easing: Easing.out(Easing.cubic),
 };
 
 /**
  * Quick spring - for UI elements, toggles, switches
  */
 export const SPRING_QUICK = {
-    type: 'spring',
-    damping: 18,
-    stiffness: 300,
-    mass: 0.9,
+    type: 'timing',
+    duration: 200,
+    easing: Easing.out(Easing.cubic),
 };
 
 /**
  * Smooth spring - for cards, modals, larger elements
  */
 export const SPRING_SMOOTH = {
-    type: 'spring',
-    damping: 22,
-    stiffness: 200,
-    mass: 1,
+    type: 'timing',
+    duration: 280,
+    easing: Easing.out(Easing.cubic),
 };
 
 /**
- * Bouncy spring - for playful interactions, celebrations
+ * Bouncy spring - replaced with snappy timing for Android stability
  */
 export const SPRING_BOUNCY = {
-    type: 'spring',
-    damping: 12,
-    stiffness: 180,
-    mass: 0.8,
+    type: 'timing',
+    duration: 250,
+    easing: Easing.out(Easing.back(1.5)),
 };
 
 /**
  * Gentle spring - for page transitions, large movements
  */
 export const SPRING_GENTLE = {
-    type: 'spring',
-    damping: 25,
-    stiffness: 150,
-    mass: 1.2,
+    type: 'timing',
+    duration: 350,
+    easing: Easing.inOut(Easing.cubic),
 };
 
 // ============================================

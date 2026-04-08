@@ -15,7 +15,6 @@ import * as Haptics from 'expo-haptics';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
     withTiming,
     runOnJS,
 } from 'react-native-reanimated';
@@ -46,17 +45,10 @@ export default function Modal({
 
     useEffect(() => {
         if (visible) {
-            // Entrance: spring animation for native feel
+            // Entrance: timing animation for stable native feel on Android
             opacity.value = withTiming(1, { duration: 150 });
-            scale.value = withSpring(1, {
-                damping: 20,
-                stiffness: 300,
-                mass: 0.8,
-            });
-            translateY.value = withSpring(0, {
-                damping: 22,
-                stiffness: 280,
-            });
+            scale.value = withTiming(1, { duration: 250 });
+            translateY.value = withTiming(0, { duration: 250 });
 
             // Haptic feedback on open
             if (Platform.OS !== 'web') {
@@ -145,9 +137,8 @@ export default function Modal({
                                 from={{ scale: 0.5, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{
-                                    type: 'spring',
-                                    damping: 15,
-                                    stiffness: 200,
+                                    type: 'timing',
+                                    duration: 300,
                                     delay: 100,
                                 }}
                                 style={styles.iconContainer}
@@ -164,9 +155,8 @@ export default function Modal({
                                 from={{ translateY: 10, opacity: 0 }}
                                 animate={{ translateY: 0, opacity: 1 }}
                                 transition={{
-                                    type: 'spring',
-                                    damping: 20,
-                                    stiffness: 200,
+                                    type: 'timing',
+                                    duration: 300,
                                     delay: 50,
                                 }}
                                 style={styles.titleContainer}
@@ -182,9 +172,8 @@ export default function Modal({
                             from={{ translateY: 15, opacity: 0 }}
                             animate={{ translateY: 0, opacity: 1 }}
                             transition={{
-                                type: 'spring',
-                                damping: 22,
-                                stiffness: 180,
+                                type: 'timing',
+                                duration: 300,
                                 delay: 100,
                             }}
                             style={styles.body}

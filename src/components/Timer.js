@@ -77,10 +77,8 @@ export default function Timer({
                 borderColor: activeColor,
             }}
             transition={{
-                type: 'spring',
-                damping: 15,
-                stiffness: 400,
-                mass: 0.6,
+                type: 'timing',
+                duration: 150,
             }}
             style={[
                 styles.container,
@@ -118,9 +116,8 @@ export default function Timer({
                             scale: isPulsing ? 1.1 : 1,
                         }}
                         transition={{
-                            type: 'spring',
-                            damping: 20,
-                            stiffness: 500,
+                            type: 'timing',
+                            duration: 120,
                         }}
                     >
                         <Text style={[

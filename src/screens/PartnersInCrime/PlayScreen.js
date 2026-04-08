@@ -71,7 +71,7 @@ export default function PartnersPlayScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, scale: 0.5, translateY: 50 }}
                         animate={{ opacity: 1, scale: 1, translateY: 0 }}
-                        transition={{ type: 'spring', damping: 15 }}
+                        transition={{ type: 'timing', duration: 300 }}
                         style={[styles.endIconContainer, { backgroundColor: colors.surfaceHighlight }]}
                     >
                         <Trophy size={64} color={colors.brand.gold} />
@@ -80,7 +80,7 @@ export default function PartnersPlayScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, translateY: 20 }}
                         animate={{ opacity: 1, translateY: 0 }}
-                        transition={{ type: 'spring', delay: 200, damping: 15 }}
+                        transition={{ type: 'timing', duration: 300, delay: 200 }}
                     >
                         <Text style={[styles.endTitle, { color: colors.text.primary }, isKurdish && styles.kurdishFont]}>
                             {isKurdish ? 'ئەنجام' : 'Results'}
@@ -90,7 +90,7 @@ export default function PartnersPlayScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ type: 'spring', delay: 400, damping: 15 }}
+                        transition={{ type: 'timing', duration: 300, delay: 400 }}
                         style={styles.scoreContainer}
                     >
                         <Text style={[styles.scoreBig, { color: colors.brand.primary }]}>{score}</Text>
@@ -102,7 +102,7 @@ export default function PartnersPlayScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, translateY: 30 }}
                         animate={{ opacity: 1, translateY: 0 }}
-                        transition={{ type: 'spring', delay: 600, damping: 15 }}
+                        transition={{ type: 'timing', duration: 300, delay: 600 }}
                         style={{ width: '100%', paddingHorizontal: layout.spacing.xl }}
                     >
                         <BeastButton
@@ -201,7 +201,7 @@ export default function PartnersPlayScreen({ navigation, route }) {
                     <MotiView
                         from={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ type: 'spring', damping: 15 }}
+                        transition={{ type: 'timing', duration: 300 }}
                     >
                         <GlassCard
                             style={[styles.questionCard, { borderColor: colors.border }]}

@@ -196,7 +196,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                         <MotiView
                             from={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ type: 'spring', damping: 14, stiffness: 120 }}
+                            transition={{ type: 'timing', duration: 300 }}
                             style={{ alignItems: 'center', marginBottom: 24 }}
                         >
                             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -236,7 +236,7 @@ export default function DrawGuessPlayScreen({ navigation, route }) {
                                     <MotiView
                                         from={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        transition={{ type: 'spring', delay: 200, damping: 10 }}
+                                        transition={{ type: 'timing', duration: 300, delay: 200 }}
                                         style={{
                                             width: 80, height: 80, borderRadius: 40,
                                             alignItems: 'center', justifyContent: 'center',

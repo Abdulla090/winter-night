@@ -76,7 +76,7 @@ const ScoreEntry = ({ player, score, rank, isWinner, colors, isDark, delay }) =>
     <MotiView
         from={{ opacity: 0, translateX: -20 }}
         animate={{ opacity: 1, translateX: 0 }}
-        transition={{ type: 'spring', delay, damping: 15 }}
+        transition={{ type: 'timing', duration: 300, delay, damping: 15 }}
         style={[
             styles.scoreEntry,
             { backgroundColor: isDark ? '#1A0B2E' : '#FFF' },
@@ -245,7 +245,7 @@ export default function ImpostorDrawResult({ navigation, route }) {
                                 key={index}
                                 from={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ type: 'spring', delay: index * 100 }}
+                                transition={{ type: 'timing', duration: 300, delay: index * 100 }}
                             >
                                 <VoteResultCard
                                     player={player}
@@ -265,7 +265,7 @@ export default function ImpostorDrawResult({ navigation, route }) {
                     <MotiView
                         from={{ scale: 0.5, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: 'spring', damping: 10 }}
+                        transition={{ type: 'timing', duration: 300 }}
                         style={styles.impostorRevealContainer}
                     >
                         <LinearGradient

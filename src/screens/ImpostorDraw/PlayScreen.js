@@ -39,17 +39,17 @@ const COLORS = ['#000000', '#EF4444', '#F97316', '#10B981', '#3B82F6', '#8B5CF6'
 // ============================================
 const ReadyScreen = ({ player, playerIndex, totalPlayers, onReady, isKurdish, colors }) => (
     <MotiView
-        from={{ opacity: 0, scale: 0.9 }}
+        from={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: 'spring', delay: 100 }}
+        transition={{ type: 'timing', duration: 280, delay: 80 }}
         style={styles.readyContainer}
     >
         <Text style={styles.playerNum}>{playerIndex + 1} / {totalPlayers}</Text>
 
         <MotiView
-            from={{ rotate: '-180deg' }}
-            animate={{ rotate: '0deg' }}
-            transition={{ type: 'spring', delay: 300, damping: 12 }}
+            from={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'timing', duration: 300, delay: 200 }}
             style={[styles.avatar, { backgroundColor: player.color }]}
         >
             <Text style={styles.avatarText}>{player.name.charAt(0)}</Text>
@@ -93,6 +93,7 @@ const DrawingPhase = ({
     <MotiView
         from={{ opacity: 0, translateY: 20 }}
         animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: 'timing', duration: 250 }}
         style={styles.drawContainer}
     >
         <View style={styles.drawHeader}>
@@ -101,7 +102,7 @@ const DrawingPhase = ({
                 <Text style={styles.nameBadgeSub}>{playerIndex + 1}/{totalPlayers}</Text>
             </View>
             <MotiView
-                animate={{ scale: timeLeft <= 3 ? [1, 1.2, 1] : 1 }}
+                animate={{ scale: timeLeft <= 3 ? [1, 1.15, 1] : 1 }}
                 transition={{ type: 'timing', duration: 500, loop: timeLeft <= 3 }}
                 style={[styles.timer, { backgroundColor: timeLeft <= 3 ? '#EF4444' : '#10B981' }]}
             >
@@ -137,6 +138,7 @@ const DrawingPhase = ({
             <MotiView
                 from={{ height: 0, opacity: 0 }}
                 animate={{ height: 72, opacity: 1 }}
+                transition={{ type: 'timing', duration: 200 }}
                 style={[styles.colorRow, { backgroundColor: isDark ? '#1A1A2E' : '#FFF' }]}
             >
                 {COLORS.map(c => (
@@ -154,15 +156,15 @@ const DrawingPhase = ({
 // ============================================
 const AllDoneScreen = ({ strokes, onGoToVoting, isKurdish, colors, isDark }) => (
     <MotiView
-        from={{ opacity: 0, scale: 0.9 }}
+        from={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: 'spring', delay: 100 }}
+        transition={{ type: 'timing', duration: 280 }}
         style={styles.doneContainer}
     >
         <MotiView
-            from={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', delay: 300, damping: 10 }}
+            from={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'timing', duration: 350, delay: 200 }}
         >
             <CheckCircle size={60} color="#10B981" />
         </MotiView>
@@ -177,9 +179,9 @@ const AllDoneScreen = ({ strokes, onGoToVoting, isKurdish, colors, isDark }) => 
 
         {/* Show final drawing */}
         <MotiView
-            from={{ opacity: 0, translateY: 20 }}
+            from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: 500 }}
+            transition={{ type: 'timing', duration: 300, delay: 350 }}
             style={[styles.doneCanvas, { backgroundColor: isDark ? '#1E1E2E' : '#FFF' }]}
         >
             <Svg width="100%" height="100%" viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`} preserveAspectRatio="xMidYMid meet">
@@ -192,7 +194,7 @@ const AllDoneScreen = ({ strokes, onGoToVoting, isKurdish, colors, isDark }) => 
         <MotiView
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 800 }}
+            transition={{ type: 'timing', duration: 300, delay: 600 }}
             style={{ width: '100%' }}
         >
             <TouchableOpacity onPress={onGoToVoting} style={styles.votingBtn} activeOpacity={0.8}>
@@ -214,13 +216,13 @@ const VotingPage = ({ timeLeft, strokes, onReveal, isKurdish, colors, isDark }) 
     <MotiView
         from={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        transition={{ type: 'timing', duration: 250 }}
         style={styles.votingContainer}
     >
-        {/* Big Timer Circle */}
+        {/* Big Timer Circle — color changes, no looping spring */}
         <MotiView
-            from={{ scale: 0.8 }}
-            animate={{ scale: timeLeft <= 10 ? [1, 1.1, 1] : 1 }}
-            transition={{ type: 'spring', loop: timeLeft <= 10 }}
+            animate={{ scale: timeLeft <= 10 ? 1.08 : 1 }}
+            transition={{ type: 'timing', duration: 300 }}
             style={[styles.bigTimer, { backgroundColor: timeLeft <= 10 ? '#EF4444' : '#D900FF' }]}
         >
             <Clock size={28} color="#FFF" />
@@ -249,9 +251,9 @@ const VotingPage = ({ timeLeft, strokes, onReveal, isKurdish, colors, isDark }) 
 
         {/* Reveal Button */}
         <MotiView
-            from={{ opacity: 0, translateY: 20 }}
+            from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: 500 }}
+            transition={{ type: 'timing', duration: 300, delay: 400 }}
             style={{ width: '100%' }}
         >
             <TouchableOpacity onPress={onReveal} style={styles.revealBtn} activeOpacity={0.8}>
@@ -271,14 +273,15 @@ const VotingPage = ({ timeLeft, strokes, onReveal, isKurdish, colors, isDark }) 
 // ============================================
 const ResultScreen = ({ impostor, word, onDone, isKurdish, colors }) => (
     <MotiView
-        from={{ opacity: 0, scale: 0.9 }}
+        from={{ opacity: 0, scale: 0.93 }}
         animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'timing', duration: 280 }}
         style={styles.resultContainer}
     >
         <MotiView
-            from={{ rotate: '-180deg', scale: 0 }}
-            animate={{ rotate: '0deg', scale: 1 }}
-            transition={{ type: 'spring', damping: 10, delay: 200 }}
+            from={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'timing', duration: 350, delay: 150 }}
             style={styles.resultIcon}
         >
             <EyeOff size={44} color="#FFF" />
@@ -289,9 +292,9 @@ const ResultScreen = ({ impostor, word, onDone, isKurdish, colors }) => (
         </Text>
 
         <MotiView
-            from={{ opacity: 0, translateY: 20 }}
+            from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: 500 }}
+            transition={{ type: 'timing', duration: 300, delay: 350 }}
             style={[styles.resultBadge, { backgroundColor: impostor.color }]}
         >
             <Text style={styles.resultName}>{impostor.name}</Text>
@@ -300,7 +303,7 @@ const ResultScreen = ({ impostor, word, onDone, isKurdish, colors }) => (
         <MotiView
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1000 }}
+            transition={{ type: 'timing', duration: 300, delay: 700 }}
             style={{ alignItems: 'center' }}
         >
             <Text style={[styles.resultWordLabel, { color: colors.text.secondary }]}>
@@ -310,9 +313,9 @@ const ResultScreen = ({ impostor, word, onDone, isKurdish, colors }) => (
         </MotiView>
 
         <MotiView
-            from={{ opacity: 0, translateY: 30 }}
+            from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: 1500 }}
+            transition={{ type: 'timing', duration: 300, delay: 1100 }}
             style={{ width: '100%' }}
         >
             <TouchableOpacity onPress={onDone} style={styles.doneBtn} activeOpacity={0.8}>
@@ -372,12 +375,10 @@ export default function ImpostorDrawPlay({ navigation, route }) {
         }
 
         if (playerIdx < players.length - 1) {
-            // Next player
             setPlayerIdx(prev => prev + 1);
             setTimeLeft(DRAW_TIME);
             setPhase('ready');
         } else {
-            // All done - go to "all done" screen with button
             setPhase('allDone');
         }
         forceUpdate(n => n + 1);

@@ -279,7 +279,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
                             <MotiView
                                 from={{ opacity: 0, scale: 0.85 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ type: 'spring', damping: 14, stiffness: 120 }}
+                                transition={{ type: 'timing', duration: 300 }}
                                 style={styles.revealSection}
                             >
                                 {isMultiplayer && !isMyTurnToReveal ? (
@@ -389,7 +389,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
                             <MotiView
                                 from={{ opacity: 0, scale: 0.7, rotateY: '90deg' }}
                                 animate={{ opacity: 1, scale: 1, rotateY: '0deg' }}
-                                transition={{ type: 'spring', damping: 12, stiffness: 100 }}
+                                transition={{ type: 'timing', duration: 300 }}
                                 style={styles.revealSection}
                             >
                                 {isMultiplayer && !isMyTurnToReveal ? (
@@ -440,7 +440,7 @@ export default function ImposterPlayScreen({ navigation, route }) {
                                                 <MotiView
                                                     from={{ scale: 0 }}
                                                     animate={{ scale: 1 }}
-                                                    transition={{ type: 'spring', delay: 200, damping: 10 }}
+                                                    transition={{ type: 'timing', duration: 300, delay: 200 }}
                                                     style={[styles.roleIconContainer, {
                                                         backgroundColor: showingImposter
                                                             ? 'rgba(239, 68, 68, 0.2)'
